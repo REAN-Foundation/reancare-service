@@ -1,0 +1,17 @@
+meta {
+  name: How do you feel details by id
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{BASE_URL}}/clinical/symptoms/how-do-you-feel/{{HOW_DO_YOU_FEEL_ID}}
+  body: none
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+  authorization: Bearer {{PATIENT_USER_JWT}}
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+}

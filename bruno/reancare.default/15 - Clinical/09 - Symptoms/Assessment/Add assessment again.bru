@@ -1,0 +1,39 @@
+meta {
+  name: Add assessment again
+  type: http
+  seq: 5
+}
+
+post {
+  url: {{BASE_URL}}/clinical/symptom-assessments
+  body: json
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+  authorization: Bearer {{PATIENT_USER_JWT}}
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+}
+
+body:json {
+  {
+      "PatientUserId": "{{PATIENT_USER_ID}}",
+      "AssessmentTemplateId": "{{ASSESSMENT_TEMPLATE_ID}}",
+      "Title": "AHA Cardiac Rehab Assessment",
+      "AssessmentDate": "2021-09-30"
+  }
+  
+}
+
+tests {
+  try {
+      var jsonData = res.getBody();
+      var id = jsonData.Data.SymptomAssessment.id;
+      bru.setEnvVar("SYMPTOM_ASSESSMENT_ID", id);
+  }
+  catch (error) {
+      console.log(error.message);
+  }
+  
+}

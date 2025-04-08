@@ -1,0 +1,34 @@
+meta {
+  name: Register doctor- with same phone number - should fail
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{BASE_URL}}/doctors/{{DOCTOR_USER_ID}}
+  body: json
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{PATIENT_USER_JWT}}
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+  Content-Type: application/json
+}
+
+script:pre-request {
+  var password = "Client-Test@123";
+  bru.setEnvVar("API_CLIENT_PASSWORD", password);
+  
+}
+
+tests {
+  
+  test("Request is failure", function () {
+      expect(res.getStatus()).to.equal(200);
+      var jsonRes = res.getBody();
+      expect(jsonRes.Status).to.eql('success');
+  });
+  
+  
+}

@@ -1,0 +1,68 @@
+meta {
+  name: Enroll to care plan
+  type: http
+  seq: 6
+}
+
+post {
+  url: {{BASE_URL}}/care-plans/patients/{{PATIENT_USER_ID}}/enroll
+  body: json
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{PATIENT_USER_JWT}}
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+  Content-Type: application/json
+}
+
+body:json {
+  {
+      "Provider": "AHA",
+      "PlanCode": "Cholesterol",
+      "StartDate": "{{CAREPLAN_START_DATE}}"
+  }
+}
+
+script:pre-request {
+  var today = (new Date()).toISOString().split('T')[0];
+  bru.setEnvVar("CAREPLAN_START_DATE", today);
+  
+}
+
+tests {
+  try {
+      var jsonRes = res.getBody();
+      bru.setEnvVar("CAREPLAN_ID", jsonRes.Data.Enrollment.id);
+      bru.setEnvVar("CAREPLAN_PARTICIPANT_ID", jsonRes.Data.Enrollment.ParticipantId);
+      bru.setEnvVar("CAREPLAN_ENROLLMENT_ID", jsonRes.Data.Enrollment.EnrollmentId);
+      bru.setEnvVar("CAREPLAN_CODE", jsonRes.Data.Enrollment.PlanCode);
+      bru.setEnvVar("CAREPLAN_PROVIDER", jsonRes.Data.Enrollment.Provider);
+      bru.setEnvVar("CAREPLAN_NAME", jsonRes.Data.Enrollment.PlanName);
+  }
+  catch (error) {
+      console.log(error.message);
+  }
+  
+  test("Request is successfull", function () {
+      expect(res.getStatus()).to.equal(201);
+      var jsonRes = res.getBody();
+      expect(jsonRes.Status).to.eql('success');
+  });
+  
+  test("Patient is enrolled to careplan", function () {
+      var jsonRes = res.getBody();
+      expect(jsonRes.Data).to.have.property('Enrollment');
+      expect(jsonRes.Data.Enrollment).to.not.be.empty;
+      expect(jsonRes.Data.Enrollment).to.have.property('PatientUserId');
+      expect(jsonRes.Data.Enrollment).to.have.property('EnrollmentId');
+      expect(jsonRes.Data.Enrollment).to.have.property('ParticipantId');
+      expect(jsonRes.Data.Enrollment).to.have.property('PlanCode');
+      expect(jsonRes.Data.Enrollment).to.have.property('Provider');
+      expect(jsonRes.Data.Enrollment).to.have.property('PlanName');
+      expect(jsonRes.Data.Enrollment).to.have.property('StartAt');
+      expect(jsonRes.Data.Enrollment).to.have.property('EndAt');
+      expect(jsonRes.Data.Enrollment).to.have.property('IsActive');
+  });
+  
+}

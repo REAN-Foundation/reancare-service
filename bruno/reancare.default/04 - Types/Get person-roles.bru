@@ -1,0 +1,25 @@
+meta {
+  name: Get person-roles
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{BASE_URL}}/types/person-roles
+  body: none
+  auth: none
+}
+
+headers {
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+  Content-Type: application/json
+}
+
+tests {
+  test("Request is successfull", function () {
+      expect(res.getStatus()).to.equal(200);
+      var jsonRes = res.getBody();
+      expect(jsonRes.Status).to.eql('success');
+  });
+  
+}

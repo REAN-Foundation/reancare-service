@@ -1,0 +1,78 @@
+meta {
+  name: Update an patient allergy
+  type: http
+  seq: 3
+}
+
+put {
+  url: {{BASE_URL}}/clinical/allergies/{{PATIENT_ALLERGY_ID}}
+  body: json
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{PATIENT_USER_JWT}}
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+  Content-Type: application/json
+}
+
+body:json {
+  {
+      "Allergy": "Nut allergy",
+      "Severity": "{{PATIENT_ALLERGY_Severity}}"
+  }
+}
+
+script:pre-request {
+  bru.setEnvVar("PATIENT_ALLERGY_Severity", 'Low');
+}
+
+tests {
+  var jsonRes = res.getBody();
+  
+  test("Request is successfull", function () {
+      expect(res.getStatus()).to.equal(200);
+      var jsonRes = res.getBody();
+      expect(jsonRes.Status).to.eql('success');
+  });
+  
+  test("Correct updates should be reflected", function () {
+  
+      let expectedPatientUserId = bru.getEnvVar("PATIENT_ALLERGY_PATIENTUSERID");
+      let expectedAllergenCategory = bru.getEnvVar("PATIENT_ALLERGY_AllergenCategory");
+      let expectedAllergenExposureRoute = bru.getEnvVar("PATIENT_ALLERGY_AllergenExposureRoute");
+      let expectedSeverity = bru.getEnvVar("PATIENT_ALLERGY_Severity");
+      let expectedReaction = bru.getEnvVar("PATIENT_ALLERGY_Reaction");
+      let expectedOtherInformation = bru.getEnvVar("PATIENT_ALLERGY_OtherInformation");
+      let expectedLastOccurrence = bru.getEnvVar("PATIENT_ALLERGY_LastOccurrence");
+  
+      var jsonRes = res.getBody();
+      expect(jsonRes.Data).to.have.property('Allergy');
+      expect(jsonRes.Data.Allergy).to.not.be.empty;
+      expect(jsonRes.Data.Allergy).to.have.property('PatientUserId');
+      expect(jsonRes.Data.Allergy).to.have.property('Allergy');
+      expect(jsonRes.Data.Allergy).to.have.property('AllergenCategory');
+      expect(jsonRes.Data.Allergy).to.have.property('AllergenExposureRoute');
+      expect(jsonRes.Data.Allergy).to.have.property('Severity');
+      expect(jsonRes.Data.Allergy).to.have.property('Reaction');
+      expect(jsonRes.Data.Allergy).to.have.property('OtherInformation');
+      expect(jsonRes.Data.Allergy).to.have.property('LastOccurrence');
+  
+      expect(jsonRes.Data.Allergy.PatientUserId).equals(expectedPatientUserId);
+      expect(jsonRes.Data.Allergy.Allergy).equals("Nut allergy");
+      expect(jsonRes.Data.Allergy.AllergenCategory).equals(expectedAllergenCategory);
+      expect(jsonRes.Data.Allergy.AllergenExposureRoute).equals(expectedAllergenExposureRoute);
+      expect(jsonRes.Data.Allergy.Severity).equals("Low");
+      expect(jsonRes.Data.Allergy.Reaction).equals(expectedReaction);
+      expect(jsonRes.Data.Allergy.OtherInformation).equals(expectedOtherInformation);
+  
+      var lastOccurrence = jsonRes.Data.Allergy.LastOccurrence.split('T')[0];
+      expect(lastOccurrence).equals(expectedLastOccurrence);
+  });
+  
+  
+}
+
+docs {
+  Update the details for an PatientAllergy.
+}

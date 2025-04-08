@@ -1,0 +1,146 @@
+meta {
+  name: Update Settings
+  type: http
+  seq: 5
+}
+
+put {
+  url: {{BASE_URL}}/tenant-settings/{{TENANT_ID}}
+  body: json
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+  Authorization: Bearer {{TENANT_ADMIN_USER_JWT}}
+}
+
+body:json {
+  {
+      "UserInterfaces": {
+          "PatientApp": true,
+          "ChatBot": true,
+          "Forms": true
+      },
+      "Common": {
+          "Clinical": {
+              "Vitals": true,
+              "LabRecords": true,
+              "Symptoms": true,
+              "DrugsManagement": true,
+              "Medications": true,
+              "Careplans": false,
+              "Assessments": true
+          },
+          "External": {
+              "FHIRStorage": false,
+              "EHRIntegration": false,
+              "ABDMIntegration": false
+          },
+          "AddOns": {
+              "HospitalSystems": false,
+              "Gamification": false,
+              "LearningJourney": false,
+              "Community": false,
+              "PatientSelfServicePortal": false,
+              "PatientStatusReports": false,
+              "DocumentsManagement": false,
+              "AppointmentReminders": false,
+              "Organizations": false,
+              "Cohorts": false,
+              "Notifications": true,
+              "Newsfeeds": false,
+              "Notices": false
+          },
+          "Analysis": {
+              "CustomQueries": false,
+              "Quicksight": false
+          }
+      },
+      "PatientApp": {
+          "Exercise": true,
+          "Nutrition": true,
+          "DeviceIntegration": {
+              "Terra": false,
+              "SenseSemi": false
+          }
+      },
+      "ChatBot": {
+          "Name": "Chatbot",
+          "Icon": null,
+          "Description": "Chatbot for patient interaction",
+          "DefaultLanguage": "en",
+          "MessageChannels": {
+              "WhatsApp": false,
+              "Telegram": true
+          },
+          "SupportChannels": {
+              "ClickUp": false,
+              "Slack": false,
+              "Email": false
+          },
+          "Personalization": false,
+          "LocationContext": false,
+          "Localization": true
+      },
+      "Forms": {
+          "Integrations": {
+              "KoboToolbox": false,
+              "GoogleForm": false,
+              "ODK": false
+          },
+          "OfflineSupport": false,
+          "FieldApp": false
+      }
+  }
+}
+
+tests {
+  // try {
+  //     var jsonRes = res.getBody();
+  // }
+  // catch (error) {
+  //     console.log(error.message);
+  // }
+  
+  test("Request is successfull", function () {
+      expect(res.getStatus()).to.equal(200);
+      var jsonRes = res.getBody();
+      expect(jsonRes.Status).to.eql('success');
+  });
+  
+  test("Doctor is created", function () {
+      var jsonRes = res.getBody();
+      expect(jsonRes.Data).to.have.property('Tenant');
+      expect(jsonRes.Data.Tenant).to.not.be.empty;
+      expect(jsonRes.Data.Tenant).to.have.property('id');
+      expect(jsonRes.Data.Tenant).to.have.property('Name');
+      expect(jsonRes.Data.Tenant.Name).to.not.be.empty;
+      expect(jsonRes.Data.Tenant).to.have.property('Description');
+      expect(jsonRes.Data.Tenant).to.have.property('Code');
+      expect(jsonRes.Data.Tenant).to.have.property('Phone');
+      expect(jsonRes.Data.Tenant).to.have.property('Email');
+      
+  });
+  
+}
+
+docs {
+  Registers patient. Phone number is the only mandatory field. The rest of the fields are optional. Phone number has to be specified in this format - 'country-code-phone-number'. e.g. "+91-1234567890".
+  
+  The typical request body is as follows - 
+  `
+  {
+      "Phone": "+91-1234567890",
+      "Prefix": "Mr.",
+      "FirstName": "John",
+      "MiddleName": "X",
+      "LastName": "Doe",
+      "Email": "john.doe@gmail.com",
+      "Gender": "Male",
+      "BirthDate": "1979-01-01",
+      "ImageResourceId": "20fd7e52-0d24-4599-bda5-3ed7be2dd383"
+  }
+  `
+}

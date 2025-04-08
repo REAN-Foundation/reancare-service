@@ -1,0 +1,42 @@
+meta {
+  name: Update doctor details - only email and first name
+  type: http
+  seq: 7
+}
+
+put {
+  url: {{BASE_URL}}/doctors/{{DOCTOR_USER_ID}}
+  body: json
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{DOCTOR_USER_JWT}}
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+  Content-Type: application/json
+}
+
+body:json {
+  {
+      "FirstName": "Anand",
+      "Email": "Anand.doe@gmail.com"
+  }
+}
+
+tests {
+  try {
+      var jsonRes = res.getBody();
+      bru.setEnvVar("DOCTOR_FIRST_NAME", jsonRes.Data.Doctor.User.Person.FirstName);
+      bru.setEnvVar("DOCTOR_EMAIL", jsonRes.Data.Doctor.User.Person.Email);
+      bru.setEnvVar("CONTACT_USER_ID", jsonRes.Data.Doctor.User.id);
+      
+      var phone = jsonRes.Data.Doctor.User.Person.Phone;
+      var tokens = phone.split('-');
+      var phoneNumber = tokens[1];
+  
+      bru.setEnvVar("DOCTOR_PHONE_NUMBER", phoneNumber);
+  }
+  catch (error) {
+      console.log(error.message);
+  }
+}

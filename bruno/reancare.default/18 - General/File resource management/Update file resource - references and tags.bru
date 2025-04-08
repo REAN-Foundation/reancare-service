@@ -1,0 +1,84 @@
+meta {
+  name: Update file resource - references and tags
+  type: http
+  seq: 4
+}
+
+put {
+  url: {{BASE_URL}}/file-resources/{{RESOURCE_ID}}
+  body: json
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+  authorization: Bearer {{PATIENT_USER_JWT}}
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+}
+
+body:json {
+  {
+      "References": [
+          {
+              "ItemId": "{{BIOMETRICS_BLOOD_PRESSURE_ID}}",
+              "ItemType": "Biometrics",
+              "Keyword": "Blood pressure"
+          }
+      ],
+      "Tags": [
+          "First tag",
+          "Second tag"
+      ]
+  }
+}
+
+tests {
+  try {
+      var jasonRes = res.getBody();
+      var resource = jasonRes.Data.FileResource;
+  
+      var reference = resource.References[0];
+      var referenceId = reference.ItemId;
+      var referenceType = reference.ItemType;
+      var referenceKeyword = reference.Keyword;
+      bru.setEnvVar("RESOURCE_REFERENCE_ID", referenceId);
+      bru.setEnvVar("RESOURCE_REFERENCE_TYPE", referenceType);
+      bru.setEnvVar("RESOURCE_REFERENCE_KEYWORD", referenceKeyword);
+  
+      var tag = resource.Tags[0];
+      bru.setEnvVar("RESOURCE_TAG", tag);
+  }
+  catch (error) {
+      console.log(error.message);
+  }
+  
+  test("Request is successfull", function () {
+      expect(res.getStatus()).to.equal(200);
+      var jsonRes = res.getBody();
+      expect(jsonRes.Status).to.eql('success');
+  });
+  
+  test("References and tags are added to resource", function () {
+  
+      var jsonRes = res.getBody();
+      expect(jsonRes.Data).to.have.property('FileResource');
+  
+      var resource = jsonRes.Data.FileResource;
+  
+      expect(resource).to.have.property('id');
+      expect(resource).to.have.property('FileName');
+      expect(resource).to.have.property('Url');
+      expect(resource).to.have.property('UploadedByUserId');
+      expect(resource).to.have.property('MimeType');
+      expect(resource).to.have.property('Versions');
+      expect(resource).to.have.property('Tags');
+      expect(resource).to.have.property('References');
+      expect(resource).to.have.property('IsPublicResource');
+      expect(resource).to.have.property('DefaultVersion');
+  
+      expect(resource.References.length).greaterThan(0);
+      expect(resource.Tags.length).greaterThan(0);
+  
+  });
+  
+}

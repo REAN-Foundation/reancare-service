@@ -1,0 +1,40 @@
+meta {
+  name: Get contact person roles
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{BASE_URL}}/patient-emergency-contacts/roles
+  body: json
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{PATIENT_USER_JWT}}
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+  Content-Type: application/json
+}
+
+tests {
+  var jsonRes = res.getBody();
+  
+  test("Request is successfull", function () {
+      expect(res.getStatus()).to.equal(200);
+      var jsonRes = res.getBody();
+      expect(jsonRes.Status).to.eql('success');
+  });
+  
+  test("Emergency contact roles are returned.", function () {
+      var jsonRes = res.getBody();
+      expect(jsonRes.Data).to.have.property('EmergencyContactRoles');
+      expect(jsonRes.Data.EmergencyContactRoles).to.not.be.empty;
+      expect(jsonRes.Data.EmergencyContactRoles.length).greaterThan(0);
+  });
+  
+  
+}
+
+docs {
+  Get an emergency contact by emergency contact id.
+}

@@ -1,0 +1,11 @@
+meta {
+  name: Get atom feed
+  type: http
+  seq: 11
+}
+
+get {
+  url: {{BASE_URL}}/rss-feeds/{{RSS_FEED_ID}}/atom
+  body: none
+  auth: none
+}

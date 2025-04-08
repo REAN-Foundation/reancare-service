@@ -1,0 +1,37 @@
+meta {
+  name: Log-in second patient
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{BASE_URL}}/users/login-with-password
+  body: json
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+}
+
+body:json {
+  {
+      "Phone": "{{PHONE_COUNTRY_CODE}}-{{PHONE_NUMBER}}",
+      "Password": "{{PASSWORD}}",
+      "LoginRoleId": {{PATIENT_LOGIN_ROLE_ID}}
+  }
+  
+}
+
+tests {
+  // try {
+  //     var jsonRes = res.getBody();
+  //     bru.setEnvVar("SECOND_PATIENT_USER_JWT", jsonRes.Data.AccessToken);
+  // }
+  // catch (error) {
+  //     console.log(error.message);
+  // }
+  
+  
+}

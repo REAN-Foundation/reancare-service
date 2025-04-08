@@ -1,0 +1,47 @@
+meta {
+  name: Get blood pressure record by id
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{BASE_URL}}/clinical/biometrics/blood-pressures/{{BIOMETRICS_BLOOD_PRESSURE_ID}}
+  body: none
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{PATIENT_USER_JWT}}
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+  Content-Type: application/json
+}
+
+tests {
+  test("Request is successfull", function () {
+      expect(res.getStatus()).to.equal(200);
+      var jsonRes = res.getBody();
+      expect(jsonRes.Status).to.eql('success');
+  });
+  
+  test("Blood pressure record is returned", function () {
+  
+      var expectedSystolic = 120;
+      var expectedDiastolic = 90;
+      var expectedPatientUserId = bru.getEnvVar("PATIENT_USER_ID");
+  
+      var jsonRes = res.getBody();
+      expect(jsonRes.Data).to.have.property('BloodPressure');
+      expect(jsonRes.Data.BloodPressure).to.not.be.empty;
+      expect(jsonRes.Data.BloodPressure).to.have.property('id');
+      expect(jsonRes.Data.BloodPressure).to.have.property('Systolic');
+      expect(jsonRes.Data.BloodPressure).to.have.property('Diastolic');
+      expect(jsonRes.Data.BloodPressure).to.have.property('PatientUserId');
+  
+      expect(jsonRes.Data.BloodPressure.Systolic).equals(expectedSystolic);
+      expect(jsonRes.Data.BloodPressure.Diastolic).equals(expectedDiastolic);
+      expect(jsonRes.Data.BloodPressure.PatientUserId).equals(expectedPatientUserId);
+  
+  });
+  
+  
+}

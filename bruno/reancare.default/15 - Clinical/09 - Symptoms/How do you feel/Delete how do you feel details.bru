@@ -1,0 +1,21 @@
+meta {
+  name: Delete how do you feel details
+  type: http
+  seq: 5
+}
+
+delete {
+  url: {{BASE_URL}}/clinical/symptoms/how-do-you-feel/{{HOW_DO_YOU_FEEL_ID}}
+  body: none
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+  authorization: Bearer {{PATIENT_USER_JWT}}
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+}
+
+docs {
+  Delete an already existing drug order.
+}

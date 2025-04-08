@@ -1,0 +1,29 @@
+meta {
+  name: Download medication stock image by id
+  type: http
+  seq: 8
+}
+
+get {
+  url: {{BASE_URL}}/clinical/medications/stock-images/{{STOCK_MEDICATION_IMAGE_ID}}/download
+  body: json
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{PATIENT_USER_JWT}}
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+  Content-Type: application/json
+}
+
+tests {
+  
+  test("Request is successfull", function () {
+      expect(res.getStatus()).to.equal(200);
+  });
+  
+}
+
+docs {
+  Returns the list of drugs/medicines stored in the system.
+}

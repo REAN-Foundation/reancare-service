@@ -1,0 +1,60 @@
+meta {
+  name: Get patient emergency contact by id
+  type: http
+  seq: 4
+}
+
+get {
+  url: {{BASE_URL}}/patient-emergency-contacts/{{PATIENT_EMERGENCY_CONTACT_ID}}
+  body: json
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{PATIENT_USER_JWT}}
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+  Content-Type: application/json
+}
+
+tests {
+  var jsonRes = res.getBody();
+  
+  test("Request is successfull", function () {
+      expect(res.getStatus()).to.equal(200);
+      var jsonRes = res.getBody();
+      expect(jsonRes.Status).to.eql('success');
+  });
+  
+  test("Emergency contact is returned", function () {
+  
+      let expectedPatientUserId = bru.getEnvVar("PATIENT_USER_ID");
+      let expectedContactRelation = "Patient family member";
+      let expectedIsAvailableForEmergency = true;
+      let expectedTimeOfAvailability = "10:00 AM - 5:00 PM";
+      let expectedDescription = "Some description here";
+      let expectedAdditionalPhoneNumbers = "+91-3243243334";
+  
+      var jsonRes = res.getBody();
+      expect(jsonRes.Data).to.have.property('EmergencyContact');
+      expect(jsonRes.Data.EmergencyContact).to.not.be.empty;
+      expect(jsonRes.Data.EmergencyContact).to.have.property('PatientUserId');
+      expect(jsonRes.Data.EmergencyContact).to.have.property('ContactRelation');
+      expect(jsonRes.Data.EmergencyContact).to.have.property('IsAvailableForEmergency');
+      expect(jsonRes.Data.EmergencyContact).to.have.property('TimeOfAvailability');
+      expect(jsonRes.Data.EmergencyContact).to.have.property('Description');
+      expect(jsonRes.Data.EmergencyContact).to.have.property('AdditionalPhoneNumbers');
+  
+      expect(jsonRes.Data.EmergencyContact.PatientUserId).equals(expectedPatientUserId);
+      expect(jsonRes.Data.EmergencyContact.ContactRelation).equals(expectedContactRelation);
+      expect(jsonRes.Data.EmergencyContact.IsAvailableForEmergency).equals(expectedIsAvailableForEmergency);
+      expect(jsonRes.Data.EmergencyContact.TimeOfAvailability).equals(expectedTimeOfAvailability);
+      expect(jsonRes.Data.EmergencyContact.Description).equals(expectedDescription);
+      expect(jsonRes.Data.EmergencyContact.AdditionalPhoneNumbers).equals(expectedAdditionalPhoneNumbers);
+  });
+  
+  
+}
+
+docs {
+  Get an emergency contact by emergency contact id.
+}

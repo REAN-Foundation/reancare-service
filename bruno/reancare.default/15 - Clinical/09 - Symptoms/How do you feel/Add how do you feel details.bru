@@ -1,0 +1,27 @@
+meta {
+  name: Add how do you feel details
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{BASE_URL}}/clinical/symptoms/how-do-you-feel
+  body: json
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+  authorization: Bearer {{PATIENT_USER_JWT}}
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+}
+
+body:json {
+  {
+      "PatientUserId": "{{PATIENT_USER_ID}}",
+      "Feeling": 1,
+      "RecordDate": "2021-06-20",
+      "Comments": "abcd66",
+      "SymptomAssessmentId": null
+  }
+}

@@ -5,6 +5,8 @@ import {
 import { v4 } from 'uuid';
 import AnteNatalVisit from './antenatal.visit.model';
 import Pregnancy from './pregnancy.model';
+import Visit from '../visit.model';
+import Medication from '../medication/medication.model';
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -42,6 +44,8 @@ export default class AntenatalMedication extends Model {
     })
     PregnancyId: string;
 
+    @IsUUID(4)
+    @ForeignKey(() => Visit)
     @Column({
         type      : DataType.UUID,
         allowNull : false,
@@ -62,6 +66,8 @@ export default class AntenatalMedication extends Model {
     })
     Given: string;
 
+    @IsUUID(4)
+    @ForeignKey(() => Medication)
     @Column({
         type      : DataType.UUID,
         allowNull : false,

@@ -1,9 +1,14 @@
 import {
+    BelongsTo,
     Column, CreatedAt, DataType, DeletedAt, ForeignKey, IsUUID, Model, PrimaryKey, Table, UpdatedAt
 } from 'sequelize-typescript';
 
 import { v4 } from 'uuid';
 import Pregnancy from './pregnancy.model';
+import Visit from '../visit.model';
+import BodyWeight from '../biometrics/body.weight.model';
+import BodyTemperature from '../biometrics/body.temperature.model';
+import BloodPressure from '../biometrics/blood.pressure.model';
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -25,6 +30,8 @@ export default class AnteNatalVisit extends Model {
     })
     id: string;
 
+    @IsUUID(4)
+    @ForeignKey(() => Visit)
     @Column({
         type      : DataType.UUID,
         allowNull : false,
@@ -82,18 +89,24 @@ export default class AnteNatalVisit extends Model {
     })
     DateOfNextVisit: Date;
 
+    @IsUUID(4)
+    @ForeignKey(() => BodyWeight)
     @Column({
         type      : DataType.UUID,
         allowNull : true,
     })
     BodyWeightID: string;
 
+    @IsUUID(4)
+    @ForeignKey(() => BodyTemperature)
     @Column({
         type      : DataType.UUID,
         allowNull : true,
     })
     BodyTemperatureId: string;
 
+    @IsUUID(4)
+    @ForeignKey(() => BloodPressure)
     @Column({
         type      : DataType.UUID,
         allowNull : true,

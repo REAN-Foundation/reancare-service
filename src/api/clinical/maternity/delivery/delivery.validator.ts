@@ -24,6 +24,7 @@ export class DeliveryValidator extends BaseValidator {
 
         const DeliveryModel: DeliveryDomainModel = {
             PregnancyId     : request.body.PregnancyId ?? null,
+            Pregnancy         : request.body.Pregnancy ?? null,
             PatientUserId   : request.body.PatientUserId ?? null,
             DeliveryDate    : request.body.DeliveryDate ?? new Date,
             DeliveryTime    : request.body.DeliveryTime ?? new Date().toTimeString(),
@@ -112,6 +113,7 @@ export class DeliveryValidator extends BaseValidator {
 
         const PostnatalVisitModel: PostnatalVisitDomainModel = {
             DeliveryId        : request.body.DeliveryId ?? null,
+            Delivery          : request.body.Delivery ?? null,
             PatientUserId     : request.body.PatientUserId ?? null,
             DateOfVisit       : request.body.DateOfVisit ?? new Date(),
             BodyWeightId      : request.body.BodyWeightId ?? null,

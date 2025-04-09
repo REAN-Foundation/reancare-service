@@ -250,6 +250,58 @@
             "Search": true,
             "Update": true
         },
+        "Maternity":{
+            "Pregnancy":{
+                "Create": false,
+                "Delete": false,
+                "GetById": false,
+                "Search": false,
+                "Update": false,
+                "CreateVaccination": false,
+                "DeleteVaccination": false,
+                "GetVaccinationById": false,
+                "SearchVaccinations": false,
+                "UpdateVaccination": false,
+                "CreateAntenatalVisit": false,
+                "DeleteAntenatalVisit": false,
+                "GetAntenatalVisitById": false,
+                "UpdateAntenatalVisit": false,
+                "CreateAntenatalMedication": false,
+                "DeleteAntenatalMedication": false,
+                "GetAntenatalMedicationById": false,
+                "UpdateAntenatalMedication": false,
+                "CreateTest": false,
+                "DeleteTest": false,
+                "GetTestById": false,
+                "UpdateTest": false
+            },
+            "Delivery":{
+                "Create": false,
+                "Delete": false,
+                "GetById": false,
+                "Search": false,
+                "Update": false,
+                "CreatePostnatalVisit": false,
+                "DeletePostnatalVisit": false,
+                "GetPostnatalVisitById": false,
+                "SearchPostnatalVisits": false,
+                "UpdatePostnatalVisit": false,
+                "CreatePostnatalMedication": false,
+                "DeletePostnatalMedication": false,
+                "GetPostnatalMedicationById": false,
+                "UpdatePostnatalMedication": false,
+                "CreateComplication": false,
+                "DeleteComplication": false,
+                "GetComplicationById": false,
+                "SearchComplications": false,
+                "UpdateComplication": false,
+                "CreateBaby": false,
+                "GetBabyById": false,
+                "CreateBreastfeeding": false,
+                "GetBreastfeedingById": false,
+                "UpdateBreastfeeding": false
+            }
+        },
         "MedicalCondition": {
             "Create": true,
             "Delete": true,
@@ -324,6 +376,13 @@
                 "Search": true,
                 "Update": false
             }
+        },
+        "Visit": {
+            "Create": true,
+            "Delete": true,
+            "GetById": true,
+            "Search": true,
+            "Update": true
         }
     },
     "Community": {

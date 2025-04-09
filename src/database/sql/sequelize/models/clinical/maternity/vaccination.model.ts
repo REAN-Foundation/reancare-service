@@ -3,6 +3,8 @@ import {
 } from 'sequelize-typescript';
 import { v4 } from 'uuid';
 import Pregnancy from './pregnancy.model';
+import Medication from '../medication/medication.model';
+import MedicationConsumption from '../medication/medication.consumption.model';
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -51,12 +53,16 @@ export default class Vaccination extends Model {
     })
     DateAdministered: Date;
 
+    @IsUUID(4)
+    @ForeignKey(() => Medication)
     @Column({
         type      : DataType.UUID,
         allowNull : true,
     })
     MedicationId: string;
 
+    @IsUUID(4)
+    @ForeignKey(() => MedicationConsumption)
     @Column({
         type      : DataType.UUID,
         allowNull : true,

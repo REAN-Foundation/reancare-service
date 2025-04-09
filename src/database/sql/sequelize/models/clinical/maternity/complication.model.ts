@@ -6,6 +6,7 @@ import {
 import { v4 } from 'uuid';
 import Delivery from './delivery.model';
 import Baby from './baby.model';
+import MedicalCondition from '../medical.condition.model';
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -76,6 +77,8 @@ export default class Complication extends Model {
     })
     Severity: string;
 
+    @IsUUID(4)
+    @ForeignKey(() => MedicalCondition)
     @Column({
         type      : DataType.UUID,
         allowNull : true,

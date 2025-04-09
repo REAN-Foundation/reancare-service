@@ -3,6 +3,9 @@ import {
 } from 'sequelize-typescript';
 import { v4 } from 'uuid';
 import Delivery from './delivery.model';
+import Complication from './complication.model';
+import BodyTemperature from '../biometrics/body.temperature.model';
+import BloodPressure from '../biometrics/blood.pressure.model';
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -50,18 +53,24 @@ export default class PostNatalVisit extends Model {
     })
     BodyWeightId: string;
 
+    @IsUUID(4)
+    @ForeignKey(() => Complication)
     @Column({
         type      : DataType.UUID,
         allowNull : true,
     })
     ComplicationId: string;
 
+    @IsUUID(4)
+    @ForeignKey(() => BodyTemperature)
     @Column({
         type      : DataType.UUID,
         allowNull : true,
     })
     BodyTemperatureId: string;
 
+    @IsUUID(4)
+    @ForeignKey(() => BloodPressure)
     @Column({
         type      : DataType.UUID,
         allowNull : true,

@@ -1,3 +1,5 @@
+import { DeliveryDomainModel } from "../delivery/delivery.domain.model";
+
 export interface PostnatalVisitDomainModel {
     id?                 : string;
     DeliveryId          : string;
@@ -7,4 +9,5 @@ export interface PostnatalVisitDomainModel {
     ComplicationId?     : string;
     BodyTemperatureId?  : string;
     BloodPressureId?    : string;
+    Delivery?             : DeliveryDomainModel;
 }

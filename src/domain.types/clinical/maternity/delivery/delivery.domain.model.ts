@@ -1,5 +1,6 @@
 import { uuid } from "../../../miscellaneous/system.types";
 import { DeliveryMode,DeliveryOutcome } from "../../../../domain.types/clinical/maternity/delivery/delivery.type";
+import { PregnancyDomainModel } from "../pregnancy/pregnancy.domain.model";
 
 export interface DeliveryDomainModel {
     id?                  : uuid;
@@ -13,4 +14,5 @@ export interface DeliveryDomainModel {
     DeliveryOutcome?     : DeliveryOutcome;
     DateOfDischarge?     : Date;
     OverallDiagnosis?    : string;
+    Pregnancy?           : PregnancyDomainModel;
 }

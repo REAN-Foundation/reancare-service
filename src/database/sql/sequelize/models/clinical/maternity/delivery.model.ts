@@ -1,9 +1,12 @@
 import {
-    Column, CreatedAt, DataType, DeletedAt, ForeignKey, Model, PrimaryKey, Table, UpdatedAt, IsUUID
+    Column, CreatedAt, DataType, DeletedAt, ForeignKey, Model, PrimaryKey, Table, UpdatedAt, IsUUID,
+    BelongsTo,
+    HasMany
 } from 'sequelize-typescript';
 import { v4 } from 'uuid';
 import Pregnancy from './pregnancy.model';
 import { DeliveryOutcome, DeliveryOutcomeList,  DeliveryMode, DeliveryModeList} from '../../../../../../domain.types/clinical/maternity/delivery/delivery.type';
+import PostNatalVisit from './postnatal.visit.model';
 
 @Table({
     timestamps      : true,
@@ -30,6 +33,9 @@ export default class Delivery extends Model {
         allowNull : false,
     })
     PregnancyId: string;
+
+    @BelongsTo(() => Pregnancy)
+    pregnancy: Pregnancy;
 
     @IsUUID(4)
     @Column({
@@ -87,6 +93,9 @@ export default class Delivery extends Model {
         allowNull : false,
     })
     OverallDiagnosis: string;
+
+    @HasMany(() => PostNatalVisit)
+    PostNatalVisit: PostNatalVisit[];
 
     @CreatedAt
     CreatedAt: Date;

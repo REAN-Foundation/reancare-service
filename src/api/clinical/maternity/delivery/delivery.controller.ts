@@ -11,6 +11,7 @@ import { PostnatalMedicationService } from '../../../../services/clinical/matern
 import { ComplicationService } from '../../../../services/clinical/maternity/complication.service';
 import { BabyService } from '../../../../services/clinical/maternity/baby.service';
 import { BreastfeedingService } from '../../../../services/clinical/maternity/breastfeeding.service';
+import { PregnancyService } from '../../../../services/clinical/maternity/pregnancy.service';
 
 
 ///////////////////////////////////////////////////////////////////////////////////////
@@ -20,6 +21,8 @@ export class DeliveryController extends BaseController {
     //#region member variables and constructors
 
     _service: DeliveryService = Injector.Container.resolve(DeliveryService);
+
+    _pregnancyService: PregnancyService = Injector.Container.resolve(PregnancyService);
 
     _postnatalVisitService: PostnatalVisitService = Injector.Container.resolve(PostnatalVisitService);
 
@@ -43,15 +46,31 @@ export class DeliveryController extends BaseController {
 
     create = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
+            // Validate input and get model
             const model = await this._validator.create(request);
+    
+            // Fetch associated Pregnancy
+            const pregnancy = await this._pregnancyService.getById(model.PregnancyId);
+            if (!pregnancy) {
+                throw new ApiError(404, 'Associated pregnancy not found with the given PregnancyId.');
+            }
+    
+            // Create Delivery record
             const delivery = await this._service.create(model);
             if (delivery == null) {
                 throw new ApiError(400, 'Cannot create record for delivery!');
             }
-
+    
+            // Prepare response with Pregnancy info
+            const responseData = {
+                ...delivery,
+                Pregnancy: pregnancy
+            };
+    
             ResponseHandler.success(request, response, 'Delivery record created successfully!', 201, {
-                Delivery: delivery,
+                Delivery: responseData,
             });
+    
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
         }
@@ -140,15 +159,27 @@ export class DeliveryController extends BaseController {
 
      createPostnatalVisit = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
+            
             const model = await this._validator.createPostnatalVisit(request);
+            const delivery = await this._service.getById(model.DeliveryId);
+            if (!delivery) {
+                throw new ApiError(404, 'Associated delivery not found with the given DeliveryId.');
+            }
+    
             const postnatalVisit = await this._postnatalVisitService.create(model);
             if (postnatalVisit == null) {
                 throw new ApiError(400, 'Cannot create record for postnatal visit!');
             }
 
+            const responseData = {
+                ...postnatalVisit,
+                Delivery: delivery
+            };
+    
             ResponseHandler.success(request, response, 'Postnatal visit record created successfully!', 201, {
-                PostnatalVisit: postnatalVisit,
+                PostnatalVisit: responseData,
             });
+    
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
         }

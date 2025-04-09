@@ -269,9 +269,8 @@ export class AssessmentController extends BaseController {
             }
 
             const isAnswered = await this._service.isAnswered(assessment.id, questionId);
-            
             if (isAnswered) {
-                throw new ApiError(400, `The question has already been answered or skipped!`);
+                throw new ApiError(400, `The question has already been answered!`);
             }
 
             var answerResponse: AssessmentQuestionResponseDto = await this._service.answerQuestion(answerModel);
@@ -312,36 +311,6 @@ export class AssessmentController extends BaseController {
 
             ResponseHandler.success(request, response, message, 200, { AnswerResponse: answerResponse });
 
-        } catch (error) {
-            ResponseHandler.handleError(request, response, error);
-        }
-    };
-
-    skipQuestion = async (request: express.Request, response: express.Response): Promise<void> => {
-        try {
-            const id: uuid = await this._validator.getParamUuid(request, 'id');
-            const questionId: uuid = await this._validator.getParamUuid(request, 'questionId');
-
-            const assessment = await this._service.getById(id);
-            if (assessment == null) {
-                throw new ApiError(404, 'Assessment record not found.');
-            }
-            await this.authorizeOne(request, assessment.PatientUserId);
-            const question = await this._service.getQuestionById(id, questionId);
-            if (question == null) {
-                throw new ApiError(404, 'Assessment question not found.');
-            }
-
-            const isAnswered = await this._service.isAnswered(assessment.id, questionId);
-            if (isAnswered) {
-                throw new ApiError(400, `The question has already been answered or skipped!`);
-            }
-
-            var nextQuestion: AssessmentQuestionResponseDto = await this._service.skipQuestion(id, questionId);
-            Logger.instance().log(JSON.stringify(nextQuestion, null, '    ')); //TODO: Remove thisnextQuestion);
-            ResponseHandler.success(request, response, 'Assessment question skipped successfully!', 200, {
-                AnswerResponse : nextQuestion,
-            });
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
         }
@@ -421,6 +390,54 @@ export class AssessmentController extends BaseController {
             
             const answerRes = answerResponse.Answer.length > 0 ? answerResponse.Answer[0] : null;
             AssessmentEvents.onAssessmentQuestionAnswered(request, answerRes, assessment, 'assessment');
+
+            ResponseHandler.success(request, response, message, 200, { AnswerResponse: answerResponse });
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
+    skipQuestion = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+            const id: uuid = await this._validator.getParamUuid(request, 'id');
+            const questionId: uuid = await this._validator.getParamUuid(request, 'questionId');
+
+            const assessment = await this._service.getById(id);
+            if (assessment == null) {
+                throw new ApiError(404, 'Assessment record not found.');
+            }
+            await this.authorizeOne(request, assessment.PatientUserId);
+
+            const question = await this._service.getQuestionById(id, questionId);
+            if (question == null) {
+                throw new ApiError(404, 'Assessment question not found.');
+            }
+
+            var answerResponse: AssessmentQuestionResponseDto = await this._service.skipQuestion(id, questionId);
+
+            if (answerResponse === null || answerResponse?.Next === null) {
+                //Assessment has no more questions left and is completed successfully!
+                await this.completeAssessmentTask(id);
+                //If the assessment has scoring enabled, score the assessment
+                if (assessment.ScoringApplicable) {
+                    var { score, reportUrl } = await this.generateScoreReport(assessment);
+                    if (score) {
+                        answerResponse['AssessmentScore'] = score;
+                        answerResponse['AssessmentScoreReport'] = reportUrl;
+                    }
+                }
+                var updatedAssessment = await this._service.getById(assessment.id);
+                updatedAssessment['Score'] = JSON.stringify(answerResponse['AssessmentScore']);
+                await this._ehrAssessmentService.addEHRRecordForAppNames(updatedAssessment, null, null);
+
+                AssessmentEvents.onAssessmentCompleted(request, updatedAssessment, 'assessment');
+            }
+
+            const message = answerResponse === null || answerResponse?.Next === null
+                ? 'Assessment has completed successfully!'
+                : 'Assessment question skipped successfully!';
+
+            AssessmentEvents.onAssessmentQuestionAnswered(request, answerResponse, assessment, 'assessment');
 
             ResponseHandler.success(request, response, message, 200, { AnswerResponse: answerResponse });
         } catch (error) {

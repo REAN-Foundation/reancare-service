@@ -34,8 +34,6 @@ import { ProgressStatus, uuid } from '../../../domain.types/miscellaneous/system
 import { AssessmentBiometricsHelper } from './assessment.biometrics.helper';
 import { ConditionProcessor } from './condition.processor';
 import { Injector } from '../../../startup/injector';
-import { Logger } from '../../../common/logger';
-import { log } from 'console';
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -147,7 +145,7 @@ export class AssessmentService {
             throw new ApiError(404, `Assessment with id ${assessmentId} cannot be found!`);
         }
         if (node.TemplateId !== assessment.AssessmentTemplateId) {
-            throw new ApiError(400, `Template associated with assessment dose not match with the question!`);
+            throw new ApiError(400, `Template associated with assessment dows not match with the question!`);
         }
 
         var isAnswered = await this.isAnswered(assessmentId, nodeId);
@@ -168,27 +166,6 @@ export class AssessmentService {
             return await this.handleAcknowledgement(assessment, messageNode);
         }
 
-        return null;
-    };
-
-    public skipQuestion = async (assessmentId: uuid, questionId: uuid)
-        : Promise<AssessmentQuestionResponseDto> => {
-
-        const node = (await this._assessmentHelperRepo.getNodeById(questionId));
-        if (!node) {
-            throw new ApiError(404, `Question with id ${questionId} cannot be found!`);
-        }
-        const assessment = await this._assessmentRepo.getById(assessmentId);
-        if (!assessment) {
-            throw new ApiError(404, `Assessment with id ${assessmentId} cannot be found!`);
-        }
-        if (node.TemplateId !== assessment.AssessmentTemplateId) {
-            throw new ApiError(400, `Template associated with assessment dose not match with the question!`);
-        }
-        const nodeType = node.NodeType;
-        if (nodeType === AssessmentNodeType.Question) {
-            return await this.handleQuestionSkip(assessment,questionId,node);
-        }
         return null;
     };
 
@@ -732,18 +709,6 @@ export class AssessmentService {
             await this._assessmentHelperRepo.createQueryResponse(answerDto);
         }
     }
-    
-    private async createSkipQueryResponse(
-        assessment: AssessmentDto,
-        node: CAssessmentQuestionNode,
-        nodeId: string,
-        queryType: QueryResponseType) {
-        var existingReposne = await this._assessmentHelperRepo.getQueryResponse(assessment.id, nodeId);
-        if (existingReposne == null) {
-            existingReposne = await this._assessmentHelperRepo.createSkipQueryResponse(assessment,node,nodeId,queryType);
-        }
-        return this._assessmentHelperRepo.getQueryResponse(assessment.id, nodeId);
-    }
 
     private async getSingleChoiceQueryAnswer(
         assessmentId: uuid,
@@ -795,34 +760,6 @@ export class AssessmentService {
 
         return await this.processPathConditions(
             assessment, nodeId, currentQueryDto, paths, answerDto, chosenOptionSequence);
-    }
-
-    private async skipSingleQuestion(
-        assessment: AssessmentDto,
-        questionNode: CAssessmentQuestionNode,
-        questionId
-    ): Promise<AssessmentQuestionResponseDto> {
-
-        const currentQueryDto = this.questionNodeAsQueryDto(questionNode, assessment);
-        if (questionNode.Required === true) {
-            throw new Error(`Cannot skip required question!`);
-        }
-        const optionType = questionNode.QueryResponseType;
-        var skipResponse: AssessmentQuestionResponseDto = null;
-        skipResponse = await this.createSkipQueryResponse(assessment,questionNode,questionId, optionType);
-        var currentNode = null;
-        currentNode = await this._assessmentHelperRepo.getNodeById(questionId);
-        var parentNode = await this._assessmentHelperRepo.getNodeById(currentNode.ParentNodeId);
-        Logger.instance().log(JSON.stringify(parentNode, null, '    '));
-        while (parentNode.NodeType !== "Node list"){
-            var node = parentNode;
-            currentNode = await this._assessmentHelperRepo.getNodeById(node.id);
-            var parentNode = await this._assessmentHelperRepo.getNodeById(currentNode.ParentNodeId);
-
-        }
-
-        return await this.respondTraverse(assessment, parentNode.id, currentQueryDto, skipResponse.Answer);
-        
     }
 
     private async getMultipleChoiceQueryAnswer(
@@ -1050,40 +987,6 @@ export class AssessmentService {
         return response;
     }
 
-    private async respondTraverse(
-        assessment: AssessmentDto,
-        nextNodeId: string,
-        currentQueryDto: AssessmentQueryDto,
-        answerDto:
-            | SingleChoiceQueryAnswer
-            | MultipleChoiceQueryAnswer
-            | MessageAnswer
-            | TextQueryAnswer
-            | DateQueryAnswer
-            | IntegerQueryAnswer
-            | FloatQueryAnswer
-            | FileQueryAnswer
-            | BiometricQueryAnswer
-    ) {
-        const next = await this.traverse(assessment, nextNodeId);
-        if (next === null) {
-            const endResponse: AssessmentQuestionResponseDto = {
-                AssessmentId : assessment.id,
-                Parent       : currentQueryDto,
-                Answer       : answerDto,
-                Next         : null
-            };
-            return endResponse;
-        }
-        const response: AssessmentQuestionResponseDto = {
-            AssessmentId : assessment.id,
-            Parent       : currentQueryDto,
-            Answer       : answerDto,
-            Next         : next,
-        };
-        return response;
-    }
-
     private async getChoiceSelectionParams(questionNode: CAssessmentNode) {
         const nodeId = questionNode.id;
         const nodeType = questionNode.NodeType as AssessmentNodeType;
@@ -1119,7 +1022,6 @@ export class AssessmentService {
             Options              : questionNode.Options,
             ProviderGivenCode    : questionNode.ProviderGivenCode,
             CorrectAnswer        : questionNode.CorrectAnswer ? JSON.parse(questionNode.CorrectAnswer) : null,
-            Required             : questionNode.Required,
         };
         return query;
     }
@@ -1213,12 +1115,6 @@ export class AssessmentService {
         return null;
     };
 
-    private handleQuestionSkip = async (
-        assessment: AssessmentDto, questionId: uuid, node: CAssessmentNode ) : Promise<AssessmentQuestionResponseDto>=> {
-        const questionNode = node as CAssessmentQuestionNode;
-        const nodeResponseType = questionNode.QueryResponseType;
-        
-        return await this.skipSingleQuestion(assessment, questionNode, questionId);
-    };
+    //#endregion
 
 }

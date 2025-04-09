@@ -45,7 +45,6 @@ import ScoringCondition from '../../../models/clinical/assessment/scoring.condit
 import { AssessmentNodeSearchResults } from '../../../../../../domain.types/clinical/assessment/assessment.node.search.types';
 import { AssessmentNodeSearchFilters } from '../../../../../../domain.types/clinical/assessment/assessment.node.search.types';
 import { Op } from 'sequelize';
-import { cat } from 'shelljs';
 import { AssessmentDto } from '../../../../../../domain.types/clinical/assessment/assessment.dto';
 
 ///////////////////////////////////////////////////////////////////////
@@ -433,12 +432,12 @@ export class AssessmentHelperRepo implements IAssessmentHelperRepo {
         }
     };
 
-    public createSkipQueryResponse = async (assessment: AssessmentDto,
-        node: CAssessmentQuestionNode,nodeId: string, queryType: QueryResponseType
-      
+    public createSkipQueryResponse = async (
+        assessment: AssessmentDto,
+        skippedNode: CAssessmentQuestionNode | CAssessmentListNode
     ): Promise<CAssessmentQueryResponse> => {
         try {
-            const model = this.generateSkipAnswerModel(node,assessment.id);
+            const model = this.generateSkipAnswerModel(skippedNode, assessment.id);
             var response = await AssessmentQueryResponse.create(model);
             return AssessmentHelperMapper.toQueryResponseDto(response);
         } catch (error) {
@@ -1034,16 +1033,16 @@ export class AssessmentHelperRepo implements IAssessmentHelperRepo {
         return null;
     };
 
-    private generateSkipAnswerModel = (node: CAssessmentQuestionNode,assessmentId: uuid) => {
+    private generateSkipAnswerModel = (
+        node: CAssessmentQuestionNode | CAssessmentListNode,
+        assessmentId: uuid) => {
         const a = node;
         return {
             AssessmentId : assessmentId,
             NodeId       : a.id,
             Sequence     : a.Sequence,
-            Type         : a.QueryResponseType,
             Skipped      : true
         };
-    
     };
 
     private getNodeDisplayCode = (nodeType: AssessmentNodeType): string => {

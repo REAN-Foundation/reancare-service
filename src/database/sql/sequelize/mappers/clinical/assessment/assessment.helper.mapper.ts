@@ -150,6 +150,7 @@ export class AssessmentHelperMapper {
             questionNodeDto.Paths = paths;
             questionNodeDto.CorrectAnswer = node.CorrectAnswer ? JSON.parse(node.CorrectAnswer) : null;
             questionNodeDto.ScoringCondition = scoringCondition ?? null;
+            questionNodeDto.Required = node.Required;
             return questionNodeDto;
         }
         if (node.NodeType === AssessmentNodeType.NodeList) {
@@ -158,6 +159,7 @@ export class AssessmentHelperMapper {
             listNodeDto.ChildrenNodeIds = children?.map((x) => x.id);
             listNodeDto.ChildrenNodeDisplayCodes = children?.map((x) => x.DisplayCode);
             listNodeDto.Children = children;
+            listNodeDto.Required = node.Required;
             return listNodeDto;
         }
         return null;
@@ -180,7 +182,6 @@ export class AssessmentHelperMapper {
         responseDto.Additional = response.Additional;
         responseDto.CreatedAt = response.CreatedAt;
         responseDto.Skipped = response.Skipped;
-        
 
         if (response.Node) {
             responseDto.Node = this.toNodeDto(response.Node);
@@ -218,7 +219,8 @@ export class AssessmentHelperMapper {
         return responseDto;
     }
  
-    static toSingleChoiceAnswerDto(assessmentId: uuid,
+    static toSingleChoiceAnswerDto(
+        assessmentId: uuid,
         questionNode: CAssessmentQuestionNode,
         answer: number,
         option: CAssessmentQueryOption

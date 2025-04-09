@@ -1,0 +1,76 @@
+meta {
+  name: Add body weight Copy
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{BASE_URL}}/clinical/biometrics/body-weights
+  body: json
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{PATIENT_USER_JWT}}
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+  Content-Type: application/json
+}
+
+body:json {
+  {
+      "PatientUserId": "{{PATIENT_USER_ID}}",
+      "BodyWeight": {{BODY_WEIGHT}},
+      "Unit": "{{WEIGHT_UNIT}}"
+  }
+}
+
+script:pre-request {
+  bru.setEnvVar("BODY_WEIGHT", 88);
+  bru.setEnvVar("WEIGHT_UNIT", "Kg");
+  
+}
+
+tests {
+  var jsonRes = res.getBody();
+  
+  try {
+      bru.setEnvVar("BODY_WEIGHT_ID", jsonRes.Data.BodyWeight.id);
+  }
+  catch (error) {
+      console.log(error.message);
+  }
+  
+  test("Request is successfull", function () {
+      expect(res.getStatus()).to.equal(201);
+      var jsonRes = res.getBody();
+      expect(jsonRes.Status).to.eql('success');
+  });
+  
+  test("New body weight is created", function () {
+  
+      var expectedPatientUserId = bru.getEnvVar("PATIENT_USER_ID");
+      var expectedBodyWeight = bru.getEnvVar("BODY_WEIGHT");
+      var expectedWeightUnit = bru.getEnvVar("WEIGHT_UNIT");
+  
+      var jsonRes = res.getBody();
+      expect(jsonRes.Data).to.have.property('BodyWeight');
+      expect(jsonRes.Data.BodyWeight).to.have.property('BodyWeight');
+      expect(jsonRes.Data.BodyWeight).to.have.property('PatientUserId');
+      expect(jsonRes.Data.BodyWeight).to.have.property('Unit');
+      expect(jsonRes.Data.BodyWeight).to.have.property('RecordDate');
+      expect(jsonRes.Data.BodyWeight).to.have.property('RecordedByUserId');
+  
+      expect(jsonRes.Data.BodyWeight.RecordDate).not.null;
+      expect(jsonRes.Data.BodyWeight.RecordedByUserId).not.null;
+  
+      expect(jsonRes.Data.BodyWeight.PatientUserId).equals(expectedPatientUserId);
+      expect(Number(jsonRes.Data.BodyWeight.BodyWeight)).equals(Number(expectedBodyWeight));
+      expect(jsonRes.Data.BodyWeight.Unit).equals(expectedWeightUnit);
+  });
+  
+  
+}
+
+docs {
+  Adds Biometrics information for Body height
+}

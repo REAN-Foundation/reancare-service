@@ -62,7 +62,6 @@ export class VisitController extends BaseController {
         try {
 
             let filters: VisitSearchFilters = await this._validator.search(request);
-            filters = await this.authorizeSearch(request, filters);
             const searchResults = await this._service.search(filters);
             const count = searchResults.Items.length;
 

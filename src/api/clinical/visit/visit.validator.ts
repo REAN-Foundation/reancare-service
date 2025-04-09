@@ -35,19 +35,19 @@ export class VisitValidator extends BaseValidator {
     };
 
     search = async (request: express.Request): Promise<VisitSearchFilters> => {
-        await this.validateString(request, 'visitType', Where.Query, false, false);
-        await this.validateUuid(request, 'patientUserId', Where.Query, false, false);
-        await this.validateUuid(request, 'medicalPractitionerUserId', Where.Query, false, false);
-        await this.validateUuid(request, 'referenceVisitId', Where.Query, false, false);
-        await this.validateString(request, 'currentState', Where.Query, false, false);
-        await this.validateDate(request, 'startDate', Where.Query, false, false);
-        await this.validateDate(request, 'endDate', Where.Query, false, false);
+        await this.validateString(request, 'VisitType', Where.Query, false, false);
+        await this.validateUuid(request, 'PatientUserId', Where.Query, false, false);
+        await this.validateUuid(request, 'MedicalPractitionerUserId', Where.Query, false, false);
+        await this.validateUuid(request, 'ReferenceVisitId', Where.Query, false, false);
+        await this.validateString(request, 'CurrentState', Where.Query, false, false);
+        await this.validateDate(request, 'StartDate', Where.Query, false, false);
+        await this.validateDate(request, 'EndDate', Where.Query, false, false);
 
         await this.validateBaseSearchFilters(request);
 
         this.validateRequest(request);
 
-        return this.getFilter(request);
+        return VisitValidator.getFilter(request);
     };
 
     update = async (request: express.Request): Promise<VisitDomainModel> => {
@@ -87,18 +87,18 @@ export class VisitValidator extends BaseValidator {
         this.validateRequest(request);
     }
 
-    private getFilter(request): VisitSearchFilters {
+    private static getFilter(request): VisitSearchFilters {
         const filters: VisitSearchFilters = {
-            VisitType                 : request.query.visitType ?? null,
+            VisitType                 : request.query.VisitType ?? null,
             EhrId                     : request.query.EhrId ?? null,
-            PatientUserId             : request.query.patientUserId ?? null,
-            MedicalPractitionerUserId : request.query.medicalPractitionerUserId ?? null,
-            ReferenceVisitId          : request.query.referenceVisitId ?? null,
-            CurrentState              : request.query.currentState ?? null,
-            StartDate                 : request.query.startDate ?? null,
-            EndDate                   : request.query.endDate ?? null,
+            PatientUserId             : request.query.PatientUserId ?? null,
+            MedicalPractitionerUserId : request.query.MedicalPractitionerUserId ?? null,
+            ReferenceVisitId          : request.query.ReferenceVisitId ?? null,
+            CurrentState              : request.query.CurrentState ?? null,
+            StartDate                 : request.query.StartDate ?? null,
+            EndDate                   : request.query.EndDate ?? null,
         };
-        return this.updateBaseSearchFilters(request, filters);
+        return  filters;
     }
 
 }

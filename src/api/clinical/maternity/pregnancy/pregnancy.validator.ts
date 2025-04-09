@@ -202,6 +202,9 @@ export class PregnancyValidator extends BaseValidator {
         this.validateRequest(request);
         return request.body;
     };
+//#endregion Antenatal visit
+
+//#region Antenatal Medication
 
     createAntenatalMedication = async (request: express.Request): Promise<AntenatalMedicationDomainModel> => {
         await this.validateUuid(request, 'AnteNatalVisitId', Where.Body, true, false);

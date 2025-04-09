@@ -1,6 +1,6 @@
 {
   "version": "1",
-  "name": "reancare.default - updated",
+  "name": "reancare.default",
   "type": "collection",
   "ignore": [
     "node_modules",

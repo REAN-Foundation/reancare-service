@@ -30,6 +30,7 @@ import {
     CScoringCondition,
     ConditionOperatorType,
     ConditionCompositionType,
+    SkipQueryAnswer,
 } from '../../../../../../domain.types/clinical/assessment/assessment.types';
 import { AssessmentTemplateDomainModel } from '../../../../../../domain.types/clinical/assessment/assessment.template.domain.model';
 import AssessmentTemplate from '../../../models/clinical/assessment/assessment.template.model';
@@ -421,23 +422,10 @@ export class AssessmentHelperRepo implements IAssessmentHelperRepo {
             | BooleanQueryAnswer
             | FileQueryAnswer
             | BiometricQueryAnswer
+            | SkipQueryAnswer
     ): Promise<CAssessmentQueryResponse> => {
         try {
             const model = this.generateQueryAnswerModel(answer);
-            var response = await AssessmentQueryResponse.create(model);
-            return AssessmentHelperMapper.toQueryResponseDto(response);
-        } catch (error) {
-            Logger.instance().log(error.message);
-            throw new ApiError(500, error.message);
-        }
-    };
-
-    public createSkipQueryResponse = async (
-        assessment: AssessmentDto,
-        skippedNode: CAssessmentQuestionNode | CAssessmentListNode
-    ): Promise<CAssessmentQueryResponse> => {
-        try {
-            const model = this.generateSkipAnswerModel(skippedNode, assessment.id);
             var response = await AssessmentQueryResponse.create(model);
             return AssessmentHelperMapper.toQueryResponseDto(response);
         } catch (error) {
@@ -923,7 +911,21 @@ export class AssessmentHelperRepo implements IAssessmentHelperRepo {
         FloatQueryAnswer |
         BooleanQueryAnswer |
         FileQueryAnswer |
-        BiometricQueryAnswer) => {
+        BiometricQueryAnswer |
+        SkipQueryAnswer
+    ) => {
+
+        //Check if the answer is a skip query
+        const skipQuery = answer as SkipQueryAnswer;
+        if (skipQuery && skipQuery?.Skipped === true) {
+            return {
+                AssessmentId : skipQuery.AssessmentId,
+                NodeId       : skipQuery.NodeId,
+                Sequence     : skipQuery.QuestionSequence,
+                Type         : skipQuery.ResponseType,
+                Skipped      : true,
+            }
+        }
 
         if (answer.ResponseType === QueryResponseType.SingleChoiceSelection) {
             const a = answer as SingleChoiceQueryAnswer;
@@ -1031,18 +1033,6 @@ export class AssessmentHelperRepo implements IAssessmentHelperRepo {
             };
         }
         return null;
-    };
-
-    private generateSkipAnswerModel = (
-        node: CAssessmentQuestionNode | CAssessmentListNode,
-        assessmentId: uuid) => {
-        const a = node;
-        return {
-            AssessmentId : assessmentId,
-            NodeId       : a.id,
-            Sequence     : a.Sequence,
-            Skipped      : true
-        };
     };
 
     private getNodeDisplayCode = (nodeType: AssessmentNodeType): string => {

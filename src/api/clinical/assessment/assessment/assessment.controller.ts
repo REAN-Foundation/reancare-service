@@ -421,37 +421,37 @@ export class AssessmentController extends BaseController {
                 throw new ApiError(400, `The question is not skippable!`);
             }
             //Check if the question is of type list
-            if (question.NodeType !== AssessmentNodeType.NodeList && question.NodeType !== AssessmentNodeType.Question) {
+            if (question.NodeType !== AssessmentNodeType.Question) {
                 throw new ApiError(400, `The node is not skippable!`);
             }
 
-            var answerResponse: AssessmentQuestionResponseDto = await this._service.skipQuestion(id, questionId);
-
-            if (answerResponse === null || answerResponse?.Next === null) {
+            var skipResponse: AssessmentQuestionResponseDto = await this._service.skipQuestion(id, questionId);
+            const isAssessmentCompleted = skipResponse === null || skipResponse?.Next === null;
+            if (isAssessmentCompleted) {
                 //Assessment has no more questions left and is completed successfully!
                 await this.completeAssessmentTask(id);
                 //If the assessment has scoring enabled, score the assessment
                 if (assessment.ScoringApplicable) {
                     var { score, reportUrl } = await this.generateScoreReport(assessment);
                     if (score) {
-                        answerResponse['AssessmentScore'] = score;
-                        answerResponse['AssessmentScoreReport'] = reportUrl;
+                        skipResponse['AssessmentScore'] = score;
+                        skipResponse['AssessmentScoreReport'] = reportUrl;
                     }
                 }
                 var updatedAssessment = await this._service.getById(assessment.id);
-                updatedAssessment['Score'] = JSON.stringify(answerResponse['AssessmentScore']);
+                updatedAssessment['Score'] = JSON.stringify(skipResponse['AssessmentScore']);
                 await this._ehrAssessmentService.addEHRRecordForAppNames(updatedAssessment, null, null);
 
                 AssessmentEvents.onAssessmentCompleted(request, updatedAssessment, 'assessment');
             }
 
-            const message = answerResponse === null || answerResponse?.Next === null
+            const message = skipResponse === null || skipResponse?.Next === null
                 ? 'Assessment has completed successfully!'
                 : 'Assessment question skipped successfully!';
 
-            AssessmentEvents.onAssessmentQuestionAnswered(request, answerResponse, assessment, 'assessment');
+            AssessmentEvents.onAssessmentQuestionSkipped(request, skipResponse, assessment, 'assessment');
 
-            ResponseHandler.success(request, response, message, 200, { AnswerResponse: answerResponse });
+            ResponseHandler.success(request, response, message, 200, { AnswerResponse: skipResponse });
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
         }

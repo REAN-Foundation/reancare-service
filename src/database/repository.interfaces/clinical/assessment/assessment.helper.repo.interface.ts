@@ -20,6 +20,7 @@ import {
     BooleanQueryAnswer,
     DateQueryAnswer,
     CScoringCondition,
+    SkipQueryAnswer,
 } from '../../../../domain.types/clinical/assessment/assessment.types';
 import { AssessmentTemplateDto } from '../../../../domain.types/clinical/assessment/assessment.template.dto';
 import { uuid } from '../../../../domain.types/miscellaneous/system.types';
@@ -66,10 +67,8 @@ export interface IAssessmentHelperRepo {
         | FloatQueryAnswer
         | BooleanQueryAnswer
         | FileQueryAnswer
-        | BiometricQueryAnswer): Promise<CAssessmentQueryResponse>;
-        
-    createSkipQueryResponse(assessment: AssessmentDto,
-    node: CAssessmentQuestionNode,nodeId: string, queryType
+        | BiometricQueryAnswer
+        | SkipQueryAnswer
     ): Promise<CAssessmentQueryResponse>;
      
     getTemplateChildrenNodes(templateId: uuid)

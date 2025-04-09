@@ -409,7 +409,6 @@ export interface BaseQueryAnswer {
     NodeDisplayCode?: string;
     Title?          : string;
     ResponseType    : QueryResponseType;
-    Skipped?        : boolean
 }
 
 export interface SingleChoiceQueryAnswer extends BaseQueryAnswer {
@@ -470,6 +469,10 @@ export interface AssessmentBiometrics {
 
 export interface BiometricQueryAnswer extends BaseQueryAnswer {
     Values  : AssessmentBiometrics[] | AssessmentBiometrics;
+}
+
+export interface SkipQueryAnswer extends BaseQueryAnswer {
+    Skipped : boolean;
 }
 
 export class CScoringCondition {

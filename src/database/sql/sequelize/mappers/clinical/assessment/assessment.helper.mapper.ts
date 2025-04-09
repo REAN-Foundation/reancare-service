@@ -24,7 +24,8 @@ import {
     FileQueryAnswer,
     BooleanQueryAnswer,
     ConditionOperand,
-    CScoringCondition
+    CScoringCondition,
+    SkipQueryAnswer
 } from '../../../../../../domain.types/clinical/assessment/assessment.types';
 import { uuid } from '../../../../../../domain.types/miscellaneous/system.types';
 import AssessmentNode from '../../../models/clinical/assessment/assessment.node.model';
@@ -402,6 +403,23 @@ export class AssessmentHelperMapper {
         };
         return dto;
     }
+
+    static toSkipQueryAnswerDto(
+        assessmentId: uuid,
+        node: CAssessmentQuestionNode,
+        skipped: boolean,
+    ): SkipQueryAnswer {
+        var dto: SkipQueryAnswer = {
+            AssessmentId     : assessmentId,
+            NodeId           : node.id,
+            QuestionSequence : node.Sequence,
+            NodeDisplayCode  : node.DisplayCode,
+            Title            : node.Title,
+            ResponseType     : node.QueryResponseType as QueryResponseType,
+            Skipped          : skipped
+        };
+        return dto;
+    };
 
     static toScoringConditionDto(condition: ScoringCondition): CScoringCondition {
         if (condition == null) {

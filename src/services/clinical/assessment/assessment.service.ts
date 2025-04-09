@@ -214,13 +214,13 @@ export class AssessmentService {
         return response;
     };
 
-    public getQuestionById = async (assessmentId: uuid, questionId: uuid): Promise<AssessmentQueryDto | string> => {
+    public getQuestionById = async (assessmentId: uuid, questionId: uuid): Promise<AssessmentQueryDto> => {
         const questionNode = await this._assessmentHelperRepo.getNodeById(questionId);
         if (
             questionNode.NodeType !== AssessmentNodeType.Question &&
             questionNode.NodeType !== AssessmentNodeType.Message
         ) {
-            return `The node with id ${questionId} is not a question!`;
+            throw new Error(`The node with id ${questionId} is not a question!`);
         }
         const assessment = await this._assessmentRepo.getById(assessmentId);
         if (questionNode.NodeType === AssessmentNodeType.Question) {

@@ -275,8 +275,7 @@ export class AssessmentController extends BaseController {
 
             var answerResponse: AssessmentQuestionResponseDto = await this._service.answerQuestion(answerModel);
 
-            var options = await this._service.getQuestionById(assessment.id, answerResponse.Answer.NodeId);
-            await this._ehrAssessmentService.addEHRRecordForAppNames(assessment, answerResponse, options);
+            await this._ehrAssessmentService.addEHRRecordForAppNames(assessment, answerResponse, question);
 
             //check if questions are related to race and ethnicity
             if (assessment.Provider && assessment.Provider === 'REAN' ) {
@@ -411,6 +410,19 @@ export class AssessmentController extends BaseController {
             const question = await this._service.getQuestionById(id, questionId);
             if (question == null) {
                 throw new ApiError(404, 'Assessment question not found.');
+            }
+
+            const isAnswered = await this._service.isAnswered(assessment.id, questionId);
+            if (isAnswered) {
+                throw new ApiError(400, `The question has already been answered!`);
+            }
+
+            if (question.Required) {
+                throw new ApiError(400, `The question is not skippable!`);
+            }
+            //Check if the question is of type list
+            if (question.NodeType !== AssessmentNodeType.NodeList && question.NodeType !== AssessmentNodeType.Question) {
+                throw new ApiError(400, `The node is not skippable!`);
             }
 
             var answerResponse: AssessmentQuestionResponseDto = await this._service.skipQuestion(id, questionId);

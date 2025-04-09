@@ -21,6 +21,8 @@ import { TenantDto } from '../../domain.types/tenant/tenant.dto';
 import { DoctorDomainModel } from '../../domain.types/users/doctor/doctor.domain.model';
 import { DoctorDetailsDto } from '../../domain.types/users/doctor/doctor.dto';
 import { DoctorService } from '../../services/users/doctor/doctor.service';
+import { Logger } from '../../common/logger';
+import { PersonDomainModel } from '../../domain.types/person/person.domain.model';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -157,6 +159,56 @@ export class UserHelper {
         patient.User.Person.Addresses = [address];
 
         return [ patient, true ];
+    };
+
+    checkMultipleAdministrativeRoles = async (newRoleId: number, existingPersonId: string) => {
+        var allRoles = await this._roleService.search({});
+        var newRoleName = allRoles.Items.find(r => r.id === newRoleId)?.RoleName;
+        if (!newRoleName) {
+            const msg = 'Role not found.';
+            Logger.instance().log(`Role not found: Role id ${newRoleId}`);
+            throw new ApiError(404, msg);
+        }
+        if (newRoleName !== Roles.TenantAdmin &&
+                newRoleName !== Roles.TenantUser &&
+                newRoleName !== Roles.SystemAdmin &&
+                newRoleName !== Roles.SystemUser) {
+            return;
+        }
+        var existingUsers = await this._userService.getByPersonId(existingPersonId);
+        for (var i = 0; i < existingUsers.length; i++) {
+            var existingUserRoleName = allRoles.Items.find(r => r.id === existingUsers[i].RoleId)?.RoleName;
+            if (!existingUserRoleName) {
+                const msg = 'Role not found.';
+                throw new ApiError(404, msg);
+            }
+            if (existingUserRoleName === Roles.TenantAdmin ||
+                    existingUserRoleName === Roles.TenantUser ||
+                    existingUserRoleName === Roles.SystemAdmin ||
+                    existingUserRoleName === Roles.SystemUser) {
+                const msg = `User cannot have multiple administrative roles.`;
+                throw new ApiError(409, msg);
+            }
+        }
+    };
+
+    updatePersonInformation = async (person: PersonDetailsDto, model: UserDomainModel) => {
+        const personUpdateModel: PersonDomainModel = {};
+        if (!person.Email && model.Person.Email) {
+            const personWithEmail = await this._personService.getPersonWithEmail(model.Person.Email);
+            if (personWithEmail) {
+                return null;
+            }
+            personUpdateModel.Email = model.Person.Email;
+        }
+        if (!person.FirstName && model.Person.FirstName) {
+            personUpdateModel.FirstName = model.Person.FirstName;
+        }
+        if (!person.LastName && model.Person.LastName) {
+            personUpdateModel.LastName = model.Person.LastName;
+        }
+        const updatedPerson = await this._personService.update(person.id, personUpdateModel);
+        return updatedPerson;
     };
 
     private createPatientWithHealthProfile = async (

@@ -131,13 +131,7 @@ export class TenantController extends BaseController {
                 Settings : settings,
             });
         } catch (error) {
-            try {
-                if (tenant) {
-                    await this._service.delete(tenant.id);
-                }
-            } catch (error) {
-                Logger.instance().log(error);
-            }
+            await this.rollbackCreateTenant(tenant);
             ResponseHandler.handleError(request, response, error);
         }
 
@@ -353,6 +347,16 @@ export class TenantController extends BaseController {
         }
         catch (error) {
             Logger.instance().log(`Unable to send email to ${tenant.Email}`);
+        }
+    };
+
+    private rollbackCreateTenant = async (tenant: TenantDto) => {
+        try {
+            if (tenant) {
+                await this._service.delete(tenant.id, true);
+            }
+        } catch (error) {
+            Logger.instance().log(error);
         }
     };
 

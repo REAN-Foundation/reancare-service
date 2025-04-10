@@ -19,6 +19,7 @@ import { Helper } from '../../../common/helper';
 import { TenantSettingsService } from '../../../services/tenant/tenant.settings.service';
 import { BaseController } from '../../../api/base.controller';
 import { UserHelper } from '../../../api/users/user.helper';
+import { PersonDetailsDto } from '../../../domain.types/person/person.dto';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -45,17 +46,22 @@ export class TenantController extends BaseController {
     //#endregion
 
     create = async (request: express.Request, response: express.Response): Promise<void> => {
+        let tenant: TenantDto = null;
         try {
             const model = await this._validator.createOrUpdate(request, false);
+            let person: PersonDetailsDto = null;
             await this._userHelper.performDuplicatePersonCheck(model.Phone, model.Email);
             if (model.Code === 'default') {
                 throw new ApiError(400, 'Cannot create tenant with code "default"!');
             }
+
             await this.authorizeOne(request);
-            const tenant = await this._service.create(model);
+
+            tenant = await this._service.create(model);
             if (tenant == null) {
                 throw new ApiError(400, 'Unable to create tenant.');
             }
+
             const tenantCode = tenant.Code;
             const adminUserName = (tenantCode + '-admin').toLowerCase();
             const adminPassword = Helper.generatePassword();
@@ -73,8 +79,38 @@ export class TenantController extends BaseController {
                 RoleId   : role.id,
             };
 
-            const person = await this._personService.create(userModel.Person);
+            const existingPerson = await this._userService.getExistingPerson({
+                Phone      : userModel.Person.Phone,
+                Email      : userModel.Person.Email,
+                UserName   : userModel.UserName,
+                TenantId   : userModel.TenantId,
+                TenantCode : tenant.Code,
+            });
+
+            if (existingPerson == null) {
+                person = await this._personService.create(userModel.Person);
+                if (person == null) {
+                    throw new ApiError(400, 'Cannot create person!');
+                }
+            }
+            else {
+                person = existingPerson;
+                var existingUserWithRole = await this._userService.getUserByPersonIdAndRole(
+                    existingPerson.id, userModel.RoleId);
+                if (existingUserWithRole) {
+                    throw new ApiError(409, `User already exists with the same role.`);
+                }
+                await this._userHelper.checkMultipleAdministrativeRoles(userModel.RoleId, existingPerson.id);
+            }
+
             userModel.Person.id = person.id;
+
+            const updatedPerson = await this._userHelper.updatePersonInformation(person, userModel);
+
+            if (!updatedPerson) {
+                throw new ApiError(409, `User already exists with the same email.`);
+            }
+
             const user = await this._userService.create(userModel);
             if (user == null) {
                 throw new ApiError(400, 'Unable to create tenant admin user.');
@@ -95,8 +131,10 @@ export class TenantController extends BaseController {
                 Settings : settings,
             });
         } catch (error) {
+            await this.rollbackCreateTenant(tenant);
             ResponseHandler.handleError(request, response, error);
         }
+
     };
 
     getById = async (request: express.Request, response: express.Response): Promise<void> => {
@@ -309,6 +347,16 @@ export class TenantController extends BaseController {
         }
         catch (error) {
             Logger.instance().log(`Unable to send email to ${tenant.Email}`);
+        }
+    };
+
+    private rollbackCreateTenant = async (tenant: TenantDto) => {
+        try {
+            if (tenant) {
+                await this._service.delete(tenant.id, true);
+            }
+        } catch (error) {
+            Logger.instance().log(error);
         }
     };
 

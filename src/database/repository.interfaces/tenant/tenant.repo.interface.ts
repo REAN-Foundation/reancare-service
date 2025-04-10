@@ -28,7 +28,7 @@ export interface ITenantRepo {
 
     update(id: uuid, model: TenantDomainModel): Promise<TenantDto>;
 
-    delete(id: uuid): Promise<boolean>;
+    delete(id: uuid, hardDelete?: boolean): Promise<boolean>;
 
     promoteTenantUserAsAdmin(id: uuid, userId: uuid): Promise<boolean>;
 

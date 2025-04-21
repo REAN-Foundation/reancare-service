@@ -863,9 +863,10 @@ export class UserService {
             var role = await this._roleRepo.getById(dto.RoleId);
             dto.Role = role;
         }
-        if (dto.TenantId && dto.TenantName == null) {
+        if (dto.TenantId && !dto.TenantName && !dto.TenantCode) {
             const tenant = await this._tenantRepo.getById(dto.TenantId);
             dto.TenantName = tenant.Name;
+            dto.TenantCode = tenant.Code;
         }
         return dto;
     };

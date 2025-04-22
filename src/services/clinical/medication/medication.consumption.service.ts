@@ -280,8 +280,8 @@ export class MedicationConsumptionService implements IUserActionService {
         return updatedDto;
     };
 
-    deleteFutureMedicationSchedules = async (medicationId: string): Promise<number> => {
-        return await this._medicationConsumptionRepo.deleteFutureMedicationSchedules(medicationId);
+    deleteFutureMedicationSchedules = async (medicationId: string, hardDelete: boolean = false): Promise<number> => {
+        return await this._medicationConsumptionRepo.deleteFutureMedicationSchedules(medicationId, hardDelete);
     };
 
     getById = async (id: string): Promise<MedicationConsumptionDetailsDto> => {

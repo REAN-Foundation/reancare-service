@@ -23,7 +23,7 @@ export interface IMedicationConsumptionRepo {
 
     markAsMissed(id: string): Promise<MedicationConsumptionDetailsDto>;
 
-    deleteFutureMedicationSchedules(medicationId: string): Promise<number>;
+    deleteFutureMedicationSchedules(medicationId: string, hardDelete: boolean): Promise<number>;
 
     getSchedulesForMedication(medicationId: string): Promise<MedicationConsumptionDto[]>;
 

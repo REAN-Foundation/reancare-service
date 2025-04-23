@@ -252,7 +252,7 @@ export class MedicationController extends BaseController{
                 throw new ApiError(400, 'Medication cannot be deleted.');
             }
 
-            await this._medicationConsumptionService.deleteFutureMedicationSchedules(id);
+            await this._medicationConsumptionService.deleteFutureMedicationSchedules(id, true);
 
             // delete ehr record
             this._ehrMedicationService.deleteMedicationEHRRecords(id);

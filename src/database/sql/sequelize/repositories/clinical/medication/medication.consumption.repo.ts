@@ -88,7 +88,7 @@ export class MedicationConsumptionRepo implements IMedicationConsumptionRepo {
         }
     };
 
-    deleteFutureMedicationSchedules = async(medicationId: uuid): Promise<number> => {
+    deleteFutureMedicationSchedules = async(medicationId: uuid, hardDelete: boolean = false): Promise<number> => {
         try {
             let deletedCount: number = 0;
             var selector = {
@@ -111,17 +111,20 @@ export class MedicationConsumptionRepo implements IMedicationConsumptionRepo {
                         ParentActionId     : medicationId,
                         ScheduledStartTime : { [Op.gte] : new Date(new Date().toISOString()
                             .split('T')[0]) }
-                    }
+                    },
+                    force : hardDelete
                 });
             } else {
                 const ids = (await MedicationConsumption.findAll(selector)).map(x => x.id);
                 deletedCount = await UserTask.destroy({
                     where : {
                         ActionId : ids, //ActionType : UserTaskActionType.Medication
-                    }
+                    },
+                    force : hardDelete
                 });
             }
 
+            selector['force'] = hardDelete;
             const deletedConsumptionCount = await MedicationConsumption.destroy(selector);
             Logger.instance().log(`Deleted ${deletedCount} users tasks.`);
             Logger.instance().log(`Deleted ${deletedConsumptionCount} medication consumptions.`);

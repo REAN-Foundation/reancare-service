@@ -19,6 +19,8 @@ export class TenantValidator extends BaseValidator {
         await this.validateString(request, 'Code', Where.Body, false, true);
         await this.validateString(request, 'Phone', Where.Body, false, false);
         await this.validateString(request, 'Email', Where.Body, false, false);
+        await this.validateString(request, 'UserName', Where.Body, false, false);
+        await this.validateString(request, 'Password', Where.Body, false, false);
 
         this.validateRequest(request);
 
@@ -30,6 +32,8 @@ export class TenantValidator extends BaseValidator {
             Code        : body.Code ?? null,
             Phone       : body.Phone ?? null,
             Email       : body.Email ?? null,
+            UserName    : body.UserName ?? null,
+            Password    : body.Password ?? null,
         };
         if (update) {
             model.id = await this.getParamUuid(request, 'id');

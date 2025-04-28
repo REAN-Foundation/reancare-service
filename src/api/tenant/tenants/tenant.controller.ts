@@ -63,8 +63,13 @@ export class TenantController extends BaseController {
             }
 
             const tenantCode = tenant.Code;
-            const adminUserName = (tenantCode + '-admin').toLowerCase();
-            const adminPassword = Helper.generatePassword();
+            const adminUserName = model.UserName?.toLowerCase() ?? (tenantCode + '-admin').toLowerCase();
+            const existingUser = await this._userService.getByUserName(adminUserName);
+            if (existingUser) {
+                throw new ApiError(400, 'Username already exists');
+            }
+           
+            const adminPassword = model.Password ?? Helper.generatePassword();
             const role = await this._roleService.getByName(Roles.TenantAdmin);
             const userModel: UserDomainModel = {
                 Person : {
@@ -129,6 +134,9 @@ export class TenantController extends BaseController {
             ResponseHandler.success(request, response, 'Tenant added successfully!', 201, {
                 Tenant   : tenant,
                 Settings : settings,
+                AdminUser: {
+                    UserName : adminUserName
+                }
             });
         } catch (error) {
             await this.rollbackCreateTenant(tenant);

@@ -657,8 +657,9 @@ export class UserService {
             if (user == null) {
                 const message = 'User does not exist with username (' + model.UserName + ')';
                 Logger.instance().log(message);
+            } else {
+                person = await this._personRepo.getById(user.Person.id);
             }
-            person = await this._personRepo.getById(user.Person.id);
         }
         if (person == null) {
             return null;

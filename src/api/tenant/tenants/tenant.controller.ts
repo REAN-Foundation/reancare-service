@@ -57,8 +57,13 @@ export class TenantController extends BaseController {
                 throw new ApiError(400, 'Unable to create tenant.');
             }
             const tenantCode = tenant.Code;
-            const adminUserName = (tenantCode + '-admin').toLowerCase();
-            const adminPassword = Helper.generatePassword();
+            let adminUserName = model.UserName?.toLowerCase() ?? (tenantCode + '-admin').toLowerCase();
+            const existingUser = await this._userService.getByUserName(adminUserName);
+            if (existingUser) {
+                throw new ApiError(400, 'Username already exists');
+            }
+           
+            const adminPassword = model.Password ?? Helper.generatePassword();
             const role = await this._roleService.getByName(Roles.TenantAdmin);
             const userModel: UserDomainModel = {
                 Person : {
@@ -93,6 +98,9 @@ export class TenantController extends BaseController {
             ResponseHandler.success(request, response, 'Tenant added successfully!', 201, {
                 Tenant   : tenant,
                 Settings : settings,
+                AdminUser   : {
+                    UserName : adminUserName
+                }
             });
         } catch (error) {
             ResponseHandler.handleError(request, response, error);

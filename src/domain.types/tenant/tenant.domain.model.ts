@@ -6,4 +6,6 @@ export interface TenantDomainModel {
     Code       ?: string;
     Phone      ?: string;
     Email      ?: string;
+    UserName   ?: string;
+    Password   ?: string;
 }

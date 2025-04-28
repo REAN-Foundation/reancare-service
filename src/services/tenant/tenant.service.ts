@@ -40,8 +40,8 @@ export class TenantService {
         return await this._tenantRepo.update(id, model);
     };
 
-    public delete = async (id: uuid): Promise<boolean> => {
-        return await this._tenantRepo.delete(id);
+    public delete = async (id: uuid, hardDelete: boolean = false): Promise<boolean> => {
+        return await this._tenantRepo.delete(id, hardDelete);
     };
 
     public getTenantWithPhone = async (phone: string): Promise<TenantDto> => {

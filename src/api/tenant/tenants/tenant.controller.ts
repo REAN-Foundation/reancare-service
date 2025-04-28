@@ -63,7 +63,7 @@ export class TenantController extends BaseController {
             }
 
             const tenantCode = tenant.Code;
-            let adminUserName = model.UserName?.toLowerCase() ?? (tenantCode + '-admin').toLowerCase();
+            const adminUserName = model.UserName?.toLowerCase() ?? (tenantCode + '-admin').toLowerCase();
             const existingUser = await this._userService.getByUserName(adminUserName);
             if (existingUser) {
                 throw new ApiError(400, 'Username already exists');
@@ -134,7 +134,7 @@ export class TenantController extends BaseController {
             ResponseHandler.success(request, response, 'Tenant added successfully!', 201, {
                 Tenant   : tenant,
                 Settings : settings,
-                AdminUser   : {
+                AdminUser: {
                     UserName : adminUserName
                 }
             });

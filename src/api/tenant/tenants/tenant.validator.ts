@@ -33,7 +33,7 @@ export class TenantValidator extends BaseValidator {
             Phone       : body.Phone ?? null,
             Email       : body.Email ?? null,
             UserName    : body.UserName ?? null,
-            Password    : body.AdminPassword ?? null,
+            Password    : body.Password ?? null,
         };
         if (update) {
             model.id = await this.getParamUuid(request, 'id');

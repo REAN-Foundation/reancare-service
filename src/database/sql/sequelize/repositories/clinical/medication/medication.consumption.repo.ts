@@ -185,7 +185,22 @@ export class MedicationConsumptionRepo implements IMedicationConsumptionRepo {
             throw new ApiError(500, error.message);
         }
     };
-
+    
+    getScheduledMedicationCountById = async (id: string): Promise<number> => {
+        try {
+            const count = await MedicationConsumption.count({
+                where : {
+                    MedicationId : id
+                }
+            });
+    
+            return count;
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(error.statusCode || 500, error.message);
+        }
+    };
+    
     getAllTakenBefore = async (patientUserId: uuid, date: Date): Promise<any[]> => {
         try {
             const offsetMinutes = await HelperRepo.getPatientTimezoneOffsets(patientUserId);

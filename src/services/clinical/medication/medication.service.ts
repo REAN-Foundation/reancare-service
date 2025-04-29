@@ -58,6 +58,10 @@ export class MedicationService {
         return await this._medicationRepo.getCurrentMedications(patientUserId);
     };
 
+    getAllActiveMedications = async (): Promise<MedicationDto[]> => {
+        return await this._medicationRepo.getAllActiveMedications();
+    };
+
     search = async (filters: MedicationSearchFilters): Promise<MedicationSearchResults> => {
         return await this._medicationRepo.search(filters);
     };

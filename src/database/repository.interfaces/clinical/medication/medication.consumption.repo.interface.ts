@@ -17,6 +17,8 @@ export interface IMedicationConsumptionRepo {
 
     getByMedicationId(id: string): Promise<MedicationConsumptionDetailsDto[]>;
 
+    getScheduledMedicationCountById(medicationId: string): Promise<number>;
+
     markAsTaken(id: string, takenAt: Date): Promise<MedicationConsumptionDetailsDto>;
 
     assignEhrId(id: string, ehrId: string): Promise<MedicationConsumptionDetailsDto>;

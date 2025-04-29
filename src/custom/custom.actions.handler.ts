@@ -8,6 +8,7 @@ import { EnrollmentDomainModel } from '../domain.types/clinical/careplan/enrollm
 import { UserTaskSenderService } from '../services/users/user/user.task.sender.service';
 import { Injector } from '../startup/injector';
 import { GGHNActions } from './gghn/gghn.actions';
+import { CommonActions } from './common/common.actions';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -16,6 +17,8 @@ export class CustomActionsHandler {
     _ahaActions: AHAActions = new AHAActions();
 
     _gghnActions: GGHNActions = new GGHNActions();
+
+    _comonActions: CommonActions = new CommonActions();
 
     //#region Public
 
@@ -155,6 +158,14 @@ export class CustomActionsHandler {
         }
     };
 
+    public scheduleCreateMedicationConsumptionTask = async (cronExpression: string) => {
+        try {
+            await this._comonActions.scheduleCreateMedicationConsumptionTask(cronExpression);
+        }
+        catch (error) {
+            Logger.instance().log(`Error in schedule of medication consumption task.`);
+        }
+    };
     //#endregion
 
     //#region Privates

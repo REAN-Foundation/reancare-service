@@ -43,6 +43,7 @@
         "body-parser": "^1.20.3",
         "cors": "^2.8.5",
         "country-currency-phone": "^0.1.11",
+        "cron-parser": "^5.1.1",
         "csv-writer": "^1.6.0",
         "dayjs": "^1.11.7",
         "dotenv": "^8.2.0",

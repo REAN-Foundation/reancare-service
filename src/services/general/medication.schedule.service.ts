@@ -60,7 +60,10 @@ export class MedicationScheduleHandler {
                 }
             }
                 
-            if (totalScheduledDays < days && customScheduleDate < medication.EndDate) {
+            if (totalScheduledDays < days &&
+                customScheduleDate < medication.EndDate &&
+                customScheduleDate < nextScheduledDate)
+            {
                 await medicationConsumptionService.create(
                     medication,
                     customScheduleDate,

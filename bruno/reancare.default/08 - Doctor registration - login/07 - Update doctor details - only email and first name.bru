@@ -18,8 +18,8 @@ headers {
 
 body:json {
   {
-      "FirstName": "Anand",
-      "Email": "Anand.doe@gmail.com"
+      "FirstName": "{{FIRST_NAME}}",
+      "Email": "{{EMAIL}}"
   }
 }
 
@@ -27,9 +27,10 @@ tests {
   try {
       var jsonRes = res.getBody();
       bru.setEnvVar("DOCTOR_FIRST_NAME", jsonRes.Data.Doctor.User.Person.FirstName);
+      bru.setEnvVar("DOCTOR_PHONE", jsonRes.Data.Doctor.User.Person.Phone);
+      bru.setEnvVar("DOCTOR_GENDER", jsonRes.Data.Doctor.User.Person.Gender);
       bru.setEnvVar("DOCTOR_EMAIL", jsonRes.Data.Doctor.User.Person.Email);
-      bru.setEnvVar("CONTACT_USER_ID", jsonRes.Data.Doctor.User.id);
-      
+  
       var phone = jsonRes.Data.Doctor.User.Person.Phone;
       var tokens = phone.split('-');
       var phoneNumber = tokens[1];
@@ -39,4 +40,24 @@ tests {
   catch (error) {
       console.log(error.message);
   }
+  
+  
+  test("Request is successfull", function () {
+      expect(res.getStatus()).to.equal(200);
+      var jsonRes = res.getBody();
+      expect(jsonRes.Status).to.eql('success');
+  });
+  
+  test("Doctor details are updated", function () {
+      var jsonRes = res.getBody();
+      expect(jsonRes.Data).to.have.property('Doctor');
+      expect(jsonRes.Data.Doctor).to.not.be.empty;
+      expect(jsonRes.Data.Doctor).to.have.property('id');
+      expect(jsonRes.Data.Doctor).to.have.property('User');
+      expect(jsonRes.Data.Doctor.User).to.not.be.empty;
+      expect(jsonRes.Data.Doctor.User).to.have.property('id');
+      expect(jsonRes.Data.Doctor.User.Person).to.not.be.empty;
+      expect(jsonRes.Data.Doctor.User.Person).to.have.property('id');
+  });
+  
 }

@@ -4,8 +4,8 @@ meta {
   seq: 2
 }
 
-get {
-  url: {{BASE_URL}}/doctors/{{DOCTOR_USER_ID}}
+post {
+  url: {{BASE_URL}}/doctors
   body: json
   auth: none
 }
@@ -16,6 +16,12 @@ headers {
   Content-Type: application/json
 }
 
+body:json {
+  {
+      "Phone": "{{PHONE_COUNTRY_CODE}}-{{PHONE_NUMBER}}"
+  }
+}
+
 script:pre-request {
   var password = "Client-Test@123";
   bru.setEnvVar("API_CLIENT_PASSWORD", password);
@@ -23,11 +29,17 @@ script:pre-request {
 }
 
 tests {
-  
-  test("Request is failure", function () {
-      expect(res.getStatus()).to.equal(200);
+  try {
       var jsonRes = res.getBody();
-      expect(jsonRes.Status).to.eql('success');
+  }
+  catch (error) {
+      console.log(error.message);
+  }
+  
+  test("Response should be failure", function () {
+      expect(res.getStatus()).to.equal(409);
+      var jsonRes = res.getBody();
+      expect(jsonRes.Status).to.eql('failure');
   });
   
   

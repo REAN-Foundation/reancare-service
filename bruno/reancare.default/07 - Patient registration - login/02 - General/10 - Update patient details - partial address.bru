@@ -1,7 +1,7 @@
 meta {
   name: Update patient details - partial address
   type: http
-  seq: 10
+  seq: 9
 }
 
 put {
@@ -11,7 +11,7 @@ put {
 }
 
 headers {
-  Authorization: Bearer {{PATIENT_USER_JWT}}
+  Authorization: Bearer {{ADMIN_USER_JWT}}
   x-api-key: {{API_CLIENT_INTERNAL_KEY}}
   Content-Type: application/json
 }
@@ -22,7 +22,7 @@ body:json {
       "FirstName": "John",
       "MiddleName": "X",
       "LastName": "Doe",
-      "Email": "john.doe@gmail.com",
+      "Email": "{{EMAIL}}",
       "Gender": "Male",
       "BirthDate": "1979-01-01",
       "ImageResourceId": "20fd7e52-0d24-4599-bda5-3ed7be2dd383",
@@ -40,6 +40,18 @@ body:json {
           }
       ]
   }
+}
+
+script:pre-request {
+  // Generate email using random first name + random number
+  const firstNames = ["Anand", "Sneha", "Rahul", "Priya", "Kiran"];
+  const randomFirstName = firstNames[Math.floor(Math.random() * firstNames.length)];
+  const randomNum = Math.floor(Math.random() * 10000);
+  const email = `${randomFirstName.toLowerCase()}.${randomNum}@gmail.com`;
+  
+  // Set EMAIL variable
+  bru.setEnvVar("EMAIL", email);
+  
 }
 
 tests {
@@ -67,7 +79,7 @@ tests {
       expect(jsonRes.Status).to.eql('success');
   });
   
-  test("Patient is created", function () {
+  test("Patient is updated", function () {
       var jsonRes = res.getBody();
       expect(jsonRes.Data).to.have.property('Patient');
       expect(jsonRes.Data.Patient).to.not.be.empty;

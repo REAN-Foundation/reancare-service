@@ -17,16 +17,50 @@ headers {
 
 body:json {
   {
-      "UserName": "qpxvqt5568"
+      "UserName": "{{USER_NAME}}"
   }
 }
 
 script:pre-request {
-  var phonenumber = (Math.floor(Math.random() * 9000000000) + 1000000000).toString();
   var password = "Test@123";
   
-  bru.setEnvVar("PHONE_NUMBER", phonenumber);
-  bru.setEnvVar("PASSWORD", password);
+  // Generate a random alphanumeric string for the username
+  function generateRandomUserName(length = 10) {
+      const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+      let result = '';
+      for (let i = 0; i < length; i++) {
+          result += chars.charAt(Math.floor(Math.random() * chars.length));
+      }
+      return result;
+  }
+  
+  const userName = generateRandomUserName();
+  
+  // Set environment variables
+  bru.setEnvVar("PATIENT_PASSWORD", password);
+  bru.setEnvVar("USER_NAME", userName);
+  
+  
+  // var phonenumber = (Math.floor(Math.random() * 9000000000) + 1000000000).toString();
+  // var password = "Test@123";
+  
+  // bru.setEnvVar("PHONE_NUMBER", phonenumber);
+  // bru.setEnvVar("PASSWORD", password);
+  
+  // // Generate a random alphanumeric string for the username
+  // function generateRandomUserName(length = 10) {
+  //     const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  //     let result = '';
+  //     for (let i = 0; i < length; i++) {
+  //         result += chars.charAt(Math.floor(Math.random() * chars.length));
+  //     }
+  //     return result;
+  // }
+  
+  // const userName = generateRandomUserName();
+  
+  // // Set it as an environment variable
+  // bru.setEnvVar("USER_NAME", userName);
   
 }
 

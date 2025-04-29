@@ -1,21 +1,21 @@
 meta {
   name: Search patients
   type: http
-  seq: 13
+  seq: 12
 }
 
 get {
-  url: {{BASE_URL}}/patients/search?phone={{PATIENT_PHONE_NUMBER}}&orderBy=Email&order=ascending&pageIndex=0&itemsPerPage=25
+  url: {{BASE_URL}}/patients/search?orderBy=Email&order=ascending&pageIndex=0&itemsPerPage=25
   body: json
   auth: none
 }
 
 params:query {
-  phone: {{PATIENT_PHONE_NUMBER}}
   orderBy: Email
   order: ascending
   pageIndex: 0
   itemsPerPage: 25
+  ~phone: {{PATIENT_PHONE_NUMBER}}
   ~email: {{PATIENT_EMAIL}}
   ~name: {{PATIENT_FIRST_NAME}}
   ~gender: {{PATIENT_GENDER}}

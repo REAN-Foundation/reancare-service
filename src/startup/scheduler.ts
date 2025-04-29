@@ -63,6 +63,7 @@ export class Scheduler {
                 this.scheduleGGHNFollowUpReminder();
                 this.scheduleUserActivityTracker();
                 this.scheduleNotificationToInactiveUsers();
+                this.scheduleCreateMedicationConsumptionTask();
 
                 const runOnceScheduler = RunOnceScheduler.instance();
                 runOnceScheduler.schedule(Scheduler._schedules);
@@ -302,6 +303,17 @@ export class Scheduler {
             })();
         });
     };
+
+    private scheduleCreateMedicationConsumptionTask = () => {
+        cron.schedule(Scheduler._schedules['CreateMedicationConsumptionTask'], () => {
+            (async () => {
+                Logger.instance().log('Running scheduled jobs: Create Medication Consumption Task...');
+                var customActionHandler = new CustomActionsHandler();
+                customActionHandler.scheduleCreateMedicationConsumptionTask(Scheduler._schedules['CreateMedicationConsumptionTask']);
+            })();
+        });
+    };
+    
     //#endregion
 
 }

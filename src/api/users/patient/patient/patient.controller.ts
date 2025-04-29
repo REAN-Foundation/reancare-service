@@ -384,7 +384,10 @@ export class PatientController extends BaseUserController {
         var medications = await this._medicationService.getCurrentMedications(patientUserId);
         for await ( var m of medications) {
             if (m.FrequencyUnit !== 'Other') {
-                var deletedMedicationCount = await this._medicationConsumptionService.deleteFutureMedicationSchedules(m.id);
+                var deletedMedicationCount = await this._medicationConsumptionService.deleteFutureMedicationSchedules(
+                    m.id,
+                    true
+                );
                 var startDate = await this._userService.getDateInUserTimeZone(m.PatientUserId, new Date().toISOString()
                     .split('T')[0]);
                 if (m.FrequencyUnit === 'Weekly' || m.FrequencyUnit === 'Monthly') {

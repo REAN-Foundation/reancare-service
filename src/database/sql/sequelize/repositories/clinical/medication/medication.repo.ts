@@ -98,6 +98,23 @@ export class MedicationRepo implements IMedicationRepo {
         }
     };
 
+    getAllActiveMedications = async (): Promise<MedicationDto[]> => {
+        try {
+            var today = new Date();
+            const medications = await Medication.findAll({
+                where : {
+                    EndDate : {
+                        [Op.gte] : today
+                    }
+                }
+            });
+            return medications.map(x => MedicationMapper.toDto(x));
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    };
+
     search = async (filters: MedicationSearchFilters): Promise<MedicationSearchResults> => {
         try {
             const search = { where: {} };

@@ -36,19 +36,49 @@ tests {
       expect(jsonRes.Status).to.eql('success');
   });
   
-  test("Doctor is created", function () {
+  test("Tenant settings types retrieved successfully", function () {
       var jsonRes = res.getBody();
-      expect(jsonRes.Data).to.have.property('Tenant');
-      expect(jsonRes.Data.Tenant).to.not.be.empty;
-      expect(jsonRes.Data.Tenant).to.have.property('id');
-      expect(jsonRes.Data.Tenant).to.have.property('Name');
-      expect(jsonRes.Data.Tenant.Name).to.not.be.empty;
-      expect(jsonRes.Data.Tenant).to.have.property('Description');
-      expect(jsonRes.Data.Tenant).to.have.property('Code');
-      expect(jsonRes.Data.Tenant).to.have.property('Phone');
-      expect(jsonRes.Data.Tenant).to.have.property('Email');
-      
+      expect(jsonRes.Data).to.have.property('TenantSettingsTypes');
+      expect(jsonRes.Data.TenantSettingsTypes).to.be.an('array').that.is.not.empty;
+      jsonRes.Data.TenantSettingsTypes.forEach(function (type) {
+          expect(type).to.be.a('string').that.is.not.empty;
+      });
   });
+  
+  
+  
+  // try {
+  //     var jsonRes = res.getBody();
+  //     const types = jsonRes.Data.TenantSettingsTypes;
+  //     for (var i = 0; i < types.length; i++) {
+  //         const idx = i + 1;
+  //         const typename = "TENANT_SETTINGS_TYPE_2" + idx.toFixed();
+  //         bru.setEnvVar(typename, types[i]);
+  //     }
+  // }
+  // catch (error) {
+  //     console.log(error.message);
+  // }
+  
+  // test("Request is successfull", function () {
+  //     expect(res.getStatus()).to.equal(200);
+  //     var jsonRes = res.getBody();
+  //     expect(jsonRes.Status).to.eql('success');
+  // });
+  
+  // test("Tenant settings types retrieved successfully", function () {
+  //     var jsonRes = res.getBody();
+  //     expect(jsonRes.Data).to.have.property('Tenant');
+  //     expect(jsonRes.Data.Tenant).to.not.be.empty;
+  //     expect(jsonRes.Data.Tenant).to.have.property('id');
+  //     expect(jsonRes.Data.Tenant).to.have.property('Name');
+  //     expect(jsonRes.Data.Tenant.Name).to.not.be.empty;
+  //     expect(jsonRes.Data.Tenant).to.have.property('Description');
+  //     expect(jsonRes.Data.Tenant).to.have.property('Code');
+  //     expect(jsonRes.Data.Tenant).to.have.property('Phone');
+  //     expect(jsonRes.Data.Tenant).to.have.property('Email');
+      
+  // });
   
 }
 

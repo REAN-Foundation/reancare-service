@@ -17,32 +17,26 @@ headers {
 }
 
 tests {
-  // try {
-  //     var jsonRes = res.getBody();
-  //     bru.setEnvVar("TENANT_ID", jsonRes.Data.Tenant.id);
-  // }
-  // catch (error) {
-  //     console.log(error.message);
-  // }
+  try {
+      var jsonRes = res.getBody();
+  }
+  catch (error) {
+      console.log("Error parsing response:", error.message);
+  }
   
-  test("Request is successfull", function () {
+  test("Request is successful", function () {
       expect(res.getStatus()).to.equal(200);
       var jsonRes = res.getBody();
-      expect(jsonRes.Status).to.eql('success');
+      expect(jsonRes.Status).to.eql("success");
   });
   
-  test("Doctor is created", function () {
+  test("Tenant setting type details are retrieved", function () {
       var jsonRes = res.getBody();
-      expect(jsonRes.Data).to.have.property('Tenant');
-      expect(jsonRes.Data.Tenant).to.not.be.empty;
-      expect(jsonRes.Data.Tenant).to.have.property('id');
-      expect(jsonRes.Data.Tenant).to.have.property('Name');
-      expect(jsonRes.Data.Tenant.Name).to.not.be.empty;
-      expect(jsonRes.Data.Tenant).to.have.property('Description');
-      expect(jsonRes.Data.Tenant).to.have.property('Code');
-      expect(jsonRes.Data.Tenant).to.have.property('Phone');
-      expect(jsonRes.Data.Tenant).to.have.property('Email');
-      
+      expect(jsonRes).to.have.property("Data");
+      expect(jsonRes.Data).to.have.property("TenantSettings");
+  
+      const settings = jsonRes.Data.TenantSettings;
+      expect(settings).to.be.an("object");
   });
   
 }

@@ -57,34 +57,35 @@ body:json {
 }
 
 tests {
-  // try {
-  //     var jsonRes = res.getBody();
-  //     bru.setEnvVar("TENANT_ID", jsonRes.Data.Tenant.id);
-  // }
-  // catch (error) {
-  //     console.log(error.message);
-  // }
-  
   test("Request is successfull", function () {
       expect(res.getStatus()).to.equal(200);
       var jsonRes = res.getBody();
       expect(jsonRes.Status).to.eql('success');
   });
   
-  test("Doctor is created", function () {
+  test("Updated Common settings are returned", () => {
       var jsonRes = res.getBody();
-      expect(jsonRes.Data).to.have.property('Tenant');
-      expect(jsonRes.Data.Tenant).to.not.be.empty;
-      expect(jsonRes.Data.Tenant).to.have.property('id');
-      expect(jsonRes.Data.Tenant).to.have.property('Name');
-      expect(jsonRes.Data.Tenant.Name).to.not.be.empty;
-      expect(jsonRes.Data.Tenant).to.have.property('Description');
-      expect(jsonRes.Data.Tenant).to.have.property('Code');
-      expect(jsonRes.Data.Tenant).to.have.property('Phone');
-      expect(jsonRes.Data.Tenant).to.have.property('Email');
-      
-  });
+      expect(jsonRes).to.have.property("Data");
+      expect(jsonRes.Data).to.have.property("Updated");
   
+      const updated = jsonRes.Data.Updated;
+      expect(updated).to.have.property("Common");
+  
+      const common = updated.Common;
+  
+      expect(common).to.have.property("Clinical");
+      expect(common.Clinical).to.have.property("Vitals").that.is.a("boolean");
+      expect(common.Clinical).to.have.property("LabRecords").that.is.a("boolean");
+  
+      expect(common).to.have.property("External");
+      expect(common.External).to.have.property("FHIRStorage").that.is.a("boolean");
+  
+      expect(common).to.have.property("AddOns");
+      expect(common.AddOns).to.have.property("Notifications").that.is.a("boolean");
+  
+      expect(common).to.have.property("Analysis");
+      expect(common.Analysis).to.have.property("Quicksight").that.is.a("boolean");
+  });
 }
 
 docs {

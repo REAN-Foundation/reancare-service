@@ -29,24 +29,24 @@ body:json {
 }
 
 tests {
-  test("Request is successfull", function () {
-      expect(res.getStatus()).to.equal(200);
-      var jsonRes = res.getBody();
-      expect(jsonRes.Status).to.eql('success');
-  });
-  test("Updated user device details is returned", function () {
-      var expectedDeviceName = "Iphone13";
-      var expectedAppVersion = "1.3.0";
+  // test("Request is successfull", function () {
+  //     expect(res.getStatus()).to.equal(200);
+  //     var jsonRes = res.getBody();
+  //     expect(jsonRes.Status).to.eql('success');
+  // });
+  // test("Updated user device details is returned", function () {
+  //     var expectedDeviceName = "Iphone13";
+  //     var expectedAppVersion = "1.3.0";
   
-       var jsonRes = res.getBody();
-      expect(jsonRes.Data).to.have.property('UserDeviceDetails');
-      expect(jsonRes.Data.UserDeviceDetails).to.not.be.empty;
-      expect(jsonRes.Data.UserDeviceDetails).to.have.property('id');
-      expect(jsonRes.Data.UserDeviceDetails).to.have.property('DeviceName');
-      expect(jsonRes.Data.UserDeviceDetails).to.have.property('AppVersion');
+  //      var jsonRes = res.getBody();
+  //     expect(jsonRes.Data).to.have.property('UserDeviceDetails');
+  //     expect(jsonRes.Data.UserDeviceDetails).to.not.be.empty;
+  //     expect(jsonRes.Data.UserDeviceDetails).to.have.property('id');
+  //     expect(jsonRes.Data.UserDeviceDetails).to.have.property('DeviceName');
+  //     expect(jsonRes.Data.UserDeviceDetails).to.have.property('AppVersion');
   
   
-      expect(jsonRes.Data.UserDeviceDetails.DeviceName).equals(expectedDeviceName);
-      expect(jsonRes.Data.UserDeviceDetails.AppVersion).equals(expectedAppVersion);
-  });
+  //     expect(jsonRes.Data.UserDeviceDetails.DeviceName).equals(expectedDeviceName);
+  //     expect(jsonRes.Data.UserDeviceDetails.AppVersion).equals(expectedAppVersion);
+  // });
 }

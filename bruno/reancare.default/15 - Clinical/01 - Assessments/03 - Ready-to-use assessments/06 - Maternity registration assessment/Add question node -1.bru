@@ -11,7 +11,7 @@ post {
 }
 
 headers {
-  Authorization: Bearer {{DOCTOR_USER_JWT}}
+  Authorization: Bearer {{ADMIN_USER_JWT}}
   x-api-key: {{API_CLIENT_INTERNAL_KEY}}
   Content-Type: application/json
 }
@@ -56,7 +56,7 @@ tests {
       expect(jsonRes.Data.AssessmentNode).to.have.property('QueryResponseType');
       expect(jsonRes.Data.AssessmentNode).to.have.property('TemplateId');
       
-      expect(jsonRes.Data.AssessmentNode.Title).equals("Time per week spent in moderate physical activity?");
+      expect(jsonRes.Data.AssessmentNode.Title).equals("Q 1/3. What is the current week of your pregnancy?");
       expect(jsonRes.Data.AssessmentNode.QueryResponseType).equals("Text");
       expect(jsonRes.Data.AssessmentNode.NodeType).equals("Question");
               

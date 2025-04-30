@@ -11,7 +11,7 @@ post {
 }
 
 headers {
-  Authorization: Bearer {{DOCTOR_USER_JWT}}
+  Authorization: Bearer {{ADMIN_USER_JWT}}
   x-api-key: {{API_CLIENT_INTERNAL_KEY}}
   Content-Type: application/json
 }
@@ -68,8 +68,8 @@ tests {
       expect(jsonRes.Data.AssessmentNode).to.have.property('QueryResponseType');
       expect(jsonRes.Data.AssessmentNode).to.have.property('TemplateId');
       
-      expect(jsonRes.Data.AssessmentNode.Title).equals("Time per week spent in moderate physical activity?");
-      expect(jsonRes.Data.AssessmentNode.QueryResponseType).equals("Text");
+      expect(jsonRes.Data.AssessmentNode.Title).equals("Q 3/3. Prior to this stroke, have you ever been told by a doctor that you have had a stroke, a transient ischemic attack (sometimes called a TIA or mini-stroke), or a heart attack?");
+      expect(jsonRes.Data.AssessmentNode.QueryResponseType).equals("Single Choice Selection");
       expect(jsonRes.Data.AssessmentNode.NodeType).equals("Question");
               
       expect(jsonRes.Data.AssessmentNode.Sequence).greaterThan(0);

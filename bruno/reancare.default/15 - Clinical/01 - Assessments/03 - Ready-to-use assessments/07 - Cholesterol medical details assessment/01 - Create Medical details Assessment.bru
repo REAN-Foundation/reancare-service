@@ -11,7 +11,7 @@ post {
 }
 
 headers {
-  Authorization: Bearer {{DOCTOR_USER_JWT}}
+  Authorization: Bearer {{ADMIN_USER_JWT}}
   x-api-key: {{API_CLIENT_INTERNAL_KEY}}
   Content-Type: application/json
 }
@@ -56,9 +56,9 @@ tests {
       expect(jsonRes.Data.AssessmentTemplate).to.have.property('Description');
       expect(jsonRes.Data.AssessmentTemplate).to.have.property('Type');
       
-      expect(jsonRes.Data.AssessmentTemplate.Title).equals("KCCQ assessment template");
-      expect(jsonRes.Data.AssessmentTemplate.Description).equals("Effect of heart failure on the life of a patient");
-      expect(jsonRes.Data.AssessmentTemplate.Type).equals("Custom");
+      expect(jsonRes.Data.AssessmentTemplate.Title).equals("Cholesterol medical details assessment template");
+      expect(jsonRes.Data.AssessmentTemplate.Description).equals("Collecting medication info of the patient");
+      expect(jsonRes.Data.AssessmentTemplate.Type).equals("Careplan");
       
   });
   

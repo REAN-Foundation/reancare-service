@@ -5,7 +5,7 @@ meta {
 }
 
 put {
-  url: {{BASE_URL}}/clinical/biometrics/blood-pressures/{{BIOMETRICS_BLOOD_PRESSURE_ID}}
+  url: {{BASE_URL}}/clinical/biometrics/blood-pressures/{{BLOOD_PRESSURE_ID}}
   body: json
   auth: none
 }
@@ -29,10 +29,10 @@ body:json {
 
 tests {
   
-  // test("Request is failure", function () {
-  //     expect(res.getStatus()).to.equal(403);
-  //     var jsonRes = res.getBody();
-  //     expect(jsonRes.Status).to.eql('failure');
-  // });
+  test("Request is failure", function () {
+      expect(res.getStatus()).to.equal(403);
+      var jsonRes = res.getBody();
+      expect(jsonRes.Status).to.eql('failure');
+  });
   
 }

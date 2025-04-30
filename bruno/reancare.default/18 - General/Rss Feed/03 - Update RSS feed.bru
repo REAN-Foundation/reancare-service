@@ -1,7 +1,7 @@
 meta {
   name: Update RSS feed
   type: http
-  seq: 3
+  seq: 2
 }
 
 put {
@@ -32,21 +32,33 @@ tests {
       expect(jsonRes.Status).to.eql('success');
   });
   
-  test("Updated course module is returned", function () {
-  
-      var expectedName = "Maths";
-      var expectedDurationInMins = 45;
+  test("Updated RSS feed is returned", function () {
+      var expectedTitle = "Raahi News";
+      var expectedDescription = "Learning course";
       
       var jsonRes = res.getBody();
-      expect(jsonRes.Data).to.have.property('CourseModule');
-      expect(jsonRes.Data.CourseModule).to.not.be.empty;
-      expect(jsonRes.Data.CourseModule).to.have.property('Name');
-      expect(jsonRes.Data.CourseModule).to.have.property('DurationInMins');
-      
-      expect(jsonRes.Data.CourseModule.Name).equals(expectedName);
-      expect(jsonRes.Data.CourseModule.DurationInMins).equals(expectedDurationInMins);
-      
+      expect(jsonRes.Data).to.have.property('Rssfeed');
+      expect(jsonRes.Data.Rssfeed).to.not.be.empty;
+  
+      expect(jsonRes.Data.Rssfeed.Title).to.equal(expectedTitle);
+      expect(jsonRes.Data.Rssfeed.Description).to.equal(expectedDescription);
   });
+  
+  // test("Updated course module is returned", function () {
+  
+  //     var expectedName = "Maths";
+  //     var expectedDurationInMins = 45;
+      
+  //     var jsonRes = res.getBody();
+  //     expect(jsonRes.Data).to.have.property('CourseModule');
+  //     expect(jsonRes.Data.CourseModule).to.not.be.empty;
+  //     expect(jsonRes.Data.CourseModule).to.have.property('Name');
+  //     expect(jsonRes.Data.CourseModule).to.have.property('DurationInMins');
+      
+  //     expect(jsonRes.Data.CourseModule.Name).equals(expectedName);
+  //     expect(jsonRes.Data.CourseModule.DurationInMins).equals(expectedDurationInMins);
+      
+  // });
   
   
 }

@@ -1,7 +1,7 @@
 meta {
   name: Search Rss feeds
   type: http
-  seq: 4
+  seq: 3
 }
 
 get {
@@ -34,8 +34,8 @@ tests {
   test("List of course modules is returned", function () {
   
       var jsonRes = res.getBody();
-      expect(jsonRes.Data).to.have.property('CourseModules');
-      expect(jsonRes.Data.CourseModules.Items.length).greaterThan(0);
+      expect(jsonRes.Data).to.have.property('RssfeedRecords');
+      expect(jsonRes.Data.RssfeedRecords.Items.length).greaterThan(0);
   
   });
   

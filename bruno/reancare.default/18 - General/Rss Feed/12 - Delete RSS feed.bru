@@ -1,7 +1,7 @@
 meta {
   name: Delete RSS feed
   type: http
-  seq: 5
+  seq: 4
 }
 
 delete {
@@ -23,7 +23,7 @@ tests {
       expect(jsonRes.Status).to.eql('success');
   });
   
-  test("Course module is deleted", function () {
+  test("Rssfeed Records is deleted", function () {
   
       var expectedValue = true;
       

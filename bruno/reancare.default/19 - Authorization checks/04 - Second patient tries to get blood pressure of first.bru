@@ -18,10 +18,10 @@ headers {
 
 tests {
   
-  // test("Request is failure", function () {
-  //     expect(res.getStatus()).to.equal(403);
-  //     var jsonRes = res.getBody();
-  //     expect(jsonRes.Status).to.eql('failure');
-  // });
+  test("Request is failure", function () {
+      expect(res.getStatus()).to.equal(403);
+      var jsonRes = res.getBody();
+      expect(jsonRes.Status).to.eql('failure');
+  });
   
 }

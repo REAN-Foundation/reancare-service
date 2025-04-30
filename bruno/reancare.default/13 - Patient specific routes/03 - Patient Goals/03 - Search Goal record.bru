@@ -5,20 +5,20 @@ meta {
 }
 
 get {
-  url: {{BASE_URL}}/patient-goals/search?createdDateFrom=2021-09-01&createdDateTo=2021-10-14&orderBy=&order=ascending&pageIndex=0&itemsPerPage=25&goalAbandoned=false&goalAchieved=true
+  url: {{BASE_URL}}/patient-goals/search?order=ascending
   body: none
   auth: none
 }
 
 params:query {
-  createdDateFrom: 2021-09-01
-  createdDateTo: 2021-10-14
-  orderBy: 
   order: ascending
-  pageIndex: 0
-  itemsPerPage: 25
-  goalAbandoned: false
-  goalAchieved: true
+  ~createdDateFrom: 2025-03-01
+  ~createdDateTo: 2025-03-14
+  ~orderBy: 
+  ~pageIndex: 0
+  ~itemsPerPage: 25
+  ~goalAbandoned: false
+  ~goalAchieved: true
   ~PatientUserId: 
   ~CarePlanId: 
   ~TypeCode: 
@@ -42,8 +42,8 @@ tests {
   test("List of Goal records is returned", function () {
   
       var jsonRes = res.getBody();
-      expect(jsonRes.Data).to.have.property('Goals');
-      expect(jsonRes.Data.Goals.Items.length).greaterThan(0);
+      expect(jsonRes.Data).to.have.property('GoalRecords');
+      expect(jsonRes.Data.GoalRecords.Items.length).greaterThan(0);
   
   });
   

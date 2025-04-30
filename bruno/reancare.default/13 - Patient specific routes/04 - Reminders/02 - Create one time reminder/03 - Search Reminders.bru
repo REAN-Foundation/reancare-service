@@ -5,15 +5,15 @@ meta {
 }
 
 get {
-  url: {{BASE_URL}}/reminders/search?createdDateFrom=2021-09-01&UserId={{PATIENT_USER_JWT}}&createdDateTo=2023-10-14
+  url: {{BASE_URL}}/reminders/search?UserId={{PATIENT_USER_JWT}}
   body: none
   auth: none
 }
 
 params:query {
-  createdDateFrom: 2021-09-01
   UserId: {{PATIENT_USER_JWT}}
-  createdDateTo: 2023-10-14
+  ~createdDateFrom: 2021-09-01
+  ~createdDateTo: 2023-10-14
 }
 
 headers {

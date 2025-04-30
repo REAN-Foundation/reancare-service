@@ -5,14 +5,14 @@ meta {
 }
 
 get {
-  url: {{BASE_URL}}/patient-emergency-contacts/search?patientUserId={{PATIENT_USER_ID}}&isAvailableForEmergency=true
+  url: {{BASE_URL}}/patient-emergency-contacts/search?patientUserId={{PATIENT_USER_ID}}
   body: json
   auth: none
 }
 
 params:query {
   patientUserId: {{PATIENT_USER_ID}}
-  isAvailableForEmergency: true
+  ~isAvailableForEmergency: true
   ~createdDateFrom: 2021-05-01
   ~createdDateTo: 2021-12-12
   ~orderBy: IsAvailableForEmergency

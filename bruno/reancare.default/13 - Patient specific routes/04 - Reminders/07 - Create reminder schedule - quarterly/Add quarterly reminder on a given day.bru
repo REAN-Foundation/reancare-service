@@ -22,8 +22,8 @@ body:json {
       "Name": "Drink Water",
       "WhenTime": "13:34:12",
       "HookUrl": "{{HOOK_URL}}",
-      "StartDate": "2023-08-12",
-      "EndDate": "2024-08-25",
+      "StartDate": "2025-08-12",
+      "EndDate": "2027-08-25",
       "EndAfterNRepetitions": 10,
       "NotificationType": "SMS"
   }
@@ -55,7 +55,7 @@ tests {
       expect(jsonRes.Data.Reminder).to.have.property('Name');
       expect(jsonRes.Data.Reminder).to.have.property('ReminderType');
   
-      expect(jsonRes.Data.Reminder.ReminderType).equals("Repeat-After-Every-N");
+      expect(jsonRes.Data.Reminder.ReminderType).equals("Repeat-Every-Quarter-On");
   
   });
   

@@ -5,7 +5,7 @@ meta {
 }
 
 get {
-  url: {{BASE_URL}}/reminders/{{REPEAT_AFTER_EVERY_N_HOURS_REMINDER_ID}}
+  url: {{BASE_URL}}/reminders/{{REPEAT_AFTER_EVERY_3_HOURS_REMINDER_ID}}
   body: none
   auth: none
 }
@@ -31,9 +31,9 @@ tests {
       expect(jsonRes.Data.Reminder).to.have.property('id');
       expect(jsonRes.Data.Reminder).to.have.property('UserId');
       expect(jsonRes.Data.Reminder).to.have.property('Name');
-      expect(jsonRes.Data.Reminder).to.have.property('ReminderTime');
+      expect(jsonRes.Data.Reminder).to.have.property('ReminderType');
   
-      expect(jsonRes.Data.Reminder.ReminderType).equals("OneTime");
+      expect(jsonRes.Data.Reminder.ReminderType).equals("Repeat-After-Every-N");
   
   });
   

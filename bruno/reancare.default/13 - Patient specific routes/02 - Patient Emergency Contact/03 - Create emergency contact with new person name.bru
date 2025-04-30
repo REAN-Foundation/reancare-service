@@ -51,10 +51,13 @@ tests {
   var jsonRes = res.getBody();
   
   try {
-      bru.setEnvVar("PATIENT_EMERGENCY_CONTACT_ID", jsonRes.Data.EmergencyContact.id);
-  }
-  catch (error) {
-      console.log(error.message);
+      if (jsonRes.Data && jsonRes.Data.EmergencyContact && jsonRes.Data.EmergencyContact.id) {
+          bru.setEnvVar("PATIENT_EMERGENCY_CONTACT_ID", jsonRes.Data.EmergencyContact.id);
+      } else {
+          console.log("EmergencyContact ID not found in response.");
+      }
+  } catch (error) {
+      console.log("Failed to set env var:", error.message);
   }
   
   test("Request is successfull", function () {

@@ -27,7 +27,8 @@ tests {
   
       var expectedPatientUserId = bru.getEnvVar("GOAL_PATIENTUSERID");
       var expectedGoalAchieved = bru.getEnvVar("GOAL_GOALACHIEVED");
-      var expectedGoalAbandoned = bru.getEnvVar("GOAL_GOALABANDONED");
+    
+    var expectedGoalAbandoned = bru.getEnvVar("GOAL_GOALABANDONED") === 'true';
   
       var jsonRes = res.getBody();
       expect(jsonRes.Data).to.have.property('Goal');

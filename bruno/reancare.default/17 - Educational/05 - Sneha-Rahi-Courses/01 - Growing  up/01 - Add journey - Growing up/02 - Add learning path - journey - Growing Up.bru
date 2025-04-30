@@ -48,12 +48,12 @@ tests {
      
       
       var jsonRes = res.getBody();
-      expect(jsonRes.Data).to.have.property('Course');
-      expect(jsonRes.Data.Course).to.not.be.empty;
-      expect(jsonRes.Data.Course).to.have.property('Name');
+      expect(jsonRes.Data).to.have.property('LearningPath');
+      expect(jsonRes.Data.LearningPath).to.not.be.empty;
+      expect(jsonRes.Data.LearningPath).to.have.property('Name');
       // expect(jsonRes.Data.Course).to.have.property('StartDate');
       
-      expect(jsonRes.Data.Course.Name).equals(expectedName);
+      expect(jsonRes.Data.LearningPath.Name).equals(expectedName);
      
   });
   

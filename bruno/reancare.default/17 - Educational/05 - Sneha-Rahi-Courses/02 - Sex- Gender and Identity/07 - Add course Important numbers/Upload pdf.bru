@@ -1,7 +1,7 @@
 meta {
-  name: Upload learning path image
+  name: Upload pdf
   type: http
-  seq: 1
+  seq: 4
 }
 
 post {
@@ -17,14 +17,14 @@ headers {
 }
 
 body:multipart-form {
-  name: @file(D:\REAN foundation\Rean service authenticated\storage\local\resources\2025-03-31\Summary Report1743413412276.pdf)
+  name: @file(C:\Users\Madhu\Downloads\Clockify_Time_Report_Summary_01_03_2025-31_03_2025.pdf)
   IsPublicResource: true
 }
 
 tests {
   try {
       var jsonRes = res.getBody();
-      bru.setEnvVar("FILE_RESOURCE_URL", jsonRes.Data.FileResources[0].Url);
+      bru.setEnvVar("PDF_FILE_RESOURCE_URL", jsonRes.Data.FileResources[0].Url);
   }
   catch(error) {
       console.log(error.message);

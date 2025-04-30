@@ -1,11 +1,11 @@
 meta {
-  name: Add learning path - journey
+  name: Add course- 1 - Manav Vikas Ki Avasthaein
   type: http
   seq: 2
 }
 
 post {
-  url: {{BASE_URL}}/educational/learning-paths
+  url: {{BASE_URL}}/educational/courses
   body: json
   auth: none
 }
@@ -18,7 +18,8 @@ headers {
 
 body:json {
   {
-      "Name": "Health and Nutrition",
+      "LearningPathId": "{{LEARNING_PATH_ID}}",
+      "Name": "Manav Vikas Ki Avasthaein",
       "ImageUrl": "{{FILE_RESOURCE_URL}}"
   }
 }
@@ -27,7 +28,7 @@ tests {
   var jsonRes = res.getBody();
   
   try {
-      bru.setEnvVar("LEARNING_PATH_ID", jsonRes.Data.LearningPath.id);
+      bru.setEnvVar("COURSE_ID", jsonRes.Data.Course.id);
   }
   catch (error) {
       console.log(error.message);
@@ -42,16 +43,16 @@ tests {
   
   test("New course is returned", function () {
   
-      var expectedName = "Health and Nutrition";
+      var expectedName = "Manav Vikas Ki Avasthaein";
      
       
       var jsonRes = res.getBody();
-      expect(jsonRes.Data).to.have.property('LearningPath');
-      expect(jsonRes.Data.LearningPath).to.not.be.empty;
-      expect(jsonRes.Data.LearningPath).to.have.property('Name');
-      // expect(jsonRes.Data.LearningPath).to.have.property('StartDate');
+      expect(jsonRes.Data).to.have.property('Course');
+      expect(jsonRes.Data.Course).to.not.be.empty;
+      expect(jsonRes.Data.Course).to.have.property('Name');
+      // expect(jsonRes.Data.Course).to.have.property('StartDate');
       
-      expect(jsonRes.Data.LearningPath.Name).equals(expectedName);
+      expect(jsonRes.Data.Course.Name).equals(expectedName);
      
   });
   

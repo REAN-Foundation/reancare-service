@@ -11,7 +11,7 @@ post {
 }
 
 headers {
-  Authorization: Bearer {{DOCTOR_USER_JWT}}
+  Authorization: Bearer {{ADMIN_USER_JWT}}
   x-api-key: {{API_CLIENT_INTERNAL_KEY}}
   Content-Type: application/json
 }
@@ -83,7 +83,7 @@ tests {
       expect(jsonRes.Data.AssessmentNode).to.have.property('QueryResponseType');
       expect(jsonRes.Data.AssessmentNode).to.have.property('TemplateId');
       
-      expect(jsonRes.Data.AssessmentNode.Title).equals("Over the past 2 weeks, on average, how many times have you been forced to sleep sitting up in a chair or with at least 3 pillows to prop you up because of shortness of breath?");
+      expect(jsonRes.Data.AssessmentNode.Title).equals("Q 5/8. Over the past 2 weeks, on average, how many times have you been forced to sleep sitting up in a chair or with at least 3 pillows to prop you up because of shortness of breath?");
       expect(jsonRes.Data.AssessmentNode.QueryResponseType).equals("Single Choice Selection");
       expect(jsonRes.Data.AssessmentNode.NodeType).equals("Question");
           

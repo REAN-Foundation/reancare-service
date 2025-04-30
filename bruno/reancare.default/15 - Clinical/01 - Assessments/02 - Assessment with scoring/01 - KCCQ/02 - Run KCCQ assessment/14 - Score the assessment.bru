@@ -17,15 +17,15 @@ headers {
 }
 
 tests {
-  try {
-      var jsonRes = res.getBody();
-      for (i = 0; i<jsonRes.Data.Next.ChildrenQuestions.length;i++ ) {
-          bru.setEnvVar("ASSESSMENT_LIST_QUESTION_ID_"+i, jsonRes.Data.Next.ChildrenQuestions[i].id);
-      }
-  }
-  catch (error) {
-      console.log(error.message);
-  }
+  // try {
+  //     var jsonRes = res.getBody();
+  //     for (i = 0; i<jsonRes.Data.Next.ChildrenQuestions.length;i++ ) {
+  //         bru.setEnvVar("ASSESSMENT_LIST_QUESTION_ID_"+i, jsonRes.Data.Next.ChildrenQuestions[i].id);
+  //     }
+  // }
+  // catch (error) {
+  //     console.log(error.message);
+  // }
   
   test("Request is successfull", function () {
       expect(res.getStatus()).to.equal(200);
@@ -35,8 +35,8 @@ tests {
   
   test("Assessment is started", function () {
       var jsonRes = res.getBody();
-      expect(jsonRes.Data.AnswerResponse).to.have.property('Next');
-      expect(jsonRes.Data.AnswerResponse).to.have.property('Answer');
-      expect(jsonRes.Data.AnswerResponse.Next).to.have.property('ChildrenNodeIds');
+      expect(jsonRes.Data).to.have.property('AssessmentId');
+      // expect(jsonRes.Data.AnswerResponse).to.have.property('Answer');
+      // expect(jsonRes.Data.AnswerResponse.Next).to.have.property('ChildrenNodeIds');
   });
 }

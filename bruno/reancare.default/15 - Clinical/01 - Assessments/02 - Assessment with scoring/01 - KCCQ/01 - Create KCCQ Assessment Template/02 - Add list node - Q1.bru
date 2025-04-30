@@ -11,7 +11,7 @@ post {
 }
 
 headers {
-  Authorization: Bearer {{DOCTOR_USER_JWT}}
+  Authorization: Bearer {{ADMIN_USER_JWT}}
   x-api-key: {{API_CLIENT_INTERNAL_KEY}}
   Content-Type: application/json
 }
@@ -55,7 +55,7 @@ tests {
       expect(jsonRes.Data.AssessmentNode).to.have.property('Title');
       expect(jsonRes.Data.AssessmentNode).to.have.property('TemplateId');
       
-      expect(jsonRes.Data.AssessmentNode.Title).equals("Daily check list");
+      expect(jsonRes.Data.AssessmentNode.Title).equals("Q 1/8. Effects of heart failure on daily activities.");
       expect(jsonRes.Data.AssessmentNode.NodeType).equals("Node list");
               
       expect(jsonRes.Data.AssessmentNode.Sequence).greaterThan(0);

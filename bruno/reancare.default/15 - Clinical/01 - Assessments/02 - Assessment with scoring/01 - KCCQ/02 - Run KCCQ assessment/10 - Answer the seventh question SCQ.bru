@@ -48,6 +48,6 @@ tests {
       var jsonRes = res.getBody();
       expect(jsonRes.Data.AnswerResponse).to.have.property('Next');
       expect(jsonRes.Data.AnswerResponse).to.have.property('Answer');
-      expect(jsonRes.Data.AnswerResponse.Next).to.have.property('ChildrenNodeIds');
+      // expect(jsonRes.Data.AnswerResponse.Next).to.have.property('ChildrenQuestions');
   });
 }

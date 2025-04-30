@@ -55,14 +55,18 @@ tests {
       expect(jsonRes.Status).to.eql('success');
   });
   
-  test("ListNode- assessment questionis answered", function () {
+  test("ListNode- assessment question is answered", function () {
       var jsonRes = res.getBody();
       expect(jsonRes.Data).to.have.property('AnswerResponse');
-      expect(jsonRes.Data.AnswerResponse).to.not.be.empty;
-      expect(jsonRes.Data.AnswerResponse[0]).to.have.property('AssessmentId');
-      expect(jsonRes.Data.AnswerResponse[0]).to.have.property('Parent');
-      expect(jsonRes.Data.AnswerResponse[0]).to.have.property('Answer');
-      expect(jsonRes.Data.AnswerResponse[0]).to.have.property('Next');
-      expect(jsonRes.Data.AnswerResponse[0].Next).to.have.property('id');
+  
+      var answer = jsonRes.Data.AnswerResponse;
+  
+      expect(answer).to.be.an('object');
+      expect(answer).to.have.property('AssessmentId');
+      expect(answer).to.have.property('Parent');
+      expect(answer).to.have.property('Answer');
+      expect(answer).to.have.property('Next');
+      expect(answer.Next).to.have.property('id');
   });
+  
 }

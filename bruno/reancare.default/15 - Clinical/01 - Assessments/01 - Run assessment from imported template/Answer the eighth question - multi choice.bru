@@ -1,7 +1,7 @@
 meta {
-  name: Answer the sixteenth question - single choice
+  name: Answer the eighth question - multi choice
   type: http
-  seq: 18
+  seq: 12
 }
 
 post {
@@ -18,8 +18,8 @@ headers {
 
 body:json {
   {
-      "ResponseType": "Single Choice Selection",
-      "Answer": 3
+      "ResponseType": "Multi Choice Selection",
+      "Answer": "a"
   }
 }
 
@@ -37,7 +37,17 @@ tests {
       expect(res.getStatus()).to.equal(200);
       var jsonRes = res.getBody();
       expect(jsonRes.Status).to.eql('success');
-      expect(jsonRes.Message).to.eql('Assessment has completed successfully!');
+  });
+  
+  test("8- assessment question is answered", function () {
+      var jsonRes = res.getBody();
+      expect(jsonRes.Data).to.have.property('AnswerResponse');
+      expect(jsonRes.Data.AnswerResponse).to.not.be.empty;
+      expect(jsonRes.Data.AnswerResponse).to.have.property('AssessmentId');
+      expect(jsonRes.Data.AnswerResponse).to.have.property('Parent');
+      expect(jsonRes.Data.AnswerResponse).to.have.property('Answer');
+      expect(jsonRes.Data.AnswerResponse).to.have.property('Next');
+      expect(jsonRes.Data.AnswerResponse.Next).to.have.property('id');
   });
   
 }

@@ -1,7 +1,7 @@
 meta {
-  name: Answer the fifteenth question - Text
+  name: Answer the third question - Date
   type: http
-  seq: 17
+  seq: 5
 }
 
 post {
@@ -18,10 +18,9 @@ headers {
 
 body:json {
   {
-      "ResponseType": "Text",
-      "Answer": 220
+      "ResponseType": "Date",
+      "Answer": "2025-10-01"
   }
-  
 }
 
 tests {
@@ -40,7 +39,7 @@ tests {
       expect(jsonRes.Status).to.eql('success');
   });
   
-  test("15- assessment question is answered", function () {
+  test("3- assessment question is answered", function () {
       var jsonRes = res.getBody();
       expect(jsonRes.Data).to.have.property('AnswerResponse');
       expect(jsonRes.Data.AnswerResponse).to.not.be.empty;

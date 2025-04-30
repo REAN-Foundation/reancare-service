@@ -1,7 +1,7 @@
 meta {
-  name: Answer the ninth question - single choice
+  name: Answer the tenth question - File
   type: http
-  seq: 11
+  seq: 14
 }
 
 post {
@@ -18,8 +18,8 @@ headers {
 
 body:json {
   {
-      "ResponseType": "Single Choice Selection",
-      "Answer": 1
+      "ResponseType": "File",
+      "Answer": "abc.png"
   }
 }
 
@@ -39,7 +39,7 @@ tests {
       expect(jsonRes.Status).to.eql('success');
   });
   
-  test("9- assessment question is answered", function () {
+  test("10- assessment question is answered", function () {
       var jsonRes = res.getBody();
       expect(jsonRes.Data).to.have.property('AnswerResponse');
       expect(jsonRes.Data.AnswerResponse).to.not.be.empty;
@@ -47,7 +47,10 @@ tests {
       expect(jsonRes.Data.AnswerResponse).to.have.property('Parent');
       expect(jsonRes.Data.AnswerResponse).to.have.property('Answer');
       expect(jsonRes.Data.AnswerResponse).to.have.property('Next');
-      expect(jsonRes.Data.AnswerResponse.Next).to.have.property('id');
+      if (jsonRes.Data.AnswerResponse.Next !== null) {
+          expect(jsonRes.Data.AnswerResponse.Next).to.have.property('id');
+      }
+      // expect(jsonRes.Data.AnswerResponse.Next).to.have.property('id');
   });
   
 }

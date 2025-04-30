@@ -1,7 +1,7 @@
 meta {
-  name: Answer the fourth question - Text
+  name: Answer the seventh question - Float
   type: http
-  seq: 6
+  seq: 11
 }
 
 post {
@@ -18,8 +18,8 @@ headers {
 
 body:json {
   {
-      "ResponseType": "Text",
-      "Answer": 1
+      "ResponseType": "Float",
+      "Answer": 10.5
   }
 }
 
@@ -39,7 +39,7 @@ tests {
       expect(jsonRes.Status).to.eql('success');
   });
   
-  test("4- assessment question is answered", function () {
+  test("7- assessment question is answered", function () {
       var jsonRes = res.getBody();
       expect(jsonRes.Data).to.have.property('AnswerResponse');
       expect(jsonRes.Data.AnswerResponse).to.not.be.empty;

@@ -1,7 +1,7 @@
 meta {
-  name: Answer the thirteenth question - Text
+  name: Answer the fourth question - Single Choice 
   type: http
-  seq: 15
+  seq: 8
 }
 
 post {
@@ -18,8 +18,8 @@ headers {
 
 body:json {
   {
-      "ResponseType": "Text",
-      "Answer": 90
+      "ResponseType": "Single Choice Selection",
+      "Answer": "1"
   }
 }
 
@@ -39,7 +39,7 @@ tests {
       expect(jsonRes.Status).to.eql('success');
   });
   
-  test("13- assessment question is answered", function () {
+  test("4- assessment question is answered", function () {
       var jsonRes = res.getBody();
       expect(jsonRes.Data).to.have.property('AnswerResponse');
       expect(jsonRes.Data.AnswerResponse).to.not.be.empty;

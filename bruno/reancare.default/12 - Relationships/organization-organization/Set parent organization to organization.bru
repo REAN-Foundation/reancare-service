@@ -31,16 +31,15 @@ tests {
   });
   
   test("Parent organization is set", function () {
-  
       var expectedParentOrganizationId = bru.getEnvVar("PARENT_ORGANIZATION_ID");
   
       var jsonRes = res.getBody();
       expect(jsonRes.Data).to.have.property('Organization');
       expect(jsonRes.Data.Organization).to.not.be.empty;
       expect(jsonRes.Data.Organization).to.have.property('id');
-      expect(jsonRes.Data.Organization).to.have.property('ParentOrganization');
+      expect(jsonRes.Data.Organization).to.have.property('ParentOrganizationId');
   
-      expect(jsonRes.Data.Organization.ParentOrganization.id).equals(expectedParentOrganizationId);
+      expect(jsonRes.Data.Organization.ParentOrganizationId).to.eql(expectedParentOrganizationId);
   });
   
   

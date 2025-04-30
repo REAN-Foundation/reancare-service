@@ -5,7 +5,7 @@ meta {
 }
 
 post {
-  url: {{BASE_URL}}/organizations/{{ORGANIZATION_ID}}/add-person/{{DOCTOR_PERSON_ID_1}}
+  url: {{BASE_URL}}/organizations/{{ORGANIZATION_ID}}/add-person/{{DOCTOR_PERSON_ID_2}}
   body: none
   auth: none
 }
@@ -13,7 +13,7 @@ post {
 headers {
   Content-Type: application/json
   x-api-key: {{API_CLIENT_INTERNAL_KEY}}
-  Authorization: Bearer {{DOCTOR_USER_JWT}}
+  Authorization: Bearer {{ADMIN_USER_JWT}}
 }
 
 tests {

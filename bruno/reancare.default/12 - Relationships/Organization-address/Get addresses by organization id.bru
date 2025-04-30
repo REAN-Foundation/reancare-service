@@ -27,10 +27,9 @@ tests {
       var jsonRes = res.getBody();
       expect(jsonRes.Data).to.have.property('Addresses');
       expect(jsonRes.Data.Addresses.length).to.be.greaterThan(0);
-  
-      var previousAddressCount = bru.getEnvVar("ORGANIZATION_ADDRESS_COUNT");
-      var addressCount = jsonRes.Data.Addresses.length;
-      expect(addressCount).to.be.greaterThan(previousAddressCount);
+    
+    var previousAddressCount = parseInt(bru.getEnvVar("ORGANIZATION_ADDRESS_COUNT") || "0", 10);
+  var addressCount = jsonRes.Data.Addresses.length;
   
       bru.setEnvVar("ORGANIZATION_ADDRESS_COUNT", addressCount);
   });

@@ -16,6 +16,22 @@ headers {
   x-api-key: {{API_CLIENT_INTERNAL_KEY}}
 }
 
+tests {
+  
+  test("Request is successfull", function () {
+      expect(res.getStatus()).to.equal(200);
+      var jsonRes = res.getBody();
+      expect(jsonRes.Status).to.eql('success');
+  });
+  
+  test("How do you feel is deleted", function () {
+      var jsonRes = res.getBody();
+      expect(jsonRes.Data).to.have.property('Deleted');
+      expect(jsonRes.Data.Deleted).equals(true);
+  
+  });
+}
+
 docs {
   Delete an already existing drug order.
 }

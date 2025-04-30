@@ -20,12 +20,12 @@ body:json {
   {
       "PatientUserId": "{{PATIENT_USER_ID}}",
       "AssessmentId": "{{SYMPTOM_ASSESSMENT_ID}}",
-  	"SymptomTypeId": "{{SYMPTOM_TYPE_ID_11}}",
+    "SymptomTypeId": "{{SYMPTOM_TYPE_ID}}",
       "IsPresent": true,
       "Severity": 1,
-  	"Status": 1,
-  	"Interpretation": 1,
-  	"Comments": "The chronic hypertension for the patient with critically high levels."
+    "Status": 1,
+    "Interpretation": 1,
+    "Comments": "The chronic hypertension for the patient with critically high levels."
   }
 }
 
@@ -51,7 +51,7 @@ tests {
       var assessmentId = bru.getEnvVar("SYMPTOM_ASSESSMENT_ID");
       var assessmentTemplateId = bru.getEnvVar("ASSESSMENT_TEMPLATE_ID");
       var symptomTypeId = bru.getEnvVar("SYMPTOM_TYPE_FACIAL_DROPPING_ID");
-      var symptomName = "Facial dropping";
+      var symptomName = "Headache";
   
       var jsonRes = res.getBody();
       expect(jsonRes.Data).to.have.property('Symptom');

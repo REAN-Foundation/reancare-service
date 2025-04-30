@@ -19,14 +19,18 @@ headers {
 body:json {
   {
       "EhrId":"{{EMERGENCY_EHRID}}",
-      "PatientUserId":"{{EMERGENCY_PATIENTUSERID}}",
+      "PatientUserId":"{{PATIENT_USER_ID}}",
       "Details":"{{EMERGENCY_DETAILS}}",
-      "EmergencyDate":"{{EMERGENCY_EMERGENCYDATE}}"
+      "EmergencyDate":"{{EMERGENCY_DATE}}"
   }
 }
 
 script:pre-request {
+  const emergencyDate = new Date().toISOString();
+  
   bru.setEnvVar("EMERGENCY_DETAILS", 'Insomnia');
+  bru.setEnvVar("EMERGENCY_DATE", emergencyDate);
+  bru.setEnvVar("EMERGENCY_EHRID", "ehr-123456");;
 }
 
 tests {
@@ -43,7 +47,7 @@ tests {
       let expectedEhrId = bru.getEnvVar("EMERGENCY_EHRID");
       let expectedPatientUserId = bru.getEnvVar("EMERGENCY_PATIENTUSERID");
       let expectedDetails = bru.getEnvVar("EMERGENCY_DETAILS");
-      let expectedEmergencyDate = bru.getEnvVar("EMERGENCY_EMERGENCYDATE");
+      let expectedEmergencyDate = bru.getEnvVar("EMERGENCY_DATE");
   
       var jsonRes = res.getBody();
       expect(jsonRes.Data).to.have.property('EmergencyEvent');

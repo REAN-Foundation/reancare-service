@@ -17,28 +17,33 @@ headers {
 }
 
 body:json {
+  
   {
-      "PatientUserId": "{{PATIENT_ALLERGY_PATIENTUSERID}}",
-      "Allergy": "{{PATIENT_ALLERGY_Allergy}}",
-      "AllergenCategory": "{{PATIENT_ALLERGY_AllergenCategory}}",
-      "AllergenExposureRoute": "{{PATIENT_ALLERGY_AllergenExposureRoute}}",
-      "Severity": "{{PATIENT_ALLERGY_Severity}}",
-      "Reaction": "{{PATIENT_ALLERGY_Reaction}}",
-      "OtherInformation": "{{PATIENT_ALLERGY_OtherInformation}}",
-      "LastOccurrence": "{{PATIENT_ALLERGY_LastOccurrence}}"
+      "PatientUserId": "{{PATIENT_USER_ID}}",
+      "Allergy": "{{PATIENT_ALLERGY}}",
+      "AllergenCategory": "{{PATIENT_ALLERGY_ALLERGEN_CATEGORY}}",
+      "AllergenExposureRoute": "{{PATIENT_ALLERGY_ALLERGEN_EXPOSURE_ROUTE}}",
+      "Severity": "{{PATIENT_ALLERGY_SEVERITY}}",
+      "Reaction": "{{PATIENT_ALLERGY_REACTION}}",
+      "OtherInformation": "{{PATIENT_ALLERGY_OTHER_INFORMATION}}",
+      "LastOccurrence": "{{PATIENT_ALLERGY_LAST_OCCURANCE}}"
   }
 }
 
 script:pre-request {
-  let patientUserId = bru.getEnvVar('PATIENT_USER_ID');
-  bru.setEnvVar("PATIENT_ALLERGY_PATIENTUSERID", patientUserId);
-  bru.setEnvVar("PATIENT_ALLERGY_Allergy", 'Peanut');
-  bru.setEnvVar("PATIENT_ALLERGY_AllergenCategory", 'Food');
-  bru.setEnvVar("PATIENT_ALLERGY_AllergenExposureRoute", 'Food');
-  bru.setEnvVar("PATIENT_ALLERGY_Severity", 'Medium');
-  bru.setEnvVar("PATIENT_ALLERGY_Reaction", 'Difficulty Breathing');
-  bru.setEnvVar("PATIENT_ALLERGY_OtherInformation", 'Na');
-  bru.setEnvVar("PATIENT_ALLERGY_LastOccurrence", '2021-01-01');
+  let PatientUserId = bru.getEnvVar('PATIENT_USER_ID');
+  bru.setEnvVar("PATIENT_ALLERGY_PATIENTUSERID", PatientUserId);
+  
+  bru.setEnvVar("PATIENT_ALLERGY", 'Peanut');
+  bru.setEnvVar("PATIENT_ALLERGY_ALLERGEN_CATEGORY", 'Food');
+  bru.setEnvVar("PATIENT_ALLERGY_ALLERGEN_EXPOSURE_ROUTE", 'Food');
+  bru.setEnvVar("PATIENT_ALLERGY_SEVERITY", 'Medium');
+  bru.setEnvVar("PATIENT_ALLERGY_REACTION", 'Difficulty Breathing');
+  bru.setEnvVar("PATIENT_ALLERGY_OTHER_INFORMATION", 'Na');
+  bru.setEnvVar("PATIENT_ALLERGY_LAST_OCCURANCE", '2025-01-01');
+  
+  
+  
 }
 
 tests {
@@ -59,14 +64,14 @@ tests {
   
   test("New allergy record is created", function () {
   
-      let expectedPatientUserId = bru.getEnvVar("PATIENT_ALLERGY_PATIENTUSERID");
-      let expectedAllergy = bru.getEnvVar("PATIENT_ALLERGY_Allergy");
-      let expectedAllergenCategory = bru.getEnvVar("PATIENT_ALLERGY_AllergenCategory");
-      let expectedAllergenExposureRoute = bru.getEnvVar("PATIENT_ALLERGY_AllergenExposureRoute");
-      let expectedSeverity = bru.getEnvVar("PATIENT_ALLERGY_Severity");
-      let expectedReaction = bru.getEnvVar("PATIENT_ALLERGY_Reaction");
-      let expectedOtherInformation = bru.getEnvVar("PATIENT_ALLERGY_OtherInformation");
-      let expectedLastOccurrence = bru.getEnvVar("PATIENT_ALLERGY_LastOccurrence");
+      let expectedPatientUserId = bru.getEnvVar("PATIENT_USER_ID");
+      let expectedAllergy = bru.getEnvVar("PATIENT_ALLERGY");
+      let expectedAllergenCategory = bru.getEnvVar("PATIENT_ALLERGY_ALLERGEN_CATEGORY");
+      let expectedAllergenExposureRoute = bru.getEnvVar("PATIENT_ALLERGY_ALLERGEN_EXPOSURE_ROUTE");
+      let expectedSeverity = bru.getEnvVar("PATIENT_ALLERGY_SEVERITY");
+      let expectedReaction = bru.getEnvVar("PATIENT_ALLERGY_REACTION");
+      let expectedOtherInformation = bru.getEnvVar("PATIENT_ALLERGY_OTHER_INFORMATION");
+      let expectedLastOccurrence = bru.getEnvVar("PATIENT_ALLERGY_LAST_OCCURANCE");
   
       var jsonRes = res.getBody();
       expect(jsonRes.Data).to.have.property('Allergy');

@@ -1,12 +1,12 @@
 meta {
-  name: Symptom types by id
+  name: Add new symptom again
   type: http
-  seq: 2
+  seq: 1
 }
 
-get {
-  url: {{BASE_URL}}/clinical/symptom-types/{{SYMPTOM_TYPE_ID}}
-  body: none
+post {
+  url: {{BASE_URL}}/clinical/symptom-types
+  body: json
   auth: none
 }
 
@@ -16,15 +16,37 @@ headers {
   x-api-key: {{API_CLIENT_INTERNAL_KEY}}
 }
 
+body:json {
+  {
+      "Symptom": "Headache",
+      "Description": "Severe to moderate headache",
+      "Tags": [
+          "Stroke",
+          "Migrain"
+      ],
+      "Language": "en-US"
+  }
+}
+
 tests {
+  try {
+      var jsonRes = res.getBody();
+      var id = jsonRes.Data.SymptomType.id;
+      bru.setEnvVar("SYMPTOM_TYPE_ID", id);
+      bru.setEnvVar("SYMPTOM_TYPE_HEADACHE_ID", id);
+      console.log(id);
+  }
+  catch (error) {
+      console.log(error.message);
+  }
   
   test("Request is successfull", function () {
-      expect(res.getStatus()).to.equal(200);
+      expect(res.getStatus()).to.equal(201);
       var jsonRes = res.getBody();
       expect(jsonRes.Status).to.eql('success');
   });
   
-  test("Symptom type by id is returned", function () {
+  test("New body height biometrice is created", function () {
   
       var jsonRes = res.getBody();
       expect(jsonRes.Data).to.have.property('SymptomType');
@@ -41,4 +63,9 @@ tests {
       expect(jsonRes.Data.SymptomType.Tags.length).greaterThan(0);
   });
   
+  
+}
+
+docs {
+  Create a new drug order (medication list) for a patient for the visit.
 }

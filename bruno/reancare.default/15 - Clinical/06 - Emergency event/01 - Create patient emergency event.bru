@@ -21,16 +21,16 @@ body:json {
       "EhrId":"{{EMERGENCY_EHRID}}",
       "PatientUserId":"{{PATIENT_USER_ID}}",
       "Details":"{{EMERGENCY_DETAILS}}",
-      "EmergencyDate":"{{EMERGENCY_EMERGENCYDATE}}"
+      "EmergencyDate":"{{EMERGENCY_DATE}}"
   }
 }
 
 script:pre-request {
+  
   let patientUserId = bru.getEnvVar('PATIENT_USER_ID');
-  bru.setEnvVar("EMERGENCY_EHRID", undefined);
-  bru.setEnvVar("EMERGENCY_PATIENTUSERID", patientUserId);
-  bru.setEnvVar("EMERGENCY_DETAILS", 'Allergy reaction and Difficulty breathing');
-  bru.setEnvVar("EMERGENCY_EMERGENCYDATE", new Date());
+  bru.setEnvVar("EMERGENCY_EHRID", "EHR-" + Math.floor(Math.random() * 1000000)); // Example EHR ID
+  bru.setEnvVar("EMERGENCY_DETAILS", "Allergy reaction and Difficulty breathing");
+  bru.setEnvVar("EMERGENCY_DATE", new Date().toISOString());
 }
 
 tests {
@@ -54,7 +54,7 @@ tests {
       let expectedEhrId = bru.getEnvVar("EMERGENCY_EHRID");
       let expectedPatientUserId = bru.getEnvVar("EMERGENCY_PATIENTUSERID");
       let expectedDetails = bru.getEnvVar("EMERGENCY_DETAILS");
-      let expectedEmergencyDate = bru.getEnvVar("EMERGENCY_EMERGENCYDATE");
+      let expectedEmergencyDate = bru.getEnvVar("EMERGENCY_DATE");
   
       var jsonRes = res.getBody();
       expect(jsonRes.Data).to.have.property('EmergencyEvent');

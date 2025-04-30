@@ -5,7 +5,7 @@ meta {
 }
 
 put {
-  url: {{BASE_URL}}/wellness/nutrition/food-consumptions/{{NUTRITION_ID_1}}
+  url: {{BASE_URL}}/wellness/nutrition/food-consumptions/{{NUTRITION_FOOD_CONSUMPTION_ID}}
   body: json
   auth: none
 }
@@ -31,7 +31,7 @@ tests {
   
   test("Updated food consumption record is returned", function () {
   
-      var expectedFood = "Rice";
+      var expectedFood = "roti";
   
       var jsonRes = res.getBody();
       expect(jsonRes.Data).to.have.property('FoodConsumption');
@@ -41,7 +41,7 @@ tests {
       expect(jsonRes.Data.FoodConsumption).to.have.property('EndTime');
   
       expect(jsonRes.Data.FoodConsumption.Food).equals(expectedFood);
-      expect(jsonRes.Data.FoodConsumption.ConsumedAs).equals("Dinner");
+      expect(jsonRes.Data.FoodConsumption.ConsumedAs).equals("Lunch");
      
   });
   

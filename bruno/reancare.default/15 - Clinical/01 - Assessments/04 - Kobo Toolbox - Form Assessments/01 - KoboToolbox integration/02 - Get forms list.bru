@@ -36,6 +36,10 @@ tests {
   
   try {
       bru.setEnvVar("EMERGENCY_EVENT_ID", jsonRes.Data.EmergencyEvent.id);
+    var firstForm = jsonRes.Data.Forms[0];
+  
+       bru.setEnvVar("PROVIDER_CODE", firstForm.ProviderCode);
+      bru.setEnvVar("FORM_ID", firstForm.ProviderId);
   }
   catch (error) {
       console.log(error.message);

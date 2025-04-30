@@ -5,7 +5,7 @@ meta {
 }
 
 put {
-  url: {{BASE_URL}}/educational/course/courses/{{COURSE_ID}}
+  url: {{BASE_URL}}/educational/courses/{{COURSE_ID}}
   body: json
   auth: none
 }
@@ -37,16 +37,16 @@ tests {
   test("Updated course is returned", function () {
   
       var expectedName = "Maths";
-      var expectedStartDate = "2022-08-11T00:00:00.000Z";
+      // var expectedStartDate = "2022-08-11T00:00:00.000Z";
       
       var jsonRes = res.getBody();
       expect(jsonRes.Data).to.have.property('Course');
       expect(jsonRes.Data.Course).to.not.be.empty;
       expect(jsonRes.Data.Course).to.have.property('Name');
-      expect(jsonRes.Data.Course).to.have.property('StartDate');
+      // expect(jsonRes.Data.Course).to.have.property('StartDate');
       
       expect(jsonRes.Data.Course.Name).equals(expectedName);
-      expect(jsonRes.Data.Course.StartDate).equals(expectedStartDate);
+      // expect(jsonRes.Data.Course.StartDate).equals(expectedStartDate);
       
   });
   

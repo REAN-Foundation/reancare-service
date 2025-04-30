@@ -5,13 +5,13 @@ meta {
 }
 
 get {
-  url: {{BASE_URL}}/educational/course-contents/search?moduleId=8b5fdb2e-71c8-47c7-8941-a160cd4a4df4
+  url: {{BASE_URL}}/educational/course-contents/search?moduleId={{COURSE_MODULE_ID}}
   body: none
   auth: none
 }
 
 params:query {
-  moduleId: 8b5fdb2e-71c8-47c7-8941-a160cd4a4df4
+  moduleId: {{COURSE_MODULE_ID}}
   ~orderBy: Title
   ~order: ascending
   ~pageIndex: 0

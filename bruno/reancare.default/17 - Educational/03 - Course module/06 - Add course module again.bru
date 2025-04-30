@@ -1,11 +1,11 @@
 meta {
-  name: Add course
+  name: Add course module again
   type: http
-  seq: 1
+  seq: 6
 }
 
 post {
-  url: {{BASE_URL}}/educational/courses
+  url: {{BASE_URL}}/educational/course-modules
   body: json
   auth: none
 }
@@ -18,12 +18,11 @@ headers {
 
 body:json {
   {
+      "CourseId": "{{COURSE_ID}}",
       "Name": "English",
       "Description": "Learning course",
       "ImageUrl": "https://docs.google.com/spreadsheets/d/1FcQMxJJAIVZtyuAKJHjSgI0qr86GVttGzm65Azzm8XM/edit#gid=0",
-      "DurationInDays": "30",
-      "StartDate": "2022-08-11",
-      "EndDate": "2022-09-11"
+      "DurationInMins": 90
   }
 }
 
@@ -31,7 +30,7 @@ tests {
   var jsonRes = res.getBody();
   
   try {
-      bru.setEnvVar("COURSE_ID", jsonRes.Data.Course.id);
+      bru.setEnvVar("COURSE_MODULE_ID", jsonRes.Data.CourseModule.id);
   }
   catch (error) {
       console.log(error.message);
@@ -44,16 +43,19 @@ tests {
       expect(jsonRes.Status).to.eql('success');
   });
   
-  test("New course is returned", function () {
+  test("New course module is returned", function () {
   
       var expectedName = "English";
+      var expectedDurationInMins = 90;
       
       var jsonRes = res.getBody();
-      expect(jsonRes.Data).to.have.property('Course');
-      expect(jsonRes.Data.Course).to.not.be.empty;
-      expect(jsonRes.Data.Course).to.have.property('Name');
+      expect(jsonRes.Data).to.have.property('CourseModule');
+      expect(jsonRes.Data.CourseModule).to.not.be.empty;
+      expect(jsonRes.Data.CourseModule).to.have.property('Name');
+      expect(jsonRes.Data.CourseModule).to.have.property('DurationInMins');
       
-      expect(jsonRes.Data.Course.Name).equals(expectedName);
+      expect(jsonRes.Data.CourseModule.Name).equals(expectedName);
+      expect(jsonRes.Data.CourseModule.DurationInMins).equals(expectedDurationInMins);
   });
   
   

@@ -26,7 +26,7 @@ tests {
   test("Course module is returned", function () {
   
       var expectedName = "English";
-      var expectedDurationInMins = 30;
+      var expectedDurationInMins = 90;
       
       var jsonRes = res.getBody();
       expect(jsonRes.Data).to.have.property('CourseModule');

@@ -5,15 +5,14 @@ meta {
 }
 
 get {
-  url: {{BASE_URL}}/clinical/biometrics/body-temperatures/search?recordedByUserId={{RECORDED_BY_USER_ID}}&createdDateFrom=2021-09-13&createdDateTo=2021-10-14&orderBy=BodyTemperature&order=ascending&pageIndex=0&itemsPerPage=25&minValue=36&maxValue=48&patientUserId={{PATIENT_USER_ID}}
+  url: {{BASE_URL}}/clinical/biometrics/body-temperatures/search?recordedByUserId={{RECORDED_BY_USER_ID}}&createdDateFrom=2025-04-12&orderBy=BodyTemperature&order=ascending&pageIndex=0&itemsPerPage=25&minValue=36&maxValue=48&patientUserId={{PATIENT_USER_ID}}
   body: none
   auth: none
 }
 
 params:query {
   recordedByUserId: {{RECORDED_BY_USER_ID}}
-  createdDateFrom: 2021-09-13
-  createdDateTo: 2021-10-14
+  createdDateFrom: 2025-04-12
   orderBy: BodyTemperature
   order: ascending
   pageIndex: 0
@@ -21,6 +20,7 @@ params:query {
   minValue: 36
   maxValue: 48
   patientUserId: {{PATIENT_USER_ID}}
+  ~createdDateTo: 2026-10-14
 }
 
 headers {

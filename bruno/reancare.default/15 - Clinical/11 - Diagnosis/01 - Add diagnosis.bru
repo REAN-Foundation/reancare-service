@@ -11,9 +11,9 @@ post {
 }
 
 headers {
-  Authorization: Bearer {{PATIENT_USER_JWT}}
   x-api-key: {{API_CLIENT_INTERNAL_KEY}}
   Content-Type: application/json
+  Authorization: Bearer {{DOCTOR_USER_JWT}}
 }
 
 body:json {
@@ -25,8 +25,8 @@ body:json {
       "IsClinicallyActive": false,
       "ValidationStatus": "Confirmed",
       "Interpretation": "Significant change up",
-      "OnsetDate": "2021-09-15",
-      "EndDate": "2021-09-25"
+      "OnsetDate": "2025-09-15",
+      "EndDate": "2025-09-25"
   }
 }
 

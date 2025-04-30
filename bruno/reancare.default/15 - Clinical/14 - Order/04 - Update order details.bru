@@ -11,7 +11,7 @@ put {
 }
 
 headers {
-  Authorization: Bearer {{DOCTOR_USER_JWT}}
+  Authorization: Bearer {{PATIENT_USER_JWT}}
   x-api-key: {{API_CLIENT_INTERNAL_KEY}}
   Content-Type: application/json
 }
@@ -19,7 +19,7 @@ headers {
 body:json {
   {
       "CurrentState": "Initiated",
-      "OrderDate": "2021-09-23",
+      "OrderDate": "2025-03-23",
       "AdditionalInformation": "Some additional information"
   }
 }

@@ -40,8 +40,8 @@ tests {
       expect(jsonRes.Data.MedicationConsumption).to.have.property('TimeScheduleEnd');
       expect(jsonRes.Data.MedicationConsumption).to.have.property('Status');
       
-      expect(jsonRes.Data.MedicationConsumption.Dose).greaterThan(0);    
-    
+      // expect(jsonRes.Data.MedicationConsumption.Dose).greaterThan(0);    
+    expect(Number(jsonRes.Data.MedicationConsumption.Dose)).to.be.greaterThan(0);
   });
   
   

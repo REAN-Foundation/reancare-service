@@ -18,7 +18,7 @@ headers {
 
 body:json {
   {
-  	"PatientUserId": "{{PATIENT_USER_ID}}",
+    "PatientUserId": "{{PATIENT_USER_ID}}",
       "DrugName": "Generic Tamiflu",
       "Dose": 1,
       "DosageUnit": "Tablet",
@@ -118,7 +118,7 @@ tests {
       expect(jsonRes.Data.Medication.ConsumptionSummary.TotalConsumptionCount).greaterThan(0);    
       expect(jsonRes.Data.Medication.TimeSchedules.length).greaterThan(0); 
   
-      var expectedDrugName = "Tylenol 8 HR Arthritis Pain: 650 mg";
+      var expectedDrugName = "Generic Tamiflu";
       expect(jsonRes.Data.Medication.DrugName).equals(expectedDrugName);    
     
   });

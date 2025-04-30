@@ -22,26 +22,30 @@ body:json {
       "EhrId": "EHR-12345",
       "DisplayId": "VIS-001",
       "PatientUserId": "{{PATIENT_USER_ID}}",
-      "MedicalPractitionerUserId": "550e8400-e29b-41d4-a716-446655440001",
-      "ReferenceVisitId": "550e8400-e29b-41d4-a716-446655440002",
+      "MedicalPractitionerUserId": "{{MEDICAL_PRACTITIONER_USER_ID}}",
       "CurrentState": "InProgress",
       "StartDate": "2025-03-30T09:00:00Z",
       "EndDate": "2025-03-30T10:00:00Z",
-      "FulfilledAtOrganizationId": "550e8400-e29b-41d4-a716-446655440003",
+      "FulfilledAtOrganizationId": "{{ORGANIZATION_ID}}",
       "AdditionalInformation": "Patient reported mild headache and dizziness."
   }
   
 }
 
+script:pre-request {
+  var doctorId = bru.getEnvVar("DOCTOR_USER_ID");
+  bru.setEnvVar("MEDICAL_PRACTITIONER_USER_ID", doctorId);
+   // "FulfilledAtOrganizationId": "550e8400-e29b-41d4-a716-446655440003",
+}
+
+script:post-response {
+  var jsonRes = res.getBody();
+  if (jsonRes?.Data?.Visit?.id) {
+      bru.setEnvVar("VISIT_ID", jsonRes.Data.Visit.id);
+  }
+}
+
 tests {
-  try {
-      var jsonRes = res.getBody();
-      var id = jsonRes.Data.Visit.id;
-      bru.setEnvVar("VISIT_ID",id);
-  }
-  catch (error) {
-      console.log(error.message);
-  }
   
   test("Request is successfull", function () {
       expect(res.getStatus()).to.equal(201);

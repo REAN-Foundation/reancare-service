@@ -5,14 +5,14 @@ meta {
 }
 
 get {
-  url: {{BASE_URL}}/clinical/visits/search?VisitType=DoctorVisit
+  url: {{BASE_URL}}/clinical/visits/search?VisitType=DoctorVisit&PatientUserId={{PATIENT_USER_ID}}
   body: none
   auth: none
 }
 
 params:query {
   VisitType: DoctorVisit
-  ~PatientUserId: {{PATIENT_USER_ID}}
+  PatientUserId: {{PATIENT_USER_ID}}
   ~MedicalPractitionerUserId: 
   ~ReferenceVisitId: {{VISIT_ID}}
   ~CurrentState: InProgress

@@ -5,13 +5,13 @@ meta {
 }
 
 get {
-  url: {{BASE_URL}}/clinical/maternity/maternity-deliveries/{{DELIVERY_ID}}/complications/search?Status=Healthy
+  url: {{BASE_URL}}/clinical/maternity/maternity-deliveries/{{DELIVERY_ID}}/complications/search?Status=Alive
   body: none
   auth: none
 }
 
 params:query {
-  Status: Healthy
+  Status: Alive
   ~DeliveryId: {{DELIVERY_ID}}
   ~BabyId1: 
   ~BabyId2: 

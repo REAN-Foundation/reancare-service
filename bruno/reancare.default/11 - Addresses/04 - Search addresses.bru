@@ -5,22 +5,22 @@ meta {
 }
 
 get {
-  url: {{BASE_URL}}/addresses/search?type=Official&city=Mum&district={{ADDRESS_DISTRICT_SEARCH_STRING}}&state={{ADDRESS_STATE_SEARCH_STRING}}&country={{ADDRESS_COUNTRY_SEARCH_STRING}}&postalCode=412&orderBy=City&order=ascending&pageIndex=0&itemsPerPage=25
+  url: {{BASE_URL}}/addresses/search?district={{ADDRESS_DISTRICT_SEARCH_STRING}}
   body: json
   auth: none
 }
 
 params:query {
-  type: Official
-  city: Mum
   district: {{ADDRESS_DISTRICT_SEARCH_STRING}}
-  state: {{ADDRESS_STATE_SEARCH_STRING}}
-  country: {{ADDRESS_COUNTRY_SEARCH_STRING}}
-  postalCode: 412
-  orderBy: City
-  order: ascending
-  pageIndex: 0
-  itemsPerPage: 25
+  ~type: Home
+  ~city: Pune
+  ~state: {{ADDRESS_STATE_SEARCH_STRING}}
+  ~country: {{ADDRESS_COUNTRY_SEARCH_STRING}}
+  ~postalCode: 412
+  ~orderBy: City
+  ~order: ascending
+  ~pageIndex: 0
+  ~itemsPerPage: 25
   ~addressLine: {{ADDRESS_LINE_SEARCH_STRING}}
   ~longitudeFrom: {{ADDRESS_LONGITUDE_SEARCH_FROM}}
   ~longitudeTo: {{ADDRESS_LONGITUDE_SEARCH_TO}}

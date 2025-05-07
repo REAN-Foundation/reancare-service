@@ -135,9 +135,11 @@ export class GGHNActions {
                 json       : true,
             };
     
-            var url = process.env.GGHN_API_BASE_URL + `/appointment-schedules/gghn/set-reminders/date/${today}`;
+            var url = process.env.GGHN_API_BASE_URL + `/appointment-schedules/gghn/fetch-schedules-by-api`;
     
-            var body = {};
+            var body = {
+                'reminder_date' : { today }
+            };
     
             needle('post', url, body, options);
             

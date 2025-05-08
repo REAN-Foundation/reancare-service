@@ -284,6 +284,14 @@ export class AssessmentService {
         return response !== null;
     };
 
+    public isSkipped = async (assessmentId: uuid, currentNodeId: uuid) => {
+        const response = await this._assessmentHelperRepo.getQueryResponse(assessmentId, currentNodeId);
+        if (response === null) {
+            return false;
+        }
+        return response.Skipped;
+    }
+
     public isListAnswered = async (assessmentId: uuid, listNode: CAssessmentListNode) => {
         if (!listNode.ServeListNodeChildrenAtOnce) {
             throw new ApiError(400, 'This list node cannot serve its children at once!');
@@ -401,8 +409,11 @@ export class AssessmentService {
             return await this.returnAsCurrentQuestionNode(assessment, currentNode as CAssessmentQuestionNode);
         }
 
+        const isSkipped = await this.isSkipped(assessment.id, currentNode.id);
+        
         var questionNode = currentNode as CAssessmentQuestionNode;
-        if (questionNode.Paths.length > 0) {
+        const hasPaths = questionNode.Paths.length > 0;
+        if (hasPaths && !isSkipped) {
             return await this.traverseQuestionNodePaths(assessment, questionNode);
         }
         else {

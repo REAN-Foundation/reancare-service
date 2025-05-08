@@ -1,0 +1,53 @@
+meta {
+  name: Add question node- 1-6
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{BASE_URL}}/clinical/assessment-templates/{{ASSESSMENT_TEMPLATE_ID}}/nodes
+  body: json
+  auth: none
+}
+
+headers {
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+  Authorization: Bearer {{ADMIN_USER_JWT}}
+}
+
+body:json {
+  {
+      "ParentNodeId": "{{COMB_ASSESSMENT_NODE_ID_1_1}}",
+      "NodeType": "Question",
+      "Title": "Q Where u hospitalized?",
+      "Description": "Query about medication",
+      "QueryResponseType": "Single Choice Selection",
+      "Options": [
+          {
+              "ProviderGivenCode": "yes",
+              "Text": "Yes",
+              "Sequence": 1
+          },
+          {
+              "ProviderGivenCode": "no",
+              "Text": "No",
+              "Sequence": 2
+          }
+          
+      ]
+  }
+  
+}
+
+tests {
+  var jsonRes = res.getBody();
+  
+  try {
+      bru.setEnvVar("ASSESSMENT_NODE_ID", jsonRes.Data.AssessmentNode.id);
+      bru.setEnvVar("COMB_ASSESSMENT_NODE_ID_1_2", jsonRes.Data.AssessmentNode.id);
+  }
+  catch (error) {
+      console.log(error.message);
+  }
+  
+}

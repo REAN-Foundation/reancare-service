@@ -119,3 +119,5 @@ seed.data/default.tenants.seed.json
 127.0.0.1
 rean.db
 reancare_y
+
+duploservices-dev-uploads-*/

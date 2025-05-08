@@ -50,4 +50,6 @@ export interface IMedicationConsumptionRepo {
 
     getStats(patientUserId: string, numMonths: number): Promise<any>;
 
+    deleteMedicationConsumptions(patientUserId: string, hardDelete: boolean): Promise<boolean>;
+
 }

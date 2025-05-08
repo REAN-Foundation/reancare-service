@@ -185,7 +185,7 @@ export class MedicationConsumptionRepo implements IMedicationConsumptionRepo {
             throw new ApiError(500, error.message);
         }
     };
-    
+
     getScheduledMedicationCountById = async (id: string): Promise<number> => {
         try {
             const count = await MedicationConsumption.count({
@@ -193,14 +193,14 @@ export class MedicationConsumptionRepo implements IMedicationConsumptionRepo {
                     MedicationId : id
                 }
             });
-    
+
             return count;
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(error.statusCode || 500, error.message);
         }
     };
-    
+
     getAllTakenBefore = async (patientUserId: uuid, date: Date): Promise<any[]> => {
         try {
             const offsetMinutes = await HelperRepo.getPatientTimezoneOffsets(patientUserId);
@@ -535,6 +535,21 @@ export class MedicationConsumptionRepo implements IMedicationConsumptionRepo {
         try {
             // const numDays = 30 * numMonths;
             return await this.getDayByDayStats(patientUserId, numDays);
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    };
+
+    deleteMedicationConsumptions = async(patientUserId: string, hardDelete: boolean): Promise<boolean> => {
+        try {
+            await MedicationConsumption.destroy({
+                where : {
+                    PatientUserId : patientUserId
+                },
+                force : hardDelete
+            });
+            return true;
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);

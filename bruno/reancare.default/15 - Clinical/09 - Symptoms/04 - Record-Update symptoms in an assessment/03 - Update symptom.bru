@@ -1,0 +1,59 @@
+meta {
+  name: Update symptom
+  type: http
+  seq: 3
+}
+
+put {
+  url: {{BASE_URL}}/clinical/symptoms/{{PATIENT_SYMPTOM_ID}}
+  body: json
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+  authorization: Bearer {{PATIENT_USER_JWT}}
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+}
+
+body:json {
+  {
+      "Comments": "The chronic hypertension"
+  }
+}
+
+tests {
+  
+  test("Request is successfull", function () {
+      expect(res.getStatus()).to.equal(200);
+      var jsonRes = res.getBody();
+      expect(jsonRes.Status).to.eql('success');
+  });
+  
+  test("Symptom is updated", function () {
+  
+      var assessmentId = bru.getEnvVar("SYMPTOM_ASSESSMENT_ID");
+      var assessmentTemplateId = bru.getEnvVar("ASSESSMENT_TEMPLATE_ID");
+      var symptomTypeId = bru.getEnvVar("SYMPTOM_TYPE_HEADACHE_ID");
+      var symptomName = "Headache";
+  
+      var jsonRes = res.getBody();
+      expect(jsonRes.Data).to.have.property('Symptom');
+      expect(jsonRes.Data.Symptom).to.have.property('id');
+      expect(jsonRes.Data.Symptom).to.have.property('PatientUserId');
+      expect(jsonRes.Data.Symptom).to.have.property('Symptom');
+      expect(jsonRes.Data.Symptom).to.have.property('AssessmentTemplateId');
+      expect(jsonRes.Data.Symptom).to.have.property('Severity');
+      expect(jsonRes.Data.Symptom).to.have.property('ValidationStatus');
+      expect(jsonRes.Data.Symptom).to.have.property('Interpretation');
+      expect(jsonRes.Data.Symptom).to.have.property('RecordDate');
+      expect(jsonRes.Data.Symptom).to.have.property('Comments');
+  
+      expect(jsonRes.Data.Symptom.AssessmentTemplateId).equals(assessmentTemplateId);
+      expect(jsonRes.Data.Symptom.AssessmentId).equals(assessmentId);
+      expect(jsonRes.Data.Symptom.Symptom).equals(symptomName);
+      expect(jsonRes.Data.Symptom.SymptomTypeId).equals(symptomTypeId);
+      expect(jsonRes.Data.Symptom.Comments).equals("The chronic hypertension");
+  });
+  
+}

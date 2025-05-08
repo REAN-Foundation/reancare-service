@@ -1,0 +1,33 @@
+meta {
+  name: Delete symptom based assessment
+  type: http
+  seq: 4
+}
+
+delete {
+  url: {{BASE_URL}}/clinical/symptom-assessments/{{SYMPTOM_ASSESSMENT_ID}}
+  body: none
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+  authorization: Bearer {{PATIENT_USER_JWT}}
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+}
+
+tests {
+  
+  test("Request is successfull", function () {
+      expect(res.getStatus()).to.equal(200);
+      var jsonRes = res.getBody();
+      expect(jsonRes.Status).to.eql('success');
+  });
+  
+  test("Assessment is deleted", function () {
+      var jsonRes = res.getBody();
+      expect(jsonRes.Data).to.have.property('Deleted');
+      expect(jsonRes.Data.Deleted).equals(true);
+  
+  });
+}

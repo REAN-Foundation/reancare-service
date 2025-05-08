@@ -1,0 +1,36 @@
+meta {
+  name: Get user roles
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{BASE_URL}}/types/person-roles
+  body: none
+  auth: none
+}
+
+headers {
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+  Content-Type: application/json
+}
+
+tests {
+  try {
+      var jsonRes = res.getBody();
+      var personRoles = jsonRes.Data.PersonRoleTypes;
+      for(var i = 0; i < personRoles.length; i++) {
+          var r = personRoles[i];
+          var name = r.RoleName;
+          var id = r.id;
+          var str = "ROLE_" + name.toUpperCase();
+          console.log(str);
+          console.log(id);
+          bru.setEnvVar(str, id);
+      }
+  }
+  catch (error) {
+      console.log(error.message);
+  }
+  
+}

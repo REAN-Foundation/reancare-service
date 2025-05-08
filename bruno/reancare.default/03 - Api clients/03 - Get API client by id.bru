@@ -1,0 +1,48 @@
+meta {
+  name: Get API client by id
+  type: http
+  seq: 3
+}
+
+get {
+  url: {{BASE_URL}}/api-clients/{{API_CLIENT_ID}}
+  body: none
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{ADMIN_USER_JWT}}
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+  Content-Type: application/json
+}
+
+tests {
+  try {
+      var jsonRes = res.getBody();
+      bru.setEnvVar("API_CLIENT_ID", jsonRes.Data.Client.id);
+      bru.setEnvVar("API_CLIENT_CODE", jsonRes.Data.Client.ClientCode);
+  }
+  catch (error) {
+      console.log(error.message);
+  }
+  
+  test("Request is successfull", function () {
+      expect(res.getStatus()).to.equal(200);
+      var jsonRes = res.getBody();
+      expect(jsonRes.Status).to.eql('success');
+  });
+  
+  test("Api client is returned", function () {
+      var jsonRes = res.getBody();
+      expect(jsonRes.Data).to.have.property('Client');
+      expect(jsonRes.Data.Client).to.not.be.empty;
+      expect(jsonRes.Data.Client).to.have.property('id');
+      expect(jsonRes.Data.Client).to.have.property('ClientCode');
+      expect(jsonRes.Data.Client.ClientCode).to.not.be.null;
+  });
+  
+}
+
+docs {
+  Retrieve an API client info by client id.
+}

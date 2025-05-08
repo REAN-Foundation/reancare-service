@@ -323,6 +323,7 @@ export class CAssessmentQueryResponse {
     SatisfiedConditionId?: uuid;
     ChosenPathId?        : uuid;
     CreatedAt?           : Date;
+    Skipped?             : boolean;
 
     constructor() {
         this.ResponseType = QueryResponseType.None;
@@ -468,6 +469,10 @@ export interface AssessmentBiometrics {
 
 export interface BiometricQueryAnswer extends BaseQueryAnswer {
     Values  : AssessmentBiometrics[] | AssessmentBiometrics;
+}
+
+export interface SkipQueryAnswer extends BaseQueryAnswer {
+    Skipped : boolean;
 }
 
 export class CScoringCondition {

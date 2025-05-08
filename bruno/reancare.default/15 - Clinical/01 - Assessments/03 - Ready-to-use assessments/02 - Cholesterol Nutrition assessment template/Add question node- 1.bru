@@ -1,0 +1,78 @@
+meta {
+  name: Add question node- 1
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{BASE_URL}}/clinical/assessment-templates/{{ASSESSMENT_TEMPLATE_ID}}/nodes
+  body: json
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{ADMIN_USER_JWT}}
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+  Content-Type: application/json
+}
+
+body:json {
+  {
+      "ParentNodeId": "{{ASSESSMENT_TEMPLATE_ROOT_NODE_ID}}",
+      "NodeType": "Question",
+      "Title": "Q 1/5. Did you eat vegetables today?",
+      "Description": "Taking idea about the nutrition of the patient.",
+      "QueryResponseType": "Single Choice Selection",
+      "Options": [
+          {
+              "ProviderGivenCode": "yes",
+              "Text": "Yes",
+              "Sequence": 1
+          },
+          {
+              "ProviderGivenCode": "no",
+              "Text": "No",
+              "Sequence": 2
+          }
+      ]
+  }
+  
+}
+
+tests {
+  var jsonRes = res.getBody();
+  
+  try {
+      bru.setEnvVar("ASSESSMENT_NODE_ID", jsonRes.Data.AssessmentNode.id);
+  }
+  catch (error) {
+      console.log(error.message);
+  }
+  
+  test("Request is successfull", function () {
+      expect(res.getStatus()).to.equal(201);
+      var jsonRes = res.getBody();
+      expect(jsonRes.Status).to.eql('success');
+  });
+  
+  test("Assessment question node - single choice selection is created", function () {
+     
+      var jsonRes = res.getBody();
+      expect(jsonRes.Data).to.have.property('AssessmentNode');
+      expect(jsonRes.Data.AssessmentNode).to.not.be.empty;
+      expect(jsonRes.Data.AssessmentNode).to.have.property('id');
+      expect(jsonRes.Data.AssessmentNode).to.have.property('ParentNodeId');
+      expect(jsonRes.Data.AssessmentNode).to.have.property('NodeType');
+      expect(jsonRes.Data.AssessmentNode).to.have.property('Title');
+      expect(jsonRes.Data.AssessmentNode).to.have.property('Description');
+      expect(jsonRes.Data.AssessmentNode).to.have.property('QueryResponseType');
+      expect(jsonRes.Data.AssessmentNode).to.have.property('TemplateId');
+      
+      expect(jsonRes.Data.AssessmentNode.Title).equals("Q 1/5. Did you eat vegetables today?");
+      expect(jsonRes.Data.AssessmentNode.QueryResponseType).equals("Single Choice Selection");
+      expect(jsonRes.Data.AssessmentNode.NodeType).equals("Question");
+          
+      expect(jsonRes.Data.AssessmentNode.Sequence).greaterThan(0);   
+  });
+  
+}

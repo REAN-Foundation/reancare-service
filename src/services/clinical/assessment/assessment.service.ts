@@ -29,7 +29,9 @@ import {
     DateQueryAnswer,
     FileQueryAnswer,
     BooleanQueryAnswer,
-    CAssessmentListNode } from '../../../domain.types/clinical/assessment/assessment.types';
+    CAssessmentListNode, 
+    SkipQueryAnswer
+} from '../../../domain.types/clinical/assessment/assessment.types';
 import { ProgressStatus, uuid } from '../../../domain.types/miscellaneous/system.types';
 import { AssessmentBiometricsHelper } from './assessment.biometrics.helper';
 import { ConditionProcessor } from './condition.processor';
@@ -214,13 +216,37 @@ export class AssessmentService {
         return response;
     };
 
-    public getQuestionById = async (assessmentId: uuid, questionId: uuid): Promise<AssessmentQueryDto | string> => {
+    public skipQuestion = async (assessmentId: uuid, nodeId: uuid): Promise<AssessmentQuestionResponseDto> => {
+
+        //Check if the this question node is from same template as assessment
+        const node = (await this._assessmentHelperRepo.getNodeById(nodeId));
+        if (!node) {
+            throw new ApiError(404, `Question with id ${nodeId} cannot be found!`);
+        }
+        if (node.Required) {
+            throw new ApiError(400, `Question is required. Cannot skip!`);
+        }
+        const assessment = await this._assessmentRepo.getById(assessmentId);
+        if (!assessment) {
+            throw new ApiError(404, `Assessment with id ${assessmentId} cannot be found!`);
+        }
+        if (node.TemplateId !== assessment.AssessmentTemplateId) {
+            throw new ApiError(400, `Template associated with assessment dows not match with the question!`);
+        }
+        if (node.NodeType === AssessmentNodeType.Question) {
+            return await this.handleSkipQuestion(assessment, node as CAssessmentQuestionNode);
+        }
+
+        return null;
+    };
+
+    public getQuestionById = async (assessmentId: uuid, questionId: uuid): Promise<AssessmentQueryDto> => {
         const questionNode = await this._assessmentHelperRepo.getNodeById(questionId);
         if (
             questionNode.NodeType !== AssessmentNodeType.Question &&
             questionNode.NodeType !== AssessmentNodeType.Message
         ) {
-            return `The node with id ${questionId} is not a question!`;
+            throw new Error(`The node with id ${questionId} is not a question!`);
         }
         const assessment = await this._assessmentRepo.getById(assessmentId);
         if (questionNode.NodeType === AssessmentNodeType.Question) {
@@ -703,7 +729,9 @@ export class AssessmentService {
         | BooleanQueryAnswer
         | FloatQueryAnswer
         | FileQueryAnswer
-        | BiometricQueryAnswer) {
+        | BiometricQueryAnswer
+        | SkipQueryAnswer
+    ) {
         var existingReposne = await this._assessmentHelperRepo.getQueryResponse(assessment.id, nodeId);
         if (existingReposne == null) {
             await this._assessmentHelperRepo.createQueryResponse(answerDto);
@@ -967,6 +995,7 @@ export class AssessmentService {
             | FloatQueryAnswer
             | FileQueryAnswer
             | BiometricQueryAnswer
+            | SkipQueryAnswer
     ) {
         const next = await this.traverse(assessment, nextNodeId);
         if (next === null) {
@@ -1113,6 +1142,20 @@ export class AssessmentService {
             return await this.handleFileAnswer(assessment, questionNode, answerModel);
         }
         return null;
+    };
+
+    private handleSkipQuestion = async (
+        assessment: AssessmentDto,
+        questionNode: CAssessmentQuestionNode) : Promise<AssessmentQuestionResponseDto> => {
+        
+        const currentQueryDto = this.questionNodeAsQueryDto(questionNode, assessment);
+        const answerDto = AssessmentHelperMapper.toSkipQueryAnswerDto(
+            assessment.id,
+            questionNode,
+            true
+        );
+        await this._assessmentHelperRepo.createQueryResponse(answerDto);
+        return await this.respondToUserAnswer(assessment, questionNode.id, currentQueryDto, answerDto);
     };
 
     //#endregion

@@ -79,7 +79,8 @@
                 "ScoreAssessment": true,
                 "Search": true,
                 "StartAssessment": true,
-                "Update": true
+                "Update": true,
+                "SkipQuestion": true
             },
             "AssessmentTemplate": {
                 "AddNode": true,
@@ -249,6 +250,58 @@
             "Search": true,
             "Update": true
         },
+        "Maternity":{
+            "Pregnancy":{
+                "Create": true,
+                "Delete": true,
+                "GetById": true,
+                "Search": true,
+                "Update": true,
+                "CreateVaccination": true,
+                "DeleteVaccination": true,
+                "GetVaccinationById": true,
+                "SearchVaccinations": true,
+                "UpdateVaccination": true,
+                "CreateAntenatalVisit": true,
+                "DeleteAntenatalVisit": true,
+                "GetAntenatalVisitById": true,
+                "UpdateAntenatalVisit": true,
+                "CreateAntenatalMedication": true,
+                "DeleteAntenatalMedication": true,
+                "GetAntenatalMedicationById": true,
+                "UpdateAntenatalMedication": true,
+                "CreateTest": true,
+                "DeleteTest": true,
+                "GetTestById": true,
+                "UpdateTest": true
+            },
+            "Delivery":{
+                "Create": true,
+                "Delete": true,
+                "GetById": true,
+                "Search": true,
+                "Update": true,
+                "CreatePostnatalVisit": true,
+                "DeletePostnatalVisit": true,
+                "GetPostnatalVisitById": true,
+                "SearchPostnatalVisits": true,
+                "UpdatePostnatalVisit": true,
+                "CreatePostnatalMedication": true,
+                "DeletePostnatalMedication": true,
+                "GetPostnatalMedicationById": true,
+                "UpdatePostnatalMedication": true,
+                "CreateComplication": true,
+                "DeleteComplication": true,
+                "GetComplicationById": true,
+                "SearchComplications": true,
+                "UpdateComplication": true,
+                "CreateBaby": true,
+                "GetBabyById": true,
+                "CreateBreastfeeding": true,
+                "GetBreastfeedingById": true,
+                "UpdateBreastfeeding": true
+            }
+        },
         "MedicalCondition": {
             "Create": true,
             "Delete": true,
@@ -323,6 +376,13 @@
                 "Search": true,
                 "Update": true
             }
+        },
+        "Visit": {
+            "Create": true,
+            "Delete": true,
+            "GetById": true,
+            "Search": true,
+            "Update": true
         }
     },
     "Community": {

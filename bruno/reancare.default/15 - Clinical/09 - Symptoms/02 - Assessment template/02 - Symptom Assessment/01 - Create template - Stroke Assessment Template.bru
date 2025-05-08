@@ -1,0 +1,61 @@
+meta {
+  name: Create template - Stroke Assessment Template
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{BASE_URL}}/clinical/symptom-assessment-templates
+  body: json
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+  authorization: Bearer {{ADMIN_USER_JWT}}
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+}
+
+body:json {
+  {
+      "Title": "Stroke",
+      "Description": "This is an assessment to identify the onset of stroke.",
+      "Tags": [
+          "Stroke",
+          "Paralysis"
+      ]
+  }
+}
+
+tests {
+  try {
+      var jsonData = res.getBody();
+      var id = jsonData.Data.SymptomAssessmentTemplate.id;
+      bru.setEnvVar("ASSESSMENT_TEMPLATE_ID", id);
+  }
+  catch (error) {
+      console.log(error.message);
+  }
+  
+  test("Request is successfull", function () {
+      expect(res.getStatus()).to.equal(201);
+      var jsonRes = res.getBody();
+      expect(jsonRes.Status).to.eql('success');
+  });
+  
+  test("New assessment template is created", function () {
+  
+      var jsonRes = res.getBody();
+      expect(jsonRes.Data).to.have.property('SymptomAssessmentTemplate');
+      expect(jsonRes.Data.SymptomAssessmentTemplate).to.have.property('id');
+      expect(jsonRes.Data.SymptomAssessmentTemplate).to.have.property('Title');
+      expect(jsonRes.Data.SymptomAssessmentTemplate).to.have.property('Description');
+      expect(jsonRes.Data.SymptomAssessmentTemplate).to.have.property('Tags');
+      expect(jsonRes.Data.SymptomAssessmentTemplate).to.have.property('TemplateSymptomTypes');
+  
+      expect(jsonRes.Data.SymptomAssessmentTemplate.Title).equals("Stroke");
+      expect(jsonRes.Data.SymptomAssessmentTemplate.Description).equals("This is an assessment to identify the onset of stroke.");
+      expect(jsonRes.Data.SymptomAssessmentTemplate.Tags.length).greaterThan(0);
+  });
+  
+}

@@ -1,0 +1,71 @@
+meta {
+  name: Upload file
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{BASE_URL}}/file-resources/upload
+  body: multipartForm
+  auth: none
+}
+
+headers {
+  enc: multipart/form-data
+  Authorization: Bearer {{PATIENT_USER_JWT}}
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+  Content-Type: 
+}
+
+body:multipart-form {
+  Name: @file(C:\Users\Madhu\Downloads\Maternity module.sql)
+  ~IsPublicResource: true
+  ~IsMultiResolutionImage: false
+  ~z: c
+}
+
+tests {
+  try {
+      var jasonRes = res.getBody();
+      var resources = jasonRes.Data.FileResources;
+      var resource = resources[0];
+      var resourceId = resource.id;
+  
+      bru.setEnvVar("PATIENT_PROFILE_IMAGE_RESOURCE_ID", resourceId);
+      bru.setEnvVar("UPLOADED_RESOURCE_ID", resourceId);
+      bru.setEnvVar("RESOURCE_ID", resourceId);
+  }
+  catch (error) {
+      console.log(error.message);
+  }
+  
+  
+  test("Request is successfull", function () {
+      expect(res.getStatus()).to.equal(201);
+      var jsonRes = res.getBody();
+      expect(jsonRes.Status).to.eql('success');
+  });
+  
+  test("File is uploaded", function () {
+  
+      var jsonRes = res.getBody();
+      expect(jsonRes.Data).to.have.property('FileResources');
+      expect(jsonRes.Data.FileResources.length).greaterThan(0);
+  
+      var resource = jsonRes.Data.FileResources[0];
+  
+      expect(resource).to.have.property('id');
+      expect(resource).to.have.property('FileName');
+      expect(resource).to.have.property('Url');
+      expect(resource).to.have.property('UploadedByUserId');
+      expect(resource).to.have.property('MimeType');
+      expect(resource).to.have.property('Versions');
+      expect(resource).to.have.property('Tags');
+      expect(resource).to.have.property('References');
+      expect(resource).to.have.property('DefaultVersion');
+  
+      expect(resource.Versions.length).greaterThan(0);
+  });
+  
+  
+}

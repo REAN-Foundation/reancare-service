@@ -1,0 +1,47 @@
+meta {
+  name: search blood glucose
+  type: http
+  seq: 4
+}
+
+get {
+  url: {{BASE_URL}}/clinical/biometrics/blood-glucose/search?recordedByUserId={{RECORDED_BY_USER_ID}}&orderBy=BloodGlucose&order=ascending&pageIndex=0&itemsPerPage=25&minValue=0&maxValue=1000&patientUserId={{PATIENT_USER_ID}}
+  body: none
+  auth: none
+}
+
+params:query {
+  recordedByUserId: {{RECORDED_BY_USER_ID}}
+  orderBy: BloodGlucose
+  order: ascending
+  pageIndex: 0
+  itemsPerPage: 25
+  minValue: 0
+  maxValue: 1000
+  patientUserId: {{PATIENT_USER_ID}}
+  ~createdDateFrom: 2021-09-01
+  ~createdDateTo: 2021-10-14
+}
+
+headers {
+  Authorization: Bearer {{PATIENT_USER_JWT}}
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+  Content-Type: application/json
+}
+
+tests {
+  test("Request is successfull", function () {
+      expect(res.getStatus()).to.equal(200);
+      var jsonRes = res.getBody();
+      expect(jsonRes.Status).to.eql('success');
+  });
+  
+  test("Record of blood glucose is returned", function () {
+  
+      var jsonRes = res.getBody();
+      expect(jsonRes.Data).to.have.property('BloodGlucoseRecords');
+      expect(jsonRes.Data.BloodGlucoseRecords.Items.length).to.be.greaterThan(0);
+  
+  });
+  
+}

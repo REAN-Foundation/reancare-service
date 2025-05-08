@@ -1,0 +1,68 @@
+meta {
+  name: Add RSS feed
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{BASE_URL}}/rss-feeds
+  body: json
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{ADMIN_USER_JWT}}
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+  Content-Type: application/json
+}
+
+body:json {
+  {
+      "Title": "Raahi News",
+      "Description": "All news related to Sneha Raahi application",
+      "Link": "https://www.snehamumbai.org/",
+      "Language": "en",
+      "Copyright": "© 2022 SNEH Foundation",
+      "Favicon": "https://www.snehamumbai.org/wp-content/themes/sneha/img/logo.png",
+      "Category": "News",
+      "Image": "https://www.snehamumbai.org/wp-content/themes/sneha/img/logo.png",
+      "Tags": [
+          "Raahi",
+          "Sneha",
+          "Social"
+      ],
+      "ProviderName": "Sneha Foundation",
+      "ProviderEmail": "crisis@snehamumbai.org",
+      "ProviderLink": "https://www.snehamumbai.org/"
+  }
+}
+
+tests {
+  var jsonRes = res.getBody();
+  
+  try {
+      bru.setEnvVar("RSS_FEED_ID", jsonRes.Data.Rssfeed.id);
+  }
+  catch (error) {
+      console.log(error.message);
+  }
+  
+  
+  test("Request is successfull", function () {
+      expect(res.getStatus()).to.equal(201);
+      var jsonRes = res.getBody();
+      expect(jsonRes.Status).to.eql('success');
+  });
+  
+  test("Created RSS feed is returned", function () {
+      var expectedTitle = "Raahi News";
+      var expectedDescription = "All news related to Sneha Raahi application";
+      
+      var jsonRes = res.getBody();
+      expect(jsonRes.Data).to.have.property('Rssfeed');
+      expect(jsonRes.Data.Rssfeed).to.not.be.empty;
+  
+      expect(jsonRes.Data.Rssfeed.Title).to.equal(expectedTitle);
+      expect(jsonRes.Data.Rssfeed.Description).to.equal(expectedDescription);
+  });
+}

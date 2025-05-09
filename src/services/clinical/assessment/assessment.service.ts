@@ -274,6 +274,17 @@ export class AssessmentService {
 
     public completeAssessment = async (assessmentId: uuid): Promise<AssessmentDto> => {
         var assessment = await this._assessmentRepo.completeAssessment(assessmentId);
+        if (!assessment) {
+            throw new ApiError(404, `Assessment with id ${assessmentId} cannot be found!`);
+        }
+        const scoringApplicable = assessment.ScoringApplicable;
+        if (scoringApplicable) {
+            const scoreDetails = await this.scoreAssessment(assessmentId);
+            assessment.ScoreDetails = scoreDetails;
+            assessment = await this._assessmentRepo.update(assessmentId, {
+                ScoreDetails : scoreDetails,
+            });
+        }
         var responses = await this._assessmentHelperRepo.getUserResponses(assessmentId);
         assessment.UserResponses = responses;
         return assessment;
@@ -305,6 +316,110 @@ export class AssessmentService {
         }
         return true;
     };
+
+    public scoreAssessment = async (assessmentId: uuid): Promise<any> => {
+        const assessment = await this._assessmentRepo.getById(assessmentId);
+        if (!assessment) {
+            throw new ApiError(404, `Assessment with id ${assessmentId} cannot be found!`);
+        }
+        const template = await this._assessmentTemplateRepo.getById(assessment.AssessmentTemplateId);
+        if (!template) {
+            throw new Error(`Error while scoring assessment. Cannot find template.`);
+        }
+        const userResponses = await this._assessmentHelperRepo.getUserResponses(assessmentId);
+        if (!userResponses) {
+            throw new Error(`Error while scoring assessment. Cannot find user responses.`);
+        }
+
+        let skippedCount = 0;
+        let answeredCount = 0;
+        let correctAnswerCount = 0;
+        let posedQuestionCount = 0;
+        let totalScore = 0;
+
+        for await (var response of userResponses) {
+            
+            //All the questions posed to the user - Skipped and answered
+            posedQuestionCount++;
+
+            if (response.Skipped) {
+                skippedCount++;
+                continue;
+            }
+            answeredCount++;
+
+            const node = await this._assessmentHelperRepo.getNodeById(response.NodeId);
+            if (!node) {
+                throw new Error(`Error while scoring assessment. Cannot find question node.`);
+            }
+            const question = node as CAssessmentQuestionNode;
+            const responseType = question.QueryResponseType;
+            const correctAnswer = question.CorrectAnswer;
+            if (responseType === QueryResponseType.SingleChoiceSelection ||
+                responseType === QueryResponseType.Integer
+            ) {
+                const answer = response.IntegerValue;
+                let expectedAnswer = correctAnswer && parseInt(correctAnswer);
+                if (answer && answer === expectedAnswer) {
+                    correctAnswerCount++;
+                    totalScore = totalScore + question.Score;
+                }
+            } 
+            else if (responseType === QueryResponseType.Float) {
+                const answer = response.FloatValue;
+                if (answer && Math.abs(answer - question.CorrectAnswer) < 0.01) {
+                    correctAnswerCount++;
+                    totalScore = totalScore + question.Score;
+                }
+            }
+            else if (responseType === QueryResponseType.Boolean) {
+                const answer = response.BooleanValue;
+                if (!correctAnswer) {
+                    continue;
+                }
+                let expectedAnswer = correctAnswer === 'true' ? true : false;
+                if (answer && answer === expectedAnswer) {
+                    correctAnswerCount++;
+                    totalScore = totalScore + question.Score;
+                }
+            }
+            else if (responseType === QueryResponseType.Text) {
+                const answer = response.TextValue;
+                const answerLowerCase = answer ? answer.toLowerCase() : null;
+                const correctAnswerLowerCase = correctAnswer ? correctAnswer.toLowerCase() : null;
+                if (answerLowerCase && answerLowerCase === correctAnswerLowerCase) {
+                    correctAnswerCount++;
+                    totalScore = totalScore + question.Score;
+                }
+            }
+            else if (responseType === QueryResponseType.Date) {
+                const answer = response.DateValue;
+                if (!answer) {
+                    continue;
+                }
+                const correctAnswerYear = correctAnswer ? new Date(correctAnswer).getFullYear() : null;
+                const correctAnswerMonth = correctAnswer ? new Date(correctAnswer).getMonth() : null;
+                const correctAnswerDate = correctAnswer ? new Date(correctAnswer).getDate() : null;
+                const answerYear = answer ? new Date(answer).getFullYear() : null;
+                const answerMonth = answer ? new Date(answer).getMonth() : null;
+                const answerDate = answer ? new Date(answer).getDate() : null;
+                if (answerYear === correctAnswerYear &&
+                    answerMonth === correctAnswerMonth &&
+                    answerDate === correctAnswerDate) {
+                    correctAnswerCount++;
+                    totalScore = totalScore + question.Score;
+                }
+            }
+        }
+        const scoreDetails = {
+            SkippedCount       : skippedCount,
+            AnsweredCount      : answeredCount,
+            CorrectAnswerCount : correctAnswerCount,
+            TotalScore         : totalScore,
+            PoserQuestionCount : posedQuestionCount
+        };
+        return scoreDetails;
+    }
 
     //#region Privates
 

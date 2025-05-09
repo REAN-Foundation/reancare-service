@@ -336,6 +336,7 @@ export class AssessmentService {
         let correctAnswerCount = 0;
         let posedQuestionCount = 0;
         let totalScore = 0;
+        let categorywiseScore = {};
 
         for await (var response of userResponses) {
             
@@ -363,6 +364,16 @@ export class AssessmentService {
                 if (answer && answer === expectedAnswer) {
                     correctAnswerCount++;
                     totalScore = totalScore + question.Score;
+                    if (question.Tags && question.Tags.length > 0) {
+                        for (const tag of question.Tags) {
+                            if (tag && tag.length > 0) {
+                                if (categorywiseScore[tag] === undefined) {
+                                    categorywiseScore[tag] = 0;
+                                }
+                                categorywiseScore[tag] = question.Score;
+                            }
+                        }
+                    }
                 }
             } 
             else if (responseType === QueryResponseType.Float) {
@@ -412,11 +423,12 @@ export class AssessmentService {
             }
         }
         const scoreDetails = {
+            PosedQuestionCount : posedQuestionCount,
             SkippedCount       : skippedCount,
             AnsweredCount      : answeredCount,
             CorrectAnswerCount : correctAnswerCount,
             TotalScore         : totalScore,
-            PoserQuestionCount : posedQuestionCount
+            CategorywiseScore  : categorywiseScore,
         };
         return scoreDetails;
     }

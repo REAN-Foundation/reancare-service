@@ -283,7 +283,7 @@ export class CAssessmentNodePath {
     Condition             ?: CAssessmentPathCondition;
     IsExitPath            ?: boolean;
     MessageBeforeQuestion ?: string;
-    
+
     constructor() {
         this.IsExitPath = false;
     }
@@ -499,6 +499,15 @@ export class CScoringCondition {
         this.Children = [];
     }
 
+}
+
+export interface AssessmentScoring {
+    PosedQuestionCount : number;
+    SkippedCount       : number;
+    AnsweredCount      : number;
+    CorrectAnswerCount : number;
+    TotalScore         : number;
+    CategorywiseScore  : any;
 }
 
 //#endregion

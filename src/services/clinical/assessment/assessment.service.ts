@@ -29,8 +29,9 @@ import {
     DateQueryAnswer,
     FileQueryAnswer,
     BooleanQueryAnswer,
-    CAssessmentListNode, 
-    SkipQueryAnswer
+    CAssessmentListNode,
+    SkipQueryAnswer,
+    AssessmentScoring
 } from '../../../domain.types/clinical/assessment/assessment.types';
 import { ProgressStatus, uuid } from '../../../domain.types/miscellaneous/system.types';
 import { AssessmentBiometricsHelper } from './assessment.biometrics.helper';
@@ -280,9 +281,10 @@ export class AssessmentService {
         const scoringApplicable = assessment.ScoringApplicable;
         if (scoringApplicable) {
             const scoreDetails = await this.scoreAssessment(assessmentId);
+            const scoreDetailsStr = JSON.stringify(scoreDetails, null, 2);
             assessment.ScoreDetails = scoreDetails;
             assessment = await this._assessmentRepo.update(assessmentId, {
-                ScoreDetails : scoreDetails,
+                ScoreDetails : scoreDetailsStr,
             });
         }
         var responses = await this._assessmentHelperRepo.getUserResponses(assessmentId);
@@ -301,7 +303,7 @@ export class AssessmentService {
             return false;
         }
         return response.Skipped;
-    }
+    };
 
     public isListAnswered = async (assessmentId: uuid, listNode: CAssessmentListNode) => {
         if (!listNode.ServeListNodeChildrenAtOnce) {
@@ -317,7 +319,7 @@ export class AssessmentService {
         return true;
     };
 
-    public scoreAssessment = async (assessmentId: uuid): Promise<any> => {
+    public scoreAssessment = async (assessmentId: uuid): Promise<AssessmentScoring | null> => {
         const assessment = await this._assessmentRepo.getById(assessmentId);
         if (!assessment) {
             throw new ApiError(404, `Assessment with id ${assessmentId} cannot be found!`);
@@ -336,10 +338,10 @@ export class AssessmentService {
         let correctAnswerCount = 0;
         let posedQuestionCount = 0;
         let totalScore = 0;
-        let categorywiseScore = {};
+        const categorywiseScore = {};
 
         for await (var response of userResponses) {
-            
+
             //All the questions posed to the user - Skipped and answered
             posedQuestionCount++;
 
@@ -360,7 +362,7 @@ export class AssessmentService {
                 responseType === QueryResponseType.Integer
             ) {
                 const answer = response.IntegerValue;
-                let expectedAnswer = correctAnswer && parseInt(correctAnswer);
+                const expectedAnswer = correctAnswer && parseInt(correctAnswer);
                 if (answer && answer === expectedAnswer) {
                     correctAnswerCount++;
                     totalScore = totalScore + question.Score;
@@ -375,7 +377,7 @@ export class AssessmentService {
                         }
                     }
                 }
-            } 
+            }
             else if (responseType === QueryResponseType.Float) {
                 const answer = response.FloatValue;
                 if (answer && Math.abs(answer - question.CorrectAnswer) < 0.01) {
@@ -388,7 +390,7 @@ export class AssessmentService {
                 if (!correctAnswer) {
                     continue;
                 }
-                let expectedAnswer = correctAnswer === 'true' ? true : false;
+                const expectedAnswer = correctAnswer === 'true' ? true : false;
                 if (answer && answer === expectedAnswer) {
                     correctAnswerCount++;
                     totalScore = totalScore + question.Score;
@@ -422,7 +424,7 @@ export class AssessmentService {
                 }
             }
         }
-        const scoreDetails = {
+        const scoreDetails: AssessmentScoring = {
             PosedQuestionCount : posedQuestionCount,
             SkippedCount       : skippedCount,
             AnsweredCount      : answeredCount,
@@ -431,7 +433,7 @@ export class AssessmentService {
             CategorywiseScore  : categorywiseScore,
         };
         return scoreDetails;
-    }
+    };
 
     //#region Privates
 
@@ -537,7 +539,7 @@ export class AssessmentService {
         }
 
         const isSkipped = await this.isSkipped(assessment.id, currentNode.id);
-        
+
         var questionNode = currentNode as CAssessmentQuestionNode;
         const hasPaths = questionNode.Paths.length > 0;
         if (hasPaths && !isSkipped) {
@@ -1285,7 +1287,7 @@ export class AssessmentService {
     private handleSkipQuestion = async (
         assessment: AssessmentDto,
         questionNode: CAssessmentQuestionNode) : Promise<AssessmentQuestionResponseDto> => {
-        
+
         const currentQueryDto = this.questionNodeAsQueryDto(questionNode, assessment);
         const answerDto = AssessmentHelperMapper.toSkipQueryAnswerDto(
             assessment.id,

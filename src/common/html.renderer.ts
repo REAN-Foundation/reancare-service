@@ -6,7 +6,6 @@ import { ConfigurationManager } from '../config/configuration.manager';
 import path from 'path';
 import fs from 'fs';
 import { Logger } from './logger';
-// import nodeHtmlToImage from 'node-html-to-image';
 import { Helper } from './helper';
 import { OSType } from '../domain.types/miscellaneous/system.types';
 
@@ -16,7 +15,6 @@ export const htmlTextToPNG = async (htmlText: string, width: number, height: num
     try {
         const generatedFilePath = await getGeneratedFilePath(filename);
 
-        // return new Promise<string>( (resolve, reject) => {
         const puppeteerArgs = {
             args            : ['--no-sandbox'],
             defaultViewport : {
@@ -48,20 +46,6 @@ export const htmlTextToPNG = async (htmlText: string, width: number, height: num
 
         Logger.instance().log('Image file created');
         return generatedFilePath;
-
-            // nodeHtmlToImage({
-            //     output        : generatedFilePath,
-            //     html          : htmlText,
-            //     puppeteerArgs : puppeteerArgs
-            // }).then(() => {
-            //     Logger.instance().log('Imgae file created');
-            //     resolve(generatedFilePath);
-            // // eslint-disable-next-line newline-per-chained-call
-            // }).catch(async (error) => {
-            //     Logger.instance().log(`Error creating image file: ${error.message}`);
-            //     reject(null);
-            // });
-        // });
     }
     catch (error) {
         Logger.instance().log(`HTML Error: ${error.message}`);

@@ -71,4 +71,8 @@ export class PulseService {
         return await this._pulseRepo.getMostRecentPulseActivity(patientUserId);
     };
 
+    deleteByUserId = async (patientUserId: string, hardDelete: boolean = true): Promise<boolean> => {
+        return await this._pulseRepo.deleteByUserId(patientUserId, hardDelete);
+    };
+
 }

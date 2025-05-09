@@ -293,7 +293,7 @@ export class BodyTemperatureRepo implements IBodyTemperatureRepo {
                     },
                 },
             });
-                    
+
             if (!recentActivityDetails) {
                 return null;
             }
@@ -304,10 +304,25 @@ export class BodyTemperatureRepo implements IBodyTemperatureRepo {
             };
 
             return result;
-                    
+
         } catch (error) {
             Logger.instance().log(error.message);
             return null;
+        }
+    };
+
+    deleteByUserId = async(patientUserId: string, hardDelete: boolean): Promise<boolean> =>{
+        try {
+            await BodyTemperatureModel.destroy({
+                where : {
+                    PatientUserId : patientUserId
+                },
+                force : hardDelete
+            });
+            return true;
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
         }
     };
 

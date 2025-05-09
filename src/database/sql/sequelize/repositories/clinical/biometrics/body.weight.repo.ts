@@ -286,6 +286,21 @@ export class BodyWeightRepo implements IBodyWeightRepo {
         }
     };
 
+    deleteByUserId = async(patientUserId: string, hardDelete: boolean): Promise<boolean> =>{
+        try {
+            await BodyWeight.destroy({
+                where : {
+                    PatientUserId : patientUserId
+                },
+                force : hardDelete
+            });
+            return true;
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    };
+
     private async getRecords(patientUserId: string, duration: number, durationType: DurationType) {
         const today = new Date();
         const from = TimeHelper.subtractDuration(new Date(), duration, durationType);
@@ -322,7 +337,7 @@ export class BodyWeightRepo implements IBodyWeightRepo {
                     },
                 },
             });
-                        
+
             if (!recentActivityDetails) {
                 return null;
             }
@@ -333,7 +348,7 @@ export class BodyWeightRepo implements IBodyWeightRepo {
             };
 
             return result;
-                        
+
         } catch (error) {
             Logger.instance().log(error.message);
             return null;

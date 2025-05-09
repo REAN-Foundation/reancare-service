@@ -8,7 +8,7 @@ export interface IBodyTemperatureRepo {
     create(bodyTemperatureDomainModel: BodyTemperatureDomainModel): Promise<BodyTemperatureDto>;
 
     getById(id: string): Promise<BodyTemperatureDto>;
-    
+
     search(filters: BodyTemperatureSearchFilters): Promise<BodyTemperatureSearchResults>;
 
     update(id: string, bodyTemperatureDomainModel: BodyTemperatureDomainModel):
@@ -23,5 +23,7 @@ export interface IBodyTemperatureRepo {
     getRecent(patientUserId: string): Promise<BodyTemperatureDto>;
 
     getMostRecentBodyTemperatureActivity(patientUserId: string): Promise<MostRecentActivityDto>;
+
+    deleteByUserId(patientUserId: string, hardDelete: boolean): Promise<boolean>;
 
 }

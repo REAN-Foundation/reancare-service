@@ -20,4 +20,5 @@ export interface IBloodCholesterolRepo {
 
     getStats(patientUserId: string, numMonths: number): Promise<any>;
 
+    deleteByUserId(patientUserId: string, hardDelete: boolean): Promise<boolean>;
 }

@@ -297,7 +297,7 @@ export class BloodOxygenSaturationRepo implements IBloodOxygenSaturationRepo {
                     },
                 },
             });
-        
+
             if (!recentActivityDetails) {
                 return null;
             }
@@ -308,10 +308,25 @@ export class BloodOxygenSaturationRepo implements IBloodOxygenSaturationRepo {
             };
 
             return result;
-        
+
         } catch (error) {
             Logger.instance().log(error.message);
             return null;
+        }
+    };
+
+    deleteByUserId = async(patientUserId: string, hardDelete: boolean): Promise<boolean> =>{
+        try {
+            await BloodOxygenSaturationModel.destroy({
+                where : {
+                    PatientUserId : patientUserId
+                },
+                force : hardDelete
+            });
+            return true;
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
         }
     };
 

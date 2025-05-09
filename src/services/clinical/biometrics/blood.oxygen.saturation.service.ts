@@ -71,4 +71,8 @@ export class BloodOxygenSaturationService {
         return await this._bloodOxygenSaturationRepo.getMostRecentBloodOxygenSaturationActivity(patientUserId);
     };
 
+    deleteByUserId = async (patientUserId: string, hardDelete: boolean = true): Promise<boolean> => {
+        return await this._bloodOxygenSaturationRepo.deleteByUserId(patientUserId, hardDelete);
+    };
+
 }

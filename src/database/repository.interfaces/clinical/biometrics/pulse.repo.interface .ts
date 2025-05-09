@@ -8,7 +8,7 @@ export interface IPulseRepo {
     create(pulseDomainModel: PulseDomainModel): Promise<PulseDto>;
 
     getById(id: string): Promise<PulseDto>;
-    
+
     search(filters: PulseSearchFilters): Promise<PulseSearchResults>;
 
     update(id: string, pulseDomainModel: PulseDomainModel):
@@ -23,5 +23,7 @@ export interface IPulseRepo {
     getRecent(patientUserId: string): Promise<PulseDto>;
 
     getMostRecentPulseActivity (patientUserId: string): Promise<MostRecentActivityDto>;
+
+    deleteByUserId(patientUserId: string, hardDelete: boolean): Promise<boolean>;
 
 }

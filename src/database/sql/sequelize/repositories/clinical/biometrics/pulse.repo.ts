@@ -294,7 +294,7 @@ export class PulseRepo implements IPulseRepo {
                     },
                 },
             });
-                            
+
             if (!recentActivityDetails) {
                 return null;
             }
@@ -305,10 +305,25 @@ export class PulseRepo implements IPulseRepo {
             };
 
             return result;
-                            
+
         } catch (error) {
             Logger.instance().log(error.message);
             return null;
+        }
+    };
+
+    deleteByUserId = async(patientUserId: string, hardDelete: boolean): Promise<boolean> =>{
+        try {
+            await PulseModel.destroy({
+                where : {
+                    PatientUserId : patientUserId
+                },
+                force : hardDelete
+            });
+            return true;
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
         }
     };
 

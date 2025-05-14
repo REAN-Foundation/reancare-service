@@ -147,6 +147,12 @@ export default class Reminder extends Model {
     })
     RawContent: string;
 
+    @Column({
+        type      : DataType.STRING,
+        allowNull : true,
+    })
+    ParentActionId: string;
+
     @Column
     @CreatedAt
     CreatedAt: Date;

@@ -27,7 +27,7 @@ body:json {
 }
 
 script:pre-request {
-  var password = "New-Client-Test@123";
+  var password = "";
   bru.setEnvVar("API_CLIENT_PASSWORD", password);
   
   bru.setEnvVar("API_CLIENT_NEW_NAME", "My health app - New name");

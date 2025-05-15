@@ -57,7 +57,7 @@ tests {
   
       bru.setEnvVar("TENANT_ID", jsonRes.Data.Tenant.id);
       bru.setEnvVar("TENANT_ADMIN_USERNAME", jsonRes.Data.AdminUser.UserName);
-    var password = "Tenant@123";
+    var password = "";
   bru.setEnvVar("TENANT_ADMIN_PASSWORD", password);
       // bru.setEnvVar("TENANT_ADMIN_PASSWORD", jsonRes.Data.AdminUser.Password);
   } catch (error) {
@@ -99,7 +99,7 @@ docs {
       "Email": "john.doe@gmail.com",
       "Gender": "Male",
       "BirthDate": "1979-01-01",
-      "ImageResourceId": "20fd7e52-0d24-4599-bda5-3ed7be2dd383"
+      "ImageResourceId": "  id"
   }
   `
 }

@@ -33,7 +33,7 @@ script:pre-request {
   var phonenumber = (Math.floor(Math.random() * 9000000000) + 1000000000).toString();
   var random_postfix = (Math.floor(Math.random() * 90000) + 10000).toString();
   var email = first + "." + random_postfix + "." + last + "@gmail.com";
-  var password = "Test@123";
+  var password = "";
   
   bru.setEnvVar("FIRST_NAME", first);
   bru.setEnvVar("LAST_NAME", last);
@@ -94,7 +94,7 @@ docs {
       "Email": "john.doe@gmail.com",
       "Gender": "Male",
       "BirthDate": "1979-01-01",
-      "ImageResourceId": "20fd7e52-0d24-4599-bda5-3ed7be2dd383"
+      "ImageResourceId": ""
   }
   `
 }

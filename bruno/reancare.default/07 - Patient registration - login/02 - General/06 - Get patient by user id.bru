@@ -17,7 +17,7 @@ headers {
 }
 
 script:pre-request {
-  var password = "Client-Test@123";
+  var password = "";
   bru.setEnvVar("API_CLIENT_PASSWORD", password);
   
 }

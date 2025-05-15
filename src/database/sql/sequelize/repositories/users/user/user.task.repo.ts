@@ -556,12 +556,16 @@ export class UserTaskRepo implements IUserTaskRepo {
 
     deleteByUserId = async(userId: string, hardDelete: boolean): Promise<boolean> => {
         try {
-            await UserTask.destroy({
+            const deletedCount = await UserTask.destroy({
                 where : {
                     UserId : userId
                 },
                 force : hardDelete
             });
+
+            if (deletedCount === 0) {
+                Logger.instance().log(`No UserTask records found for user: ${userId}`);
+            }
             return true;
         } catch (error) {
             Logger.instance().log(error.message);

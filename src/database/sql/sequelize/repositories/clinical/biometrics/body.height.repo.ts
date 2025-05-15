@@ -209,12 +209,16 @@ export class BodyHeightRepo implements IBodyHeightRepo {
 
     deleteByUserId = async(patientUserId: string, hardDelete: boolean): Promise<boolean> =>{
         try {
-            await BodyHeight.destroy({
+            const deletedCount = await BodyHeight.destroy({
                 where : {
                     PatientUserId : patientUserId
                 },
                 force : hardDelete
             });
+
+            if (deletedCount === 0) {
+                Logger.instance().log(`No BodyHeight records found for user: ${patientUserId}`);
+            }
             return true;
         } catch (error) {
             Logger.instance().log(error.message);

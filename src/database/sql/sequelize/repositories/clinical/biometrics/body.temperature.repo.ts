@@ -313,12 +313,16 @@ export class BodyTemperatureRepo implements IBodyTemperatureRepo {
 
     deleteByUserId = async(patientUserId: string, hardDelete: boolean): Promise<boolean> =>{
         try {
-            await BodyTemperatureModel.destroy({
+            const deletedCount = await BodyTemperatureModel.destroy({
                 where : {
                     PatientUserId : patientUserId
                 },
                 force : hardDelete
             });
+
+            if (deletedCount === 0) {
+                Logger.instance().log(`No BodyTemperature records found for user: ${patientUserId}`);
+            }
             return true;
         } catch (error) {
             Logger.instance().log(error.message);

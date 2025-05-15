@@ -546,8 +546,8 @@ export class MedicationConsumptionService implements IUserActionService {
         return await this._medicationConsumptionRepo.getScheduledMedicationCountById(medicationId);
     };
 
-    deleteMedicationConsumptions = async (patientUserId: string, hardDelete: boolean = true): Promise<boolean> => {
-        return await this._medicationConsumptionRepo.deleteMedicationConsumptions(patientUserId, hardDelete);
+    deleteByUserId = async (patientUserId: string, hardDelete: boolean = true): Promise<boolean> => {
+        return await this._medicationConsumptionRepo.deleteByUserId(patientUserId, hardDelete);
     };
     //#region Privates
 

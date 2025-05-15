@@ -541,14 +541,18 @@ export class MedicationConsumptionRepo implements IMedicationConsumptionRepo {
         }
     };
 
-    deleteMedicationConsumptions = async(patientUserId: string, hardDelete: boolean): Promise<boolean> => {
+    deleteByUserId = async(patientUserId: string, hardDelete: boolean): Promise<boolean> => {
         try {
-            await MedicationConsumption.destroy({
+            const deletedCount = await MedicationConsumption.destroy({
                 where : {
                     PatientUserId : patientUserId
                 },
                 force : hardDelete
             });
+
+            if (deletedCount === 0) {
+                Logger.instance().log(`No Medication Consumption records found for user: ${patientUserId}`);
+            }
             return true;
         } catch (error) {
             Logger.instance().log(error.message);

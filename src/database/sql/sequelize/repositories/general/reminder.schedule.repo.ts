@@ -465,6 +465,26 @@ export class ReminderScheduleRepo implements IReminderScheduleRepo {
         return schedules;
     };
 
+    deleteByUserId = async (userId: string, hardDelete: boolean): Promise<boolean> => {
+        try {
+            const deletedCount = await ReminderSchedule.destroy({
+                where : {
+                    UserId : userId,
+                },
+                force : hardDelete
+            });
+
+            if (deletedCount === 0) {
+                Logger.instance().log(`No Reminder Schedule records found for user: ${userId}`);
+            }
+            return true;
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+
+    };
+
     private addTimeToSchedule(referenceDate: Date, hours: number, minutes: number, seconds: number) {
         referenceDate = TimeHelper.addDuration(referenceDate, hours, DurationType.Hour);
         referenceDate = TimeHelper.addDuration(referenceDate, minutes, DurationType.Minute);

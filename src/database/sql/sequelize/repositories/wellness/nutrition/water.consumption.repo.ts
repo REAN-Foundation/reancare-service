@@ -172,4 +172,23 @@ export class WaterConsumptionRepo implements IWaterConsumptionRepo {
         }
     };
 
+    public deleteByUserId = async (patientUserId: string, hardDelete: boolean): Promise<boolean> => {
+        try {
+            const deletedCount = await WaterConsumptionModel.destroy({
+                where : {
+                    PatientUserId : patientUserId,
+                },
+                force : hardDelete
+            });
+
+            if (deletedCount === 0) {
+                Logger.instance().log(`No WaterConsumption records found for user: ${patientUserId}`);
+            }
+            return true;
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    };
+
 }

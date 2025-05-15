@@ -288,12 +288,16 @@ export class BodyWeightRepo implements IBodyWeightRepo {
 
     deleteByUserId = async(patientUserId: string, hardDelete: boolean): Promise<boolean> =>{
         try {
-            await BodyWeight.destroy({
+            const deletedCount = await BodyWeight.destroy({
                 where : {
                     PatientUserId : patientUserId
                 },
                 force : hardDelete
             });
+
+            if (deletedCount === 0) {
+                Logger.instance().log(`No BodyWeight records found for user: ${patientUserId}`);
+            }
             return true;
         } catch (error) {
             Logger.instance().log(error.message);

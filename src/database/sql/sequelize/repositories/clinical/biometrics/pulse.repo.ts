@@ -314,12 +314,16 @@ export class PulseRepo implements IPulseRepo {
 
     deleteByUserId = async(patientUserId: string, hardDelete: boolean): Promise<boolean> =>{
         try {
-            await PulseModel.destroy({
+            const deletedCount = await PulseModel.destroy({
                 where : {
                     PatientUserId : patientUserId
                 },
                 force : hardDelete
             });
+
+            if (deletedCount === 0) {
+                Logger.instance().log(`No Pulse records found for user: ${patientUserId}`);
+            }
             return true;
         } catch (error) {
             Logger.instance().log(error.message);

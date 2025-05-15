@@ -24,6 +24,7 @@ import { MedicationService } from '../../../../services/clinical/medication/medi
 import { MedicationConsumptionService } from '../../../../services/clinical/medication/medication.consumption.service';
 import { PatientSearchFilters } from '../../../../domain.types/users/patient/patient/patient.search.types';
 import { UserEvents } from '../../user/user.events';
+import { PatientDeleteService } from '../../../../services/users/patient/patient.delete.service';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -53,6 +54,8 @@ export class PatientController extends BaseUserController {
     _customActionHandler: CustomActionsHandler = new CustomActionsHandler();
 
     _validator = new PatientValidator();
+
+    _patientDeleteService: PatientDeleteService = Injector.Container.resolve(PatientDeleteService);
 
     //#endregion
 
@@ -320,7 +323,7 @@ export class PatientController extends BaseUserController {
                 throw new ApiError(400, 'User cannot be deleted.');
             }
 
-            // deleted = await this._service.deleteRelatedData(userId);
+            await this._patientDeleteService.enqueueDeletePatientData(userId);
 
             //TODO: Please add check here whether the patient-person
             //has other roles in the system

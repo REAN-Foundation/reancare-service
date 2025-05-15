@@ -18,4 +18,6 @@ export interface IEmergencyContactRepo {
 
     delete(id: string): Promise<boolean>;
 
+    deleteByUserId(patientUserId: string, hardDelete: boolean): Promise<boolean>;
+
 }

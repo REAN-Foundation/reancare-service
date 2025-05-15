@@ -317,12 +317,16 @@ export class BloodOxygenSaturationRepo implements IBloodOxygenSaturationRepo {
 
     deleteByUserId = async(patientUserId: string, hardDelete: boolean): Promise<boolean> =>{
         try {
-            await BloodOxygenSaturationModel.destroy({
+            const deletedCount = await BloodOxygenSaturationModel.destroy({
                 where : {
                     PatientUserId : patientUserId
                 },
                 force : hardDelete
             });
+
+            if (deletedCount === 0) {
+                Logger.instance().log(`No BloodOxygenSaturation records found for user: ${patientUserId}`);
+            }
             return true;
         } catch (error) {
             Logger.instance().log(error.message);

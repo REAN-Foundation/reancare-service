@@ -293,12 +293,16 @@ export class BloodCholesterolRepo implements IBloodCholesterolRepo {
 
     deleteByUserId = async(patientUserId: string, hardDelete: boolean): Promise<boolean> =>{
         try {
-            await BloodCholesterol.destroy({
+            const deletedCount = await BloodCholesterol.destroy({
                 where : {
                     PatientUserId : patientUserId
                 },
                 force : hardDelete
             });
+
+            if (deletedCount === 0) {
+                Logger.instance().log(`No BloodCholesterol records found for user: ${patientUserId}`);
+            }
             return true;
         } catch (error) {
             Logger.instance().log(error.message);

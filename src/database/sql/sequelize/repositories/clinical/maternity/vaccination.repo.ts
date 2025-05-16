@@ -33,7 +33,7 @@ export class VaccinationRepo implements IVaccinationRepo {
             };
 
             const vaccination = await Vaccination.create(entity);
-            return await VaccinationMapper.toDto(vaccination);
+            return VaccinationMapper.toDto(vaccination);
 
         } catch (error) {
             Logger.instance().log(error.message);
@@ -44,7 +44,7 @@ export class VaccinationRepo implements IVaccinationRepo {
     getById = async (id: string): Promise<VaccinationDto> => {
         try {
             const vaccination = await Vaccination.findByPk(id);
-            return await VaccinationMapper.toDto(vaccination);
+            return VaccinationMapper.toDto(vaccination);
 
         } catch (error) {
             Logger.instance().log(error.message);
@@ -148,7 +148,7 @@ export class VaccinationRepo implements IVaccinationRepo {
 
             await vaccination.save();
 
-            return await VaccinationMapper.toDto(vaccination);
+            return VaccinationMapper.toDto(vaccination);
 
         } catch (error) {
             Logger.instance().log(error.message);

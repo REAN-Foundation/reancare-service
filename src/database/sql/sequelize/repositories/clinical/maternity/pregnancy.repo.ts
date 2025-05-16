@@ -33,7 +33,7 @@ export class PregnancyRepo implements IPregnancyRepo {
             };
 
             const pregnancy = await Pregnancy.create(entity);
-            return await PregnancyMapper.toDto(pregnancy);
+            return PregnancyMapper.toDto(pregnancy);
 
         } catch (error) {
             Logger.instance().log(error.message);
@@ -44,7 +44,7 @@ export class PregnancyRepo implements IPregnancyRepo {
     getById = async (id: string): Promise<PregnancyDto> => {
         try {
             const pregnancy = await Pregnancy.findByPk(id);
-            return await PregnancyMapper.toDto(pregnancy);
+            return PregnancyMapper.toDto(pregnancy);
 
         } catch (error) {
             Logger.instance().log(error.message);
@@ -96,7 +96,7 @@ export class PregnancyRepo implements IPregnancyRepo {
 
             const dtos: PregnancyDto[] = [];
             for (const pregnancy of foundResults.rows) {
-                const dto = await PregnancyMapper.toDto(pregnancy);
+                const dto = PregnancyMapper.toDto(pregnancy);
                 dtos.push(dto);
             }
 
@@ -136,7 +136,7 @@ export class PregnancyRepo implements IPregnancyRepo {
 
             await pregnancy.save();
 
-            return await PregnancyMapper.toDto(pregnancy);
+            return PregnancyMapper.toDto(pregnancy);
 
         } catch (error) {
             Logger.instance().log(error.message);

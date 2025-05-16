@@ -37,7 +37,7 @@ export class AntenatalVisitRepo implements IAntenatalVisitRepo {
             };
 
             const visit = await AnteNatalVisit.create(entity);
-            return await AntenatalVisitMapper.toDto(visit);
+            return AntenatalVisitMapper.toDto(visit);
 
         } catch (error) {
             Logger.instance().log(error.message);
@@ -48,7 +48,7 @@ export class AntenatalVisitRepo implements IAntenatalVisitRepo {
     getById = async (id: string): Promise<AntenatalVisitDto> => {
         try {
             const visit = await AnteNatalVisit.findByPk(id);
-            return await AntenatalVisitMapper.toDto(visit);
+            return AntenatalVisitMapper.toDto(visit);
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
@@ -79,7 +79,7 @@ export class AntenatalVisitRepo implements IAntenatalVisitRepo {
 
             await antenatalVisit.save();
 
-            return await AntenatalVisitMapper.toDto(antenatalVisit);
+            return AntenatalVisitMapper.toDto(antenatalVisit);
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);

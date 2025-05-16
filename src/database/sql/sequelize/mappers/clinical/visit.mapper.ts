@@ -15,7 +15,7 @@ export class VisitMapper {
             VisitType                 : visit.VisitType,
             EhrId                     : visit.EhrId,
             DisplayId                 : visit.DisplayId,
-            PatientUserId              : visit.PatientUserId,
+            PatientUserId             : visit.PatientUserId,
             MedicalPractitionerUserId : visit.MedicalPractitionerUserId,
             ReferenceVisitId          : visit.ReferenceVisitId,
             CurrentState              : visit.CurrentState,

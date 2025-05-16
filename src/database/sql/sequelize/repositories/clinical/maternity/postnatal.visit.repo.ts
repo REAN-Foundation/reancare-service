@@ -4,7 +4,6 @@ import { Logger } from '../../../../../../common/logger';
 import { PostnatalVisitDomainModel } from '../../../../../../domain.types/clinical/maternity/postnatal.visit/postnatal.visit.domain.model';
 import { PostnatalVisitDto } from '../../../../../../domain.types/clinical/maternity/postnatal.visit/postnatal.visit.dto';
 import { PostnatalVisitSearchFilters, PostnatalVisitSearchResults } from '../../../../../../domain.types/clinical/maternity/postnatal.visit/postnatal.visit.search type';
-
 import { IPostnatalVisitRepo } from '../../../../../repository.interfaces/clinical/maternity/postnatal.visit.repo.interface';
 import { PostnatalVisitMapper } from '../../../mappers/clinical/maternity/postnatal.visit.mapper';
 import PostnatalVisit from '../../../models/clinical/maternity/postnatal.visit.model';
@@ -25,17 +24,17 @@ export class PostnatalVisitRepo implements IPostnatalVisitRepo {
     create = async (createModel: PostnatalVisitDomainModel): Promise<PostnatalVisitDto> => {
         try {
             const entity = {
-                DeliveryId         : createModel.DeliveryId,
-                PatientUserId      : createModel.PatientUserId,
-                DateOfVisit        : createModel.DateOfVisit,
-                BodyWeightId       : createModel.BodyWeightId,
-                ComplicationId     : createModel.ComplicationId,
-                BodyTemperatureId  : createModel.BodyTemperatureId,
-                BloodPressureId    : createModel.BloodPressureId
+                DeliveryId        : createModel.DeliveryId,
+                PatientUserId     : createModel.PatientUserId,
+                DateOfVisit       : createModel.DateOfVisit,
+                BodyWeightId      : createModel.BodyWeightId,
+                ComplicationId    : createModel.ComplicationId,
+                BodyTemperatureId : createModel.BodyTemperatureId,
+                BloodPressureId   : createModel.BloodPressureId
             };
 
             const postnatalVisit = await PostnatalVisit.create(entity);
-            return await PostnatalVisitMapper.toDto(postnatalVisit);
+            return PostnatalVisitMapper.toDto(postnatalVisit);
 
         } catch (error) {
             Logger.instance().log(error.message);
@@ -46,7 +45,7 @@ export class PostnatalVisitRepo implements IPostnatalVisitRepo {
     getById = async (id: string): Promise<PostnatalVisitDto> => {
         try {
             const postnatalVisit = await PostnatalVisit.findByPk(id);
-            return await PostnatalVisitMapper.toDto(postnatalVisit);
+            return PostnatalVisitMapper.toDto(postnatalVisit);
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
@@ -106,7 +105,7 @@ export class PostnatalVisitRepo implements IPostnatalVisitRepo {
 
             const dtos: PostnatalVisitDto[] = [];
             for (const postnatalVisit of foundResults.rows) {
-                const dto = await PostnatalVisitMapper.toDto(postnatalVisit);
+                const dto = PostnatalVisitMapper.toDto(postnatalVisit);
                 dtos.push(dto);
             }
 
@@ -155,7 +154,7 @@ export class PostnatalVisitRepo implements IPostnatalVisitRepo {
 
             await postnatalVisit.save();
 
-            return await PostnatalVisitMapper.toDto(postnatalVisit);
+            return PostnatalVisitMapper.toDto(postnatalVisit);
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
@@ -171,4 +170,5 @@ export class PostnatalVisitRepo implements IPostnatalVisitRepo {
             throw new ApiError(500, error.message);
         }
     };
+
 }

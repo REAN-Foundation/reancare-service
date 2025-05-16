@@ -13,16 +13,16 @@ export class TestRepo implements ITestRepo {
     create = async (createModel: TestDomainModel): Promise<TestDto> => {
         try {
             const entity = {
-                PregnancyId: createModel.PregnancyId,
-                TestName   : createModel.TestName,
-                Type       : createModel.Type,
-                Impression : createModel.Impression,
-                Parameters : createModel.Parameters ? JSON.stringify(createModel.Parameters) : null,
-                DateOfTest : createModel.DateOfTest,
+                PregnancyId : createModel.PregnancyId,
+                TestName    : createModel.TestName,
+                Type        : createModel.Type,
+                Impression  : createModel.Impression,
+                Parameters  : createModel.Parameters ? JSON.stringify(createModel.Parameters) : null,
+                DateOfTest  : createModel.DateOfTest,
             };
 
             const test = await TestModel.create(entity);
-            return await TestMapper.toDto(test);
+            return TestMapper.toDto(test);
 
         } catch (error) {
             Logger.instance().log(error.message);
@@ -33,7 +33,7 @@ export class TestRepo implements ITestRepo {
     getById = async (id: string): Promise<TestDto> => {
         try {
             const test = await TestModel.findByPk(id);
-            return await TestMapper.toDto(test);
+            return TestMapper.toDto(test);
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
@@ -66,7 +66,7 @@ export class TestRepo implements ITestRepo {
 
             await test.save();
 
-            return await TestMapper.toDto(test);
+            return TestMapper.toDto(test);
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);

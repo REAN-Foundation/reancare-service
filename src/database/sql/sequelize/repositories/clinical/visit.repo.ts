@@ -28,7 +28,7 @@ export class VisitRepo implements IVisitRepo {
             };
 
             const visit = await VisitModel.create(entity);
-            return await VisitMapper.toDto(visit);
+            return VisitMapper.toDto(visit);
 
         } catch (error) {
             Logger.instance().log(error.message);
@@ -39,7 +39,7 @@ export class VisitRepo implements IVisitRepo {
     getById = async (id: string): Promise<VisitDto> => {
         try {
             const visit = await VisitModel.findByPk(id);
-            return await VisitMapper.toDto(visit);
+            return VisitMapper.toDto(visit);
 
         } catch (error) {
             Logger.instance().log(error.message);
@@ -143,7 +143,7 @@ export class VisitRepo implements IVisitRepo {
                 visit.AdditionalInformation = updateModel.AdditionalInformation;
             }
             await visit.save();
-            return await VisitMapper.toDto(visit);
+            return VisitMapper.toDto(visit);
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);

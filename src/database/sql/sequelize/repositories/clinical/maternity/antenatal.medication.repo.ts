@@ -31,7 +31,7 @@ export class AntenatalMedicationRepo implements IAntenatalMedicationRepo {
             };
 
             const medication = await AntenatalMedication.create(entity);
-            return await AntenatalMedicationMapper.toDto(medication);
+            return AntenatalMedicationMapper.toDto(medication);
 
         } catch (error) {
             Logger.instance().log(error.message);
@@ -42,14 +42,15 @@ export class AntenatalMedicationRepo implements IAntenatalMedicationRepo {
     getById = async (id: string): Promise<AntenatalMedicationDto> => {
         try {
             const medication = await AntenatalMedication.findByPk(id);
-            return await AntenatalMedicationMapper.toDto(medication);
+            return AntenatalMedicationMapper.toDto(medication);
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
         }
     };
 
-    update = async (antenatalMedicationId: string, updateModel: AntenatalMedicationDomainModel): Promise<AntenatalMedicationDto> => {
+    update = async (antenatalMedicationId: string, updateModel: AntenatalMedicationDomainModel):
+    Promise<AntenatalMedicationDto> => {
         try {
             const medication = await AntenatalMedication.findByPk(antenatalMedicationId);
             if (!medication) throw new ApiError(404, 'Antenatal medication not found');
@@ -59,7 +60,7 @@ export class AntenatalMedicationRepo implements IAntenatalMedicationRepo {
 
             await medication.save();
 
-            return await AntenatalMedicationMapper.toDto(medication);
+            return AntenatalMedicationMapper.toDto(medication);
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);

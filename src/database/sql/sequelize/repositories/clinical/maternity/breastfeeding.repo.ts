@@ -13,15 +13,15 @@ export class BreastfeedingRepo implements IBreastfeedingRepo {
     create = async (createModel: BreastfeedingDomainModel): Promise<BreastfeedingDto> => {
         try {
             const entity = {
-                VisitId               : createModel.VisitId,
-                PostNatalVisitId      : createModel.PostNatalVisitId,
-                BreastFeedingStatus   : createModel.BreastFeedingStatus,
-                BreastfeedingFrequency: createModel.BreastfeedingFrequency,
-                AdditionalNotes       : createModel.AdditionalNotes,
+                VisitId                : createModel.VisitId,
+                PostNatalVisitId       : createModel.PostNatalVisitId,
+                BreastFeedingStatus    : createModel.BreastFeedingStatus,
+                BreastfeedingFrequency : createModel.BreastfeedingFrequency,
+                AdditionalNotes        : createModel.AdditionalNotes,
             };
 
             const breastfeeding = await Breastfeeding.create(entity);
-            return await BreastfeedingMapper.toDto(breastfeeding);
+            return BreastfeedingMapper.toDto(breastfeeding);
 
         } catch (error) {
             Logger.instance().log(error.message);
@@ -32,7 +32,7 @@ export class BreastfeedingRepo implements IBreastfeedingRepo {
     getById = async (id: string): Promise<BreastfeedingDto> => {
         try {
             const breastfeeding = await Breastfeeding.findByPk(id);
-            return await BreastfeedingMapper.toDto(breastfeeding);
+            return BreastfeedingMapper.toDto(breastfeeding);
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
@@ -61,7 +61,7 @@ export class BreastfeedingRepo implements IBreastfeedingRepo {
 
             await breastfeeding.save();
 
-            return await BreastfeedingMapper.toDto(breastfeeding);
+            return BreastfeedingMapper.toDto(breastfeeding);
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);

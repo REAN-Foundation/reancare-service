@@ -4,7 +4,6 @@ import { Logger } from '../../../../../../common/logger';
 import { ComplicationDomainModel } from '../../../../../../domain.types/clinical/maternity/complication/complication.domain.model';
 import { ComplicationDto } from '../../../../../../domain.types/clinical/maternity/complication/complication.dto';
 import { ComplicationSearchFilter, ComplicationSearchResults } from '../../../../../../domain.types/clinical/maternity/complication/complication.search.type';
-
 import { IComplicationRepo } from '../../../../../repository.interfaces/clinical/maternity/complication.repo.interface';
 import { ComplicationMapper } from '../../../mappers/clinical/maternity/complication.mapper';
 import Complication from '../../../models/clinical/maternity/complication.model';
@@ -36,7 +35,7 @@ export class ComplicationRepo implements IComplicationRepo {
             };
 
             const complication = await Complication.create(entity);
-            return await ComplicationMapper.toDto(complication);
+            return ComplicationMapper.toDto(complication);
 
         } catch (error) {
             Logger.instance().log(error.message);
@@ -47,7 +46,7 @@ export class ComplicationRepo implements IComplicationRepo {
     getById = async (id: string): Promise<ComplicationDto> => {
         try {
             const complication = await Complication.findByPk(id);
-            return await ComplicationMapper.toDto(complication);
+            return ComplicationMapper.toDto(complication);
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
@@ -87,12 +86,12 @@ export class ComplicationRepo implements IComplicationRepo {
 
             const dtos: ComplicationDto[] = [];
             for (const complication of foundResults.rows) {
-                const dto = await ComplicationMapper.toDto(complication);
+                const dto = ComplicationMapper.toDto(complication);
                 dtos.push(dto);
             }
 
             const searchResults: ComplicationSearchResults = {
-                Items: dtos,
+                Items : dtos,
             };
 
             return searchResults;
@@ -133,7 +132,7 @@ export class ComplicationRepo implements IComplicationRepo {
 
             await complication.save();
 
-            return await ComplicationMapper.toDto(complication);
+            return ComplicationMapper.toDto(complication);
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);

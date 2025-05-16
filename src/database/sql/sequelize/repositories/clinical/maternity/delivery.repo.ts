@@ -4,7 +4,6 @@ import { Logger } from '../../../../../../common/logger';
 import { DeliveryDomainModel } from '../../../../../../domain.types/clinical/maternity/delivery/delivery.domain.model';
 import { DeliveryDto } from '../../../../../../domain.types/clinical/maternity/delivery/delivery.dto';
 import { DeliverySearchFilters, DeliverySearchResults } from '../../../../../../domain.types/clinical/maternity/delivery/delivery.search.type';
-
 import { IDeliveryRepo } from '../../../../../repository.interfaces/clinical/maternity/delivery.repo.interface';
 import { DeliveryMapper } from '../../../mappers/clinical/maternity/delivery.mapper';
 import Delivery from '../../../models/clinical/maternity/delivery.model';
@@ -25,20 +24,20 @@ export class DeliveryRepo implements IDeliveryRepo {
     create = async (createModel: DeliveryDomainModel): Promise<DeliveryDto> => {
         try {
             const entity = {
-                PregnancyId        : createModel.PregnancyId,
-                PatientUserId      : createModel.PatientUserId,
-                DeliveryDate       : createModel.DeliveryDate,
-                DeliveryTime       : createModel.DeliveryTime,
-                GestationAtBirth   : createModel.GestationAtBirth,
-                DeliveryMode       : createModel.DeliveryMode,
-                DeliveryPlace      : createModel.DeliveryPlace,
-                DeliveryOutcome    : createModel.DeliveryOutcome,
-                DateOfDischarge    : createModel.DateOfDischarge,
-                OverallDiagnosis   : createModel.OverallDiagnosis
+                PregnancyId      : createModel.PregnancyId,
+                PatientUserId    : createModel.PatientUserId,
+                DeliveryDate     : createModel.DeliveryDate,
+                DeliveryTime     : createModel.DeliveryTime,
+                GestationAtBirth : createModel.GestationAtBirth,
+                DeliveryMode     : createModel.DeliveryMode,
+                DeliveryPlace    : createModel.DeliveryPlace,
+                DeliveryOutcome  : createModel.DeliveryOutcome,
+                DateOfDischarge  : createModel.DateOfDischarge,
+                OverallDiagnosis : createModel.OverallDiagnosis
             };
 
             const delivery = await Delivery.create(entity);
-            return await DeliveryMapper.toDto(delivery);
+            return DeliveryMapper.toDto(delivery);
 
         } catch (error) {
             Logger.instance().log(error.message);
@@ -49,7 +48,7 @@ export class DeliveryRepo implements IDeliveryRepo {
     getById = async (id: string): Promise<DeliveryDto> => {
         try {
             const delivery = await Delivery.findByPk(id);
-            return await DeliveryMapper.toDto(delivery);
+            return DeliveryMapper.toDto(delivery);
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
@@ -97,7 +96,7 @@ export class DeliveryRepo implements IDeliveryRepo {
 
             const dtos: DeliveryDto[] = [];
             for (const delivery of foundResults.rows) {
-                const dto = await DeliveryMapper.toDto(delivery);
+                const dto = DeliveryMapper.toDto(delivery);
                 dtos.push(dto);
             }
 
@@ -134,7 +133,7 @@ export class DeliveryRepo implements IDeliveryRepo {
 
             await delivery.save();
 
-            return await DeliveryMapper.toDto(delivery);
+            return DeliveryMapper.toDto(delivery);
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);

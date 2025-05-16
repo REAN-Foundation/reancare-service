@@ -23,7 +23,7 @@ export class PostnatalMedicationRepo implements IPostnatalMedicationRepo {
         try {
             const entity = {
                 PostNatalVisitId : createModel.PostNatalVisitId,
-                DeliveryId      : createModel.DeliveryId,
+                DeliveryId       : createModel.DeliveryId,
                 VisitId          : createModel.VisitId,
                 Name             : createModel.Name,
                 Given            : createModel.Given,
@@ -31,7 +31,7 @@ export class PostnatalMedicationRepo implements IPostnatalMedicationRepo {
             };
 
             const postnatalMedication = await PostnatalMedication.create(entity);
-            return await PostnatalMedicationMapper.toDto(postnatalMedication);
+            return PostnatalMedicationMapper.toDto(postnatalMedication);
 
         } catch (error) {
             Logger.instance().log(error.message);
@@ -42,7 +42,7 @@ export class PostnatalMedicationRepo implements IPostnatalMedicationRepo {
     getById = async (id: string): Promise<PostnatalMedicationDto> => {
         try {
             const postnatalMedication = await PostnatalMedication.findByPk(id);
-            return await PostnatalMedicationMapper.toDto(postnatalMedication);
+            return PostnatalMedicationMapper.toDto(postnatalMedication);
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
@@ -74,7 +74,7 @@ export class PostnatalMedicationRepo implements IPostnatalMedicationRepo {
 
             await postnatalMedication.save();
 
-            return await PostnatalMedicationMapper.toDto(postnatalMedication);
+            return PostnatalMedicationMapper.toDto(postnatalMedication);
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
@@ -90,4 +90,5 @@ export class PostnatalMedicationRepo implements IPostnatalMedicationRepo {
             throw new ApiError(500, error.message);
         }
     };
+
 }

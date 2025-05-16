@@ -22,7 +22,7 @@ export class BabyRepo implements IBabyRepo {
             };
 
             const baby = await Baby.create(entity);
-            return await BabyMapper.toDto(baby);
+            return BabyMapper.toDto(baby);
 
         } catch (error) {
             Logger.instance().log(error.message);
@@ -33,7 +33,7 @@ export class BabyRepo implements IBabyRepo {
     getById = async (id: string): Promise<BabyDto> => {
         try {
             const baby = await Baby.findByPk(id);
-            return await BabyMapper.toDto(baby);
+            return BabyMapper.toDto(baby);
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);

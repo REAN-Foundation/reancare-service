@@ -34,7 +34,7 @@ export class VisitController extends BaseController {
                 throw new ApiError(400, 'Cannot create record for visit!');
             }
             ResponseHandler.success(request, response, 'Visit record created successfully!', 201, {
-                Visit: visit,
+                Visit : visit,
             });
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
@@ -51,7 +51,7 @@ export class VisitController extends BaseController {
             }
             await this.authorizeOne(request, visit.PatientUserId);
             ResponseHandler.success(request, response, 'Visit record retrieved successfully!', 200, {
-                Visit: visit,
+                Visit : visit,
             });
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
@@ -61,7 +61,7 @@ export class VisitController extends BaseController {
     search = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
-            let filters: VisitSearchFilters = await this._validator.search(request);
+            const filters: VisitSearchFilters = await this._validator.search(request);
             const searchResults = await this._service.search(filters);
             const count = searchResults.Items.length;
 
@@ -71,7 +71,7 @@ export class VisitController extends BaseController {
                     : `Total ${count} visit records retrieved successfully!`;
 
             ResponseHandler.success(request, response, message, 200, {
-                VisitRecords: searchResults });
+                VisitRecords : searchResults });
 
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
@@ -94,7 +94,7 @@ export class VisitController extends BaseController {
             }
 
             ResponseHandler.success(request, response, 'Visit record updated successfully!', 200, {
-                Visit: updated,
+                Visit : updated,
             });
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
@@ -116,7 +116,7 @@ export class VisitController extends BaseController {
             }
 
             ResponseHandler.success(request, response, 'Visit record deleted successfully!', 200, {
-                Deleted: true,
+                Deleted : true,
             });
         } catch (error) {
             ResponseHandler.handleError(request, response, error);

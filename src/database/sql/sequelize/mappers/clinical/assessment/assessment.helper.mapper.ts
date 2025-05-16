@@ -419,7 +419,7 @@ export class AssessmentHelperMapper {
             Skipped          : skipped
         };
         return dto;
-    };
+    }
 
     static toScoringConditionDto(condition: ScoringCondition): CScoringCondition {
         if (condition == null) {

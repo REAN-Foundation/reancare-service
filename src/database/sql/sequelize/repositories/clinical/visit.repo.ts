@@ -1,4 +1,3 @@
-import { Op } from 'sequelize';
 import { ApiError } from '../../../../../common/api.error';
 import { Logger } from '../../../../../common/logger';
 import { VisitDto } from '../../../../../domain.types/clinical/visit/visit.dto';
@@ -18,7 +17,7 @@ export class VisitRepo implements IVisitRepo {
                 VisitType                 : createModel.VisitType,
                 EhrId                     : createModel.EhrId,
                 DisplayId                 : createModel.DisplayId,
-                PatientUserId              : createModel.PatientUserId,
+                PatientUserId             : createModel.PatientUserId,
                 MedicalPractitionerUserId : createModel.MedicalPractitionerUserId,
                 ReferenceVisitId          : createModel.ReferenceVisitId,
                 CurrentState              : createModel.CurrentState,
@@ -81,7 +80,7 @@ export class VisitRepo implements IVisitRepo {
             const order = filters.Order === 'descending' ? 'DESC' : 'ASC';
             search['order'] = [[orderByColumn, order]];
 
-            let limit = filters.ItemsPerPage || 25;
+            const limit = filters.ItemsPerPage || 25;
             let offset = 0;
             if (filters.PageIndex) {
                 offset = filters.PageIndex * limit;
@@ -150,6 +149,7 @@ export class VisitRepo implements IVisitRepo {
             throw new ApiError(500, error.message);
         }
     };
+
     delete = async (id: string): Promise<boolean> => {
         try {
             const result = await VisitModel.destroy({ where: { id } });
@@ -159,4 +159,5 @@ export class VisitRepo implements IVisitRepo {
             throw new ApiError(500, error.message);
         }
     };
+
 }

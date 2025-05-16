@@ -85,7 +85,7 @@ export class PregnancyValidator extends BaseValidator {
 
     private static getFilter(request): PregnancySearchFilters {
 
-        const filters: PregnancySearchFilters = { 
+        const filters: PregnancySearchFilters = {
             DateOfLastMenstrualPeriod : request.query.DateOfLastMenstrualPeriod ?? null,
             EstimatedDateOfChildBirth : request.query.EstimatedDateOfChildBirth ?? null,
             Gravidity                 : request.query.Gravidity ? parseInt(request.query.Gravidity as string) : null,
@@ -99,16 +99,16 @@ export class PregnancyValidator extends BaseValidator {
     //#region Vaccination validation
 
      getVaccinationDomainModel = (request: express.Request): VaccinationDomainModel => {
-        const VaccinationModel: VaccinationDomainModel = {
-            PregnancyId              : request.body.PregnancyId,
-            VaccineName              : request.body.VaccineName,
-            DoseNumber               : request.body.DoseNumber,
-            DateAdministered         : new Date(request.body.DateAdministered),
-            MedicationId             : request.body.MedicationId ?? null,
-            MedicationConsumptionId  : request.body.MedicationConsumptionId ?? null,
-        };
-        return VaccinationModel;
-    };
+         const VaccinationModel: VaccinationDomainModel = {
+             PregnancyId             : request.body.PregnancyId,
+             VaccineName             : request.body.VaccineName,
+             DoseNumber              : request.body.DoseNumber,
+             DateAdministered        : new Date(request.body.DateAdministered),
+             MedicationId            : request.body.MedicationId ?? null,
+             MedicationConsumptionId : request.body.MedicationConsumptionId ?? null,
+         };
+         return VaccinationModel;
+     };
 
     createVaccination = async (request: express.Request): Promise<VaccinationDomainModel> => {
         await this.validateVaccinationCreateBody(request);
@@ -150,10 +150,11 @@ export class PregnancyValidator extends BaseValidator {
         const pageIndex = request.query.pageIndex !== 'undefined' ? parseInt(request.query.pageIndex as string, 10) : 0;
         const itemsPerPage = request.query.itemsPerPage !== 'undefined' ? parseInt(request.query.itemsPerPage as string, 10) : 25;
         const filters: VaccinationSearchFilters = {
-            PregnancyId             : request.query.PregnancyId ?? null,
-            VaccineName             : request.query.VaccineName ?? null,
-            DoseNumber              : request.query.DoseNumber ? parseInt(request.query.DoseNumber as string) : null,
-            DateAdministered        : request.query.DateAdministered ? new Date(request.query.DateAdministered as string) : null,
+            PregnancyId      : request.query.PregnancyId ?? null,
+            VaccineName      : request.query.VaccineName ?? null,
+            DoseNumber       : request.query.DoseNumber ? parseInt(request.query.DoseNumber as string) : null,
+            DateAdministered : request.query.DateAdministered ?
+                new Date(request.query.DateAdministered as string) : null,
             MedicationId            : request.query.MedicationId ?? null,
             MedicationConsumptionId : request.query.MedicationConsumptionId ?? null,
         };
@@ -232,10 +233,10 @@ export class PregnancyValidator extends BaseValidator {
     
         this.validateRequest(request);
         return request.body;
-    };
-//#endregion Antenatal visit
+    }
+    //#endregion Antenatal visit
 
-//#region Antenatal Medication
+    //#region Antenatal Medication
 
     createAntenatalMedication = async (request: express.Request): Promise<AntenatalMedicationDomainModel> => {
         await this.validateUuid(request, 'AnteNatalVisitId', Where.Body, true, false);
@@ -267,15 +268,15 @@ export class PregnancyValidator extends BaseValidator {
 
     getTestDomainModel = (request: express.Request): TestDomainModel => {
         const TestModel: TestDomainModel = {
-            PregnancyId  : request.body.PregnancyId,
-            TestName     : request.body.TestName,
-            Type         : request.body.Type,
-            Impression   : request.body.Impression,
-            Parameters   : request.body.Parameters,
-            DateOfTest   : request.body.DateOfTest,
+            PregnancyId : request.body.PregnancyId,
+            TestName    : request.body.TestName,
+            Type        : request.body.Type,
+            Impression  : request.body.Impression,
+            Parameters  : request.body.Parameters,
+            DateOfTest  : request.body.DateOfTest,
         };
         return TestModel;
-    }
+    };
 
     createTest = async (request: express.Request): Promise<TestDomainModel> => {
         await this.validateTestCreateBody(request);
@@ -304,6 +305,7 @@ export class PregnancyValidator extends BaseValidator {
         this.validateRequest(request);
         return request.body;
     };
+
 }
 function uuidv4() {
     throw new Error('Function not implemented.');

@@ -3,7 +3,7 @@ import { ApiError } from '../../../../../../common/api.error';
 import { Logger } from '../../../../../../common/logger';
 import { PregnancyDomainModel } from "../../../../../../domain.types/clinical/maternity/pregnancy/pregnancy.domain.model";
 import { PregnancyDto } from "../../../../../../domain.types/clinical/maternity/pregnancy/pregnancy.dto";
-import { PregnancySearchFilters, PregnancySearchResults } from "../../../../../../domain.types/clinical/maternity/pregnancy/pregnancy.search.type"
+import { PregnancySearchFilters, PregnancySearchResults } from "../../../../../../domain.types/clinical/maternity/pregnancy/pregnancy.search.type";
 import { IPregnancyRepo } from '../../../../../repository.interfaces/clinical/maternity/pregnancy.repo.interface';
 import { PregnancyMapper } from '../../../mappers/clinical/maternity/pregnancy.mapper';
 import Pregnancy from '../../../models/clinical/maternity/pregnancy.model';
@@ -24,12 +24,12 @@ export class PregnancyRepo implements IPregnancyRepo {
     create = async (createModel: PregnancyDomainModel): Promise<PregnancyDto> => {
         try {
             const entity = {
-                PatientUserId              : createModel.PatientUserId,
-                ExternalPregnancyId        : createModel.ExternalPregnancyId,
-                DateOfLastMenstrualPeriod  : createModel.DateOfLastMenstrualPeriod,
-                EstimatedDateOfChildBirth  : createModel.EstimatedDateOfChildBirth,
-                Gravidity                  : createModel.Gravidity,
-                Parity                     : createModel.Parity
+                PatientUserId             : createModel.PatientUserId,
+                ExternalPregnancyId       : createModel.ExternalPregnancyId,
+                DateOfLastMenstrualPeriod : createModel.DateOfLastMenstrualPeriod,
+                EstimatedDateOfChildBirth : createModel.EstimatedDateOfChildBirth,
+                Gravidity                 : createModel.Gravidity,
+                Parity                    : createModel.Parity
             };
 
             const pregnancy = await Pregnancy.create(entity);

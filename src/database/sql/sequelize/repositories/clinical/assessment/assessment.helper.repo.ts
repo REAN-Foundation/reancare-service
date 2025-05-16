@@ -924,7 +924,7 @@ export class AssessmentHelperRepo implements IAssessmentHelperRepo {
                 Sequence     : skipQuery.QuestionSequence,
                 Type         : skipQuery.ResponseType,
                 Skipped      : true,
-            }
+            };
         }
 
         if (answer.ResponseType === QueryResponseType.SingleChoiceSelection) {

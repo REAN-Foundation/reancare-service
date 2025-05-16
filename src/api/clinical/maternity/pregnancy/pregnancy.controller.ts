@@ -8,12 +8,9 @@ import { Injector } from '../../../../startup/injector';
 import { PregnancyValidator } from './pregnancy.validator';
 import { BaseController } from '../../../base.controller';
 import { AntenatalVisitService } from '../../../../services/clinical/maternity/antenatal.visit.service';
-import { AntenatalMedicationService } from '../../../../services/clinical/maternity/antenatal.medication.service'
+import { AntenatalMedicationService } from '../../../../services/clinical/maternity/antenatal.medication.service';
 import { TestService } from '../../../../services/clinical/maternity/test.service';
 import { VisitService } from '../../../../services/clinical/visit.service';
-import { AntenatalVisitDomainModel } from '../../../../domain.types/clinical/maternity/antenatal.visit/antenatal.visit.domain.type';
-import { VisitDto } from '../../../../domain.types/clinical/visit/visit.dto';
-import { AntenatalVisitDto } from '../../../../domain.types/clinical/maternity/antenatal.visit/antenatal.visit.dto';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -52,7 +49,7 @@ export class PregnancyController extends BaseController {
             }
 
             ResponseHandler.success(request, response, 'Pregnancy record created successfully!', 201, {
-                Pregnancy: pregnancy,
+                Pregnancy : pregnancy,
             });
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
@@ -68,7 +65,7 @@ export class PregnancyController extends BaseController {
             }
 
             ResponseHandler.success(request, response, 'Pregnancy record retrieved successfully!', 200, {
-                Pregnancy: pregnancy,
+                Pregnancy : pregnancy,
             });
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
@@ -86,7 +83,7 @@ export class PregnancyController extends BaseController {
                     : `Total ${count} pregnancy records retrieved successfully!`;
 
             ResponseHandler.success(request, response, message, 200, {
-                Pregnancies: searchResults
+                Pregnancies : searchResults
             });
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
@@ -108,7 +105,7 @@ export class PregnancyController extends BaseController {
             }
 
             ResponseHandler.success(request, response, 'Pregnancy record updated successfully!', 200, {
-                Pregnancy: updated,
+                Pregnancy : updated,
             });
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
@@ -129,7 +126,7 @@ export class PregnancyController extends BaseController {
             }
 
             ResponseHandler.success(request, response, 'Pregnancy record deleted successfully!', 200, {
-                Deleted: true,
+                Deleted : true,
             });
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
@@ -149,7 +146,7 @@ createVaccination = async (request: express.Request, response: express.Response)
         }
 
         ResponseHandler.success(request, response, 'Vaccination record created successfully!', 201, {
-            Vaccination: vaccination,
+            Vaccination : vaccination,
         });
     } catch (error) {
         ResponseHandler.handleError(request, response, error);
@@ -165,7 +162,7 @@ getVaccinationById = async (request: express.Request, response: express.Response
         }
 
         ResponseHandler.success(request, response, 'Vaccination record retrieved successfully!', 200, {
-            Vaccination: vaccination,
+            Vaccination : vaccination,
         });
     } catch (error) {
         ResponseHandler.handleError(request, response, error);
@@ -183,7 +180,7 @@ searchVaccinations = async (request: express.Request, response: express.Response
                 : `Total ${count} vaccination records retrieved successfully!`;
 
         ResponseHandler.success(request, response, message, 200, {
-            Vaccinations: searchResults
+            Vaccinations : searchResults
         });
     } catch (error) {
         ResponseHandler.handleError(request, response, error);
@@ -205,7 +202,7 @@ updateVaccination = async (request: express.Request, response: express.Response)
         }
 
         ResponseHandler.success(request, response, 'Vaccination record updated successfully!', 200, {
-            Vaccination: updated,
+            Vaccination : updated,
         });
     } catch (error) {
         ResponseHandler.handleError(request, response, error);
@@ -226,16 +223,16 @@ deleteVaccination = async (request: express.Request, response: express.Response)
         }
 
         ResponseHandler.success(request, response, 'Vaccination record deleted successfully!', 200, {
-            Deleted: true,
+            Deleted : true,
         });
     } catch (error) {
         ResponseHandler.handleError(request, response, error);
     }
 };
 
-    //#endregion
+//#endregion
 
-    //#region Antenatal Visit Action methods
+//#region Antenatal Visit Action methods
 
     createAntenatalVisit = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
@@ -258,12 +255,12 @@ deleteVaccination = async (request: express.Request, response: express.Response)
 
             const responseData = {
                 ...antenatalVisit,
-                Visit: visit,
-                Pregnancy: pregnancy
+                Visit     : visit,
+                Pregnancy : pregnancy
             };
     
             ResponseHandler.success(request, response, 'Antenatal visit record created successfully!', 201, {
-                AntenatalVisit: responseData,
+                AntenatalVisit : responseData,
             });
     
         } catch (error) {
@@ -280,7 +277,7 @@ deleteVaccination = async (request: express.Request, response: express.Response)
             }
 
             ResponseHandler.success(request, response, 'Antenatal visit record retrieved successfully!', 200, {
-                AntenatalVisit: visit,
+                AntenatalVisit : visit,
             });
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
@@ -303,7 +300,7 @@ deleteVaccination = async (request: express.Request, response: express.Response)
             }
     
             ResponseHandler.success(request, response, 'Antenatal visit updated successfully!', 200, {
-                AntenatalVisit: updatedVisit,
+                AntenatalVisit : updatedVisit,
             });
     
         } catch (error) {
@@ -334,7 +331,7 @@ deleteVaccination = async (request: express.Request, response: express.Response)
             }
 
             ResponseHandler.success(request, response, 'Antenatal medication record created successfully!', 201, {
-                AntenatalMedication: medication,
+                AntenatalMedication : medication,
             });
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
@@ -350,7 +347,7 @@ deleteVaccination = async (request: express.Request, response: express.Response)
             }
 
             ResponseHandler.success(request, response, 'Antenatal medication record retrieved successfully!', 200, {
-                AntenatalMedication: medication,
+                AntenatalMedication : medication,
             });
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
@@ -373,7 +370,7 @@ deleteVaccination = async (request: express.Request, response: express.Response)
             }
     
             ResponseHandler.success(request, response, 'Antenatal medication updated successfully!', 200, {
-                AntenatalMedication: updatedMedication,
+                AntenatalMedication : updatedMedication,
             });
     
         } catch (error) {
@@ -404,7 +401,7 @@ deleteVaccination = async (request: express.Request, response: express.Response)
             }
 
             ResponseHandler.success(request, response, "Test record created successfully!", 201, {
-                Test: test,
+                Test : test,
             });
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
@@ -420,7 +417,7 @@ deleteVaccination = async (request: express.Request, response: express.Response)
             }
 
             ResponseHandler.success(request, response, "Test record retrieved successfully!", 200, {
-                Test: test,
+                Test : test,
             });
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
@@ -443,7 +440,7 @@ deleteVaccination = async (request: express.Request, response: express.Response)
             }
 
             ResponseHandler.success(request, response, "Test record updated successfully!", 200, {
-                Test: updatedTest,
+                Test : updatedTest,
             });
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
@@ -461,4 +458,5 @@ deleteVaccination = async (request: express.Request, response: express.Response)
     };
 
     //#endregion
+
 }

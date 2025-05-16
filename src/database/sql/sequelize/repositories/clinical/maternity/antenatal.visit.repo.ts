@@ -2,7 +2,7 @@ import { ApiError } from '../../../../../../common/api.error';
 import { Logger } from '../../../../../../common/logger';
 import { AntenatalVisitDomainModel } from '../../../../../../domain.types/clinical/maternity/antenatal.visit/antenatal.visit.domain.type';
 import { AntenatalVisitDto } from '../../../../../../domain.types/clinical/maternity/antenatal.visit/antenatal.visit.dto';
-import{ IAntenatalVisitRepo } from '../../../../../repository.interfaces/clinical/maternity/antenatal.visit.repo.interface';
+import { IAntenatalVisitRepo } from '../../../../../repository.interfaces/clinical/maternity/antenatal.visit.repo.interface';
 import { AntenatalVisitMapper } from '../../../mappers/clinical/maternity/antenatal.visit.mapper';
 import AnteNatalVisit from '../../../models/clinical/maternity/antenatal.visit.model';
 
@@ -22,18 +22,18 @@ export class AntenatalVisitRepo implements IAntenatalVisitRepo {
     create = async (createModel: AntenatalVisitDomainModel): Promise<AntenatalVisitDto> => {
         try {
             const entity = {
-                VisitId                  : createModel.VisitId,
-                ExternalVisitId          : createModel.ExternalVisitId,
-                PregnancyId              : createModel.PregnancyId,
-                PatientUserId            : createModel.PatientUserId,
-                DateOfVisit              : createModel.DateOfVisit,
-                GestationInWeeks         : createModel.GestationInWeeks,
-                FetalHeartRateBPM        : createModel.FetalHeartRateBPM,
-                FundalHeight             : createModel.FundalHeight ? JSON.stringify(createModel.FundalHeight) : null,
-                DateOfNextVisit          : createModel.DateOfNextVisit,
-                BodyWeightID             : createModel.BodyWeightID,
-                BodyTemperatureId        : createModel.BodyTemperatureId,
-                BloodPressureId          : createModel.BloodPressureId
+                VisitId           : createModel.VisitId,
+                ExternalVisitId   : createModel.ExternalVisitId,
+                PregnancyId       : createModel.PregnancyId,
+                PatientUserId     : createModel.PatientUserId,
+                DateOfVisit       : createModel.DateOfVisit,
+                GestationInWeeks  : createModel.GestationInWeeks,
+                FetalHeartRateBPM : createModel.FetalHeartRateBPM,
+                FundalHeight      : createModel.FundalHeight ? JSON.stringify(createModel.FundalHeight) : null,
+                DateOfNextVisit   : createModel.DateOfNextVisit,
+                BodyWeightID      : createModel.BodyWeightID,
+                BodyTemperatureId : createModel.BodyTemperatureId,
+                BloodPressureId   : createModel.BloodPressureId
             };
 
             const visit = await AnteNatalVisit.create(entity);
@@ -76,7 +76,6 @@ export class AntenatalVisitRepo implements IAntenatalVisitRepo {
             if (updateModel.FundalHeight != null) {
                 antenatalVisit.FundalHeight = JSON.stringify(updateModel.FundalHeight);
             }
-            
 
             await antenatalVisit.save();
 

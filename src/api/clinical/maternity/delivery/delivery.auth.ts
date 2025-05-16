@@ -4,7 +4,7 @@ import {
     ResourceOwnership,
     ActionScope,
     DefaultAuthOptions
-} from '../../../../auth/auth.types'
+} from '../../../../auth/auth.types';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -54,7 +54,7 @@ export class DeliveryAuth {
     };
 
     static readonly createPostnatalVisit: AuthOptions = {
-        ...DefaultAuthOptions, 
+        ...DefaultAuthOptions,
         Context     : `${this._baseContext}.CreatePostnatalVisit`,
         Ownership   : ResourceOwnership.Owner,
         ActionScope : ActionScope.Tenant,
@@ -95,7 +95,7 @@ export class DeliveryAuth {
     };
 
     static readonly createPostnatalMedication: AuthOptions = {
-        ...DefaultAuthOptions, 
+        ...DefaultAuthOptions,
         Context     : `${this._baseContext}.CreatePostnatalMedication`,
         Ownership   : ResourceOwnership.Owner,
         ActionScope : ActionScope.Tenant,
@@ -127,7 +127,7 @@ export class DeliveryAuth {
     };
 
     static readonly createComplication: AuthOptions = {
-        ...DefaultAuthOptions, 
+        ...DefaultAuthOptions,
         Context     : `${this._baseContext}.CreateComplication`,
         Ownership   : ResourceOwnership.Owner,
         ActionScope : ActionScope.Tenant,
@@ -168,7 +168,7 @@ export class DeliveryAuth {
     };
 
     static readonly createBaby: AuthOptions = {
-        ...DefaultAuthOptions, 
+        ...DefaultAuthOptions,
         Context     : `${this._baseContext}.CreateBaby`,
         Ownership   : ResourceOwnership.Owner,
         ActionScope : ActionScope.Tenant,
@@ -184,7 +184,7 @@ export class DeliveryAuth {
     };
 
     static readonly createBreastfeeding: AuthOptions = {
-        ...DefaultAuthOptions, 
+        ...DefaultAuthOptions,
         Context     : `${this._baseContext}.CreateBreastfeeding`,
         Ownership   : ResourceOwnership.Owner,
         ActionScope : ActionScope.Tenant,

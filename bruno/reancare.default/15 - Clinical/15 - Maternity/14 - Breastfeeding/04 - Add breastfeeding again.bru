@@ -1,0 +1,61 @@
+meta {
+  name: Create Again
+  type: http
+  seq: 4
+}
+
+post {
+  url: {{BASE_URL}}/clinical/maternity/maternity-deliveries/{{DELIVERY_ID}}/breastfeedings
+  body: json
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{ADMIN_USER_JWT}}
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+  Content-Type: application/json
+}
+
+body:json {
+  {
+      "VisitId"                : "{{VISIT_ID}}",
+      "PostNatalVisitId"       : "{{POSTNATAL_VISIT_ID}}",
+      "BreastFeedingStatus"    : "Initiated",
+      "BreastfeedingFrequency" : "Every 2 hours",
+      "AdditionalNotes"        : "Mother is experiencing mild discomfort."
+  }
+  
+}
+
+tests {
+  try {
+  
+      var jsonData = res.getBody();
+      var id = jsonData.Data.Breastfeeding.id;
+      bru.setEnvVar("BREASTFEEDING_ID", id);
+  
+  }
+  catch (error) {
+      console.log(error.message);
+  }
+  
+  test("Request is successfull", function () {
+      expect(res.getStatus()).to.equal(201);
+      var jsonRes = res.getBody();
+      expect(jsonRes.Status).to.eql('success');
+  });
+  
+  test("New Delivery record is created", function () {
+  
+      var jsonRes = res.getBody();
+      expect(jsonRes.Data).to.have.property('Breastfeeding');
+      
+      expect(jsonRes.Data.Breastfeeding).to.have.property('id');
+      expect(jsonRes.Data.Breastfeeding).to.have.property('VisitId');
+      expect(jsonRes.Data.Breastfeeding).to.have.property('PostNatalVisitId');
+      expect(jsonRes.Data.Breastfeeding).to.have.property('BreastFeedingStatus');
+      expect(jsonRes.Data.Breastfeeding).to.have.property('BreastfeedingFrequency');
+      expect(jsonRes.Data.Breastfeeding).to.have.property('AdditionalNotes');
+  });
+  
+}

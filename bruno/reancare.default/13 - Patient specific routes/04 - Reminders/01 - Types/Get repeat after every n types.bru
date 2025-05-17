@@ -1,0 +1,68 @@
+meta {
+  name: Get repeat after every n types
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{BASE_URL}}/types/reminder-repeat-after-every-units
+  body: none
+  auth: none
+}
+
+headers {
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+  Content-Type: application/json
+}
+
+tests {
+  isUpperCase = (str) => {
+      return str.toUpperCase() === str;
+  };
+  
+  convertPascalCaseToCapitalSnakeCase = (str) => {
+      if (str.length > 0) {
+          var outstr = "";
+          str = str.replace('-', '');
+          str = str.replace('-', '');
+          str = str.replace('-', '');
+          for (var i = 0; i < str.length; i++) {
+              var c = str.charAt(i);
+              if (isUpperCase(c) && i !== 0) {
+                  outstr += '_' + c.toUpperCase();
+              }
+              else {
+                  outstr += c.toUpperCase();
+              }
+          }
+          return outstr;
+      }
+      return str;
+  };
+  
+  try {
+      var jsonRes = res.getBody();
+      var types = jsonRes.Data.RepeatAfterEveryUnitTypes;
+      for(var i = 0; i < types.length; i++) {
+          var r = types[i];
+          const x = convertPascalCaseToCapitalSnakeCase(r);
+          var str = "REMINDER_REPEAT_AFTER_EVERY_N_" + x;
+          console.log(str);
+          bru.setEnvVar(str, types[i]);
+      }
+  }
+  catch (error) {
+      console.log(error.message);
+  }
+  
+  test("Request is successfull", function () {
+      expect(res.getStatus()).to.equal(200);
+      var jsonRes = res.getBody();
+      expect(jsonRes.Status).to.eql('success');
+  });
+  
+}
+
+docs {
+  Gets list of Goal records
+}

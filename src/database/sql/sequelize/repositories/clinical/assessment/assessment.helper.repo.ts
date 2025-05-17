@@ -30,6 +30,7 @@ import {
     CScoringCondition,
     ConditionOperatorType,
     ConditionCompositionType,
+    SkipQueryAnswer,
 } from '../../../../../../domain.types/clinical/assessment/assessment.types';
 import { AssessmentTemplateDomainModel } from '../../../../../../domain.types/clinical/assessment/assessment.template.domain.model';
 import AssessmentTemplate from '../../../models/clinical/assessment/assessment.template.model';
@@ -45,7 +46,6 @@ import ScoringCondition from '../../../models/clinical/assessment/scoring.condit
 import { AssessmentNodeSearchResults } from '../../../../../../domain.types/clinical/assessment/assessment.node.search.types';
 import { AssessmentNodeSearchFilters } from '../../../../../../domain.types/clinical/assessment/assessment.node.search.types';
 import { Op } from 'sequelize';
-import { cat } from 'shelljs';
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -421,6 +421,7 @@ export class AssessmentHelperRepo implements IAssessmentHelperRepo {
             | BooleanQueryAnswer
             | FileQueryAnswer
             | BiometricQueryAnswer
+            | SkipQueryAnswer
     ): Promise<CAssessmentQueryResponse> => {
         try {
             const model = this.generateQueryAnswerModel(answer);
@@ -909,7 +910,21 @@ export class AssessmentHelperRepo implements IAssessmentHelperRepo {
         FloatQueryAnswer |
         BooleanQueryAnswer |
         FileQueryAnswer |
-        BiometricQueryAnswer) => {
+        BiometricQueryAnswer |
+        SkipQueryAnswer
+    ) => {
+
+        //Check if the answer is a skip query
+        const skipQuery = answer as SkipQueryAnswer;
+        if (skipQuery && skipQuery?.Skipped === true) {
+            return {
+                AssessmentId : skipQuery.AssessmentId,
+                NodeId       : skipQuery.NodeId,
+                Sequence     : skipQuery.QuestionSequence,
+                Type         : skipQuery.ResponseType,
+                Skipped      : true,
+            };
+        }
 
         if (answer.ResponseType === QueryResponseType.SingleChoiceSelection) {
             const a = answer as SingleChoiceQueryAnswer;

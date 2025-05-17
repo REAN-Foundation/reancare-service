@@ -1,0 +1,73 @@
+meta {
+  name: Get a list of symptoms from database
+  type: http
+  seq: 3
+}
+
+get {
+  url: {{BASE_URL}}/clinical/symptom-types/search?tag=Heart failure
+  body: json
+  auth: none
+}
+
+params:query {
+  tag: Heart failure
+}
+
+headers {
+  Content-Type: application/json
+  authorization: Bearer {{ADMIN_USER_JWT}}
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+}
+
+tests {
+  try {
+      var jsonRes = res.getBody();
+      var symptomTypes = jsonRes.Data.SymptomTypes.Items;
+      
+      if (symptomTypes.length > 0) {
+          var symptomTypeIds = symptomTypes.map((x) => { return x.id; });
+          console.log(symptomTypeIds);
+          bru.setEnvVar("SYMPTOM_TYPE_ID_1", symptomTypeIds[0]);
+          bru.setEnvVar("SYMPTOM_TYPE_ID_2", symptomTypeIds[1]);
+          bru.setEnvVar("SYMPTOM_TYPE_ID_3", symptomTypeIds[2]);
+          bru.setEnvVar("SYMPTOM_TYPE_ID_4", symptomTypeIds[3]);
+          bru.setEnvVar("SYMPTOM_TYPE_ID_5", symptomTypeIds[4]);
+          bru.setEnvVar("SYMPTOM_TYPE_ID_6", symptomTypeIds[5]);
+          bru.setEnvVar("SYMPTOM_TYPE_ID_7", symptomTypeIds[6]);
+          bru.setEnvVar("SYMPTOM_TYPE_ID_8", symptomTypeIds[7]);
+          bru.setEnvVar("SYMPTOM_TYPE_ID_9", symptomTypeIds[8]);
+          bru.setEnvVar("SYMPTOM_TYPE_ID_10", symptomTypeIds[9]);
+          bru.setEnvVar("SYMPTOM_TYPE_ID_11", symptomTypeIds[10]);
+          bru.setEnvVar("SYMPTOM_TYPE_ID_12", symptomTypeIds[11]);
+          
+          var count = symptomTypes.length;
+          var lastSymptomType = symptomTypes[count -1];
+          bru.setEnvVar("SYMPTOM_TYPE_ID_A", lastSymptomType.id);
+      }
+  }
+  catch (error) {
+      console.log(error.message);
+  }
+  
+  
+  test("Request is successfull", function () {
+      expect(res.getStatus()).to.equal(200);
+      var jsonRes = res.getBody();
+      expect(jsonRes.Status).to.eql('success');
+  });
+  
+  test("List of symptom types is returned", function () {
+  
+      var jsonRes = res.getBody();
+      expect(jsonRes.Data).to.have.property('SymptomTypes');
+      expect(jsonRes.Data.SymptomTypes).to.have.property('RetrievedCount');
+      expect(jsonRes.Data.SymptomTypes).to.have.property('Items');
+      expect(jsonRes.Data.SymptomTypes.Items.length).greaterThan(0);
+  });
+  
+}
+
+docs {
+  Returns the list of ailments stored in the system.
+}

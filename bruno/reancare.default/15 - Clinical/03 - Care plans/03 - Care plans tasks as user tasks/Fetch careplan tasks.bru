@@ -1,0 +1,25 @@
+meta {
+  name: Fetch careplan tasks
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{BASE_URL}}/care-plans/{{CAREPLAN_ID}}/fetch-tasks
+  body: json
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{PATIENT_USER_JWT}}
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+  Content-Type: application/json
+}
+
+body:json {
+  {
+      "Provider": "AHA",
+      "PlanCode": "HeartFailure",
+      "StartDate": "2022-01-11"
+  }
+}

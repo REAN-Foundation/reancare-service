@@ -1,0 +1,111 @@
+meta {
+  name: Create complaint
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{BASE_URL}}/clinical/complaints
+  body: json
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{PATIENT_USER_JWT}}
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+  Content-Type: application/json
+}
+
+body:json {
+  {
+      "PatientUserId": "{{PATIENT_COMPLAINT_PATIENTUSERID}}",
+      "MedicalPractitionerUserId": "{{PATIENT_COMPLAINT_MEDICALPRACTITIONERUSERID}}",
+      "VisitId": "{{PATIENT_COMPLAINT_VISITID}}",
+      "EhrId": "{{PATIENT_COMPLAINT_EHRID}}",
+      "Complaint": "{{PATIENT_COMPLAINT_COMPLAINT}}",
+      "Severity": "{{PATIENT_COMPLAINT_SEVERITY}}",
+      "RecordDate": "{{PATIENT_COMPLAINT_RECORDDATE}}"
+  }
+}
+
+script:pre-request {
+  let patientUserId = bru.getEnvVar('PATIENT_USER_ID') || 'default-patient-id';
+  let doctorUserId = bru.getEnvVar('DOCTOR_USER_ID') || 'default-doctor-id';
+  let visitId = bru.getEnvVar('VISIT_ID') || patientUserId; // fallback to patientUserId if not present
+  let ehrId = bru.getEnvVar('EHR_ID') || 'ehr-id-placeholder';
+  let complaint = 'Bad Service';
+  let severity = 'Medium';
+  let recordDate = new Date().toISOString();
+  
+  bru.setEnvVar("PATIENT_COMPLAINT_PATIENTUSERID", patientUserId);
+  bru.setEnvVar("PATIENT_COMPLAINT_MEDICALPRACTITIONERUSERID", doctorUserId);
+  bru.setEnvVar("PATIENT_COMPLAINT_VISITID", visitId);
+  bru.setEnvVar("PATIENT_COMPLAINT_EHRID", ehrId);
+  bru.setEnvVar("PATIENT_COMPLAINT_COMPLAINT", complaint);
+  bru.setEnvVar("PATIENT_COMPLAINT_SEVERITY", severity);
+  bru.setEnvVar("PATIENT_COMPLAINT_RECORDDATE", recordDate);
+  
+  
+  // let patientUserId = bru.getEnvVar('PATIENT_USER_ID');
+  // let doctorUserId = bru.getEnvVar('DOCTOR_USER_ID');
+  // bru.setEnvVar("PATIENT_COMPLAINT_PATIENTUSERID", patientUserId);
+  // bru.setEnvVar("PATIENT_COMPLAINT_MEDICALPRACTITIONERUSERID", doctorUserId);
+  // bru.setEnvVar("PATIENT_COMPLAINT_VISITID", patientUserId);
+  // bru.setEnvVar("PATIENT_COMPLAINT_EHRID", '');
+  // bru.setEnvVar("PATIENT_COMPLAINT_COMPLAINT", 'Bad Service');
+  // bru.setEnvVar("PATIENT_COMPLAINT_SEVERITY", 'Medium');
+  // bru.setEnvVar("PATIENT_COMPLAINT_RECORDDATE", new Date());
+}
+
+tests {
+  var jsonRes = res.getBody();
+  
+  try {
+      bru.setEnvVar("PATIENT_COMPLAINT_ID", jsonRes.Data.Complaint.id);
+  }
+  catch (error) {
+      console.log(error.message);
+  }
+  
+  test("Request is successfull", function () {
+      expect(res.getStatus()).to.equal(201);
+      var jsonRes = res.getBody();
+      expect(jsonRes.Status).to.eql('success');
+  });
+  
+  test("New Patient Complaint record is created", function () {
+  
+      let expectedPatientUserID = bru.getEnvVar("PATIENT_COMPLAINT_PATIENTUSERID");
+      let expectedMedicalPractitionerUserID = bru.getEnvVar("PATIENT_COMPLAINT_MEDICALPRACTITIONERUSERID");
+      let expectedVisitID = bru.getEnvVar("PATIENT_COMPLAINT_VISITID");
+      let expectedEHRID = bru.getEnvVar("PATIENT_COMPLAINT_EHRID");
+      let expectedComplaint = bru.getEnvVar("PATIENT_COMPLAINT_COMPLAINT");
+      let expectedSeverity = bru.getEnvVar("PATIENT_COMPLAINT_SEVERITY");
+      let expectedRecordDate = bru.getEnvVar("PATIENT_COMPLAINT_RECORDDATE");
+  
+      var jsonRes = res.getBody();
+      expect(jsonRes.Data).to.have.property('Complaint');
+      expect(jsonRes.Data.Complaint).to.not.be.empty;
+      expect(jsonRes.Data.Complaint).to.have.property('PatientUserId');
+      expect(jsonRes.Data.Complaint).to.have.property('MedicalPractitionerUserId');
+      expect(jsonRes.Data.Complaint).to.have.property('VisitId');
+      expect(jsonRes.Data.Complaint).to.have.property('EhrId');
+      expect(jsonRes.Data.Complaint).to.have.property('Complaint');
+      expect(jsonRes.Data.Complaint).to.have.property('Severity');
+      expect(jsonRes.Data.Complaint).to.have.property('RecordDate');
+  
+      expect(jsonRes.Data.Complaint.PatientUserId).equals(expectedPatientUserID);
+      expect(jsonRes.Data.Complaint.MedicalPractitionerUserId).equals(expectedMedicalPractitionerUserID);
+      expect(jsonRes.Data.Complaint.VisitId).equals(expectedVisitID);
+      expect(jsonRes.Data.Complaint.EhrId).equals(expectedEHRID);
+      expect(jsonRes.Data.Complaint.Complaint).equals(expectedComplaint);
+      expect(jsonRes.Data.Complaint.Severity).equals(expectedSeverity);
+      expect(jsonRes.Data.Complaint.RecordDate).equals(expectedRecordDate);
+  });
+  
+  
+}
+
+docs {
+  Add A Patient Complaint.
+}

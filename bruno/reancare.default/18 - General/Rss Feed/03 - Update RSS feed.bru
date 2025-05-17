@@ -1,0 +1,64 @@
+meta {
+  name: Update RSS feed
+  type: http
+  seq: 2
+}
+
+put {
+  url: {{BASE_URL}}/rss-feeds/{{RSS_FEED_ID}}
+  body: json
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{ADMIN_USER_JWT}}
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+  Content-Type: application/json
+}
+
+body:json {
+  {
+      "Name": "Maths",
+      "Description": "Learning course",
+      "ImageUrl": "https://docs.google.com/spreadsheets/d/1FcQMxJJAIVZtyuAKJHjSgI0qr86GVttGzm65Azzm8XM/edit#gid=0",
+      "DurationInMins": 45
+  }
+}
+
+tests {
+  test("Request is successfull", function () {
+      expect(res.getStatus()).to.equal(200);
+      var jsonRes = res.getBody();
+      expect(jsonRes.Status).to.eql('success');
+  });
+  
+  test("Updated RSS feed is returned", function () {
+      var expectedTitle = "Raahi News";
+      var expectedDescription = "Learning course";
+      
+      var jsonRes = res.getBody();
+      expect(jsonRes.Data).to.have.property('Rssfeed');
+      expect(jsonRes.Data.Rssfeed).to.not.be.empty;
+  
+      expect(jsonRes.Data.Rssfeed.Title).to.equal(expectedTitle);
+      expect(jsonRes.Data.Rssfeed.Description).to.equal(expectedDescription);
+  });
+  
+  // test("Updated course module is returned", function () {
+  
+  //     var expectedName = "Maths";
+  //     var expectedDurationInMins = 45;
+      
+  //     var jsonRes = res.getBody();
+  //     expect(jsonRes.Data).to.have.property('CourseModule');
+  //     expect(jsonRes.Data.CourseModule).to.not.be.empty;
+  //     expect(jsonRes.Data.CourseModule).to.have.property('Name');
+  //     expect(jsonRes.Data.CourseModule).to.have.property('DurationInMins');
+      
+  //     expect(jsonRes.Data.CourseModule.Name).equals(expectedName);
+  //     expect(jsonRes.Data.CourseModule.DurationInMins).equals(expectedDurationInMins);
+      
+  // });
+  
+  
+}

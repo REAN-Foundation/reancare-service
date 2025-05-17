@@ -1,0 +1,67 @@
+meta {
+  name: Add second module content
+  type: http
+  seq: 4
+}
+
+post {
+  url: {{BASE_URL}}/educational/course-contents
+  body: json
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{ADMIN_USER_JWT}}
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+  Content-Type: application/json
+}
+
+body:json {
+  {
+      "CourseId": "{{COURSE_ID}}",
+      "LearningPathId": "{{LEARNING_PATH_ID}}",
+      "ModuleId": "{{SECOND_COURSE_MODULE_ID}}",
+      "Title": "Safarnama: Kishoravastha se Yuvavastha",
+      "Description": "The path from adolescence to adulthood has become a complicated journey filled with uncertainty, shifting social and cultural expectations, growing social, etc. This module give you a broad understanding of what are some of the changes one can expect.",
+      "DurationInMins": 4.16,
+      "ContentType": "Video",
+      "ResourceLink": "https://www.youtube.com/watch?v=8KQoZrquwrg",
+      "ImageUrl": "{{FILE_RESOURCE_URL}}",
+      "Sequence": 1
+  }
+}
+
+tests {
+  var jsonRes = res.getBody();
+  
+  try {
+      bru.setEnvVar("SECOND_MODULE_CONTENT_ID", jsonRes.Data.CourseContent.id);
+  }
+  catch (error) {
+      console.log(error.message);
+  }
+  
+  
+  test("Request is successfull", function () {
+      expect(res.getStatus()).to.equal(201);
+      var jsonRes = res.getBody();
+      expect(jsonRes.Status).to.eql('success');
+  });
+  
+  test("New course content is returned", function () {
+  
+      var expectedTitle = "Safarnama: Kishoravastha se Yuvavastha";
+      var expectedDurationInMins = 4.16;
+      
+      var jsonRes = res.getBody();
+      expect(jsonRes.Data).to.have.property('CourseContent');
+      expect(jsonRes.Data.CourseContent).to.not.be.empty;
+      expect(jsonRes.Data.CourseContent).to.have.property('Title');
+      expect(jsonRes.Data.CourseContent).to.have.property('DurationInMins');
+      
+      expect(jsonRes.Data.CourseContent.Title).equals(expectedTitle );
+      expect(jsonRes.Data.CourseContent.DurationInMins).equals(expectedDurationInMins);
+  });
+  
+  
+}

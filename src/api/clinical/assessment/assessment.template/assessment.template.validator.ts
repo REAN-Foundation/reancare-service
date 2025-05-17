@@ -115,7 +115,7 @@ export class AssessmentTemplateValidator extends BaseValidator {
         await this.validateAny(request, 'CorrectAnswer', Where.Body, false, false);
         await this.validateObject(request, 'RawData', Where.Body, false, false);
         await this.validateArray(request, 'Tags', Where.Body, false, true);
-
+        
         this.validateRequest(request);
 
         if (request.body.NodeType === AssessmentNodeType.Question) {
@@ -124,7 +124,7 @@ export class AssessmentTemplateValidator extends BaseValidator {
                 NodeType          : AssessmentNodeType.Question,
                 DisplayCode       : request.body.DisplayCode ?? Helper.generateDisplayCode('QNode'),
                 QueryResponseType : request.body.QueryResponseType,
-                Required          : true,
+                Required          : request.body.Required ?? true,
                 ProviderGivenId   : request.body.ProviderGivenId ?? null,
                 ProviderGivenCode : request.body.ProviderGivenCode ?? null,
                 Title             : request.body.Title,
@@ -135,6 +135,7 @@ export class AssessmentTemplateValidator extends BaseValidator {
                 Options           : [],
                 RawData           : request.body.RawData ? JSON.stringify(request.body.RawData) : null,
                 Tags              : request.body.Tags ?? [],
+                
             };
             if (request.body.Options && request.body.Options.length > 0) {
                 var options: CAssessmentQueryOption[] = [];
@@ -155,7 +156,7 @@ export class AssessmentTemplateValidator extends BaseValidator {
                 ParentNodeId                : request.body.ParentNodeId,
                 NodeType                    : AssessmentNodeType.NodeList,
                 DisplayCode                 : Helper.generateDisplayCode('LNode'),
-                Required                    : true,
+                Required                    : request.body.Required ?? true,
                 ProviderGivenId             : request.body.ProviderGivenId ?? null,
                 ProviderGivenCode           : request.body.ProviderGivenCode ?? null,
                 Title                       : request.body.Title,
@@ -172,7 +173,7 @@ export class AssessmentTemplateValidator extends BaseValidator {
             var messageNode: CAssessmentMessageNode = {
                 ParentNodeId      : request.body.ParentNodeId,
                 NodeType          : AssessmentNodeType.Message,
-                Required          : true,
+                Required          : request.body.Required ?? true,
                 ProviderGivenId   : request.body.ProviderGivenId ?? null,
                 ProviderGivenCode : request.body.ProviderGivenCode ?? null,
                 Title             : request.body.Title,

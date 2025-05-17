@@ -1,0 +1,50 @@
+meta {
+  name: Update move minutes record by id
+  type: http
+  seq: 3
+}
+
+put {
+  url: {{BASE_URL}}/wellness/daily-records/move-minutes/{{DAILY_MOVE_MINUTES_ID}}
+  body: json
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{PATIENT_USER_JWT}}
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+  Content-Type: application/json
+}
+
+body:json {
+  {
+      "MoveMinutes": 85,
+      "Unit": "mins",
+      "RecordDate": "2021-09-14"
+  }
+}
+
+tests {
+  test("Request is successfull", function () {
+      expect(res.getStatus()).to.equal(200);
+      var jsonRes = res.getBody();
+      expect(jsonRes.Status).to.eql('success');
+  });
+  
+  test("Updated move minutes record is returned", function () {
+  
+      var expectedMoveMinutes = 85;
+      var expectedRecordDate = "2021-09-14T00:00:00.000Z";
+      
+      var jsonRes = res.getBody();
+      expect(jsonRes.Data).to.have.property('MoveMinutes');
+      expect(jsonRes.Data.MoveMinutes).to.not.be.empty;
+      expect(jsonRes.Data.MoveMinutes).to.have.property('MoveMinutes');
+      expect(jsonRes.Data.MoveMinutes).to.have.property('RecordDate');
+  
+      expect(jsonRes.Data.MoveMinutes.MoveMinutes).equals(expectedMoveMinutes);
+      expect(jsonRes.Data.MoveMinutes.RecordDate).equals(expectedRecordDate);    
+  });
+  
+  
+}

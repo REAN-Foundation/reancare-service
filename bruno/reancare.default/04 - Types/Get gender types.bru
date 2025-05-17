@@ -1,0 +1,48 @@
+meta {
+  name: Get gender types
+  type: http
+  seq: 3
+}
+
+get {
+  url: {{BASE_URL}}/types/genders
+  body: none
+  auth: none
+}
+
+headers {
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+  Content-Type: application/json
+}
+
+tests {
+  try {
+      var jsonRes = res.getBody();
+      var genderTypes = jsonRes.Data.GenderTypes;
+      for(var i = 0; i < genderTypes.length; i++) {
+          var r = genderTypes[i];
+          var name = r.Name;
+          var id = r.id;
+          var str = "GENDER_TYPE_" + name.toUpperCase();
+          bru.setEnvVar(str, id);
+      }
+  }
+  catch (error) {
+      console.log(error.message);
+  }
+  
+  test("Request is successfull", function () {
+      expect(res.getStatus()).to.equal(200);
+      var jsonRes = res.getBody();
+      expect(jsonRes.Status).to.eql('success');
+  });
+  
+  test("Gender types are retrieved", function () {
+      var jsonRes = res.getBody();
+      expect(jsonRes.Data).to.have.property('GenderTypes');
+      expect(jsonRes.Data.GenderTypes).to.not.be.empty;
+      var count = jsonRes.Data.GenderTypes.length;
+      expect(count).greaterThan(0);
+  });
+  
+}

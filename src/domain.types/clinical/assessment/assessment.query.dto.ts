@@ -19,6 +19,7 @@ export interface AssessmentQueryDto {
     CorrectAnswer?     : string | any;
     ProviderGivenCode?  : string;
     ProviderGivenId?    : string;
+    Required?           : boolean;
 }
 
 export interface AssessmentQueryListDto {

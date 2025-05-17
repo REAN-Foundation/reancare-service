@@ -1,0 +1,81 @@
+meta {
+  name: Create goal
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{BASE_URL}}/patient-goals
+  body: json
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{PATIENT_USER_JWT}}
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+  Content-Type: application/json
+}
+
+body:json {
+  {
+      "PatientUserId": "{{PATIENT_USER_ID}}",
+      "ProviderEnrollmentId": "{{CAREPLAN_ENROLLMENT_ID}}",
+      "Provider": "{{CAREPLAN_PROVIDER}}",
+      "ProviderCareplanName": "{{CAREPLAN_NAME}}",
+      "ProviderCareplanCode": "{{CAREPLAN_CODE}}",
+      "Title": "Lower systolic blood pressure",
+      "Sequence": 0,
+      "HealthPriorityId": "{{HEALTH_PRIORITY_ID}}",
+      "GoalAchieved": false,
+      "GoalAbandoned": false
+  }
+}
+
+script:pre-request {
+  var userId = bru.getEnvVar("PATIENT_USER_ID");
+  bru.setEnvVar("GOAL_PATIENTUSERID", userId);
+  bru.setEnvVar("GOAL_CAREPLANID", 1);
+  bru.setEnvVar("GOAL_TYPECODE", 1);
+  bru.setEnvVar("GOAL_TYPENAME", "Name");
+  bru.setEnvVar("GOAL_GOALACHIEVED", true);
+  bru.setEnvVar("GOAL_GOALABANDONED",false);
+}
+
+tests {
+  var jsonRes = res.getBody();
+  
+  try {
+      bru.setEnvVar("PATIENT_GOAL_ID", jsonRes.Data.Goal.id);
+  }
+  catch (error) {
+      console.log(error.message);
+  }
+  
+  test("Request is successfull", function () {
+      expect(res.getStatus()).to.equal(201);
+      var jsonRes = res.getBody();
+      expect(jsonRes.Status).to.eql('success');
+  });
+  
+  test("New Goal record is created", function () {
+  
+      var jsonRes = res.getBody();
+      expect(jsonRes.Data).to.have.property('Goal');
+      expect(jsonRes.Data.Goal).to.not.be.empty;
+      expect(jsonRes.Data.Goal).to.have.property('id');
+      expect(jsonRes.Data.Goal).to.have.property('PatientUserId');
+      expect(jsonRes.Data.Goal).to.have.property('Provider');
+      expect(jsonRes.Data.Goal).to.have.property('ProviderCareplanName');
+      expect(jsonRes.Data.Goal).to.have.property('ProviderCareplanCode');
+      expect(jsonRes.Data.Goal).to.have.property('Title');
+      expect(jsonRes.Data.Goal).to.have.property('HealthPriorityId');
+      expect(jsonRes.Data.Goal).to.have.property('GoalAchieved');
+      expect(jsonRes.Data.Goal).to.have.property('GoalAbandoned');
+  
+  });
+  
+}
+
+docs {
+  Create new Goal record
+}

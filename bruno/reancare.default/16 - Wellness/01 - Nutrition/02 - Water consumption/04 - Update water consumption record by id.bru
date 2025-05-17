@@ -1,0 +1,48 @@
+meta {
+  name: Update water consumption record by id
+  type: http
+  seq: 3
+}
+
+put {
+  url: {{BASE_URL}}/wellness/nutrition/water-consumptions/{{NUTRITION_WATER_CONSUMPTION_ID}}
+  body: json
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{PATIENT_USER_JWT}}
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+  Content-Type: application/json
+}
+
+body:json {
+  {
+  
+      "PatientUserId": "{{PATIENT_USER_ID}}",
+      "Volume": 10,
+      "Time": "2021-09-21"
+  
+  }
+}
+
+tests {
+  test("Request is successfull", function () {
+      expect(res.getStatus()).to.equal(200);
+      var jsonRes = res.getBody();
+      expect(jsonRes.Status).to.eql('success');
+  });
+  test("Updated water consumption record is returned", function () {
+      var expectedValue = 10;
+      var expectedTime= "2021-09-21T00:00:00.000Z";
+  
+      var jsonRes = res.getBody();
+      expect(jsonRes.Data).to.have.property('WaterConsumption');
+      expect(jsonRes.Data.WaterConsumption).to.not.be.empty;
+      expect(jsonRes.Data.WaterConsumption).to.have.property('Volume');
+      expect(jsonRes.Data.WaterConsumption).to.have.property('Time');
+  
+      expect(jsonRes.Data.WaterConsumption.Volume).equals(expectedValue);
+      expect(jsonRes.Data.WaterConsumption.Time).equals(expectedTime);
+  });
+}

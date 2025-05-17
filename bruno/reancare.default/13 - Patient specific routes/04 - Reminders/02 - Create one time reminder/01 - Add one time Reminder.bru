@@ -1,0 +1,64 @@
+meta {
+  name: Add one time Reminder
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{BASE_URL}}/reminders/one-time
+  body: json
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{PATIENT_USER_JWT}}
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+  Content-Type: application/json
+}
+
+body:json {
+  {
+      "UserId": "{{PATIENT_USER_ID}}",
+      "Name": "Bring milk from shop",
+      "WhenDate": "2023-07-22",
+      "WhenTime": "21:26:12",
+      "HookUrl": "{{HOOK_URL}}",
+      "NotificationType": "SMS"
+  }
+}
+
+tests {
+  var jsonRes = res.getBody();
+  
+  try {
+      bru.setEnvVar("ONE_TIME_REMINDER_ID", jsonRes.Data.Reminder.id);
+  }
+  catch (error) {
+      console.log(error.message);
+  }
+  
+  test("Request is successfull", function () {
+      expect(res.getStatus()).to.equal(201);
+      var jsonRes = res.getBody();
+      expect(jsonRes.Status).to.eql('success');
+  });
+  
+  test("New one time reminder is created", function () {
+  
+      var jsonRes = res.getBody();
+      expect(jsonRes.Data).to.have.property('Reminder');
+      expect(jsonRes.Data.Reminder).to.not.be.empty;
+      expect(jsonRes.Data.Reminder).to.have.property('id');
+      expect(jsonRes.Data.Reminder).to.have.property('UserId');
+      expect(jsonRes.Data.Reminder).to.have.property('Name');
+      expect(jsonRes.Data.Reminder).to.have.property('ReminderType');
+  
+      expect(jsonRes.Data.Reminder.ReminderType).equals("OneTime");
+  
+  });
+  
+}
+
+docs {
+  Create new Goal record
+}

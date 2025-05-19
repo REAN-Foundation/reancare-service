@@ -88,7 +88,10 @@ export class MedicationScheduleHandler {
     private static findNextScheduledDate = (cronExpression: string): Date => {
         try {
             const interval = CronExpressionParser.parse(cronExpression);
-            const nextRun: Date = interval.next().toDate();
+            let nextRun: Date = interval.next().toDate();
+            if (nextRun.getTime() <= new Date().getTime()) {
+                nextRun = interval.next().toDate();
+            }
             return nextRun;
         } catch (error) {
             Logger.instance().log(`Error parsing cron expression: ${cronExpression}`);

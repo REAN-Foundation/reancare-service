@@ -160,6 +160,7 @@ export class CustomActionsHandler {
 
     public scheduleCreateMedicationConsumptionTask = async (cronExpression: string) => {
         try {
+            Logger.instance().log('Inside scheduleCreateMedicationConsumptionTask');
             await this._comonActions.scheduleCreateMedicationConsumptionTask(cronExpression);
         }
         catch (error) {

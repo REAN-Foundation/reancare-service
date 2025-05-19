@@ -66,7 +66,7 @@
         "ScheduleGGHNFollowUpReminder": "0 5 * * *",
          "UserActivityTracker": "20 8 6 1 *",
         "scheduleNotificationToInactiveUsers": "5 9 9 1 *",
-        "CreateMedicationConsumptionTask": "30 16 * * 1"
+        "CreateMedicationConsumptionTask": "0 10 * * 1"
     },
     "uat": {
         "FileCleanup": "*/30 * * * *",

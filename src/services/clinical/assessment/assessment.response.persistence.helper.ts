@@ -21,6 +21,8 @@ import { AssessmentDto } from '../../../domain.types/clinical/assessment/assessm
 import { AssessmentFieldIdentifiers } from '../../../domain.types/clinical/assessment/assessment.field.identifiers';
 import { AssessmentPersonalProfileHelper } from './assessment.personal.profile.helper';
 import { AssessmentHealthProfileHelper } from './assessment.health.profile.helper';
+import { AssessmentLabRecordsHelper } from './assessment.lab.records.helper';
+import { AssessmentVitalsHelper } from './assessment.vitals.helper';
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -71,7 +73,15 @@ export class AssessmentResponsePersistenceHelper {
                 const healthProfileHelper = Injector.Container.resolve(AssessmentHealthProfileHelper);
                 await healthProfileHelper.persist(assessment, questionNode, fieldName, answerDto);
             }
-           
+            else if (subCategory === 'LabRecords') {
+                const labRecordsHelper = Injector.Container.resolve(AssessmentLabRecordsHelper);
+                await labRecordsHelper.persist(assessment, questionNode, fieldName, FieldIdentifierUnit, answerDto);
+            }
+            else if (subCategory === 'Vitals') {
+                const labRecordsHelper = Injector.Container.resolve(AssessmentVitalsHelper);
+                await labRecordsHelper.persist(assessment, questionNode, fieldName, FieldIdentifierUnit, answerDto);
+            }
         }
     };
+
 }

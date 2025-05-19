@@ -6,7 +6,7 @@ import {
     FloatQueryAnswer,
     IntegerQueryAnswer,
     MessageAnswer,
-    MultipleChoiceQueryAnswer, 
+    MultipleChoiceQueryAnswer,
     QueryResponseType,
     CAssessmentQuestionNode,
     SingleChoiceQueryAnswer,
@@ -33,7 +33,7 @@ export class AssessmentPersonalProfileHelper {
     public persist = async (
         assessment: AssessmentDto,
         node: CAssessmentQuestionNode,
-        fieldName: string, 
+        fieldName: string,
         answer: SingleChoiceQueryAnswer
             | MultipleChoiceQueryAnswer
             | MessageAnswer
@@ -58,13 +58,13 @@ export class AssessmentPersonalProfileHelper {
             const a = answer as TextQueryAnswer;
             const name = a.Text;
             const person = await this._personRepo.update(personId, {
-                FirstName: name,
+                FirstName : name,
             });
         } else if (fieldName === 'LastName') {
             const a = answer as TextQueryAnswer;
             const name = a.Text;
             const person = await this._personRepo.update(personId, {
-                LastName: name,
+                LastName : name,
             });
         } else if (fieldName === 'Name') {
             const a = answer as TextQueryAnswer;
@@ -73,14 +73,14 @@ export class AssessmentPersonalProfileHelper {
             if (tokens.length < 2) {
                 Logger.instance().log(`Invalid name format: ${name}`);
                 const person = await this._personRepo.update(personId, {
-                    FirstName: name,
+                    FirstName : name,
                 });
             }
             const firstName = tokens[0];
             const lastName = tokens.slice(1).join(' ');
             const person = await this._personRepo.update(personId, {
-                FirstName: firstName,
-                LastName: lastName,
+                FirstName : firstName,
+                LastName  : lastName,
             });
         } else if (fieldName === 'Age') {
             const a = answer as IntegerQueryAnswer;
@@ -88,15 +88,18 @@ export class AssessmentPersonalProfileHelper {
             const now = new Date();
             const dob = now.setFullYear(now.getFullYear() - age, 0, 1);
             const dateOfBirth = new Date(dob);
-            const person = await this._personRepo.update(personId, {
-                BirthDate: dateOfBirth,
+            const personDob = await this._personRepo.update(personId, {
+                BirthDate : dateOfBirth,
+            });
+            const personAge = await this._personRepo.update(personId, {
+                Age : String(age),
             });
         } else if (fieldName === 'DateOfBirth') {
             const a = answer as DateQueryAnswer;
             const dateOfBirth = a.Date;
             if (dateOfBirth) {
                 const person = await this._personRepo.update(personId, {
-                    BirthDate: dateOfBirth,
+                    BirthDate : dateOfBirth,
                 });
             }
         } else if (fieldName === 'Gender') {
@@ -122,4 +125,5 @@ export class AssessmentPersonalProfileHelper {
             }
         }
     };
+
 }

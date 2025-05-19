@@ -1,0 +1,45 @@
+meta {
+  name: Create task
+  type: http
+  seq: 11
+}
+
+post {
+  url: {{BASE_URL}}/user-tasks
+  body: json
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{ADMIN_USER_JWT}}
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+  Content-Type: application/json
+}
+
+body:json {
+  {
+      "UserId": "{{PATIENT_USER_ID}}",
+      "Task": "Take a dog for walk",
+      "Category": "Custom",
+      "ScheduledStartTime": "2021-10-11T05:30:00.000Z",
+      "ScheduledEndTime": "2021-10-11T07:30:00.000Z",
+      "IsRecurrent": false
+  }
+}
+
+tests {
+  var jsonRes = res.getBody();
+  
+  try {
+      bru.setEnvVar("USER_TASK_ID", jsonRes.Data.UserTask.id);
+      bru.setEnvVar("USER_TASK_DISPLAY_ID", jsonRes.Data.UserTask.DisplayId);
+  }
+  catch (error) {
+      console.log(error.message);
+  }
+  
+}
+
+docs {
+  Create new User Task record
+}

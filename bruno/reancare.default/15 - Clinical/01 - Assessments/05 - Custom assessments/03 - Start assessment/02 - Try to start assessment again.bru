@@ -1,0 +1,28 @@
+meta {
+  name: Try to start assessment again
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{BASE_URL}}/clinical/assessments/{{ASSESSMENT_ID}}/start
+  body: none
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{PATIENT_USER_JWT}}
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+  Content-Type: application/json
+}
+
+tests {
+  test("Request is unsuccessfull", function () {
+      expect(res.getStatus()).to.equal(400);
+      var jsonRes = res.getBody();
+      expect(jsonRes.Status).to.eql('failure');
+  });
+  
+  
+  
+}

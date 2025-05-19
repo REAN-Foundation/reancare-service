@@ -1,0 +1,52 @@
+meta {
+  name: Update document
+  type: http
+  seq: 5
+}
+
+put {
+  url: {{BASE_URL}}/patient-documents/{{PATIENT_DOCUMENT_ID}}
+  body: json
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{PATIENT_USER_JWT}}
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+  Content-Type: application/json
+}
+
+body:json {
+  {
+      "DocumentType": "Drug prescription",
+      "MedicalPractitionerUserId": "{{DOCTOR_USER_ID}}",
+      "MedicalPractionerRole": "Doctor",
+      "RecordDate": "2021-09-24"
+  }
+  
+}
+
+tests {
+  test("Request is successfull", function () {
+      expect(res.getStatus()).to.equal(200);
+      var jsonRes = res.getBody();
+      expect(jsonRes.Status).to.eql('success');
+  });
+  
+  test("Updated document record is returned", function () {
+  
+      var expectedDocumentType = "Drug prescription";
+      var expectedRecordDate = "2021-09-24T00:00:00.000Z";
+  
+      var jsonRes = res.getBody();
+      expect(jsonRes.Data).to.have.property('PatientDocument');
+      expect(jsonRes.Data.PatientDocument).to.not.be.empty;
+      expect(jsonRes.Data.PatientDocument).to.have.property('id');
+      expect(jsonRes.Data.PatientDocument).to.have.property('RecordDate');
+      expect(jsonRes.Data.PatientDocument).to.have.property('ResourceId');
+      expect(jsonRes.Data.PatientDocument.DocumentType).equals(expectedDocumentType);
+      expect(jsonRes.Data.PatientDocument.RecordDate).equals(expectedRecordDate);
+  });
+  
+  
+}

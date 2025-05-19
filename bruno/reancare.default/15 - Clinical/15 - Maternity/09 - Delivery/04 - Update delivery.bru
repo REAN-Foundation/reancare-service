@@ -1,0 +1,58 @@
+meta {
+  name: Update
+  type: http
+  seq: 3
+}
+
+put {
+  url: {{BASE_URL}}/clinical/maternity/maternity-deliveries/{{DELIVERY_ID}}
+  body: json
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{ADMIN_USER_JWT}}
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+  Content-Type: application/json
+}
+
+body:json {
+  {
+      "PregnancyId"     : "{{PREGNANCY_ID}}",
+      "PatientUserId"   : "9ad2f83e-626a-497d-b607-e9092a8861c1",
+      "DeliveryDate"         : "2025-08-09",
+      "DeliveryTime"         : "14:30:00",
+      "GestationAtBirth"     : 38,
+      "DeliveryMode"         : "LSCS",
+      "DeliveryPlace"        : "aa hospital",
+      "DeliveryOutcome"      : "Aborted",
+      "DateOfDischarge"     : "2025-08-09",
+      "OverallDiagnosis"    : "In Good Health"
+  }
+}
+
+tests {
+  test("Request is successfull", function () {
+      expect(res.getStatus()).to.equal(200);
+      var jsonRes = res.getBody();
+      expect(jsonRes.Status).to.eql('success');
+  });
+  
+  test("Delivery record updated successfully", function () {
+  
+      var jsonRes = res.getBody();
+      expect(jsonRes.Data).to.have.property('Delivery');
+      
+      expect(jsonRes.Data.Delivery).to.have.property('PatientUserId');
+      expect(jsonRes.Data.Delivery).to.have.property('PregnancyId');
+      expect(jsonRes.Data.Delivery).to.have.property('DeliveryDate');
+      expect(jsonRes.Data.Delivery).to.have.property('DeliveryTime');
+      expect(jsonRes.Data.Delivery).to.have.property('GestationAtBirth');
+      expect(jsonRes.Data.Delivery).to.have.property('DeliveryMode');
+      expect(jsonRes.Data.Delivery).to.have.property('DeliveryPlace');
+      expect(jsonRes.Data.Delivery).to.have.property('DeliveryOutcome');
+      expect(jsonRes.Data.Delivery).to.have.property('DateOfDischarge');
+      expect(jsonRes.Data.Delivery).to.have.property('OverallDiagnosis');
+  });
+  
+}

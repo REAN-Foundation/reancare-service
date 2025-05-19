@@ -1,0 +1,60 @@
+meta {
+  name: Add course again
+  type: http
+  seq: 6
+}
+
+post {
+  url: {{BASE_URL}}/educational/courses
+  body: json
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{ADMIN_USER_JWT}}
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+  Content-Type: application/json
+}
+
+body:json {
+  {
+      "Name": "English",
+      "Description": "Learning course",
+      "ImageUrl": "https://docs.google.com/spreadsheets/d/1FcQMxJJAIVZtyuAKJHjSgI0qr86GVttGzm65Azzm8XM/edit#gid=0",
+      "DurationInDays": "30",
+      "StartDate": "2022-08-11",
+      "EndDate": "2022-09-11"
+  }
+}
+
+tests {
+  var jsonRes = res.getBody();
+  
+  try {
+      bru.setEnvVar("COURSE_ID", jsonRes.Data.Course.id);
+  }
+  catch (error) {
+      console.log(error.message);
+  }
+  
+  
+  test("Request is successfull", function () {
+      expect(res.getStatus()).to.equal(201);
+      var jsonRes = res.getBody();
+      expect(jsonRes.Status).to.eql('success');
+  });
+  
+  test("New course is returned", function () {
+  
+      var expectedName = "English";
+      
+      var jsonRes = res.getBody();
+      expect(jsonRes.Data).to.have.property('Course');
+      expect(jsonRes.Data.Course).to.not.be.empty;
+      expect(jsonRes.Data.Course).to.have.property('Name');
+      
+      expect(jsonRes.Data.Course.Name).equals(expectedName);
+  });
+  
+  
+}

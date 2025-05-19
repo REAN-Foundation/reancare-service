@@ -1,0 +1,50 @@
+meta {
+  name: Update template
+  type: http
+  seq: 7
+}
+
+put {
+  url: {{BASE_URL}}/clinical/symptom-assessment-templates/{{ASSESSMENT_TEMPLATE_ID}}
+  body: json
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+  authorization: Bearer {{ADMIN_USER_JWT}}
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+}
+
+body:json {
+  {
+      "Description": "This is updated description of the template.",
+      "Tags": [
+          "One more tag"
+      ]
+  }
+}
+
+tests {
+  
+  test("Request is successfull", function () {
+      expect(res.getStatus()).to.equal(200);
+      var jsonRes = res.getBody();
+      expect(jsonRes.Status).to.eql('success');
+  });
+  
+  test("Assessment template is updated", function () {
+  
+      var jsonRes = res.getBody();
+      expect(jsonRes.Data).to.have.property('SymptomAssessmentTemplate');
+      expect(jsonRes.Data.SymptomAssessmentTemplate).to.have.property('id');
+      expect(jsonRes.Data.SymptomAssessmentTemplate).to.have.property('Title');
+      expect(jsonRes.Data.SymptomAssessmentTemplate).to.have.property('Description');
+      expect(jsonRes.Data.SymptomAssessmentTemplate).to.have.property('Tags');
+      expect(jsonRes.Data.SymptomAssessmentTemplate).to.have.property('TemplateSymptomTypes');
+  
+      expect(jsonRes.Data.SymptomAssessmentTemplate.Description).equals("This is updated description of the template.");
+  
+  });
+  
+}

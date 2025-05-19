@@ -1,0 +1,138 @@
+meta {
+  name: Add question node- 1
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{BASE_URL}}/clinical/assessment-templates/{{ASSESSMENT_TEMPLATE_ID}}/nodes
+  body: json
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{ADMIN_USER_JWT}}
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+  Content-Type: application/json
+}
+
+body:json {
+  {
+      "ParentNodeId": "{{ASSESSMENT_TEMPLATE_ROOT_NODE_ID}}",
+      "NodeType": "Question",
+      "Title": "Q 1/10. What is your race?",
+      "Description": "Taking idea about race",
+      "QueryResponseType": "Single Choice Selection",
+      "Options": [
+          {
+              "ProviderGivenCode": "white",
+              "Text": "White",
+              "Sequence": 1
+          },
+          {
+              "ProviderGivenCode": "black",
+              "Text": "Black",
+              "Sequence": 2
+          },
+          {
+              "ProviderGivenCode": "american Indian or Alaska Native",
+              "Text": "American Indian or Alaska Native",
+              "Sequence": 3
+          },
+          {
+              "ProviderGivenCode": "asian Indian",
+              "Text": "Asian Indian",
+              "Sequence": 4
+          },
+          {
+              "ProviderGivenCode": "chinese",
+              "Text": "Chinese",
+              "Sequence": 5
+          },
+          {
+              "ProviderGivenCode": "filipino",
+              "Text": "Filipino",
+              "Sequence": 6
+          },
+          {
+              "ProviderGivenCode": "japanese",
+              "Text": "Japanese",
+              "Sequence": 7
+          },
+          {
+              "ProviderGivenCode": "korean",
+              "Text": "Korean",
+              "Sequence": 8
+          },
+          {
+              "ProviderGivenCode": "vietnamese",
+              "Text": "Vietnamese",
+              "Sequence": 9
+          },
+          {
+              "ProviderGivenCode": "other Asian",
+              "Text": "Other Asian",
+              "Sequence": 10
+          },
+          {
+              "ProviderGivenCode": "hawaiian",
+              "Text": "Hawaiian",
+              "Sequence": 11
+          },
+          {
+              "ProviderGivenCode": "guamanian",
+              "Text": "Guamanian",
+              "Sequence": 12
+          },
+          {
+              "ProviderGivenCode": "samoan",
+              "Text": "Samoan",
+              "Sequence": 13
+          },
+          {
+              "ProviderGivenCode": "other Pacific Islander",
+              "Text": "Other Pacific Islander",
+              "Sequence": 14
+          }
+      ]
+  }
+  
+}
+
+tests {
+  var jsonRes = res.getBody();
+  
+  try {
+      bru.setEnvVar("ASSESSMENT_NODE_ID", jsonRes.Data.AssessmentNode.id);
+  }
+  catch (error) {
+      console.log(error.message);
+  }
+  
+  test("Request is successfull", function () {
+      expect(res.getStatus()).to.equal(201);
+      var jsonRes = res.getBody();
+      expect(jsonRes.Status).to.eql('success');
+  });
+  
+  test("Assessment question node - single choice selection is created", function () {
+     
+      var jsonRes = res.getBody();
+      expect(jsonRes.Data).to.have.property('AssessmentNode');
+      expect(jsonRes.Data.AssessmentNode).to.not.be.empty;
+      expect(jsonRes.Data.AssessmentNode).to.have.property('id');
+      expect(jsonRes.Data.AssessmentNode).to.have.property('ParentNodeId');
+      expect(jsonRes.Data.AssessmentNode).to.have.property('NodeType');
+      expect(jsonRes.Data.AssessmentNode).to.have.property('Title');
+      expect(jsonRes.Data.AssessmentNode).to.have.property('Description');
+      expect(jsonRes.Data.AssessmentNode).to.have.property('QueryResponseType');
+      expect(jsonRes.Data.AssessmentNode).to.have.property('TemplateId');
+      
+      expect(jsonRes.Data.AssessmentNode.Title).equals("Q 1/10. What is your race?");
+      expect(jsonRes.Data.AssessmentNode.QueryResponseType).equals("Single Choice Selection");
+      expect(jsonRes.Data.AssessmentNode.NodeType).equals("Question");
+          
+      expect(jsonRes.Data.AssessmentNode.Sequence).greaterThan(0);   
+  });
+  
+}

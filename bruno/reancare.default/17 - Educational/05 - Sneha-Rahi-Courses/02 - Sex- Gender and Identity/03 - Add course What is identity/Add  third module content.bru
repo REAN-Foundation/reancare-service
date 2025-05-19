@@ -1,0 +1,67 @@
+meta {
+  name: Add  third module content
+  type: http
+  seq: 4
+}
+
+post {
+  url: {{BASE_URL}}/educational/course-contents
+  body: json
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{ADMIN_USER_JWT}}
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+  Content-Type: application/json
+}
+
+body:json {
+  {
+      "CourseId": "{{COURSE_ID}}",
+      "LearningPathId": "{{LEARNING_PATH_ID}}",
+      "ModuleId": "{{THIRD_COURSE_MODULE_ID}}",
+      "Title": "What is identity",
+      "Description": "Who are you? What makes you, you? Your gender identity is how you see yourself, boy or girl, and everything in between. This module will teach you a litlle more about understanding yourself and people around you.",
+      "DurationInMins": 2.29,
+      "ContentType": "Video",
+      "ResourceLink": "https://www.youtube.com/watch?v=FFZtHu_DXi4",
+      "ImageUrl": "{{FILE_RESOURCE_URL}}",
+      "Sequence": 1
+  }
+}
+
+tests {
+  var jsonRes = res.getBody();
+  
+  try {
+      bru.setEnvVar("THIRD_MODULE_CONTENT_ID", jsonRes.Data.CourseContent.id);
+  }
+  catch (error) {
+      console.log(error.message);
+  }
+  
+  
+  test("Request is successfull", function () {
+      expect(res.getStatus()).to.equal(201);
+      var jsonRes = res.getBody();
+      expect(jsonRes.Status).to.eql('success');
+  });
+  
+  test("New course content is returned", function () {
+  
+      var expectedTitle = "What is identity";
+      var expectedDurationInMins = 2.29;
+      
+      var jsonRes = res.getBody();
+      expect(jsonRes.Data).to.have.property('CourseContent');
+      expect(jsonRes.Data.CourseContent).to.not.be.empty;
+      expect(jsonRes.Data.CourseContent).to.have.property('Title');
+      expect(jsonRes.Data.CourseContent).to.have.property('DurationInMins');
+      
+      expect(jsonRes.Data.CourseContent.Title).equals(expectedTitle );
+      expect(jsonRes.Data.CourseContent.DurationInMins).equals(expectedDurationInMins);
+  });
+  
+  
+}

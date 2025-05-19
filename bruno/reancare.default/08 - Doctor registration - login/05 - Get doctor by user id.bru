@@ -1,0 +1,45 @@
+meta {
+  name: Get doctor by user id
+  type: http
+  seq: 5
+}
+
+get {
+  url: {{BASE_URL}}/doctors/{{DOCTOR_USER_ID}}
+  body: json
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{DOCTOR_USER_JWT}}
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+  Content-Type: application/json
+}
+
+script:pre-request {
+  var password = "";
+  bru.setEnvVar("API_CLIENT_PASSWORD", password);
+  
+}
+
+tests {
+  
+  test("Request is successfull", function () {
+      expect(res.getStatus()).to.equal(200);
+      var jsonRes = res.getBody();
+      expect(jsonRes.Status).to.eql('success');
+  });
+  
+  test("Doctor is created", function () {
+      var jsonRes = res.getBody();
+      expect(jsonRes.Data).to.have.property('Doctor');
+      expect(jsonRes.Data.Doctor).to.not.be.empty;
+      expect(jsonRes.Data.Doctor).to.have.property('id');
+      expect(jsonRes.Data.Doctor).to.have.property('User');
+      expect(jsonRes.Data.Doctor.User).to.not.be.empty;
+      expect(jsonRes.Data.Doctor.User).to.have.property('id');
+      expect(jsonRes.Data.Doctor.User.Person).to.not.be.empty;
+      expect(jsonRes.Data.Doctor.User.Person).to.have.property('id');
+  });
+  
+}

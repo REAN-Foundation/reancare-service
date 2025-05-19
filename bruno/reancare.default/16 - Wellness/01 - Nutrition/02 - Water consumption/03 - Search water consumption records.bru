@@ -1,0 +1,40 @@
+meta {
+  name: Search water consumption records
+  type: http
+  seq: 4
+}
+
+get {
+  url: {{BASE_URL}}/wellness/nutrition/water-consumptions/search?dailyVolumeFrom=5&dailyVolumeTo=12&order=ascending&pageIndex=0&itemsPerPage=25&orderBy=volume&patientUserId={{PATIENT_USER_ID}}
+  body: none
+  auth: none
+}
+
+params:query {
+  dailyVolumeFrom: 5
+  dailyVolumeTo: 12
+  order: ascending
+  pageIndex: 0
+  itemsPerPage: 25
+  orderBy: volume
+  patientUserId: {{PATIENT_USER_ID}}
+}
+
+headers {
+  Authorization: Bearer {{PATIENT_USER_JWT}}
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+  Content-Type: application/json
+}
+
+tests {
+  test("Request is successfull", function () {
+      expect(res.getStatus()).to.equal(200);
+      var jsonRes = res.getBody();
+      expect(jsonRes.Status).to.eql('success');
+  });
+  test("List of water consumption records is returned", function () {
+      var jsonRes = res.getBody();
+      expect(jsonRes.Data).to.have.property('WaterConsumptionRecords');
+      expect(jsonRes.Data.WaterConsumptionRecords.Items.length).to.be.greaterThan(0);
+  });
+}

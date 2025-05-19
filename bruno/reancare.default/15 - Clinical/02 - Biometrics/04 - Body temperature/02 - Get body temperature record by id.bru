@@ -1,0 +1,44 @@
+meta {
+  name: Get body temperature record by id
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{BASE_URL}}/clinical/biometrics/body-temperatures/{{BIOMETRICS_BODY_TEMPERATURE_ID}}
+  body: none
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{PATIENT_USER_JWT}}
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+  Content-Type: application/json
+}
+
+tests {
+  test("Request is successfull", function () {
+      expect(res.getStatus()).to.equal(200);
+      var jsonRes = res.getBody();
+      expect(jsonRes.Status).to.eql('success');
+  });
+  
+  test("Body temperature record is returned", function () {
+  
+      var expectedValue = 36;
+      var expectedPatientUserId = bru.getEnvVar("PATIENT_USER_ID");
+  
+      var jsonRes = res.getBody();
+      expect(jsonRes.Data).to.have.property('BodyTemperature');
+      expect(jsonRes.Data.BodyTemperature).to.not.be.empty;
+      expect(jsonRes.Data.BodyTemperature).to.have.property('id');
+      expect(jsonRes.Data.BodyTemperature).to.have.property('BodyTemperature');
+      expect(jsonRes.Data.BodyTemperature).to.have.property('PatientUserId');
+  
+      expect(jsonRes.Data.BodyTemperature.BodyTemperature).equals(expectedValue);
+      expect(jsonRes.Data.BodyTemperature.PatientUserId).equals(expectedPatientUserId);
+  
+  });
+  
+  
+}

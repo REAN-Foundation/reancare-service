@@ -1,0 +1,36 @@
+meta {
+  name: Delete Reminder
+  type: http
+  seq: 4
+}
+
+delete {
+  url: {{BASE_URL}}/reminders/{{REPEAT_AFTER_EVERY_3_HOURS_REMINDER_ID}}
+  body: none
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{PATIENT_USER_JWT}}
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+  Content-Type: application/json
+}
+
+tests {
+  test("Request is successfull", function () {
+      expect(res.getStatus()).to.equal(200);
+      var jsonRes = res.getBody();
+      expect(jsonRes.Status).to.eql('success');
+  });
+  
+  test("Reminder record is deleted", function () {
+      var jsonRes = res.getBody();
+      expect(jsonRes.Data).to.have.property('Deleted');
+      expect(jsonRes.Data.Deleted).equals(true);
+  });
+  
+}
+
+docs {
+  Delete Goal record with id
+}

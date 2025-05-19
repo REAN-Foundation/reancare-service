@@ -1,0 +1,81 @@
+meta {
+  name: Add blood pressure record for first patient
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{BASE_URL}}/clinical/biometrics/blood-pressures
+  body: json
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{PATIENT_USER_JWT}}
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+  Content-Type: application/json
+}
+
+body:json {
+  {
+      "PatientUserId": "{{PATIENT_USER_ID}}",
+      "Systolic": 160,
+      "Diastolic": 180,
+      "Unit": "mm Hg",
+      "RecordDate": "2021-09-22",
+      "RecordedByUserId": "{{RECORDED_BY_USER_ID}}"
+  }
+}
+
+tests {
+  var jsonRes = res.getBody();
+  
+  try {
+      bru.setEnvVar("BLOOD_PRESSURE_ID", jsonRes.Data.BloodPressure.id);
+  }
+  catch (error) {
+      console.log(error.message);
+  }
+  
+  test("Request is successful", function () {
+      expect(res.getStatus()).to.equal(201);
+      var jsonRes = res.getBody();
+      expect(jsonRes.Status).to.eql('success');
+  });
+  
+  test("Blood pressure record is created", function () {
+  
+      var expectedSystolic = 160;
+      var expectedDiastolic = 180;
+      var expectedUnit = "mm Hg";
+      
+      var jsonRes = res.getBody();
+      expect(jsonRes.Data).to.have.property('BloodPressure');
+      expect(jsonRes.Data.BloodPressure).to.not.be.empty;
+      expect(jsonRes.Data.BloodPressure).to.have.property('id');
+      expect(jsonRes.Data.BloodPressure).to.have.property('Systolic');
+      expect(jsonRes.Data.BloodPressure).to.have.property('Diastolic');
+      expect(jsonRes.Data.BloodPressure).to.have.property('Unit');
+  
+      expect(jsonRes.Data.BloodPressure.Systolic).to.equal(expectedSystolic);
+      expect(jsonRes.Data.BloodPressure.Diastolic).to.equal(expectedDiastolic);
+      expect(jsonRes.Data.BloodPressure.Unit).to.equal(expectedUnit);
+  });
+  
+  
+  // var jsonRes = res.getBody();
+  
+  // try {
+  //     bru.setEnvVar("BIOMETRICS_BLOOD_PRESSURE_ID", jsonRes.Data.BloodPressure.id);
+  // }
+  // catch (error) {
+  //     console.log(error.message);
+  // }
+  
+  // test("Request is successfull", function () {
+  //     expect(res.getStatus()).to.equal(201);
+  //     var jsonRes = res.getBody();
+  //     expect(jsonRes.Status).to.eql('success');
+  // });
+  
+}

@@ -1,0 +1,38 @@
+meta {
+  name: Search Patient complaint
+  type: http
+  seq: 4
+}
+
+get {
+  url: {{BASE_URL}}/clinical/complaints/search/{{PATIENT_USER_ID}}
+  body: json
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{PATIENT_USER_JWT}}
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+  Content-Type: application/json
+}
+
+tests {
+  test("Request is successfull", function () {
+      expect(res.getStatus()).to.equal(200);
+      var jsonRes = res.getBody();
+      expect(jsonRes.Status).to.eql('success');
+  });
+  
+  test("List of Calorie Record is returned", function () {
+  
+      var jsonRes = res.getBody();
+      expect(jsonRes.Data).to.have.property('Complaints');
+      expect(jsonRes.Data.Complaints.length).to.be.greaterThan(0);
+  
+  });
+  
+}
+
+docs {
+  Search Patient Complaint using patient user id
+}

@@ -1,0 +1,27 @@
+meta {
+  name: Search and download
+  type: http
+  seq: 14
+}
+
+get {
+  url: {{BASE_URL}}/file-resources/search-download?referenceId={{RESOURCE_REFERENCE_ID}}
+  body: none
+  auth: none
+}
+
+params:query {
+  referenceId: {{RESOURCE_REFERENCE_ID}}
+}
+
+headers {
+  Authorization: Bearer {{PATIENT_USER_JWT}}
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+}
+
+tests {
+  test("Request is successfull", function () {
+      expect(res.getStatus()).to.equal(200);
+  });
+  
+}

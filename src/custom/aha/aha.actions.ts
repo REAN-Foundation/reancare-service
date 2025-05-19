@@ -222,7 +222,7 @@ export class AHAActions {
             const assessment = await this._assessmentService.getById(assessmentId);
             const userResponses = assessment.UserResponses;
 
-            var score = null;
+            var score = assessment?.ScoreDetails ?? null;
             if (assessment.Title.includes("Quality of Life Questionnaire")) {
                 //This is KCCQ assessment,...
                 Logger.instance().log('Calculating the score...');

@@ -46,6 +46,7 @@ import ScoringCondition from '../../../models/clinical/assessment/scoring.condit
 import { AssessmentNodeSearchResults } from '../../../../../../domain.types/clinical/assessment/assessment.node.search.types';
 import { AssessmentNodeSearchFilters } from '../../../../../../domain.types/clinical/assessment/assessment.node.search.types';
 import { Op } from 'sequelize';
+import { AssessmentDto } from '../../../../../../domain.types/clinical/assessment/assessment.dto';
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -490,9 +491,11 @@ export class AssessmentHelperRepo implements IAssessmentHelperRepo {
             }
             else if (nodeObj.NodeType === AssessmentNodeType.Question) {
 
-                const questionNode = nodeObj as CAssessmentQuestionNode;
-                thisNode.QueryResponseType = questionNode.QueryResponseType;
-                thisNode.CorrectAnswer     = questionNode.CorrectAnswer;
+                const questionNode           = nodeObj as CAssessmentQuestionNode;
+                thisNode.QueryResponseType   = questionNode.QueryResponseType;
+                thisNode.CorrectAnswer       = questionNode.CorrectAnswer;
+                thisNode.FieldIdentifier     = questionNode.FieldIdentifier;
+                thisNode.FieldIdentifierUnit = questionNode.FieldIdentifierUnit;
                 await thisNode.save();
 
                 if (questionNode.Options && questionNode.Options.length > 0) {
@@ -564,6 +567,12 @@ export class AssessmentHelperRepo implements IAssessmentHelperRepo {
             }
             if (Helper.hasProperty(updates, 'Tags')) {
                 thisNode.Tags = updates['Tags'] ? JSON.stringify(updates['Tags']) : null;
+            }
+            if (Helper.hasProperty(updates, 'FieldIdentifier')) {
+                thisNode.FieldIdentifier = updates['FieldIdentifier'];
+            }
+            if (Helper.hasProperty(updates, 'FieldIdentifierUnit')) {
+                thisNode.FieldIdentifierUnit = updates['FieldIdentifierUnit'];
             }
             thisNode = await thisNode.save();
 

@@ -5,7 +5,6 @@ import { DurationType } from '../../domain.types/miscellaneous/time.types';
 import { MedicationDto } from '../../domain.types/clinical/medication/medication/medication.dto';
 import { Injector } from '../../startup/injector';
 import { MEDICATION_CONSUMPTION_DURATION_DAYS, MedicationConsumptionService } from '../clinical/medication/medication.consumption.service';
-import { CronExpressionParser } from 'cron-parser';
 
 /////////////////////////////////////////////////////////////////////
 
@@ -57,7 +56,7 @@ export class MedicationScheduleHandler {
 
             if (customScheduleDate < nextScheduledDate) {
                 const difference = Math.ceil(TimeHelper.dayDiff(nextScheduledDate, customScheduleDate));
-                if (difference > 0 && difference <= medicationConsumptionDurationDays) {
+                if (difference > 0) {
                     medicationConsumptionDurationDays = difference;
                 }
             }
@@ -66,7 +65,7 @@ export class MedicationScheduleHandler {
             Logger.instance().log(`Medication: ${JSON.stringify(medication)}`);
             Logger.instance().log(`Custom Schedule Date: ${customScheduleDate}`);
             Logger.instance().log(`Total Scheduled Days: ${totalScheduledDays}`);
-            Logger.instance().log(`Medication Consumption Duration Days: ${medicationConsumptionDurationDays}`);
+            Logger.instance().log(`Medication scheduled for n Days: ${medicationConsumptionDurationDays}`);
             Logger.instance().log(`######################################`);
                 
             if (totalScheduledDays < days &&
@@ -85,14 +84,9 @@ export class MedicationScheduleHandler {
         }
     };
     
-    private static findNextScheduledDate = (cronExpression: string): Date => {
+    private static findNextScheduledDate = (cronExpression: string): Date | null => {
         try {
-            const interval = CronExpressionParser.parse(cronExpression);
-            let nextRun: Date = interval.next().toDate();
-            if (nextRun.getTime() <= new Date().getTime()) {
-                nextRun = interval.next().toDate();
-            }
-            return nextRun;
+            return TimeHelper.addDuration(new Date(), MEDICATION_CONSUMPTION_DURATION_DAYS, DurationType.Day);
         } catch (error) {
             Logger.instance().log(`Error parsing cron expression: ${cronExpression}`);
             return null;

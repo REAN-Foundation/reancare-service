@@ -554,7 +554,7 @@ export class UserTaskRepo implements IUserTaskRepo {
         }
     };
 
-    deleteByUserId = async(userId: string, hardDelete: boolean): Promise<boolean> => {
+    deleteByUserId = async(userId: string, hardDelete: boolean = false): Promise<boolean> => {
         try {
             const deletedCount = await UserTask.destroy({
                 where : {
@@ -564,12 +564,11 @@ export class UserTaskRepo implements IUserTaskRepo {
             });
 
             if (deletedCount === 0) {
-                Logger.instance().log(`No UserTask records found for user: ${userId}`);
+                Logger.instance().log(`No UserTask record found for user: ${userId}`);
             }
             return true;
         } catch (error) {
             Logger.instance().log(error.message);
-            throw new ApiError(500, error.message);
         }
     };
 

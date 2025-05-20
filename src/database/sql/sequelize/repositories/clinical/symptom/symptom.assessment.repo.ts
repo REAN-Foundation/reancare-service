@@ -171,7 +171,7 @@ export class SymptomAssessmentRepo implements ISymptomAssessmentRepo {
         }
     };
 
-    deleteByUserId = async (patientUserId: string, hardDelete: boolean): Promise<boolean> =>{
+    deleteByUserId = async (patientUserId: string, hardDelete: boolean = false): Promise<boolean> =>{
         try {
 
             const assessments = await SymptomAssessment.findAll({
@@ -205,7 +205,6 @@ export class SymptomAssessmentRepo implements ISymptomAssessmentRepo {
             return true;
         } catch (error) {
             Logger.instance().log(error.message);
-            throw new ApiError(500, error.message);
         }
     };
 

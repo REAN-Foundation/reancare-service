@@ -226,7 +226,7 @@ export class BloodPressureRepo implements IBloodPressureRepo {
         }
     };
 
-    deleteByUserId = async(patientUserId: string, hardDelete: boolean): Promise<boolean> =>{
+    deleteByUserId = async(patientUserId: string, hardDelete: boolean = false): Promise<boolean> =>{
         try {
             const deletedCount = await BloodPressure.destroy({
                 where : {
@@ -241,7 +241,6 @@ export class BloodPressureRepo implements IBloodPressureRepo {
             return true;
         } catch (error) {
             Logger.instance().log(error.message);
-            throw new ApiError(500, error.message);
         }
     };
 

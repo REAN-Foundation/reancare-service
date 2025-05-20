@@ -315,7 +315,7 @@ export class BloodOxygenSaturationRepo implements IBloodOxygenSaturationRepo {
         }
     };
 
-    deleteByUserId = async(patientUserId: string, hardDelete: boolean): Promise<boolean> =>{
+    deleteByUserId = async(patientUserId: string, hardDelete: boolean = false): Promise<boolean> =>{
         try {
             const deletedCount = await BloodOxygenSaturationModel.destroy({
                 where : {
@@ -330,7 +330,6 @@ export class BloodOxygenSaturationRepo implements IBloodOxygenSaturationRepo {
             return true;
         } catch (error) {
             Logger.instance().log(error.message);
-            throw new ApiError(500, error.message);
         }
     };
 

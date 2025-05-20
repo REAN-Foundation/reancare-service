@@ -207,7 +207,7 @@ export class BodyHeightRepo implements IBodyHeightRepo {
         }
     };
 
-    deleteByUserId = async(patientUserId: string, hardDelete: boolean): Promise<boolean> =>{
+    deleteByUserId = async(patientUserId: string, hardDelete: boolean = false): Promise<boolean> =>{
         try {
             const deletedCount = await BodyHeight.destroy({
                 where : {
@@ -222,7 +222,6 @@ export class BodyHeightRepo implements IBodyHeightRepo {
             return true;
         } catch (error) {
             Logger.instance().log(error.message);
-            throw new ApiError(500, error.message);
         }
     };
 

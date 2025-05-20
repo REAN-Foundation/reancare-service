@@ -259,7 +259,7 @@ export class MeditationRepo implements IMeditationRepo {
         }
     };
 
-    deleteByUserId = async (patientUserId: string, hardDelete: boolean): Promise<boolean> => {
+    deleteByUserId = async (patientUserId: string, hardDelete: boolean = false): Promise<boolean> => {
         try {
             const deletedCount = await MeditationModel.destroy({
                 where : {
@@ -274,7 +274,6 @@ export class MeditationRepo implements IMeditationRepo {
             return true;
         } catch (error) {
             Logger.instance().log(error.message);
-            throw new ApiError(500, error.message);
         }
     };
 

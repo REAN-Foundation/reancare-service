@@ -184,7 +184,7 @@ export class PhysicalActivityRepo implements IPhysicalActivityRepo {
         }
     };
 
-    public deleteByUserId = async (patientUserId: string, hardDelete: boolean): Promise<boolean> => {
+    public deleteByUserId = async (patientUserId: string, hardDelete: boolean = false): Promise<boolean> => {
         try {
             const deletedCount = await PhysicalActivity.destroy({
                 where : {
@@ -199,7 +199,6 @@ export class PhysicalActivityRepo implements IPhysicalActivityRepo {
             return true;
         } catch (error) {
             Logger.instance().log(error.message);
-            throw new ApiError(500, error.message);
         }
     };
 

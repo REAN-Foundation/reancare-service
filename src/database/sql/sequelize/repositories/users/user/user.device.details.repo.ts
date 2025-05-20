@@ -203,7 +203,7 @@ export class UserDeviceDetailsRepo implements IUserDeviceDetailsRepo {
         }
     };
 
-    deleteByUserId = async (userId: string, hardDelete: boolean): Promise<boolean> => {
+    deleteByUserId = async (userId: string, hardDelete: boolean = false): Promise<boolean> => {
         try {
             const deletedCount = await UserDeviceDetailsModel.destroy({
                 where : {
@@ -213,12 +213,11 @@ export class UserDeviceDetailsRepo implements IUserDeviceDetailsRepo {
             });
 
             if (deletedCount === 0) {
-                Logger.instance().log(`No Reminder records found for user: ${userId}`);
+                Logger.instance().log(`No Device Details records found for user: ${userId}`);
             }
             return true;
         } catch (error) {
             Logger.instance().log(error.message);
-            throw new ApiError(500, error.message);
         }
     };
 

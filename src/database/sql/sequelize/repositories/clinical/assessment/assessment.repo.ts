@@ -352,7 +352,7 @@ export class AssessmentRepo implements IAssessmentRepo {
         }
     };
 
-    public deleteByUserId = async (patientUserId: string, hardDelete: boolean) : Promise<boolean> => {
+    public deleteByUserId = async (patientUserId: string, hardDelete: boolean = false) : Promise<boolean> => {
         try {
 
             const assessments = await Assessment.findAll({
@@ -391,7 +391,6 @@ export class AssessmentRepo implements IAssessmentRepo {
             return true;
         } catch (error) {
             Logger.instance().log(error.message);
-            throw new ApiError(500, error.message);
         }
     };
 

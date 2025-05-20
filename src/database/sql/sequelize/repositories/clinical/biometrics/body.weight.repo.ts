@@ -286,7 +286,7 @@ export class BodyWeightRepo implements IBodyWeightRepo {
         }
     };
 
-    deleteByUserId = async(patientUserId: string, hardDelete: boolean): Promise<boolean> =>{
+    deleteByUserId = async(patientUserId: string, hardDelete: boolean = false): Promise<boolean> =>{
         try {
             const deletedCount = await BodyWeight.destroy({
                 where : {
@@ -301,7 +301,6 @@ export class BodyWeightRepo implements IBodyWeightRepo {
             return true;
         } catch (error) {
             Logger.instance().log(error.message);
-            throw new ApiError(500, error.message);
         }
     };
 

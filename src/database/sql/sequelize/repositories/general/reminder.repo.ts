@@ -163,7 +163,7 @@ export class ReminderRepo implements IReminderRepo {
         }
     };
 
-    deleteByUserId = async (userId: string, hardDelete: boolean): Promise<boolean> => {
+    deleteByUserId = async (userId: string, hardDelete: boolean = false): Promise<boolean> => {
         try {
             const deletedCount = await Reminder.destroy({
                 where : {
@@ -178,7 +178,6 @@ export class ReminderRepo implements IReminderRepo {
             return true;
         } catch (error) {
             Logger.instance().log(error.message);
-            throw new ApiError(500, error.message);
         }
 
     };

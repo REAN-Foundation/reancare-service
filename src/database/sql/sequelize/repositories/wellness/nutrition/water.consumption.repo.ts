@@ -172,7 +172,7 @@ export class WaterConsumptionRepo implements IWaterConsumptionRepo {
         }
     };
 
-    public deleteByUserId = async (patientUserId: string, hardDelete: boolean): Promise<boolean> => {
+    public deleteByUserId = async (patientUserId: string, hardDelete: boolean = false): Promise<boolean> => {
         try {
             const deletedCount = await WaterConsumptionModel.destroy({
                 where : {
@@ -182,12 +182,11 @@ export class WaterConsumptionRepo implements IWaterConsumptionRepo {
             });
 
             if (deletedCount === 0) {
-                Logger.instance().log(`No WaterConsumption records found for user: ${patientUserId}`);
+                Logger.instance().log(`No Water Consumption records found for user: ${patientUserId}`);
             }
             return true;
         } catch (error) {
             Logger.instance().log(error.message);
-            throw new ApiError(500, error.message);
         }
     };
 

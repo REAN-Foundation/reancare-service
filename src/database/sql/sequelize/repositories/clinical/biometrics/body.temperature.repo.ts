@@ -311,7 +311,7 @@ export class BodyTemperatureRepo implements IBodyTemperatureRepo {
         }
     };
 
-    deleteByUserId = async(patientUserId: string, hardDelete: boolean): Promise<boolean> =>{
+    deleteByUserId = async(patientUserId: string, hardDelete: boolean = false): Promise<boolean> =>{
         try {
             const deletedCount = await BodyTemperatureModel.destroy({
                 where : {
@@ -326,7 +326,6 @@ export class BodyTemperatureRepo implements IBodyTemperatureRepo {
             return true;
         } catch (error) {
             Logger.instance().log(error.message);
-            throw new ApiError(500, error.message);
         }
     };
 

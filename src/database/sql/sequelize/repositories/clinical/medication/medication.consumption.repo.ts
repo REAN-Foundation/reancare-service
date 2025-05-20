@@ -541,7 +541,7 @@ export class MedicationConsumptionRepo implements IMedicationConsumptionRepo {
         }
     };
 
-    deleteByUserId = async(patientUserId: string, hardDelete: boolean): Promise<boolean> => {
+    deleteByUserId = async(patientUserId: string, hardDelete: boolean = false): Promise<boolean> => {
         try {
             const deletedCount = await MedicationConsumption.destroy({
                 where : {
@@ -556,7 +556,6 @@ export class MedicationConsumptionRepo implements IMedicationConsumptionRepo {
             return true;
         } catch (error) {
             Logger.instance().log(error.message);
-            throw new ApiError(500, error.message);
         }
     };
 

@@ -189,18 +189,20 @@ export class EmergencyContactRepo implements IEmergencyContactRepo {
         }
     };
 
-    deleteByUserId = async (patientUserId: string, hardDelete: boolean): Promise<boolean> => {
+    deleteByUserId = async (patientUserId: string, hardDelete: boolean = false): Promise<boolean> => {
         try {
-            await EmergencyContact.destroy({
+            const deletedCount = await EmergencyContact.destroy({
                 where : {
                     PatientUserId : patientUserId,
                 },
                 force : hardDelete
             });
+            if (deletedCount === 0) {
+                Logger.instance().log(`No Emergency-contact record found for user: ${patientUserId}`);
+            }
             return true;
         } catch (error) {
             Logger.instance().log(error.message);
-            throw new ApiError(500, error.message);
         }
     };
 

@@ -585,7 +585,7 @@ export class CareplanRepo implements ICareplanRepo {
         }
     };
 
-    public deleteEnrollmentByUserId = async (patientUserId: string, hardDelete: boolean): Promise<boolean> =>{
+    public deleteEnrollmentByUserId = async (patientUserId: string, hardDelete: boolean = false): Promise<boolean> =>{
         try {
             const deletedCount = await CareplanEnrollment.destroy({
                 where : {
@@ -600,11 +600,10 @@ export class CareplanRepo implements ICareplanRepo {
             return true;
         } catch (error) {
             Logger.instance().log(error.message);
-            throw new ApiError(500, error.message);
         }
     };
 
-    public deleteActivitiesByUserId = async (patientUserId: string, hardDelete: boolean): Promise<boolean> =>{
+    public deleteActivitiesByUserId = async (patientUserId: string, hardDelete: boolean = false): Promise<boolean> =>{
         try {
             const deletedCount = await CareplanActivity.destroy({
                 where : {
@@ -619,7 +618,6 @@ export class CareplanRepo implements ICareplanRepo {
             return true;
         } catch (error) {
             Logger.instance().log(error.message);
-            throw new ApiError(500, error.message);
         }
     };
 

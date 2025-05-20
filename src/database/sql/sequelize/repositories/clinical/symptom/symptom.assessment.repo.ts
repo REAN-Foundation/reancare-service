@@ -9,6 +9,7 @@ import { SymptomAssessmentDto } from '../../../../../../domain.types/clinical/sy
 import { SymptomAssessmentSearchFilters, SymptomAssessmentSearchResults } from '../../../../../../domain.types/clinical/symptom/symptom.assessment/symptom.assessment.search.types';
 import { ProgressStatus } from '../../../../../../domain.types/miscellaneous/system.types';
 import Symptom from '../../../models/clinical/symptom/symptom.model';
+import HowDoYouFeel from '../../../models/clinical/symptom/how.do.you.feel.model';
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -167,6 +168,43 @@ export class SymptomAssessmentRepo implements ISymptomAssessmentRepo {
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
+        }
+    };
+
+    deleteByUserId = async (patientUserId: string, hardDelete: boolean = false): Promise<boolean> =>{
+        try {
+
+            const assessments = await SymptomAssessment.findAll({
+                where : {
+                    PatientUserId : patientUserId
+                },
+                attributes : ['id']
+            });
+
+            const assessmentIds = assessments.map(a => a.id);
+
+            for (const id of assessmentIds) {
+                await HowDoYouFeel.destroy({
+                    where : {
+                        SymptomAssessmentId : id
+                    },
+                    force : hardDelete
+                });
+            }
+
+            const deletedCount = await SymptomAssessment.destroy({
+                where : {
+                    PatientUserId : patientUserId
+                },
+                force : hardDelete
+            });
+
+            if (deletedCount === 0) {
+                Logger.instance().log(`No Symptom Assessment records found for user: ${patientUserId}`);
+            }
+            return true;
+        } catch (error) {
+            Logger.instance().log(error.message);
         }
     };
 

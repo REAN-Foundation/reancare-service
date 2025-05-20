@@ -556,7 +556,7 @@ export class CareplanRepo implements ICareplanRepo {
         try {
             var where_clause = { PatientUserId: patientUserId, IsActive: true };
             where_clause['EndDate'] = { [Op.gte]: new Date() };
-            
+
             const enrollments = await CareplanEnrollment.findAll({
                 where : where_clause
             });
@@ -582,6 +582,42 @@ export class CareplanRepo implements ICareplanRepo {
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
+        }
+    };
+
+    public deleteEnrollmentByUserId = async (patientUserId: string, hardDelete: boolean = false): Promise<boolean> =>{
+        try {
+            const deletedCount = await CareplanEnrollment.destroy({
+                where : {
+                    PatientUserId : patientUserId
+                },
+                force : hardDelete
+            });
+
+            if (deletedCount === 0) {
+                Logger.instance().log(`No Careplan Enrollment records found for user: ${patientUserId}`);
+            }
+            return true;
+        } catch (error) {
+            Logger.instance().log(error.message);
+        }
+    };
+
+    public deleteActivitiesByUserId = async (patientUserId: string, hardDelete: boolean = false): Promise<boolean> =>{
+        try {
+            const deletedCount = await CareplanActivity.destroy({
+                where : {
+                    PatientUserId : patientUserId
+                },
+                force : hardDelete
+            });
+
+            if (deletedCount === 0) {
+                Logger.instance().log(`No Careplan Activity records found for user: ${patientUserId}`);
+            }
+            return true;
+        } catch (error) {
+            Logger.instance().log(error.message);
         }
     };
 

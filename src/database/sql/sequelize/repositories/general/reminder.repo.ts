@@ -163,4 +163,23 @@ export class ReminderRepo implements IReminderRepo {
         }
     };
 
+    deleteByUserId = async (userId: string, hardDelete: boolean = false): Promise<boolean> => {
+        try {
+            const deletedCount = await Reminder.destroy({
+                where : {
+                    UserId : userId,
+                },
+                force : hardDelete
+            });
+
+            if (deletedCount === 0) {
+                Logger.instance().log(`No Reminder records found for user: ${userId}`);
+            }
+            return true;
+        } catch (error) {
+            Logger.instance().log(error.message);
+        }
+
+    };
+
 }

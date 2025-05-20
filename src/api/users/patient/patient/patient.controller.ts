@@ -24,6 +24,7 @@ import { MedicationService } from '../../../../services/clinical/medication/medi
 import { MedicationConsumptionService } from '../../../../services/clinical/medication/medication.consumption.service';
 import { PatientSearchFilters } from '../../../../domain.types/users/patient/patient/patient.search.types';
 import { UserEvents } from '../../user/user.events';
+import { PatientDeleteService } from '../../../../services/users/patient/patient.delete.service';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -53,6 +54,8 @@ export class PatientController extends BaseUserController {
     _customActionHandler: CustomActionsHandler = new CustomActionsHandler();
 
     _validator = new PatientValidator();
+
+    _patientDeleteService: PatientDeleteService = Injector.Container.resolve(PatientDeleteService);
 
     //#endregion
 
@@ -229,7 +232,7 @@ export class PatientController extends BaseUserController {
                 OtherInformation          : updateModel.HealthProfile.OtherInformation,
             };
             await this._patientHealthProfileService.updateByPatientUserId(userId, healthProfile);
-            
+
             if (userDomainModel.Person.Phone && (updatedUser.Person.Phone !== userDomainModel.Person.Phone)) {
                 const isPersonExistsWithPhone = await this._personService.getPersonWithPhone(userDomainModel.Person.Phone);
                 if (isPersonExistsWithPhone) {
@@ -297,29 +300,31 @@ export class PatientController extends BaseUserController {
                 throw new ApiError(404, 'User not found.');
             }
             await this.authorizeOne(request, user.id, user.TenantId);
-            
+
             let deleted = await this._service.deleteByUserId(userId);
             if (!deleted) {
                 throw new ApiError(400, 'User cannot be deleted.');
             }
-            
+
             deleted = await this._patientHealthProfileService.deleteByPatientUserId(userId);
             if (!deleted) {
                 throw new ApiError(400, 'User cannot be deleted.');
             }
-            
+
             deleted = await this._userDeviceDetailsService.deleteByUserId(userId);
             if (!deleted) {
                 throw new ApiError(400, 'User cannot be deleted.');
             }
-            
+
             deleted = await this._cohortService.removeUserFromAllCohorts(userId);
-            
+
             deleted = await this._userService.delete(userId);
             if (!deleted) {
                 throw new ApiError(400, 'User cannot be deleted.');
             }
-            
+
+            await this._patientDeleteService.enqueueDeletePatientData(userId);
+
             //TODO: Please add check here whether the patient-person
             //has other roles in the system
             const personDeleted = await this._personService.delete(personId);
@@ -413,10 +418,10 @@ export class PatientController extends BaseUserController {
         if (request.currentClient?.IsPrivileged) {
             return searchFilters;
         }
-            
+
         const currentUser = request.currentUser;
         const currentRole = request.currentUser.CurrentRole;
-        
+
         if (searchFilters.TenantId != null) {
             if (searchFilters.TenantId !== request.currentUser.TenantId) {
                 if (currentRole !== Roles.SystemAdmin &&

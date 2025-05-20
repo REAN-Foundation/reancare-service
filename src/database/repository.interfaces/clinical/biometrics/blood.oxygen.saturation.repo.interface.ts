@@ -8,7 +8,7 @@ export interface IBloodOxygenSaturationRepo {
     create(bloodOxygenSaturationDomainModel: BloodOxygenSaturationDomainModel): Promise<BloodOxygenSaturationDto>;
 
     getById(id: string): Promise<BloodOxygenSaturationDto>;
-    
+
     search(filters: BloodOxygenSaturationSearchFilters): Promise<BloodOxygenSaturationSearchResults>;
 
     update(id: string, bloodOxygenSaturationDomainModel: BloodOxygenSaturationDomainModel):
@@ -23,5 +23,7 @@ export interface IBloodOxygenSaturationRepo {
     getRecent(patientUserId: string): Promise<BloodOxygenSaturationDto>;
 
     getMostRecentBloodOxygenSaturationActivity(patientUserId: string): Promise<MostRecentActivityDto>;
+
+    deleteByUserId(patientUserId: string, hardDelete: boolean): Promise<boolean>;
 
 }

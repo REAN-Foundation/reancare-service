@@ -69,4 +69,8 @@ export class BodyWeightService {
         return await this._bodyWeightRepo.getMostRecentBodyWeightActivity(patientUserId);
     };
 
+    deleteByUserId = async (patientUserId: string, hardDelete: boolean = true): Promise<boolean> => {
+        return await this._bodyWeightRepo.deleteByUserId(patientUserId, hardDelete);
+    };
+
 }

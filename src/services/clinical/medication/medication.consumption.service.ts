@@ -545,6 +545,10 @@ export class MedicationConsumptionService implements IUserActionService {
     getScheduledMedicationCountById = async(medicationId: string): Promise<number> => {
         return await this._medicationConsumptionRepo.getScheduledMedicationCountById(medicationId);
     };
+
+    deleteByUserId = async (patientUserId: string, hardDelete: boolean = true): Promise<boolean> => {
+        return await this._medicationConsumptionRepo.deleteByUserId(patientUserId, hardDelete);
+    };
     //#region Privates
 
     private async finishAssociatedTask(medConsumption: MedicationConsumptionDetailsDto) {
@@ -809,7 +813,7 @@ export class MedicationConsumptionService implements IUserActionService {
             messageTemplate.MedicationReminder.NotificationType, title, body
         );
         Logger.instance().log(`Seding notification to patient :: ${patientUserId} - ${JSON.stringify(message)}`);
-        
+
         for await (var device of deviceList) {
             await Loader.notificationService.sendNotificationToDevice(device.Token, message);
         }

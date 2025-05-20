@@ -71,4 +71,8 @@ export class BodyTemperatureService {
         return await this._bodyTemperatureRepo.getMostRecentBodyTemperatureActivity(patientUserId);
     };
 
+    deleteByUserId = async (patientUserId: string, hardDelete: boolean = true): Promise<boolean> => {
+        return await this._bodyTemperatureRepo.deleteByUserId(patientUserId, hardDelete);
+    };
+
 }

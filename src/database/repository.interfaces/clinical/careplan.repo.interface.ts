@@ -74,4 +74,8 @@ export interface ICareplanRepo {
     stop(enrollmentId: uuid): Promise<EnrollmentDto>;
 
     getAllCareplanEnrollmentByPlanCode(planCode: CareplanCode): Promise<EnrollmentDto[]>;
+
+    deleteEnrollmentByUserId(patientUserId: string, hardDelete: boolean): Promise<boolean>;
+
+    deleteActivitiesByUserId(patientUserId: string, hardDelete: boolean): Promise<boolean>;
 }

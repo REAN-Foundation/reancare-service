@@ -1,0 +1,17 @@
+meta {
+  name: Get atom feed
+  type: http
+  seq: 11
+}
+
+get {
+  url: {{BASE_URL}}/rss-feeds/{{RSS_FEED_ID}}/feed-items
+  body: none
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{ADMIN_USER_JWT}}
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+  Content-Type: application/json
+}

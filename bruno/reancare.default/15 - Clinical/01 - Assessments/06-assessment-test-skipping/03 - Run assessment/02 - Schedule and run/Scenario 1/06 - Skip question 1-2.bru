@@ -1,0 +1,27 @@
+meta {
+  name: 06 - Skip question 1-2
+  type: http
+  seq: 6
+}
+
+post {
+  url: {{BASE_URL}}/clinical/assessments/{{ASSESSMENT_ID}}/questions/{{ASSESSMENT_QUESTION_ID}}/skip
+  body: none
+  auth: none
+}
+
+headers {
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+  Authorization: Bearer {{ADMIN_USER_JWT}}
+}
+
+tests {
+  try {
+      var jsonRes = res.getBody();
+      bru.setEnvVar("ASSESSMENT_QUESTION_ID", jsonRes.Data.AnswerResponse.Next.id);
+      bru.setEnvVar("ASSESSMENT_NEXT_QUESTION_ID", jsonRes.Data.AnswerResponse.Next.id);
+  }
+  catch (error) {
+      console.log(error.message);
+  }
+}

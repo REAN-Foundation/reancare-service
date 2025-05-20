@@ -1,0 +1,108 @@
+meta {
+  name: Update Settings by types
+  type: http
+  seq: 4
+}
+
+put {
+  url: {{BASE_URL}}/tenant-settings/{{TENANT_ID}}/types/{{TENANT_SETTINGS_TYPE_2}}
+  body: json
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+  Authorization: Bearer {{TENANT_ADMIN_USER_JWT}}
+}
+
+body:json {
+  {
+      "Common": {
+          "Clinical": {
+              "Vitals": true,
+              "LabRecords": true,
+              "Symptoms": true,
+              "DrugsManagement": true,
+              "Medications": true,
+              "Careplans": false,
+              "Assessments": true
+          },
+          "External": {
+              "FHIRStorage": false,
+              "EHRIntegration": false,
+              "ABDMIntegration": false
+          },
+          "AddOns": {
+              "HospitalSystems": false,
+              "Gamification": false,
+              "LearningJourney": false,
+              "Community": false,
+              "PatientSelfServicePortal": false,
+              "PatientStatusReports": false,
+              "DocumentsManagement": false,
+              "AppointmentReminders": false,
+              "Organizations": false,
+              "Cohorts": false,
+              "Notifications": true,
+              "Newsfeeds": false,
+              "Notices": false
+          },
+          "Analysis": {
+              "CustomQueries": false,
+              "Quicksight": false
+          }
+      }
+  }
+}
+
+tests {
+  test("Request is successfull", function () {
+      expect(res.getStatus()).to.equal(200);
+      var jsonRes = res.getBody();
+      expect(jsonRes.Status).to.eql('success');
+  });
+  
+  test("Updated Common settings are returned", () => {
+      var jsonRes = res.getBody();
+      expect(jsonRes).to.have.property("Data");
+      expect(jsonRes.Data).to.have.property("Updated");
+  
+      const updated = jsonRes.Data.Updated;
+      expect(updated).to.have.property("Common");
+  
+      const common = updated.Common;
+  
+      expect(common).to.have.property("Clinical");
+      expect(common.Clinical).to.have.property("Vitals").that.is.a("boolean");
+      expect(common.Clinical).to.have.property("LabRecords").that.is.a("boolean");
+  
+      expect(common).to.have.property("External");
+      expect(common.External).to.have.property("FHIRStorage").that.is.a("boolean");
+  
+      expect(common).to.have.property("AddOns");
+      expect(common.AddOns).to.have.property("Notifications").that.is.a("boolean");
+  
+      expect(common).to.have.property("Analysis");
+      expect(common.Analysis).to.have.property("Quicksight").that.is.a("boolean");
+  });
+}
+
+docs {
+  Registers patient. Phone number is the only mandatory field. The rest of the fields are optional. Phone number has to be specified in this format - 'country-code-phone-number'. e.g. "+91-1234567890".
+  
+  The typical request body is as follows - 
+  `
+  {
+      "Phone": "+91-1234567890",
+      "Prefix": "Mr.",
+      "FirstName": "John",
+      "MiddleName": "X",
+      "LastName": "Doe",
+      "Email": "john.doe@gmail.com",
+      "Gender": "Male",
+      "BirthDate": "1979-01-01",
+      "ImageResourceId": ""
+  }
+  `
+}

@@ -1,0 +1,38 @@
+meta {
+  name: Answer tenth question - File
+  type: http
+  seq: 12
+}
+
+post {
+  url: {{BASE_URL}}/clinical/assessments/{{ASSESSMENT_ID}}/questions/{{ASSESSMENT_NEXT_QUESTION_ID}}/answer
+  body: json
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{PATIENT_USER_JWT}}
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+  Content-Type: application/json
+}
+
+body:json {
+  {
+      "ResponseType": "File",
+      "Answer": {
+          "ResourceId": "{{RESOURCE_ID}}",
+          "FileName": "2.jpg",
+          "Url": "http://localhost:7272/api/v1/file-resources/09d85c49-862f-4e43-a855-a31bcbd3e0b1/download"
+      }
+  }
+}
+
+tests {
+  test("Request is successfull", function () {
+      expect(res.getStatus()).to.equal(200);
+      var jsonRes = res.getBody();
+      expect(jsonRes.Status).to.eql('success');
+      expect(jsonRes.Message).to.eql('Assessment has completed successfully!');
+  });
+  
+}

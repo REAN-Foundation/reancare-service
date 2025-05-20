@@ -283,7 +283,7 @@ export class CAssessmentNodePath {
     Condition             ?: CAssessmentPathCondition;
     IsExitPath            ?: boolean;
     MessageBeforeQuestion ?: string;
-    
+
     constructor() {
         this.IsExitPath = false;
     }
@@ -323,6 +323,7 @@ export class CAssessmentQueryResponse {
     SatisfiedConditionId?: uuid;
     ChosenPathId?        : uuid;
     CreatedAt?           : Date;
+    Skipped?             : boolean;
 
     constructor() {
         this.ResponseType = QueryResponseType.None;
@@ -470,6 +471,10 @@ export interface BiometricQueryAnswer extends BaseQueryAnswer {
     Values  : AssessmentBiometrics[] | AssessmentBiometrics;
 }
 
+export interface SkipQueryAnswer extends BaseQueryAnswer {
+    Skipped : boolean;
+}
+
 export class CScoringCondition {
 
     id?             : uuid;
@@ -494,6 +499,15 @@ export class CScoringCondition {
         this.Children = [];
     }
 
+}
+
+export interface AssessmentScoring {
+    PosedQuestionCount : number;
+    SkippedCount       : number;
+    AnsweredCount      : number;
+    CorrectAnswerCount : number;
+    TotalScore         : number;
+    CategorywiseScore  : any;
 }
 
 //#endregion

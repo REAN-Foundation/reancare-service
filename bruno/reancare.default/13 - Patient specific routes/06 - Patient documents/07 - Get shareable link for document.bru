@@ -1,0 +1,37 @@
+meta {
+  name: Get shareable link for document
+  type: http
+  seq: 8
+}
+
+get {
+  url: {{BASE_URL}}/patient-documents/{{PATIENT_DOCUMENT_ID}}/share?durationMinutes=2
+  body: none
+  auth: none
+}
+
+params:query {
+  durationMinutes: 2
+  ~documentType: PATIENT_LAB_REPORTS
+}
+
+headers {
+  Content-Type: application/json
+  Authorization: Bearer {{PATIENT_USER_JWT}}
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+}
+
+tests {
+  test("Request is successfull", function () {
+      expect(res.getStatus()).to.equal(200);
+      var jsonRes = res.getBody();
+      expect(jsonRes.Status).to.eql('success');
+  });
+  
+  test("Document is renamed with new file name", function () {
+      var jsonRes = res.getBody();
+      expect(jsonRes.Data).to.have.property('PatientDocumentLink');
+      expect(jsonRes.Data.PatientDocumentLink).to.not.be.empty;
+  });
+  
+}

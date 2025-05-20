@@ -1,0 +1,67 @@
+meta {
+  name: Add how do you feel details
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{BASE_URL}}/clinical/symptoms/how-do-you-feel
+  body: json
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+  authorization: Bearer {{PATIENT_USER_JWT}}
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+}
+
+body:json {
+  {
+      "PatientUserId": "{{PATIENT_USER_ID}}",
+      "Feeling": 1,
+      "RecordDate": "2025-06-20",
+      "Comments": "abcd66",
+      "SymptomAssessmentId": null
+  }
+}
+
+tests {
+  try {
+      var jsonData = res.getBody();
+      var id = jsonData.Data.HowDoYouFeel.id;
+      bru.setEnvVar("HOW_DO_YOU_FEEL_ID", id);
+  }
+  catch (error) {
+      console.log(error.message);
+  }
+  
+  test("Request is successful", function () {
+      expect(res.getStatus()).to.equal(201);
+      var jsonRes = res.getBody();
+      expect(jsonRes.Status).to.eql('success');
+  });
+  
+  test("New 'HowDoYouFeel' record is created", function () {
+  
+      var patientUserId = bru.getEnvVar("PATIENT_USER_ID");
+      var feeling = 1;  
+      var comments = "abcd66";
+      var recordDate = "2025-06-20T00:00:00.000Z";
+  
+      var jsonRes = res.getBody();
+      expect(jsonRes.Data).to.have.property('HowDoYouFeel');
+      expect(jsonRes.Data.HowDoYouFeel).to.have.property('id');
+      expect(jsonRes.Data.HowDoYouFeel).to.have.property('PatientUserId');
+      expect(jsonRes.Data.HowDoYouFeel).to.have.property('Feeling');
+      expect(jsonRes.Data.HowDoYouFeel).to.have.property('Comments');
+      expect(jsonRes.Data.HowDoYouFeel).to.have.property('RecordDate');
+  
+      // Validate the values
+      expect(jsonRes.Data.HowDoYouFeel.PatientUserId).equals(patientUserId);
+      expect(jsonRes.Data.HowDoYouFeel.Feeling).equals(feeling);
+      expect(jsonRes.Data.HowDoYouFeel.Comments).equals(comments);
+      expect(jsonRes.Data.HowDoYouFeel.RecordDate).equals(recordDate);
+  });
+  
+}

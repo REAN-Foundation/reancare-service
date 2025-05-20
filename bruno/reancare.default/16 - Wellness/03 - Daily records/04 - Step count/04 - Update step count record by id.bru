@@ -1,0 +1,51 @@
+meta {
+  name: Update step count record by id
+  type: http
+  seq: 3
+}
+
+put {
+  url: {{BASE_URL}}/wellness/daily-records/step-counts/{{DAILY_STEP_COUNT_ID}}
+  body: json
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{PATIENT_USER_JWT}}
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+  Content-Type: application/json
+}
+
+body:json {
+  {
+      "StepCount": 10000,
+      "RecordDate": "2021-09-14"
+  }
+}
+
+tests {
+  test("Request is successfull", function () {
+      expect(res.getStatus()).to.equal(200);
+      var jsonRes = res.getBody();
+      expect(jsonRes.Status).to.eql('success');
+  });
+  
+  test("Updated step count record is returned", function () {
+  
+      var expectedStepCount = 10000;
+      
+      var jsonRes = res.getBody();
+      expect(jsonRes.Data).to.have.property('StepCount');
+      expect(jsonRes.Data.StepCount).to.not.be.empty;
+      expect(jsonRes.Data.StepCount).to.have.property('StepCount');
+      expect(jsonRes.Data.StepCount).to.have.property('RecordDate');
+  
+      expect(jsonRes.Data.StepCount.StepCount).equals(expectedStepCount);
+      var recordDate = jsonRes.Data.StepCount.RecordDate;
+      if (recordDate) {
+          recordDate = recordDate.split('T')[0];
+      } 
+  });
+  
+  
+}

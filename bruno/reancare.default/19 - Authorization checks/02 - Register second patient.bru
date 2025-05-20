@@ -1,0 +1,83 @@
+meta {
+  name: Register second patient
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{BASE_URL}}/patients
+  body: json
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+}
+
+body:json {
+  {
+      "Phone": "{{PHONE_COUNTRY_CODE}}-{{PHONE_NUMBER}}",
+      "Password": "{{PASSWORD}}"
+  }
+}
+
+script:pre-request {
+  var phonenumber = (Math.floor(Math.random() * 9000000000) + 1000000000).toString();
+  var password = "";
+  
+  bru.setEnvVar("PHONE_NUMBER", phonenumber);
+  bru.setEnvVar("PASSWORD", password);
+  
+}
+
+tests {
+  var jsonRes = res.getBody();
+  
+  try {
+      bru.setEnvVar("PATIENT_ID", jsonRes.Data.Patient.id);
+      bru.setEnvVar("PATIENT_USER_ID", jsonRes.Data.Patient.UserId);
+      bru.setEnvVar("HEALTH_PROFILE_ID", jsonRes.Data.Patient.HealthProfile.id);
+  }
+  catch (error) {
+      console.log(error.message);
+  }
+  
+  test("Request is successful", function () {
+      expect(res.getStatus()).to.equal(201);
+      var jsonRes = res.getBody();
+      expect(jsonRes.Status).to.eql('success');
+  });
+  
+  test("Patient record is created", function () {
+      var jsonRes = res.getBody();
+  
+      expect(jsonRes.Data).to.have.property('Patient');
+      expect(jsonRes.Data.Patient).to.not.be.empty;
+      expect(jsonRes.Data.Patient).to.have.property('id');
+      expect(jsonRes.Data.Patient).to.have.property('UserId');
+      expect(jsonRes.Data.Patient).to.have.property('DisplayId');
+      expect(jsonRes.Data.Patient).to.have.property('User');
+      expect(jsonRes.Data.Patient).to.have.property('HealthProfile');
+  
+      expect(jsonRes.Data.Patient.User).to.have.property('UserName');
+      expect(jsonRes.Data.Patient.User).to.have.property('Person');
+      expect(jsonRes.Data.Patient.User.Person).to.have.property('Phone');
+      expect(jsonRes.Data.Patient.User.Person).to.have.property('DisplayName');
+  
+      expect(jsonRes.Data.Patient.HealthProfile).to.have.property('id');
+      expect(jsonRes.Data.Patient.HealthProfile).to.have.property('PatientUserId');
+  });
+  
+  
+  
+  // try {
+  //     var jsonRes = res.getBody();
+  //     bru.setEnvVar("SECOND_PATIENT_USER_ID", jsonRes.Data.Patient.User.id);
+  //     bru.setEnvVar("SECOND_PATIENT_PERSON_ID", jsonRes.Data.Patient.User.Person.id);
+  // }
+  // catch (error) {
+  //     console.log(error.message);
+  // }
+  
+}

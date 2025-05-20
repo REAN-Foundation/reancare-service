@@ -121,7 +121,8 @@ export class CommonActions {
 
     scheduleCreateMedicationConsumptionTask = async (cronExpression: string) => {
         const medications = await this._medicationService.getAllActiveMedications();
-        
+        Logger.instance().log(`Total medications to schedule: ${medications.length}`);
+        Logger.instance().log(`Cron expression: ${cronExpression}`);
         for (const medication of medications) {
             await MedicationScheduleHandler.scheduleMedicationConsumption(medication, cronExpression);
         }

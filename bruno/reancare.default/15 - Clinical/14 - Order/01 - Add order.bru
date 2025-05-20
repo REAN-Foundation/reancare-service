@@ -1,0 +1,71 @@
+meta {
+  name: Add order
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{BASE_URL}}/clinical/orders
+  body: json
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{PATIENT_USER_JWT}}
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+  Content-Type: application/json
+}
+
+body:json {
+  {
+      "PatientUserId": "{{PATIENT_USER_ID}}",
+      "Type": "DrugOrder",
+      "DisplayId": "1234",
+      "MedicalPractitionerUserId": "{{DOCTOR_USER_ID}}",
+      "CurrentState": "RaisedQuery",
+      "OrderDate": "2021-09-23",
+      "AdditionalInformation": "Nothing"
+  }
+}
+
+tests {
+  var jsonRes = res.getBody();
+  
+  try {
+      bru.setEnvVar("ORDER_ID", jsonRes.Data.Order.id);
+  }
+  catch (error) {
+      console.log(error.message);
+  }
+  
+  test("Request is successfull", function () {
+      expect(res.getStatus()).to.equal(201);
+      var jsonRes = res.getBody();
+      expect(jsonRes.Status).to.eql('success');
+  });
+  
+  test("New order record is created", function () {
+  
+      var expectedType = "Drug order";
+      var expectedPatientUserId = bru.getEnvVar("PATIENT_USER_ID");
+      var expectedMedicalPractitionerUserId = bru.getEnvVar("DOCTOR_USER_ID");
+      var expectedCurrentState = "Raised query";
+  
+      
+      var jsonRes = res.getBody();
+      expect(jsonRes.Data).to.have.property('Order');
+      expect(jsonRes.Data.Order).to.not.be.empty;
+      expect(jsonRes.Data.Order).to.have.property('id');
+      expect(jsonRes.Data.Order).to.have.property('Type');
+      expect(jsonRes.Data.Order).to.have.property('PatientUserId');
+      expect(jsonRes.Data.Order).to.have.property('MedicalPractitionerUserId');
+  
+      
+      expect(jsonRes.Data.Order.Type).equals(expectedType);
+      expect(jsonRes.Data.Order.PatientUserId).equals(expectedPatientUserId);
+      expect(jsonRes.Data.Order.MedicalPractitionerUserId).equals(expectedMedicalPractitionerUserId);
+      expect(jsonRes.Data.Order.CurrentState).equals(expectedCurrentState);
+      
+  });
+  
+}

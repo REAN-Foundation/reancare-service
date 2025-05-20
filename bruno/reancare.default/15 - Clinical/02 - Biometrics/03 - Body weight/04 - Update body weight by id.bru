@@ -1,0 +1,56 @@
+meta {
+  name: Update body weight by id
+  type: http
+  seq: 3
+}
+
+put {
+  url: {{BASE_URL}}/clinical/biometrics/body-weights/{{BODY_WEIGHT_ID}}
+  body: json
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{PATIENT_USER_JWT}}
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+  Content-Type: application/json
+}
+
+body:json {
+  {
+      "PatientUserId": "{{PATIENT_USER_ID}}",
+      "BodyWeight": 90,
+      "Unit": "{{WEIGHT_UNIT}}"
+  }
+}
+
+tests {
+  test("Request is successfull", function () {
+      expect(res.getStatus()).to.equal(200);
+      var jsonRes = res.getBody();
+      expect(jsonRes.Status).to.eql('success');
+  });
+  
+  test("Updated Body weight biometric is returned", function () {
+  
+      var expectedPatientUserId = bru.getEnvVar("PATIENT_USER_ID");
+      var expectedBodyWeight = 90;
+      var expectedWeightUnit = bru.getEnvVar("WEIGHT_UNIT");
+  
+      var jsonRes = res.getBody();
+      expect(jsonRes.Data).to.have.property('BodyWeight');
+      expect(jsonRes.Data.BodyWeight).to.have.property('BodyWeight');
+      expect(jsonRes.Data.BodyWeight).to.have.property('PatientUserId');
+      expect(jsonRes.Data.BodyWeight).to.have.property('Unit');
+  
+      expect(jsonRes.Data.BodyWeight.PatientUserId).equals(expectedPatientUserId);
+      expect(Number(jsonRes.Data.BodyWeight.BodyWeight)).equals(Number(expectedBodyWeight));
+      expect(jsonRes.Data.BodyWeight.Unit).equals(expectedWeightUnit);
+  });
+  
+  
+}
+
+docs {
+  Update the details for a body height metric by body_height_id.
+}

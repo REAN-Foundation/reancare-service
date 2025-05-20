@@ -5,7 +5,6 @@ import { DurationType } from '../../domain.types/miscellaneous/time.types';
 import { MedicationDto } from '../../domain.types/clinical/medication/medication/medication.dto';
 import { Injector } from '../../startup/injector';
 import { MEDICATION_CONSUMPTION_DURATION_DAYS, MedicationConsumptionService } from '../clinical/medication/medication.consumption.service';
-import { CronExpressionParser } from 'cron-parser';
 
 /////////////////////////////////////////////////////////////////////
 
@@ -25,6 +24,7 @@ export class MedicationScheduleHandler {
 
     private static createMedicationConsumption = async (medication: MedicationDto, cronExpression: string) => {
         try {
+            Logger.instance().log(`Creating medication consumption task...`);
             const medicationConsumptionService = Injector.Container.resolve(MedicationConsumptionService);
 
             let medicationConsumptionCount = await medicationConsumptionService.
@@ -52,13 +52,21 @@ export class MedicationScheduleHandler {
             let medicationConsumptionDurationDays = MEDICATION_CONSUMPTION_DURATION_DAYS;
     
             const nextScheduledDate = MedicationScheduleHandler.findNextScheduledDate(cronExpression);
-    
+            Logger.instance().log(`Next scheduled date: ${nextScheduledDate}`);
+
             if (customScheduleDate < nextScheduledDate) {
                 const difference = Math.ceil(TimeHelper.dayDiff(nextScheduledDate, customScheduleDate));
-                if (difference > 0 && difference <= medicationConsumptionDurationDays) {
+                if (difference > 0) {
                     medicationConsumptionDurationDays = difference;
                 }
             }
+            
+            Logger.instance().log(`######################################`);
+            Logger.instance().log(`Medication: ${JSON.stringify(medication)}`);
+            Logger.instance().log(`Custom Schedule Date: ${customScheduleDate}`);
+            Logger.instance().log(`Total Scheduled Days: ${totalScheduledDays}`);
+            Logger.instance().log(`Medication scheduled for n Days: ${medicationConsumptionDurationDays}`);
+            Logger.instance().log(`######################################`);
                 
             if (totalScheduledDays < days &&
                 customScheduleDate < medication.EndDate &&
@@ -76,11 +84,9 @@ export class MedicationScheduleHandler {
         }
     };
     
-    private static findNextScheduledDate = (cronExpression: string): Date => {
+    private static findNextScheduledDate = (cronExpression: string): Date | null => {
         try {
-            const interval = CronExpressionParser.parse(cronExpression);
-            const nextRun: Date = interval.next().toDate();
-            return nextRun;
+            return TimeHelper.addDuration(new Date(), MEDICATION_CONSUMPTION_DURATION_DAYS, DurationType.Day);
         } catch (error) {
             Logger.instance().log(`Error parsing cron expression: ${cronExpression}`);
             return null;

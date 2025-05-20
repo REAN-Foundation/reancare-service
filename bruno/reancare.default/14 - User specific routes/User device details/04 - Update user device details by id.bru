@@ -1,0 +1,52 @@
+meta {
+  name: Update user device details by id
+  type: http
+  seq: 3
+}
+
+put {
+  url: {{BASE_URL}}/user-device-details/{{USER_DEVICE_DETAILS_ID}}
+  body: json
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{PATIENT_USER_JWT}}
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+  Content-Type: application/json
+}
+
+body:json {
+  {
+      "Token": "abcds",
+      "UserId": "237d4b82-d682-43cb-8688-3ec19ee9f2ea",
+      "DeviceName": "Iphone13",
+      "OSType": "aaa",
+      "OSVersion": "14.2",
+      "AppName": "Rean Health",
+      "AppVersion": "1.3.0"
+  }
+}
+
+tests {
+  // test("Request is successfull", function () {
+  //     expect(res.getStatus()).to.equal(200);
+  //     var jsonRes = res.getBody();
+  //     expect(jsonRes.Status).to.eql('success');
+  // });
+  // test("Updated user device details is returned", function () {
+  //     var expectedDeviceName = "Iphone13";
+  //     var expectedAppVersion = "1.3.0";
+  
+  //      var jsonRes = res.getBody();
+  //     expect(jsonRes.Data).to.have.property('UserDeviceDetails');
+  //     expect(jsonRes.Data.UserDeviceDetails).to.not.be.empty;
+  //     expect(jsonRes.Data.UserDeviceDetails).to.have.property('id');
+  //     expect(jsonRes.Data.UserDeviceDetails).to.have.property('DeviceName');
+  //     expect(jsonRes.Data.UserDeviceDetails).to.have.property('AppVersion');
+  
+  
+  //     expect(jsonRes.Data.UserDeviceDetails.DeviceName).equals(expectedDeviceName);
+  //     expect(jsonRes.Data.UserDeviceDetails.AppVersion).equals(expectedAppVersion);
+  // });
+}

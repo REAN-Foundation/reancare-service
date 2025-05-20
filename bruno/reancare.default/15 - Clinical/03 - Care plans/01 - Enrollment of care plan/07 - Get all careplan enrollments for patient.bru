@@ -1,0 +1,42 @@
+meta {
+  name: Get all careplan enrollments for patient
+  type: http
+  seq: 7
+}
+
+get {
+  url: {{BASE_URL}}/care-plans/patients/{{PATIENT_USER_ID}}/enrollments
+  body: json
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{PATIENT_USER_JWT}}
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+  Content-Type: application/json
+}
+
+body:json {
+  {
+      "Provider": "AHA",
+      "PlanCode": "HeartFailure",
+      "StartDate": "2022-01-11"
+  }
+}
+
+tests {
+  
+  test("Request is successfull", function () {
+      expect(res.getStatus()).to.equal(200);
+      var jsonRes = res.getBody();
+      expect(jsonRes.Status).to.eql('success');
+  });
+  
+  test("Patient is enrolled to careplan", function () {
+      var jsonRes = res.getBody();
+      expect(jsonRes.Data).to.have.property('PatientEnrollments');
+      expect(jsonRes.Data.PatientEnrollments).to.be.an('array');
+      // expect(jsonRes.Data.PatientEnrollments.length).to.be.greaterThan(0);
+  });
+  
+}

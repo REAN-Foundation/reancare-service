@@ -1,0 +1,68 @@
+meta {
+  name: Add reminder which repeats after every 3 months
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{BASE_URL}}/reminders/repeat-after-every-n
+  body: json
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{PATIENT_USER_JWT}}
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+  Content-Type: application/json
+}
+
+body:json {
+  {
+      "UserId": "{{PATIENT_USER_ID}}",
+      "Name": "Drink Water",
+      "WhenTime": "13:34:12",
+      "HookUrl": "{{HOOK_URL}}",
+      "RepeatAfterEvery": 3,
+      "RepeatAfterEveryNUnit": "Month",
+      "StartDate": "2025-08-12",
+      "EndDate": "2027-08-25",
+      "EndAfterNRepetitions": 100,
+      "NotificationType": "SMS"
+  }
+}
+
+tests {
+  var jsonRes = res.getBody();
+  
+  try {
+      bru.setEnvVar("REPEAT_AFTER_EVERY_N_HOURS_REMINDER_ID", jsonRes.Data.Reminder.id);
+  }
+  catch (error) {
+      console.log(error.message);
+  }
+  
+  test("Request is successfull", function () {
+      expect(res.getStatus()).to.equal(201);
+      var jsonRes = res.getBody();
+      expect(jsonRes.Status).to.eql('success');
+  });
+  
+  test("Repeat after every 3-hour reminder is created", function () {
+  
+      var jsonRes = res.getBody();
+      expect(jsonRes.Data).to.have.property('Reminder');
+      expect(jsonRes.Data.Reminder).to.not.be.empty;
+      expect(jsonRes.Data.Reminder).to.have.property('id');
+      expect(jsonRes.Data.Reminder).to.have.property('UserId');
+      expect(jsonRes.Data.Reminder).to.have.property('Name');
+      expect(jsonRes.Data.Reminder).to.have.property('ReminderType');
+  
+      expect(jsonRes.Data.Reminder.ReminderType).equals("Repeat-After-Every-N");
+  
+  });
+  
+}
+
+docs {
+  Create new Goal record
+}

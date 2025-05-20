@@ -1,0 +1,36 @@
+meta {
+  name: Delete knowledge nugget record
+  type: http
+  seq: 5
+}
+
+delete {
+  url: {{BASE_URL}}/educational/knowledge-nuggets/{{KNOWLEDGE_NUGGET_ID}}
+  body: none
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{ADMIN_USER_JWT}}
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+  Content-Type: application/json
+}
+
+tests {
+  test("Request is successfull", function () {
+      expect(res.getStatus()).to.equal(200);
+      var jsonRes = res.getBody();
+      expect(jsonRes.Status).to.eql('success');
+  });
+  
+  test("Knowledge nugget record is deleted", function () {
+  
+      var expectedValue = true;
+      
+      var jsonRes = res.getBody();
+      expect(jsonRes.Data).to.have.property('Deleted');
+      expect(jsonRes.Data.Deleted).equals(expectedValue);
+  
+  });
+  
+}

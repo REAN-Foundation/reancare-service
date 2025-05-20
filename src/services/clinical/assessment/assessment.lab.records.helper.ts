@@ -20,6 +20,7 @@ import {
 } from '../../../domain.types/clinical/assessment/assessment.types';
 import { LabRecordDomainModel } from '../../../domain.types/clinical/lab.record/lab.record/lab.record.domain.model';
 import { ILabRecordRepo } from '../../../database/repository.interfaces/clinical/lab.record/lab.record.interface';
+import { LabRecordType } from '../../../domain.types/clinical/lab.record/lab.record/lab.record.types';
 @injectable()
 export class AssessmentLabRecordsHelper {
     
@@ -44,96 +45,100 @@ export class AssessmentLabRecordsHelper {
     FileQueryAnswer |
     BiometricQueryAnswer |
     SkipQueryAnswer) => {
+        try {
+            const userId = assessment.PatientUserId;
+            const user = await this._userRepo.getById(userId);
+            const personId = user.PersonId;
+            if (!personId) {
+                Logger.instance().log(`No person found for user ${userId}`);
+                return;
+            }
 
-        const userId = assessment.PatientUserId;
-        const user = await this._userRepo.getById(userId);
-        const personId = user.PersonId;
-        if (!personId) {
-            Logger.instance().log(`No person found for user ${userId}`);
-            return;
+            if (fieldName === 'Cholesterol') {
+                const a = answer as IntegerQueryAnswer;
+                const cholesterol = a.Value;
+                const labRecordType = await this._labRecordRepo.getTypeByDisplayName(LabRecordType.TotalCholesterol);
+                const labRecord : LabRecordDomainModel = {
+                    PatientUserId : userId,
+                    TypeName      : 'Cholesterol',
+                    TypeId        : labRecordType.id,
+                    PrimaryValue  : cholesterol,
+                    Unit          : FieldIdentifierUnit ?? 'mg/dL',
+                    RecordedAt    : new Date(),
+                    DisplayName   : LabRecordType.TotalCholesterol
+                };
+                
+                const personCholesterol = await this._labRecordRepo.create(labRecord);
+            }
+
+            else if (fieldName === 'Triglycerides') {
+                const a = answer as IntegerQueryAnswer;
+                const triglycerides = a.Value;
+                const labRecordType = await this._labRecordRepo.getTypeByDisplayName(LabRecordType.TriglycerideLevel);
+                const labRecord : LabRecordDomainModel = {
+                    PatientUserId : userId,
+                    TypeName      : 'Cholesterol',
+                    TypeId        : labRecordType.id,
+                    PrimaryValue  : triglycerides,
+                    Unit          : FieldIdentifierUnit ?? 'mg/dL',
+                    RecordedAt    : new Date(),
+                    DisplayName   : LabRecordType.TriglycerideLevel
+                };
+                const personTriglycerides = await this._labRecordRepo.create(labRecord);
+            }
+
+            else if (fieldName === 'LDL') {
+                const a = answer as IntegerQueryAnswer;
+                const ldl = a.Value;
+                const labRecordType = await this._labRecordRepo.getTypeByDisplayName(fieldName);
+                const labRecord : LabRecordDomainModel = {
+                    PatientUserId : userId,
+                    TypeName      : 'Cholesterol',
+                    TypeId        : labRecordType.id,
+                    PrimaryValue  : ldl,
+                    Unit          : FieldIdentifierUnit ?? 'mg/dL',
+                    RecordedAt    : new Date(),
+                    DisplayName   : fieldName
+                };
+                const personLdl = await this._labRecordRepo.create(labRecord);
+            }
+
+            else if (fieldName === 'HDL') {
+                const a = answer as IntegerQueryAnswer;
+                const hdl = a.Value;
+                const labRecordType = await this._labRecordRepo.getTypeByDisplayName(fieldName);
+                const labRecord : LabRecordDomainModel = {
+                    PatientUserId : userId,
+                    TypeName      : 'Cholesterol',
+                    TypeId        : labRecordType.id,
+                    PrimaryValue  : hdl,
+                    Unit          : FieldIdentifierUnit ?? 'mg/dL',
+                    RecordedAt    : new Date(),
+                    DisplayName   : fieldName
+                };
+                const personHdl = await this._labRecordRepo.create(labRecord);
+                
+            }
+
+            else if (fieldName === 'A1C') {
+                const a = answer as FloatQueryAnswer;
+                const a1c = a.Value;
+                const displayName = fieldName + ' ' + 'Level';
+                const labRecordType = await this._labRecordRepo.getTypeByDisplayName(displayName);
+                const labRecord : LabRecordDomainModel = {
+                    PatientUserId : userId,
+                    TypeName      : 'Cholesterol',
+                    TypeId        : labRecordType.id,
+                    PrimaryValue  : a1c,
+                    Unit          : FieldIdentifierUnit ?? '%',
+                    RecordedAt    : new Date(),
+                    DisplayName   : displayName
+                };
+                const personA1c = await this._labRecordRepo.create(labRecord);
+            }
         }
-
-        if (fieldName === 'Cholesterol') {
-            const a = answer as IntegerQueryAnswer;
-            const cholesterol = a.Value;
-            const typeId = await this._labRecordRepo.getTypeByDisplayName('Total Cholesterol');
-            const labRecord : LabRecordDomainModel = {
-                PatientUserId : userId,
-                TypeName      : 'Cholesterol',
-                TypeId        : typeId.id,
-                PrimaryValue  : cholesterol,
-                Unit          : FieldIdentifierUnit ?? 'mg/dL',
-                RecordedAt    : new Date(),
-                DisplayName   : 'Total Cholesterol'
-            };
-            
-            const personCholesterol = await this._labRecordRepo.create(labRecord);
-        }
-
-        else if (fieldName === 'Triglycerides') {
-            const a = answer as IntegerQueryAnswer;
-            const triglycerides = a.Value;
-            const typeId = await this._labRecordRepo.getTypeByDisplayName('Triglyceride Level');
-            const labRecord : LabRecordDomainModel = {
-                PatientUserId : userId,
-                TypeName      : 'Cholesterol',
-                TypeId        : typeId.id,
-                PrimaryValue  : triglycerides,
-                Unit          : FieldIdentifierUnit ?? 'mg/dL',
-                RecordedAt    : new Date(),
-                DisplayName   : 'Triglyceride Level'
-            };
-            const personTriglycerides = await this._labRecordRepo.create(labRecord);
-        }
-
-        else if (fieldName === 'LDL') {
-            const a = answer as IntegerQueryAnswer;
-            const ldl = a.Value;
-            const typeId = await this._labRecordRepo.getTypeByDisplayName(fieldName);
-            const labRecord : LabRecordDomainModel = {
-                PatientUserId : userId,
-                TypeName      : 'Cholesterol',
-                TypeId        : typeId.id,
-                PrimaryValue  : ldl,
-                Unit          : FieldIdentifierUnit ?? 'mg/dL',
-                RecordedAt    : new Date(),
-                DisplayName   : fieldName
-            };
-            const personLdl = await this._labRecordRepo.create(labRecord);
-        }
-
-        else if (fieldName === 'HDL') {
-            const a = answer as IntegerQueryAnswer;
-            const hdl = a.Value;
-            const typeId = await this._labRecordRepo.getTypeByDisplayName(fieldName);
-            const labRecord : LabRecordDomainModel = {
-                PatientUserId : userId,
-                TypeName      : 'Cholesterol',
-                TypeId        : typeId.id,
-                PrimaryValue  : hdl,
-                Unit          : FieldIdentifierUnit ?? 'mg/dL',
-                RecordedAt    : new Date(),
-                DisplayName   : fieldName
-            };
-            const personHdl = await this._labRecordRepo.create(labRecord);
-            
-        }
-
-        else if (fieldName === 'A1C') {
-            const a = answer as FloatQueryAnswer;
-            const a1c = a.Value;
-            const para = fieldName + ' ' + 'Level';
-            const typeId = await this._labRecordRepo.getTypeByDisplayName(para);
-            const labRecord : LabRecordDomainModel = {
-                PatientUserId : userId,
-                TypeName      : 'Cholesterol',
-                TypeId        : typeId.id,
-                PrimaryValue  : a1c,
-                Unit          : FieldIdentifierUnit ?? '%',
-                RecordedAt    : new Date(),
-                DisplayName   : para
-            };
-            const personA1c = await this._labRecordRepo.create(labRecord);
+        catch (error) {
+            Logger.instance().log(error.message);
         }
     };
 

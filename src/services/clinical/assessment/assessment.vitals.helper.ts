@@ -71,138 +71,140 @@ export class AssessmentVitalsHelper {
     FileQueryAnswer |
     BiometricQueryAnswer |
     SkipQueryAnswer) => {
+        try {
+            const userId = assessment.PatientUserId;
+            const user = await this._userRepo.getById(userId);
+            const personId = user.PersonId;
+            if (!personId) {
+                Logger.instance().log(`No person found for user ${userId}`);
+                return;
+            }
 
-        const userId = assessment.PatientUserId;
-        const user = await this._userRepo.getById(userId);
-        const personId = user.PersonId;
-        if (!personId) {
-            Logger.instance().log(`No person found for user ${userId}`);
-            return;
-        }
-
-        if (fieldName === 'Pulse') {
-            const a = answer as BiometricQueryAnswer;
-            if (!Array.isArray(a.Values)) {
-                const pulseRecord = a.Values;
-                if (pulseRecord) {
-                    const pulseModel : PulseDomainModel = {
-                        PatientUserId : userId,
-                        Pulse         : Number(pulseRecord),
-                        Unit          : FieldIdentifierUnit ?? 'bpm',
-                        Provider      : assessment.Provider,
-                        RecordDate    : new Date()
-                    };
-                    const personPulse = await this._pulseRepo.create(pulseModel);
-                    await this._ehrVitalService.addEHRPulseForAppNames(personPulse);
+            if (fieldName === 'Pulse') {
+                const a = answer as BiometricQueryAnswer;
+                if (!Array.isArray(a.Values)) {
+                    const pulseRecord = a.Values;
+                    if (pulseRecord) {
+                        const pulseModel : PulseDomainModel = {
+                            PatientUserId : userId,
+                            Pulse         : Number(pulseRecord),
+                            Unit          : FieldIdentifierUnit ?? 'bpm',
+                            Provider      : assessment.Provider,
+                            RecordDate    : new Date()
+                        };
+                        const personPulse = await this._pulseRepo.create(pulseModel);
+                        await this._ehrVitalService.addEHRPulseForAppNames(personPulse);
+                    }
                 }
+            }
+                    
+            else if (fieldName === 'Temperature') {
+                const a = answer as BiometricQueryAnswer;
+                if (!Array.isArray(a.Values)) {
+                    const temperatureRecord = a.Values;
+                    if (temperatureRecord) {
+                        const temperatureModel : BodyTemperatureDomainModel = {
+                            PatientUserId   : userId,
+                            BodyTemperature : Number(temperatureRecord),
+                            Unit            : FieldIdentifierUnit ?? '°F',
+                            Provider        : assessment.Provider,
+                            RecordDate      : new Date()
+                        };
+                        const personBodyTemperature = await this._bodyTemperatureService.create(temperatureModel);
+                        await this._ehrVitalService.addEHRBodyTemperatureForAppNames(personBodyTemperature);
+                    }
+                }
+            }
+            
+            else if (fieldName === 'Weight') {
+                const a = answer as BiometricQueryAnswer;
+                if (!Array.isArray(a.Values)) {
+                    const weightRecord = a.Values;
+                    if (weightRecord) {
+                        const weightModel : BodyWeightDomainModel = {
+                            PatientUserId : userId,
+                            BodyWeight    : Number(weightRecord),
+                            Unit          : FieldIdentifierUnit ?? 'kg',
+                            RecordDate    : new Date()
+                        };
+                        const personBodyWeight = await this._bodyWeightService.create(weightModel);
+                        await this._ehrVitalService.addEHRBodyWeightForAppNames(personBodyWeight);
+                    }
+                }
+            }
                 
-            }
-            
-        }
-            
-        else if (fieldName === 'Temperature') {
-            const a = answer as BiometricQueryAnswer;
-            if (!Array.isArray(a.Values)) {
-                const temperatureRecord = a.Values;
-                if (temperatureRecord) {
-                    const temperatureModel : BodyTemperatureDomainModel = {
-                        PatientUserId   : userId,
-                        BodyTemperature : Number(temperatureRecord),
-                        Unit            : FieldIdentifierUnit ?? '°F',
-                        Provider        : assessment.Provider,
-                        RecordDate      : new Date()
-                    };
-                    const personBodyTemperature = await this._bodyTemperatureService.create(temperatureModel);
-                    await this._ehrVitalService.addEHRBodyTemperatureForAppNames(personBodyTemperature);
+            else if (fieldName === 'Height') {
+                const a = answer as BiometricQueryAnswer;
+                if (!Array.isArray(a.Values)) {
+                    const heightRecord = a.Values;
+                    if (heightRecord ) {
+                        const heightModel : BodyHeightDomainModel = {
+                            PatientUserId : userId,
+                            BodyHeight    : Number(heightRecord),
+                            Unit          : FieldIdentifierUnit ?? 'cm',
+                            RecordDate    : new Date()
+                        };
+                        const personBodyHeight = await this._bodyHeightService.create(heightModel);
+                        await this._ehrVitalService.addEHRBodyHeightForAppNames(personBodyHeight);
+                    }
                 }
             }
-        }
-       
-        else if (fieldName === 'Weight') {
-            const a = answer as BiometricQueryAnswer;
-            if (!Array.isArray(a.Values)) {
-                const weightRecord = a.Values;
-                if (weightRecord) {
-                    const weightModel : BodyWeightDomainModel = {
-                        PatientUserId : userId,
-                        BodyWeight    : Number(weightRecord),
-                        Unit          : FieldIdentifierUnit ?? 'kg',
-                        RecordDate    : new Date()
-                    };
-                    const personBodyWeight = await this._bodyWeightService.create(weightModel);
-                    await this._ehrVitalService.addEHRBodyWeightForAppNames(personBodyWeight);
-                }
-            }
-        }
-          
-        else if (fieldName === 'Height') {
-            const a = answer as BiometricQueryAnswer;
-            if (!Array.isArray(a.Values)) {
-                const heightRecord = a.Values;
-                if (heightRecord ) {
-                    const heightModel : BodyHeightDomainModel = {
-                        PatientUserId : userId,
-                        BodyHeight    : Number(heightRecord),
-                        Unit          : FieldIdentifierUnit ?? 'cm',
-                        RecordDate    : new Date()
-                    };
-                    const personBodyHeight = await this._bodyHeightService.create(heightModel);
-                    await this._ehrVitalService.addEHRBodyHeightForAppNames(personBodyHeight);
-                }
-            }
-        }
 
-        else if (fieldName === 'OxygenSaturation') {
-            const a = answer as BiometricQueryAnswer;
-            if (!Array.isArray(a.Values)) {
-                const oxygenSaturationRecord = a.Values;
-                if (oxygenSaturationRecord ) {
-                    const oxygenSaturationModel : BloodOxygenSaturationDomainModel = {
-                        PatientUserId         : userId,
-                        BloodOxygenSaturation : Number(oxygenSaturationRecord),
-                        Unit                  : FieldIdentifierUnit ?? '%',
-                        Provider              : assessment.Provider,
-                        RecordDate            : new Date()
-                    };
-                    const personOxygenSaturation = await this._bloodOxygenSaturationService.create(oxygenSaturationModel);
-                    await this._ehrVitalService.addEHRBloodOxygenSaturationForAppNames(personOxygenSaturation);
+            else if (fieldName === 'OxygenSaturation') {
+                const a = answer as BiometricQueryAnswer;
+                if (!Array.isArray(a.Values)) {
+                    const oxygenSaturationRecord = a.Values;
+                    if (oxygenSaturationRecord ) {
+                        const oxygenSaturationModel : BloodOxygenSaturationDomainModel = {
+                            PatientUserId         : userId,
+                            BloodOxygenSaturation : Number(oxygenSaturationRecord),
+                            Unit                  : FieldIdentifierUnit ?? '%',
+                            Provider              : assessment.Provider,
+                            RecordDate            : new Date()
+                        };
+                        const personOxygenSaturation = await
+                        this._bloodOxygenSaturationService.create(oxygenSaturationModel);
+                        await this._ehrVitalService.addEHRBloodOxygenSaturationForAppNames(personOxygenSaturation);
+                    }
                 }
             }
-        }
 
-        else if (fieldName === 'BloodGlucose') {
-            const a = answer as BiometricQueryAnswer;
-            if (!Array.isArray(a.Values)) {
-                const bloodGlucoseRecord = a.Values;
-                if (bloodGlucoseRecord ) {
-                    const bloodGlucoseModel : BloodGlucoseDomainModel = {
-                        PatientUserId : userId,
-                        BloodGlucose  : Number( bloodGlucoseRecord),
-                        Unit          : FieldIdentifierUnit ?? 'mg/dL',
-                        Provider      : assessment.Provider,
-                        RecordDate    : new Date()
-                    };
-                    const personBloodGlucose = await this._bloodGlucoseService.create(bloodGlucoseModel);
-                    await this._ehrVitalService.addEHRBloodGlucoseForAppNames(personBloodGlucose);
+            else if (fieldName === 'BloodGlucose') {
+                const a = answer as BiometricQueryAnswer;
+                if (!Array.isArray(a.Values)) {
+                    const bloodGlucoseRecord = a.Values;
+                    if (bloodGlucoseRecord ) {
+                        const bloodGlucoseModel : BloodGlucoseDomainModel = {
+                            PatientUserId : userId,
+                            BloodGlucose  : Number( bloodGlucoseRecord),
+                            Unit          : FieldIdentifierUnit ?? 'mg/dL',
+                            Provider      : assessment.Provider,
+                            RecordDate    : new Date()
+                        };
+                        const personBloodGlucose = await this._bloodGlucoseService.create(bloodGlucoseModel);
+                        await this._ehrVitalService.addEHRBloodGlucoseForAppNames(personBloodGlucose);
+                    }
                 }
             }
-        }
 
-        else if (fieldName.startsWith('BloodPressure')) {
-            const a = answer as BiometricQueryAnswer;
-            const systolicValue = a.Values[0];
-            const diastolicValue = a.Values[1];
-            const bloodPressureModel : BloodPressureDomainModel = {
-                PatientUserId : userId,
-                Systolic      : systolicValue,
-                Diastolic     : diastolicValue,
-                Unit          : FieldIdentifierUnit ?? 'mmHg',
-                RecordDate    : new Date()
-            };
-            const personBloodPressure = await this._bloodPressureService.create(bloodPressureModel);
-            await this._ehrVitalService.addEHRBloodPressureForAppNames(personBloodPressure);
+            else if (fieldName.startsWith('BloodPressure')) {
+                const a = answer as BiometricQueryAnswer;
+                const systolicValue = a.Values[0];
+                const diastolicValue = a.Values[1];
+                const bloodPressureModel : BloodPressureDomainModel = {
+                    PatientUserId : userId,
+                    Systolic      : systolicValue,
+                    Diastolic     : diastolicValue,
+                    Unit          : FieldIdentifierUnit ?? 'mmHg',
+                    RecordDate    : new Date()
+                };
+                const personBloodPressure = await this._bloodPressureService.create(bloodPressureModel);
+                await this._ehrVitalService.addEHRBloodPressureForAppNames(personBloodPressure);
+            }
         }
-          
+        catch (error) {
+            Logger.instance().log(error);
+        }
     };
 
 }

@@ -45,84 +45,88 @@ export class AssessmentPersonalProfileHelper {
             | FileQueryAnswer
             | BiometricQueryAnswer
             | SkipQueryAnswer) => {
+        try {
+            const userId = assessment.PatientUserId;
+            const user = await this._userRepo.getById(userId);
+            const personId = user.PersonId;
+            if (!personId) {
+                Logger.instance().log(`No person found for user ${userId}`);
+                return;
+            }
 
-        const userId = assessment.PatientUserId;
-        const user = await this._userRepo.getById(userId);
-        const personId = user.PersonId;
-        if (!personId) {
-            Logger.instance().log(`No person found for user ${userId}`);
-            return;
-        }
-
-        if (fieldName === 'FirstName' && answer.ResponseType === QueryResponseType.Text) {
-            const a = answer as TextQueryAnswer;
-            const name = a.Text;
-            const person = await this._personRepo.update(personId, {
-                FirstName : name,
-            });
-        } else if (fieldName === 'LastName') {
-            const a = answer as TextQueryAnswer;
-            const name = a.Text;
-            const person = await this._personRepo.update(personId, {
-                LastName : name,
-            });
-        } else if (fieldName === 'Name') {
-            const a = answer as TextQueryAnswer;
-            const name = a.Text;
-            const tokens = name.split(' ');
-            if (tokens.length < 2) {
-                Logger.instance().log(`Invalid name format: ${name}`);
+            if (fieldName === 'FirstName' && answer.ResponseType === QueryResponseType.Text) {
+                const a = answer as TextQueryAnswer;
+                const name = a.Text;
                 const person = await this._personRepo.update(personId, {
                     FirstName : name,
                 });
-            }
-            const firstName = tokens[0];
-            const lastName = tokens.slice(1).join(' ');
-            const person = await this._personRepo.update(personId, {
-                FirstName : firstName,
-                LastName  : lastName,
-            });
-        } else if (fieldName === 'Age') {
-            const a = answer as IntegerQueryAnswer;
-            const age = a.Value;
-            const now = new Date();
-            const dob = now.setFullYear(now.getFullYear() - age, 0, 1);
-            const dateOfBirth = new Date(dob);
-            const personDob = await this._personRepo.update(personId, {
-                BirthDate : dateOfBirth,
-            });
-            const personAge = await this._personRepo.update(personId, {
-                Age : String(age),
-            });
-        } else if (fieldName === 'DateOfBirth') {
-            const a = answer as DateQueryAnswer;
-            const dateOfBirth = a.Date;
-            if (dateOfBirth) {
+            } else if (fieldName === 'LastName') {
+                const a = answer as TextQueryAnswer;
+                const name = a.Text;
                 const person = await this._personRepo.update(personId, {
+                    LastName : name,
+                });
+            } else if (fieldName === 'Name') {
+                const a = answer as TextQueryAnswer;
+                const name = a.Text;
+                const tokens = name.split(' ');
+                if (tokens.length < 2) {
+                    Logger.instance().log(`Invalid name format: ${name}`);
+                    const person = await this._personRepo.update(personId, {
+                        FirstName : name,
+                    });
+                }
+                const firstName = tokens[0];
+                const lastName = tokens.slice(1).join(' ');
+                const person = await this._personRepo.update(personId, {
+                    FirstName : firstName,
+                    LastName  : lastName,
+                });
+            } else if (fieldName === 'Age') {
+                const a = answer as IntegerQueryAnswer;
+                const age = a.Value;
+                const now = new Date();
+                const dob = now.setFullYear(now.getFullYear() - age, 0, 1);
+                const dateOfBirth = new Date(dob);
+                const personDob = await this._personRepo.update(personId, {
                     BirthDate : dateOfBirth,
                 });
-            }
-        } else if (fieldName === 'Gender') {
-            const respType = answer.ResponseType;
-            let gender = null;
-            if (respType === QueryResponseType.SingleChoiceSelection) {
-                const a = answer as SingleChoiceQueryAnswer;
-                const options = node.Options;
-                const selectedOption = options.find((option) => option.Sequence === a.ChosenSequence);
-                const fieldValue = selectedOption?.Text;
-                if (fieldValue) {
-                    gender = fieldValue;
+                const personAge = await this._personRepo.update(personId, {
+                    Age : String(age),
+                });
+            } else if (fieldName === 'DateOfBirth') {
+                const a = answer as DateQueryAnswer;
+                const dateOfBirth = a.Date;
+                if (dateOfBirth) {
+                    const person = await this._personRepo.update(personId, {
+                        BirthDate : dateOfBirth,
+                    });
+                }
+            } else if (fieldName === 'Gender') {
+                const respType = answer.ResponseType;
+                let gender = null;
+                if (respType === QueryResponseType.SingleChoiceSelection) {
+                    const a = answer as SingleChoiceQueryAnswer;
+                    const options = node.Options;
+                    const selectedOption = options.find((option) => option.Sequence === a.ChosenSequence);
+                    const fieldValue = selectedOption?.Text;
+                    if (fieldValue) {
+                        gender = fieldValue;
+                    }
+                }
+                else if (respType === QueryResponseType.Text) {
+                    const a = answer as TextQueryAnswer;
+                    gender = a.Text;
+                }
+                if (gender) {
+                    const person = await this._personRepo.update(personId, {
+                        Gender : gender,
+                    });
                 }
             }
-            else if (respType === QueryResponseType.Text) {
-                const a = answer as TextQueryAnswer;
-                gender = a.Text;
-            }
-            if (gender) {
-                const person = await this._personRepo.update(personId, {
-                    Gender : gender,
-                });
-            }
+
+        } catch (error) {
+            Logger.instance().log(error.message);
         }
     };
 

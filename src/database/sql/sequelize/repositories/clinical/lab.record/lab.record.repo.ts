@@ -19,6 +19,7 @@ import { LabRecordTypeSearchFilters, LabRecordTypeSearchResults }
     from '../../../../../../domain.types/clinical/lab.record/lab.recod.type/lab.record.type.search.types';
 import { ReportFrequency } from '../../../../../../domain.types/users/patient/health.report.setting/health.report.setting.domain.model';
 import { Helper } from '../../../../../../common/helper';
+import Patient from '../../../models/users/patient/patient.model';
 
 ///////////////////////////////////////////////////////////////////////
 

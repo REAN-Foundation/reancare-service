@@ -152,6 +152,8 @@ export class AssessmentHelperMapper {
             questionNodeDto.CorrectAnswer = node.CorrectAnswer ? JSON.parse(node.CorrectAnswer) : null;
             questionNodeDto.ScoringCondition = scoringCondition ?? null;
             questionNodeDto.Required = node.Required;
+            questionNodeDto.FieldIdentifier = node.FieldIdentifier;
+            questionNodeDto.FieldIdentifierUnit = node.FieldIdentifierUnit;
             return questionNodeDto;
         }
         if (node.NodeType === AssessmentNodeType.NodeList) {

@@ -44,43 +44,48 @@ export class AssessmentResponsePersistenceHelper {
         | BiometricQueryAnswer
         | SkipQueryAnswer
     ) => {
-        if (answerDto.ResponseType === QueryResponseType.Biometrics) {
-            const biometricsHelper = Injector.Container.resolve(AssessmentBiometricsHelper);
-            const biometrics = answerDto as BiometricQueryAnswer;
-            await biometricsHelper.persistBiometrics(assessment.PatientUserId, biometrics);
-        }
-        const questionNode = node as CAssessmentQuestionNode;
-        const fieldIdentifier = questionNode.FieldIdentifier;
-        const FieldIdentifierUnit = questionNode.FieldIdentifierUnit;
-        const field = AssessmentFieldIdentifiers.find((x) => x === fieldIdentifier);
-        if (!field) {
-            Logger.instance().log('Unsupported field identifier ...');
-        }
+        try {
+            if (answerDto.ResponseType === QueryResponseType.Biometrics) {
+                const biometricsHelper = Injector.Container.resolve(AssessmentBiometricsHelper);
+                const biometrics = answerDto as BiometricQueryAnswer;
+                await biometricsHelper.persistBiometrics(assessment.PatientUserId, biometrics);
+            }
+            const questionNode = node as CAssessmentQuestionNode;
+            const fieldIdentifier = questionNode.FieldIdentifier;
+            const FieldIdentifierUnit = questionNode.FieldIdentifierUnit;
+            const field = AssessmentFieldIdentifiers.find((x) => x === fieldIdentifier);
+            if (!field) {
+                Logger.instance().log('Unsupported field identifier ...');
+            }
 
-        const tokens = field.split(':');
-        const category = tokens[0];
-        const subCategory = tokens[1];
-        const fieldName = tokens[2];
+            const tokens = field.split(':');
+            const category = tokens[0];
+            const subCategory = tokens[1];
+            const fieldName = tokens[2];
 
-        if (category === 'General') {
-            if (subCategory === 'PersonalProfile') {
-                const personalProfileHelper = Injector.Container.resolve(AssessmentPersonalProfileHelper);
-                await personalProfileHelper.persist(assessment, questionNode, fieldName, answerDto);
+            if (category === 'General') {
+                if (subCategory === 'PersonalProfile') {
+                    const personalProfileHelper = Injector.Container.resolve(AssessmentPersonalProfileHelper);
+                    await personalProfileHelper.persist(assessment, questionNode, fieldName, answerDto);
+                }
+            }
+            else if (category === 'Clinical') {
+                if (subCategory === 'HealthProfile') {
+                    const healthProfileHelper = Injector.Container.resolve(AssessmentHealthProfileHelper);
+                    await healthProfileHelper.persist(assessment, questionNode, fieldName, answerDto);
+                }
+                else if (subCategory === 'LabRecords') {
+                    const labRecordsHelper = Injector.Container.resolve(AssessmentLabRecordsHelper);
+                    await labRecordsHelper.persist(assessment, questionNode, fieldName, FieldIdentifierUnit, answerDto);
+                }
+                else if (subCategory === 'Vitals') {
+                    const labRecordsHelper = Injector.Container.resolve(AssessmentVitalsHelper);
+                    await labRecordsHelper.persist(assessment, questionNode, fieldName, FieldIdentifierUnit, answerDto);
+                }
             }
         }
-        else if (category === 'Clinical') {
-            if (subCategory === 'HealthProfile') {
-                const healthProfileHelper = Injector.Container.resolve(AssessmentHealthProfileHelper);
-                await healthProfileHelper.persist(assessment, questionNode, fieldName, answerDto);
-            }
-            else if (subCategory === 'LabRecords') {
-                const labRecordsHelper = Injector.Container.resolve(AssessmentLabRecordsHelper);
-                await labRecordsHelper.persist(assessment, questionNode, fieldName, FieldIdentifierUnit, answerDto);
-            }
-            else if (subCategory === 'Vitals') {
-                const labRecordsHelper = Injector.Container.resolve(AssessmentVitalsHelper);
-                await labRecordsHelper.persist(assessment, questionNode, fieldName, FieldIdentifierUnit, answerDto);
-            }
+        catch (error) {
+            Logger.instance().log(error);
         }
     };
 

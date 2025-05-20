@@ -237,14 +237,16 @@ export class CAssessmentListNode extends CAssessmentNode {
 
 export class CAssessmentQuestionNode extends CAssessmentNode {
 
-    QueryResponseType: QueryResponseType;
-    DefaultPathId?   : uuid;
-    Paths?           : CAssessmentNodePath[];
-    Options?         : CAssessmentQueryOption[];
-    UserResponse?    : CAssessmentQueryResponse;
-    SkipCondition?   : CAssessmentPathCondition;
-    ScoringCondition?: CScoringCondition;
-    CorrectAnswer?   : string | any;
+    QueryResponseType   : QueryResponseType;
+    DefaultPathId?      : uuid;
+    Paths?              : CAssessmentNodePath[];
+    Options?            : CAssessmentQueryOption[];
+    UserResponse?       : CAssessmentQueryResponse;
+    SkipCondition?      : CAssessmentPathCondition;
+    ScoringCondition   ?: CScoringCondition;
+    CorrectAnswer?      : string | any;
+    FieldIdentifier?    : string;
+    FieldIdentifierUnit?: string;
 
     constructor() {
         super();
@@ -283,7 +285,7 @@ export class CAssessmentNodePath {
     Condition             ?: CAssessmentPathCondition;
     IsExitPath            ?: boolean;
     MessageBeforeQuestion ?: string;
-
+    
     constructor() {
         this.IsExitPath = false;
     }
@@ -501,13 +503,5 @@ export class CScoringCondition {
 
 }
 
-export interface AssessmentScoring {
-    PosedQuestionCount : number;
-    SkippedCount       : number;
-    AnsweredCount      : number;
-    CorrectAnswerCount : number;
-    TotalScore         : number;
-    CategorywiseScore  : any;
-}
 
 //#endregion

@@ -30,13 +30,12 @@ import {
     FileQueryAnswer,
     BooleanQueryAnswer,
     CAssessmentListNode,
-    SkipQueryAnswer,
-    AssessmentScoring
+    SkipQueryAnswer
 } from '../../../domain.types/clinical/assessment/assessment.types';
 import { ProgressStatus, uuid } from '../../../domain.types/miscellaneous/system.types';
-import { AssessmentBiometricsHelper } from './assessment.biometrics.helper';
 import { ConditionProcessor } from './condition.processor';
 import { Injector } from '../../../startup/injector';
+import { AssessmentResponsePersistenceHelper } from './assessment.response.persistence.helper';
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -45,12 +44,15 @@ export class AssessmentService {
 
     _conditionProcessor: ConditionProcessor = null;
 
+    _responsePersistenceHelper: AssessmentResponsePersistenceHelper = null;
+
     constructor(
         @inject('IAssessmentRepo') private _assessmentRepo: IAssessmentRepo,
         @inject('IAssessmentHelperRepo') private _assessmentHelperRepo: IAssessmentHelperRepo,
         @inject('IAssessmentTemplateRepo') private _assessmentTemplateRepo: IAssessmentTemplateRepo,
     ) {
         this._conditionProcessor = Injector.Container.resolve(ConditionProcessor);
+        this._responsePersistenceHelper = Injector.Container.resolve(AssessmentResponsePersistenceHelper);
     }
 
     public create = async (model: AssessmentDomainModel): Promise<AssessmentDto> => {
@@ -281,10 +283,9 @@ export class AssessmentService {
         const scoringApplicable = assessment.ScoringApplicable;
         if (scoringApplicable) {
             const scoreDetails = await this.scoreAssessment(assessmentId);
-            const scoreDetailsStr = JSON.stringify(scoreDetails, null, 2);
             assessment.ScoreDetails = scoreDetails;
             assessment = await this._assessmentRepo.update(assessmentId, {
-                ScoreDetails : scoreDetailsStr,
+                ScoreDetails : scoreDetails,
             });
         }
         var responses = await this._assessmentHelperRepo.getUserResponses(assessmentId);
@@ -319,7 +320,7 @@ export class AssessmentService {
         return true;
     };
 
-    public scoreAssessment = async (assessmentId: uuid): Promise<AssessmentScoring | null> => {
+    public scoreAssessment = async (assessmentId: uuid): Promise<any> => {
         const assessment = await this._assessmentRepo.getById(assessmentId);
         if (!assessment) {
             throw new ApiError(404, `Assessment with id ${assessmentId} cannot be found!`);
@@ -341,7 +342,7 @@ export class AssessmentService {
         const categorywiseScore = {};
 
         for await (var response of userResponses) {
-
+            
             //All the questions posed to the user - Skipped and answered
             posedQuestionCount++;
 
@@ -424,7 +425,7 @@ export class AssessmentService {
                 }
             }
         }
-        const scoreDetails: AssessmentScoring = {
+        const scoreDetails = {
             PosedQuestionCount : posedQuestionCount,
             SkippedCount       : skippedCount,
             AnsweredCount      : answeredCount,
@@ -539,7 +540,7 @@ export class AssessmentService {
         }
 
         const isSkipped = await this.isSkipped(assessment.id, currentNode.id);
-
+        
         var questionNode = currentNode as CAssessmentQuestionNode;
         const hasPaths = questionNode.Paths.length > 0;
         if (hasPaths && !isSkipped) {
@@ -859,7 +860,7 @@ export class AssessmentService {
 
     private async createQueryResponse(
         assessment: AssessmentDto,
-        nodeId: string,
+        node: CAssessmentQuestionNode | CAssessmentMessageNode,
         answerDto: | SingleChoiceQueryAnswer
         | MultipleChoiceQueryAnswer
         | MessageAnswer
@@ -872,10 +873,20 @@ export class AssessmentService {
         | BiometricQueryAnswer
         | SkipQueryAnswer
     ) {
-        var existingReposne = await this._assessmentHelperRepo.getQueryResponse(assessment.id, nodeId);
-        if (existingReposne == null) {
+        var existing = await this._assessmentHelperRepo.getQueryResponse(assessment.id, node.id);
+        if (existing == null) {
             await this._assessmentHelperRepo.createQueryResponse(answerDto);
         }
+        const isQuestionNode = node.NodeType === AssessmentNodeType.Question;
+        if (!isQuestionNode) {
+            return;
+        }
+        const questionNode = node as CAssessmentQuestionNode;
+        const FieldIdentifier = questionNode.FieldIdentifier;
+        if (!FieldIdentifier) {
+            return;
+        }
+        await this._responsePersistenceHelper.persist(assessment, questionNode, answerDto);
     }
 
     private async getSingleChoiceQueryAnswer(
@@ -918,7 +929,7 @@ export class AssessmentService {
         const { answerDto, paths, chosenOptionSequence, nodeId } =
             await this.getSingleChoiceQueryAnswer(assessment.id, questionNode, answerModel);
 
-        await this.createQueryResponse(assessment, nodeId, answerDto);
+        await this.createQueryResponse(assessment, questionNode, answerDto);
 
         if (paths.length === 0) {
             //In case there are no paths...
@@ -970,7 +981,7 @@ export class AssessmentService {
         const { answerDto, paths, chosenOptionSequences, nodeId } =
             await this.getMultipleChoiceQueryAnswer(assessment.id, questionNode, answerModel);
 
-        await this.createQueryResponse(assessment, nodeId, answerDto);
+        await this.createQueryResponse(assessment, questionNode, answerDto);
 
         if (paths.length === 0) {
             //In case there are no paths...
@@ -995,11 +1006,7 @@ export class AssessmentService {
             answerModel.Biometrics
         );
 
-        await this._assessmentHelperRepo.createQueryResponse(answerDto);
-        if (answerDto.ResponseType === QueryResponseType.Biometrics) {
-            const biometricsHelper = Injector.Container.resolve(AssessmentBiometricsHelper);
-            await biometricsHelper.persistBiometrics(assessment.PatientUserId, answerDto);
-        }
+        await this.createQueryResponse(assessment, questionNode, answerDto);
         return await this.respondToUserAnswer(assessment, questionNode.id, currentQueryDto, answerDto);
     }
 
@@ -1016,7 +1023,7 @@ export class AssessmentService {
             answerModel.TextValue
         );
 
-        await this._assessmentHelperRepo.createQueryResponse(answerDto);
+        await this.createQueryResponse(assessment, questionNode, answerDto);
         return await this.respondToUserAnswer(assessment, questionNode.id, currentQueryDto, answerDto);
     }
 
@@ -1031,8 +1038,7 @@ export class AssessmentService {
             assessment.id,
             messageNode,
         );
-
-        await this._assessmentHelperRepo.createQueryResponse(answerDto);
+        await this.createQueryResponse(assessment, messageNode, answerDto);
         return await this.respondToUserAnswer(assessment, messageNode.id, currentQueryDto, answerDto);
     }
 
@@ -1047,8 +1053,7 @@ export class AssessmentService {
             questionNode,
             answerModel.DateValue
         );
-
-        await this._assessmentHelperRepo.createQueryResponse(answerDto);
+        await this.createQueryResponse(assessment, questionNode, answerDto);
         return await this.respondToUserAnswer(assessment, questionNode.id, currentQueryDto, answerDto);
     }
 
@@ -1064,8 +1069,7 @@ export class AssessmentService {
             answerModel.FieldName,
             answerModel.IntegerValue
         );
-
-        await this._assessmentHelperRepo.createQueryResponse(answerDto);
+        await this.createQueryResponse(assessment, questionNode, answerDto);
         return await this.respondToUserAnswer(assessment, questionNode.id, currentQueryDto, answerDto);
     }
 
@@ -1081,8 +1085,7 @@ export class AssessmentService {
             answerModel.FieldName,
             answerModel.BooleanValue
         );
-
-        await this._assessmentHelperRepo.createQueryResponse(answerDto);
+        await this.createQueryResponse(assessment, questionNode, answerDto);
         return await this.respondToUserAnswer(assessment, questionNode.id, currentQueryDto, answerDto);
     }
 
@@ -1098,8 +1101,7 @@ export class AssessmentService {
             answerModel.FieldName,
             answerModel.FloatValue
         );
-
-        await this._assessmentHelperRepo.createQueryResponse(answerDto);
+        await this.createQueryResponse(assessment, questionNode, answerDto);
         return await this.respondToUserAnswer(assessment, questionNode.id, currentQueryDto, answerDto);
     }
 
@@ -1116,8 +1118,7 @@ export class AssessmentService {
             answerModel.Url,
             answerModel.ResourceId
         );
-
-        await this._assessmentHelperRepo.createQueryResponse(answerDto);
+        await this.createQueryResponse(assessment, questionNode, answerDto);
         return await this.respondToUserAnswer(assessment, questionNode.id, currentQueryDto, answerDto);
     }
 
@@ -1287,14 +1288,14 @@ export class AssessmentService {
     private handleSkipQuestion = async (
         assessment: AssessmentDto,
         questionNode: CAssessmentQuestionNode) : Promise<AssessmentQuestionResponseDto> => {
-
+        
         const currentQueryDto = this.questionNodeAsQueryDto(questionNode, assessment);
         const answerDto = AssessmentHelperMapper.toSkipQueryAnswerDto(
             assessment.id,
             questionNode,
             true
         );
-        await this._assessmentHelperRepo.createQueryResponse(answerDto);
+        await this.createQueryResponse(assessment, questionNode, answerDto);
         return await this.respondToUserAnswer(assessment, questionNode.id, currentQueryDto, answerDto);
     };
 

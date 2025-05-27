@@ -364,8 +364,10 @@ export class TenantSettingsValidator extends BaseValidator {
             }
         );
 
+        const MAX_REMINDER_ITEMS = 20;
+
         const apiReminderSchedule = request.body?.Followup?.ApiIntegrationSettings?.ReminderSchedule || [];
-        for (let i = 0; i < apiReminderSchedule.length; i++) {
+        for (let i = 0; i < Math.min(apiReminderSchedule.length, MAX_REMINDER_ITEMS); i++) {
             const path = `Followup.ApiIntegrationSettings.ReminderSchedule[${i}]`;
             await this.validateEnum(
                 request,
@@ -597,8 +599,10 @@ export class TenantSettingsValidator extends BaseValidator {
         await this.validateString(request, 'Consent.DefaultLanguage', Where.Body, true, false, false, 1);
         await this.validateArray(request, 'Consent.Messages', Where.Body, true, false, 1);
 
+        const MAX_MESSAGES = 25;
+
         const messages = request.body?.Consent?.Messages || [];
-        for (let i = 0; i < messages.length; i++) {
+        for (let i = 0; i < Math.min(messages.length, MAX_MESSAGES); i++) {
             const path = `Consent.Messages[${i}]`;
             await this.validateString(request, `${path}.LanguageCode`, Where.Body, true, false, false, 1);
             await this.validateString(request, `${path}.Content`, Where.Body, true, false, false, 1);

@@ -1,0 +1,16 @@
+meta {
+  name: Delete resource
+  type: http
+  seq: 19
+}
+
+delete {
+  url: {{BASE_URL}}/file-resources/{{RESOURCE_ID}}
+  body: none
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{PATIENT_USER_JWT}}
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+}

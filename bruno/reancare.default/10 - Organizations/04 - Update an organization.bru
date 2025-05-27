@@ -1,0 +1,78 @@
+meta {
+  name: Update an organization
+  type: http
+  seq: 3
+}
+
+put {
+  url: {{BASE_URL}}/organizations/{{ORGANIZATION_ID}}
+  body: json
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{ADMIN_USER_JWT}}
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+  Content-Type: application/json
+}
+
+body:json {
+  {
+      "Type": "Hospital",
+      "Name": "Shree Hospital",
+      "About": "Shree Hospital is a speciality hospital located on western part of the Pune city specializing in post-trauma care",
+      "ContactPhone": "{{CONTACT_ORGANIZATION_PHONE}}",
+      "ContactEmail": "{{CONTACT_ORGANIZATION_EMAIL}}",
+      "OperationalSince": "{{ORGANIZATION_OPERATIONAL_SINCE}}",
+      "ImageResourceId": "{{ORGANIZATION_IMAGE_RESOURCE_ID}}"
+  }
+}
+
+tests {
+  bru.setEnvVar("ORGANIZATION_NAME", 'Shree Hospital');
+  bru.getEnvVar("ORGANIZATION_TYPE", "Hospital");
+  
+  
+  test("Request is successfull", function () {
+      expect(res.getStatus()).to.equal(200);
+      var jsonRes = res.getBody();
+      expect(jsonRes.Status).to.eql('success');
+  });
+  
+  test("Organization is updated", function () {
+  
+      var expectedContactPhone = bru.getEnvVar("CONTACT_ORGANIZATION_PHONE");
+      var expectedContactEmail = bru.getEnvVar("CONTACT_ORGANIZATION_EMAIL");
+      var expectedOperationalSince = bru.getEnvVar("ORGANIZATION_OPERATIONAL_SINCE");
+  
+      var jsonRes = res.getBody();
+      expect(jsonRes.Data).to.have.property('Organization');
+      expect(jsonRes.Data.Organization).to.not.be.empty;
+      expect(jsonRes.Data.Organization).to.have.property('id');
+      expect(jsonRes.Data.Organization).to.have.property('Type');
+      expect(jsonRes.Data.Organization).to.have.property('Name');
+      expect(jsonRes.Data.Organization).to.have.property('ContactEmail');
+      expect(jsonRes.Data.Organization).to.have.property('ContactPhone');
+      expect(jsonRes.Data.Organization).to.have.property('OperationalSince');
+      expect(jsonRes.Data.Organization).to.have.property('IsHealthFacility');
+  
+      var opSince = jsonRes.Data.Organization.OperationalSince;
+      if(opSince){
+          opSince = opSince.split('T')[0];
+      }
+  
+      expect(jsonRes.Data.Organization.Type).equals('Hospital');
+      expect(jsonRes.Data.Organization.Name).equals('Shree Hospital');
+      expect(jsonRes.Data.Organization.ContactEmail).equals(expectedContactEmail);
+      expect(jsonRes.Data.Organization.ContactPhone).equals(expectedContactPhone);
+      expect(opSince).equals(expectedOperationalSince);
+      expect(jsonRes.Data.Organization.IsHealthFacility).equals(true);
+  
+  });
+  
+  
+}
+
+docs {
+  Get an address by address id.
+}

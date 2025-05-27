@@ -1,0 +1,45 @@
+meta {
+  name: Add path condition to DONTKNOW path
+  type: http
+  seq: 6
+}
+
+post {
+  url: {{BASE_URL}}/clinical/assessment-templates/{{ASSESSMENT_TEMPLATE_ID}}/nodes/{{COMB_ASSESSMENT_NODE_ID_1_1}}/paths/{{COMB_QUESTION_1_1_DONTKNOW}}/conditions
+  body: json
+  auth: none
+}
+
+headers {
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+  Authorization: Bearer {{ADMIN_USER_JWT}}
+}
+
+body:json {
+  {
+      "IsCompositeCondition": false,
+      "ParentConditionId": null,
+      "OperatorType": "Equal to",
+      "FirstOperand": {
+          "DataType": "Integer",
+          "Name": "ReceivedAnswer",
+          "Value": null
+      },
+      "SecondOperand": {
+          "DataType": "Integer",
+          "Name": "ExpectedAnswer",
+          "Value": 3
+      }
+  }
+}
+
+tests {
+  var jsonRes = res.getBody();
+  
+  try {
+      bru.setEnvVar("COMB_QUESTION_1_1_DONTKNOW_CONDITION", jsonRes.Data.PathCondition.id);
+  }
+  catch (error) {
+      console.log(error.message);
+  }
+}

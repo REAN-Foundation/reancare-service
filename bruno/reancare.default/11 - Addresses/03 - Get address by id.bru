@@ -1,0 +1,57 @@
+meta {
+  name: Get address by id
+  type: http
+  seq: 3
+}
+
+get {
+  url: {{BASE_URL}}/addresses/{{ADDRESS_ID}}
+  body: json
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{PATIENT_USER_JWT}}
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+  Content-Type: application/json
+}
+
+tests {
+  test("Request is successfull", function () {
+      expect(res.getStatus()).to.equal(200);
+      var jsonRes = res.getBody();
+      expect(jsonRes.Status).to.eql('success');
+  });
+  
+  test("Address is returned", function () {
+  
+      var expectedType = "Home";
+      var expectedAddressLine = bru.getEnvVar("ADDRESS_LINE");
+      var expectedCity = bru.getEnvVar("ADDRESS_CITY");
+      var expectedDistrict = null;
+      var expectedState = null;
+      var expectedCountry = bru.getEnvVar("ADDRESS_COUNTRY");
+      var expectedPostalCode = null;
+  
+      var jsonRes = res.getBody();
+      expect(jsonRes.Data).to.have.property('Address');
+      expect(jsonRes.Data.Address).to.not.be.empty;
+      expect(jsonRes.Data.Address).to.have.property('id');
+      expect(jsonRes.Data.Address).to.have.property('Type');
+      expect(jsonRes.Data.Address).to.have.property('AddressLine');
+      expect(jsonRes.Data.Address).to.have.property('City');
+      expect(jsonRes.Data.Address).to.have.property('District');
+      expect(jsonRes.Data.Address).to.have.property('State');
+      expect(jsonRes.Data.Address).to.have.property('Country');
+      expect(jsonRes.Data.Address).to.have.property('PostalCode');
+      expect(jsonRes.Data.Address).to.have.property('Longitude');
+      expect(jsonRes.Data.Address).to.have.property('Lattitude');
+  
+  });
+  
+  
+}
+
+docs {
+  Get an address by address id.
+}

@@ -1,0 +1,51 @@
+meta {
+  name: Get heart points record by id
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{BASE_URL}}/wellness/daily-records/heart-points/{{HEART_POINT_ID}}
+  body: json
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{PATIENT_USER_JWT}}
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+  Content-Type: application/json
+}
+
+tests {
+  var jsonRes = res.getBody();
+  
+  test("Request is successfull", function () {
+      expect(res.getStatus()).to.equal(200);
+      var jsonRes = res.getBody();
+      expect(jsonRes.Status).to.eql('success');
+  });
+  
+  test("Calorie record should have correct data", function () {
+  
+      var expectedPatientUserId = bru.getEnvVar("HEART_POINT_PATIENTUSERID");
+      var expectedHeartPoints = bru.getEnvVar("HEART_POINT_VALUE");
+      var expectedHeartPointUnit = bru.getEnvVar("HEART_POINT_UNIT");
+  
+      var jsonRes = res.getBody();
+      expect(jsonRes.Data).to.have.property('HeartPoints');
+      expect(jsonRes.Data.HeartPoints).to.not.be.empty;
+      expect(jsonRes.Data.HeartPoints).to.have.property('PatientUserId');
+      expect(jsonRes.Data.HeartPoints).to.have.property('HeartPoints');
+      expect(jsonRes.Data.HeartPoints).to.have.property('Unit');
+  
+      expect(jsonRes.Data.HeartPoints.PatientUserId).equals(expectedPatientUserId);
+      expect(jsonRes.Data.HeartPoints.HeartPoints).equals(120);
+      expect(jsonRes.Data.HeartPoints.Unit).equals(expectedHeartPointUnit);
+  });
+  
+  
+}
+
+docs {
+  Get an HeartPoint by HeartPoint id.
+}

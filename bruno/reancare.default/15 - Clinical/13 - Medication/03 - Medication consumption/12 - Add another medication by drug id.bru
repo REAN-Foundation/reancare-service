@@ -1,0 +1,115 @@
+meta {
+  name: Add another medication by drug id
+  type: http
+  seq: 12
+}
+
+post {
+  url: {{BASE_URL}}/clinical/medications/
+  body: json
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{PATIENT_USER_JWT}}
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+  Content-Type: application/json
+}
+
+body:json {
+  {
+      "PatientUserId": "{{PATIENT_USER_ID}}",
+      "DrugId": "{{DRUG_ID}}",
+      "Dose": 1.5,
+      "DosageUnit": "Tablet",
+      "TimeSchedules": [
+          "Morning", 
+          "Afternoon"
+      ],
+      "FrequencyUnit": "Daily",
+      "Route": "Oral",
+      "Duration": 2,
+      "DurationUnit": "Weeks",
+      "StartDate": "{{MEDICATION_START_DATE}}",
+      "RefillNeeded": true,
+      "RefillCount": 2,
+      "Instructions": "If there is reaction or allergy, please contact immediately."
+  }
+}
+
+script:pre-request {
+  Date.prototype.addDays = function(days) {
+      var date = new Date(this.valueOf());
+      date.setDate(date.getDate() + days);
+      return date;
+  }
+  
+  function formatDate(date) {
+      var d = new Date(date),
+          month = '' + (d.getMonth() + 1),
+          day = '' + d.getDate(),
+          year = d.getFullYear();
+  
+      if (month.length < 2) 
+          month = '0' + month;
+      if (day.length < 2) 
+          day = '0' + day;
+  
+      return [year, month, day].join('-');
+  }
+  
+  var start_date = formatDate((new Date()).addDays(-2));
+  
+  bru.setEnvVar("MEDICATION_START_DATE", start_date);
+  
+  
+}
+
+tests {
+  try {
+  
+      var jsonData = res.getBody();
+      var id = jsonData.Data.Medication.id;
+      bru.setEnvVar("MEDICATION_ID", id);
+  
+  }
+  catch (error) {
+      console.log(error.message);
+  }
+  
+  test("Request is successfull", function () {
+      expect(res.getStatus()).to.equal(201);
+      var jsonRes = res.getBody();
+      expect(jsonRes.Status).to.eql('success');
+  });
+  
+  test("Added another Medication by drug id", () => {
+      const json = res.getBody();
+      const med = json.Data.Medication;
+  
+      expect(med).to.have.property("id");
+      expect(med).to.have.property("PatientUserId").that.is.not.empty;
+      expect(med).to.have.property("DrugId").that.is.not.empty;
+      expect(med).to.have.property("DrugName").that.is.a("string");
+      expect(med).to.have.property("Dose");
+      expect(Number(med.Dose)).to.be.greaterThan(0);
+      expect(med).to.have.property("DosageUnit").that.is.a("string");
+      expect(med).to.have.property("TimeSchedules").that.is.an("array").that.includes("Morning", "Afternoon");
+      expect(med).to.have.property("Frequency").that.equals(2);
+      expect(med).to.have.property("FrequencyUnit").that.equals("Daily");
+      expect(med).to.have.property("Route").that.equals("Oral");
+      expect(med).to.have.property("Duration").that.equals(1);
+      expect(med).to.have.property("DurationUnit").that.equals("Weeks");
+      expect(med).to.have.property("StartDate").that.includes("2025-04-22T18:30:00.000Z");
+      expect(med).to.have.property("EndDate").that.includes("2025-05-06T18:30:00.000Z");
+      expect(med).to.have.property("RefillNeeded").that.equals(true);
+      expect(med).to.have.property("RefillCount").that.equals(2);
+      expect(med).to.have.property("Instructions").that.includes("reaction or allergy");
+      expect(med).to.have.property("ConsumptionSummary");
+  });
+  
+}
+
+docs {
+  Create a new drug order (medication list) for a patient for the visit.
+}

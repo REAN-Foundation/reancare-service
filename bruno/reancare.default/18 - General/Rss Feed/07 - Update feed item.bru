@@ -1,0 +1,56 @@
+meta {
+  name: Update feed item
+  type: http
+  seq: 8
+}
+
+put {
+  url: {{BASE_URL}}/rss-feeds/feed-items/{{RSS_FEED_ITEM_ID}}
+  body: json
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{ADMIN_USER_JWT}}
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+  Content-Type: application/json
+}
+
+body:json {
+  {
+      "Content": "Our intervention on early childhood development (ECD) addresses various developmental domains."
+  }
+}
+
+tests {
+  var jsonRes = res.getBody();
+  
+  try {
+      bru.setEnvVar("RSS_FEED_ITEM_ID", jsonRes.Data.Rssfeed.id);
+  }
+  catch (error) {
+      console.log(error.message);
+  }
+  
+  
+  test("Request is successfull", function () {
+      expect(res.getStatus()).to.equal(200);
+      var jsonRes = res.getBody();
+      expect(jsonRes.Status).to.eql('success');
+  });
+  
+  test("Updated RSS feed item", function () {
+      var expectedTitle = "Field trip to Nehru Science Centre";
+      var expectedDescription = "Learning visits has always been a key strategy in EHSAS to build assets, agency and self-awareness in young people. On the 24th of September, 2022, 43 young people from all three sites of Dharavi, Kandivali and Kalwa visited the Nehru Science Center.";
+      var expectedAuthor = "Sneha Foundation";
+  
+      var jsonRes = res.getBody();
+      expect(jsonRes.Data).to.have.property('RssfeedItem');
+      expect(jsonRes.Data.RssfeedItem).to.not.be.empty;
+  
+      expect(jsonRes.Data.RssfeedItem.Title).to.equal(expectedTitle);
+      expect(jsonRes.Data.RssfeedItem.Description).to.equal(expectedDescription);
+      expect(jsonRes.Data.RssfeedItem.AuthorName).to.equal(expectedAuthor);
+  });
+  
+}

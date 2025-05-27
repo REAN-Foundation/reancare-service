@@ -16,6 +16,7 @@ export const register = (app: express.Application): void => {
     router.get('/:id/questions/next', auth(AssessmentAuth.getNextQuestion), controller.getNextQuestion);
     router.get('/:id/questions/:questionId', auth(AssessmentAuth.getQuestionById), controller.getQuestionById);
     router.post('/:id/questions/:questionId/answer', auth(AssessmentAuth.answerQuestion), controller.answerQuestion);
+    router.post('/:id/questions/:questionId/skip', auth(AssessmentAuth.skipQuestion), controller.skipQuestion);
     router.post('/:id/question-lists/:listId/answer', auth(AssessmentAuth.answerQuestionList), controller.answerQuestionList);
 
     router.post('/', auth(AssessmentAuth.create), controller.create);

@@ -1,0 +1,61 @@
+meta {
+  name: Update body height by id
+  type: http
+  seq: 3
+}
+
+put {
+  url: {{BASE_URL}}/clinical/biometrics/body-heights/{{BODY_HEIGHT_ID}}
+  body: json
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{PATIENT_USER_JWT}}
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+  Content-Type: application/json
+}
+
+body:json {
+  {
+      "PatientUserId": "{{PATIENT_USER_ID}}",
+      "BodyHeight": 180,
+      "Unit": "{{HEIGHT_UNIT}}"
+  }
+}
+
+script:pre-request {
+  let height = bru.getEnvVar("BODY_HEIGHT");
+  bru.setEnvVar("BODY_HEIGHT", Number(height) + 10);
+}
+
+tests {
+  test("Request is successfull", function () {
+      expect(res.getStatus()).to.equal(200);
+      var jsonRes = res.getBody();
+      expect(jsonRes.Status).to.eql('success');
+  });
+  
+  test("Updated Body height biometric is returned", function () {
+  
+      var expectedPatientUserId = bru.getEnvVar("PATIENT_USER_ID");
+      var expectedBodyHeight = 180;
+      var expectedHeightUnit = bru.getEnvVar("HEIGHT_UNIT");
+  
+      var jsonRes = res.getBody();
+      expect(jsonRes.Data).to.have.property('BodyHeight');
+      expect(jsonRes.Data.BodyHeight).to.have.property('BodyHeight');
+      expect(jsonRes.Data.BodyHeight).to.have.property('PatientUserId');
+      expect(jsonRes.Data.BodyHeight).to.have.property('Unit');
+  
+      expect(jsonRes.Data.BodyHeight.PatientUserId).equals(expectedPatientUserId);
+      expect(Number(jsonRes.Data.BodyHeight.BodyHeight)).equals(Number(expectedBodyHeight));
+      expect(jsonRes.Data.BodyHeight.Unit).equals(expectedHeightUnit);
+  });
+  
+  
+}
+
+docs {
+  Update the details for a body height metric by body_height_id.
+}

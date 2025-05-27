@@ -1,0 +1,107 @@
+meta {
+  name: Get medication consumption list
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{BASE_URL}}/clinical/medication-consumptions/search-for-patient/{{PATIENT_USER_ID}}?order=ascending&itemsPerPage=200
+  body: none
+  auth: none
+}
+
+params:query {
+  order: ascending
+  itemsPerPage: 200
+  ~drugOrderId: {{DRUG_ORDER_ID}}
+  ~medicationId: {{MEDICATION_ID}}
+  ~dateFrom: {{MEDICATION_CONSUMPTION_SCHEDULE_FROM}}
+  ~dateTo: {{MEDICATION_CONSUMPTION_SCHEDULE_TO}}
+  ~fromDate: 2021-10-21
+  ~toDate: 2021-06-21
+}
+
+headers {
+  Authorization: Bearer {{PATIENT_USER_JWT}}
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+  Content-Type: application/json
+}
+
+script:pre-request {
+  
+  Date.prototype.addDays = function(days) {
+      var date = new Date(this.valueOf());
+      date.setDate(date.getDate() + days);
+      return date;
+  }
+  
+  function formatDate(date) {
+      var d = new Date(date),
+          month = '' + (d.getMonth() + 1),
+          day = '' + d.getDate(),
+          year = d.getFullYear();
+  
+      if (month.length < 2) 
+          month = '0' + month;
+      if (day.length < 2) 
+          day = '0' + day;
+  
+      return [year, month, day].join('-');
+  }
+  
+  var d = new Date();
+  
+  var fromDate = formatDate(d.addDays(2));
+  var toDate = formatDate((new Date()).addDays(7));
+  
+  bru.setEnvVar("MEDICATION_CONSUMPTION_SCHEDULE_FROM", fromDate);
+  bru.setEnvVar("MEDICATION_CONSUMPTION_SCHEDULE_TO", toDate);
+}
+
+tests {
+  try {
+      var jsonRes = res.getBody();
+      var items = jsonRes.Data.MedicationConsumptions.Items;
+      for(var i = 0; i < items.length; i++) {
+          var r = items[i];
+          const x = i + 1;
+          var str = "MED_CONSUMPTION_ID_" + x.toString();
+          console.log(str + ' : ' + r.id);
+          bru.setEnvVar(str, r.id);
+      }
+  }
+  catch (error) {
+      console.log(error.message);
+  }
+  
+  try {
+  
+      var jsonData = res.getBody();
+      var medication_consumption_id = jsonData.Data.MedicationConsumptions.Items[0].id;
+      bru.setEnvVar("MEDICATION_CONSUMPTION_ID", medication_consumption_id);
+  
+  }
+  catch (error) {
+      console.log(error.message);
+  }
+  
+  test("Request is successfull", function () {
+      expect(res.getStatus()).to.equal(200);
+      var jsonRes = res.getBody();
+      expect(jsonRes.Status).to.eql('success');
+  });
+  
+  test("Medication consumptions for patient are returned", function () {
+     
+      var jsonRes = res.getBody();
+      expect(jsonRes.Data).to.have.property('MedicationConsumptions');
+      expect(jsonRes.Data.MedicationConsumptions).to.not.be.empty;
+      expect(jsonRes.Data.MedicationConsumptions).to.have.property('TotalCount');
+      expect(jsonRes.Data.MedicationConsumptions).to.have.property('Items');
+      
+      expect(jsonRes.Data.MedicationConsumptions.TotalCount).greaterThan(0);    
+      expect(jsonRes.Data.MedicationConsumptions.Items.length).greaterThan(0);    
+  });
+  
+  
+}

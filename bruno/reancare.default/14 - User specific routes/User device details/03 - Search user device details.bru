@@ -1,0 +1,45 @@
+meta {
+  name: Search user device details
+  type: http
+  seq: 4
+}
+
+get {
+  url: {{BASE_URL}}/user-device-details/search?deviceName=Iphone13&oSType=aaa&oSVersion=14.2&orderBy=DeviceName&order=ascending&pageIndex=0&itemsPerPage=25
+  body: none
+  auth: none
+}
+
+params:query {
+  deviceName: Iphone13
+  oSType: aaa
+  oSVersion: 14.2
+  orderBy: DeviceName
+  order: ascending
+  pageIndex: 0
+  itemsPerPage: 25
+  ~appName: Rean Health
+  ~appVersion: 1.3.0
+  ~userId: {{PATIENT_USER_ID}}
+}
+
+headers {
+  Authorization: Bearer {{PATIENT_USER_JWT}}
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+  Content-Type: application/json
+}
+
+tests {
+  test("Request is successfull", function () {
+      expect(res.getStatus()).to.equal(200);
+      var jsonRes = res.getBody();
+      expect(jsonRes.Status).to.eql('success');
+  });
+  
+  test("List of user device details is returned", function () {
+  
+      var jsonRes = res.getBody();
+      expect(jsonRes.Data).to.have.property('UserDeviceDetailsRecords');
+      expect(jsonRes.Data.UserDeviceDetailsRecords.Items.length).to.be.greaterThan(0);
+  });
+}

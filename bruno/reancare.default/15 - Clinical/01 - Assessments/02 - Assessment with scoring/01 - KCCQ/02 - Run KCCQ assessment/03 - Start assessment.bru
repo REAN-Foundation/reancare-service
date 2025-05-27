@@ -1,0 +1,76 @@
+meta {
+  name: Start assessment
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{BASE_URL}}/clinical/assessments/{{ASSESSMENT_ID}}/start
+  body: none
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{PATIENT_USER_JWT}}
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+  Content-Type: application/json
+}
+
+tests {
+  try {
+      var jsonRes = res.getBody();
+      var next = jsonRes.Data.Next;
+  
+      if (next.NodeType === "Node list") {
+          bru.setEnvVar("ASSESSMENT_LIST_NODE_ID", next.id);
+  
+          if (Array.isArray(next.ChildrenQuestions)) {
+              for (let i = 0; i < next.ChildrenQuestions.length; i++) {
+                  bru.setEnvVar("ASSESSMENT_LIST_QUESTION_ID_" + i, next.ChildrenQuestions[i].id);
+              }
+          }
+      } else if (next.NodeType === "Node list") {
+          bru.setEnvVar("ASSESSMENT_QUESTION_ID", next.id);
+          bru.setEnvVar("ASSESSMENT_QUESTION_TYPE", next.ExpectedResponseType);
+      }
+  } catch (error) {
+      console.log("Parsing error: ", error.message);
+  }
+  // try {
+  //     var jsonRes = res.getBody();
+  //     var next = jsonRes.Data.Next;
+  //     if (next.NodeType == "Node list") {
+  //         const listNodeId = next.id;
+  //         bru.setEnvVar("ASSESSMENT_LIST_NODE_ID", listNodeId);
+  //     }
+  //     else {
+  //         bru.setEnvVar("ASSESSMENT_QUESTION_ID", jsonRes.Data.Next.id);
+  //     }
+  
+  //     for (i = 0; i<jsonRes.Data.Next.ChildrenQuestions.length;i++ ) {
+  //         bru.setEnvVar("ASSESSMENT_LIST_QUESTION_ID_"+i, jsonRes.Data.Next.ChildrenQuestions[i].id);
+  //     }
+  // }
+  // catch (error) {
+  //     console.log(error.message);
+  // }
+  
+  test("Request is successfull", function () {
+      expect(res.getStatus()).to.equal(200);
+      var jsonRes = res.getBody();
+      expect(jsonRes.Status).to.eql('success');
+  });
+  
+  test("Assessment is started", function () {
+      var jsonRes = res.getBody();
+      expect(jsonRes.Data).to.have.property('Next');
+  
+      const next = jsonRes.Data.Next;
+      expect(next).to.have.property('id');
+      expect(next).to.have.property('NodeType');
+      expect(next).to.have.property('Title');
+      expect(next.NodeType).to.equal("Node list");
+  });
+  
+  
+}

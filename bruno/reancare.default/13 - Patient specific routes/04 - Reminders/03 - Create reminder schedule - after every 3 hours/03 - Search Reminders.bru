@@ -1,0 +1,44 @@
+meta {
+  name: Search Reminders
+  type: http
+  seq: 3
+}
+
+get {
+  url: {{BASE_URL}}/reminders/search?UserId={{PATIENT_USER_ID}}
+  body: none
+  auth: none
+}
+
+params:query {
+  UserId: {{PATIENT_USER_ID}}
+  ~createdDateFrom: 2025-04-12
+  ~createdDateTo: 2027-04-25
+}
+
+headers {
+  Authorization: Bearer {{PATIENT_USER_JWT}}
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+  Content-Type: application/json
+}
+
+tests {
+  test("Request is successfull", function () {
+      expect(res.getStatus()).to.equal(200);
+      var jsonRes = res.getBody();
+      expect(jsonRes.Status).to.eql('success');
+  });
+  
+  test("List of reminders is returned", function () {
+  
+      var jsonRes = res.getBody();
+      expect(jsonRes.Data).to.have.property('Reminders');
+      expect(jsonRes.Data.Reminders.Items.length).greaterThan(0);
+  
+  });
+  
+}
+
+docs {
+  Search Goal records with filters
+}

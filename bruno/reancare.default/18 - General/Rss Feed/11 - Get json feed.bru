@@ -1,0 +1,11 @@
+meta {
+  name: Get json feed
+  type: http
+  seq: 13
+}
+
+get {
+  url: {{BASE_URL}}/rss-feeds/{{RSS_FEED_ID}}/json
+  body: none
+  auth: none
+}

@@ -1,0 +1,63 @@
+meta {
+  name: Upload pdf
+  type: http
+  seq: 4
+}
+
+post {
+  url: {{BASE_URL}}/file-resources/upload/
+  body: multipartForm
+  auth: none
+}
+
+headers {
+  enc: multipart/form-data
+  Authorization: Bearer {{ADMIN_USER_JWT}}
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+}
+
+body:multipart-form {
+  name: @file(C:\Users\Madhu\Downloads\Clockify_Time_Report_Summary_01_03_2025-31_03_2025.pdf)
+  IsPublicResource: true
+}
+
+tests {
+  try {
+      var jsonRes = res.getBody();
+      bru.setEnvVar("PDF_FILE_RESOURCE_URL", jsonRes.Data.FileResources[0].Url);
+  }
+  catch(error) {
+      console.log(error.message);
+  }
+  
+  test("Request is successfull", function () {
+      expect(res.getStatus()).to.equal(201);
+      var jsonRes = res.getBody();
+      expect(jsonRes.Status).to.eql('success');
+  });
+  
+  test("File is uploaded as public resource", function () {
+  
+      var jsonRes = res.getBody();
+      expect(jsonRes.Data).to.have.property('FileResources');
+      expect(jsonRes.Data.FileResources.length).greaterThan(0);
+  
+      var resource = jsonRes.Data.FileResources[0];
+  
+      expect(resource).to.have.property('id');
+      expect(resource).to.have.property('FileName');
+      expect(resource).to.have.property('Url');
+      expect(resource).to.have.property('UploadedByUserId');
+      expect(resource).to.have.property('MimeType');
+      expect(resource).to.have.property('Versions');
+      expect(resource).to.have.property('Tags');
+      expect(resource).to.have.property('References');
+      expect(resource).to.have.property('IsPublicResource');
+      expect(resource).to.have.property('DefaultVersion');
+  
+      expect(resource.Versions.length).greaterThan(0);
+      expect(resource.IsPublicResource).equals(true);
+  });
+  
+  
+}

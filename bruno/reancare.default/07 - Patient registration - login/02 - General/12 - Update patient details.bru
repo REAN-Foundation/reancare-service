@@ -1,0 +1,99 @@
+meta {
+  name: Update patient details
+  type: http
+  seq: 8
+}
+
+put {
+  url: {{BASE_URL}}/patients/{{PATIENT_USER_ID}}
+  body: json
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{ADMIN_USER_JWT}}
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+  Content-Type: application/json
+}
+
+body:json {
+  {
+      "Prefix": "Mr.",
+      "FirstName": "{{FIRST_NAME}}",
+      "MiddleName": "X",
+      "LastName": "{{LAST_NAME}}",
+      "Email": "{{EMAIL}}",
+      "Gender": "Male",
+      "BirthDate": "1999-01-01",
+      "ImageResourceId": "",
+      "Addresses": [
+          {
+              "Type": "Official",
+              "AddressLine": "99/4, Hosur Mn Rd, Opp Bts Bus Stop, Bommana Halli",
+              "City": "Mumbai",
+              "Country": "India"
+          }
+      ],
+      "DefaultTimeZone": "+05:30",
+      "CurrentTimeZone": "+05:30"
+  }
+}
+
+script:pre-request {
+  //Randomly generated user details
+  
+  var first_names = ['Jerry', 'Tom', 'Garfield', 'Jerome', 'Hobbes', 'Calvin', 'Nate', 'Peanuts', 'John', 'Abigale', 'Erin'];
+  
+  var last_names = ['Smith', 'Johnson',  'Williams', 'Jones', 'Brown', 'Davis', 'Miller', 'Wilson', 'Moore', 'Taylor', 'Anderson', 'Thomas', 'Jackson', 'White', 'Harris', 'Martin', 'Thompson', 'Garcia', 'Martinez', 'Robinson', 'Clark', 'Rodriguez', 'Lewis', 'Lee', 'Walker', 'Hall'];
+  
+  var first = first_names[Math.floor(Math.random() * first_names.length)];
+  var last = last_names[Math.floor(Math.random() * last_names.length)];
+  var phonenumber = (Math.floor(Math.random() * 9000000000) + 1000000000).toString();
+  var random_postfix = (Math.floor(Math.random() * 90000) + 10000).toString();
+  var email = first + "." + random_postfix + "." + last + "@gmail.com";
+  var password = "";
+  
+  bru.setEnvVar("FIRST_NAME", first);
+  bru.setEnvVar("LAST_NAME", last);
+  bru.setEnvVar("EMAIL", email);
+  
+}
+
+tests {
+  try {
+      var jsonRes = res.getBody();
+      bru.setEnvVar("PATIENT_FIRST_NAME", jsonRes.Data.Patient.User.Person.FirstName);
+      bru.setEnvVar("PATIENT_PHONE", jsonRes.Data.Patient.User.Person.Phone);
+      bru.setEnvVar("PATIENT_GENDER", jsonRes.Data.Patient.User.Person.Gender);
+      bru.setEnvVar("PATIENT_EMAIL", jsonRes.Data.Patient.User.Person.Email);
+  
+      var phone = jsonRes.Data.Patient.User.Person.Phone;
+      var tokens = phone.split('-');
+      var phoneNumber = tokens[1];
+  
+      bru.setEnvVar("PATIENT_PHONE_NUMBER", phoneNumber);
+  }
+  catch (error) {
+      console.log(error.message);
+  }
+  
+  
+  test("Request is successfull", function () {
+      expect(res.getStatus()).to.equal(200);
+      var jsonRes = res.getBody();
+      expect(jsonRes.Status).to.eql('success');
+  });
+  
+  test("Patient is updated", function () {
+      var jsonRes = res.getBody();
+      expect(jsonRes.Data).to.have.property('Patient');
+      expect(jsonRes.Data.Patient).to.not.be.empty;
+      expect(jsonRes.Data.Patient).to.have.property('id');
+      expect(jsonRes.Data.Patient).to.have.property('User');
+      expect(jsonRes.Data.Patient.User).to.not.be.empty;
+      expect(jsonRes.Data.Patient.User).to.have.property('id');
+      expect(jsonRes.Data.Patient.User.Person).to.not.be.empty;
+      expect(jsonRes.Data.Patient.User.Person).to.have.property('id');
+  });
+  
+}

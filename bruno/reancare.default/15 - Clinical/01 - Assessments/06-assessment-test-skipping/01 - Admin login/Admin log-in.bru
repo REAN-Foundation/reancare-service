@@ -1,0 +1,58 @@
+meta {
+  name: Admin log-in
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{BASE_URL}}/users/login-with-password
+  body: json
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+}
+
+body:json {
+  {
+      "UserName": "admin",
+      "Password": "{{ADMIN_PASSWORD}}",
+      "LoginRoleId": 1
+  }
+  
+}
+
+script:pre-request {
+  try {
+      var jsonRes = res.getBody();
+      bru.setEnvVar("ADMIN_USER_JWT", jsonRes.Data.AccessToken);
+  }
+  catch (error) {
+      console.log(error.message);
+  }
+  
+}
+
+tests {
+  
+  test("Request is successfull", function () {
+      expect(res.getStatus()).to.equal(200);
+      var jsonRes = res.getBody();
+      expect(jsonRes.Status).to.eql('success');
+  });
+  
+  test("Admin login: Access token is returned", function () {
+      var jsonRes = res.getBody();
+      expect(jsonRes.Data).to.have.property('AccessToken');
+      expect(jsonRes.Data.AccessToken).to.not.be.null;
+  });
+  
+}
+
+docs {
+  User login with username/phone/email and password.
+  
+  'LoginRoleId' is the role id through which user wants to log into the system provided the user has the role.
+}

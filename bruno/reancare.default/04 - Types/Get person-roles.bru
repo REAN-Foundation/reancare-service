@@ -1,0 +1,51 @@
+meta {
+  name: Get person-roles
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{BASE_URL}}/types/person-roles
+  body: none
+  auth: none
+}
+
+headers {
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+  Content-Type: application/json
+}
+
+tests {
+  try {
+      var jsonRes = res.getBody();
+      var personRoleTypes = jsonRes.Data.PersonRoleTypes;
+  
+      for (var i = 0; i < personRoleTypes.length; i++) {
+          var role = personRoleTypes[i];
+          var name = role.RoleName;
+          var id = role.id;
+          var key = name.toUpperCase()
+                        .replace(/[^A-Z0-9]/g, "_")    
+                        .replace(/_+/g, "_")          
+                        .replace(/^_|_$/g, "");        
+          key = key + "_ROLE_ID";
+  
+          bru.setEnvVar(key, id);
+      }
+  } catch (error) {
+      console.log("Error setting person role environment variables: ", error.message);
+  }
+  
+  test("Request is successful", function () {
+      expect(res.getStatus()).to.equal(200);
+      var jsonRes = res.getBody();
+      expect(jsonRes.Status).to.eql('success');
+  });
+  
+  test("Person roles are retrieved", function () {
+      var jsonRes = res.getBody();
+      expect(jsonRes.Data).to.have.property('PersonRoleTypes');
+      expect(jsonRes.Data.PersonRoleTypes.length).to.be.greaterThan(0);
+  });
+  
+}

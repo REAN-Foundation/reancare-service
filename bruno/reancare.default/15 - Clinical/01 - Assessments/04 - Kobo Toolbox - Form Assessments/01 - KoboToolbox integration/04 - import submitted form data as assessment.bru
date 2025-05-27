@@ -1,0 +1,44 @@
+meta {
+  name: import submitted form data as assessment
+  type: http
+  seq: 4
+}
+
+post {
+  url: {{BASE_URL}}/clinical/forms/provider/KoboToolbox/import-form-submissions/1023823
+  body: json
+  auth: none
+}
+
+headers {
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+  Content-Type: application/json
+}
+
+body:json {
+  {
+      "BaseUrl":"{{KOBO_TOOLBOX_BASE_URL}}",
+      "SecondaryUrl":"{{KOBO_TOOLBOX_SECONDARY_URL}}",
+      "Token":"{{KOBO_TOOLBOX_TOKEN}}"
+  }
+}
+
+script:pre-request {
+  bru.setEnvVar("KOBO_TOOLBOX_BASE_URL", "https://kc.kobotoolbox.org/api/");
+  bru.setEnvVar("KOBO_TOOLBOX_SECONDARY_URL", "https://kf.kobotoolbox.org/api/");
+  bru.setEnvVar("KOBO_TOOLBOX_TOKEN", "");
+  
+}
+
+tests {
+  test("Request is successfull", function () {
+      expect(res.getStatus()).to.equal(200);
+      var jsonRes = res.getBody();
+      expect(jsonRes.Status).to.eql('success');
+  });
+  
+}
+
+docs {
+  Add an emergency event.
+}

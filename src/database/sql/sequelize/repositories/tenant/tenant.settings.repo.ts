@@ -1,9 +1,8 @@
 import TenantSettings from '../../models/tenant/tenant.settings.model';
 import {
-    UserInterfaces,
-    CommonSettings,
-    PatientAppSettings,
     ChatBotSettings,
+    CommonSettings,
+    FollowupSettings,
     FormsSettings,
     TenantSettingsDomainModel,
     TenantSettingsDto
@@ -22,18 +21,17 @@ export class TenantSettingsRepo implements ITenantSettingsRepo {
     createDefaultSettings = async (tenantId: uuid, model: TenantSettingsDomainModel)
         : Promise<TenantSettingsDto> => {
         try {
-            const userInterface: string = this.validateJSONStringify(JSON.stringify(model.UserInterfaces));
             const common = this.validateJSONStringify(JSON.stringify(model.Common));
-            const patientApp = this.validateJSONStringify(JSON.stringify(model.PatientApp));
             const chatBot = this.validateJSONStringify(JSON.stringify(model.ChatBot));
+            const followup = this.validateJSONStringify(JSON.stringify(model.Followup));
             const forms = this.validateJSONStringify(JSON.stringify(model.Forms));
+ 
             const entity = {
-                TenantId       : tenantId,
-                UserInterfaces : userInterface,
-                Common         : common,
-                PatientApp     : patientApp,
-                ChatBot        : chatBot,
-                Forms          : forms,
+                TenantId : tenantId,
+                Common   : common,
+                Followup : followup,
+                ChatBot  : chatBot,
+                Forms    : forms,
             };
             const settings = await TenantSettings.create(entity);
             return TenantSettingsMapper.toDto(settings);
@@ -55,21 +53,6 @@ export class TenantSettingsRepo implements ITenantSettingsRepo {
         }
     };
 
-    updateHealthcareInterfaces = async (tenantId: string, settings: UserInterfaces)
-        : Promise<TenantSettingsDto> => {
-        try {
-            const userInterface: string = this.validateJSONStringify(JSON.stringify(settings));
-            const record = await TenantSettings.findOne({ where: { TenantId: tenantId } });
-            record.UserInterfaces = userInterface;
-            await record.save();
-            return TenantSettingsMapper.toDto(record);
-        }
-        catch (error) {
-            Logger.instance().log(error.message);
-            throw new ApiError(500, `Failed to update tenant feature settings: ${error.message}`);
-        }
-    };
-
     updateCommonSettings = async (tenantId: string, settings: CommonSettings)
         : Promise<TenantSettingsDto> => {
         try {
@@ -85,18 +68,18 @@ export class TenantSettingsRepo implements ITenantSettingsRepo {
         }
     };
 
-    updatePatientAppSettings = async (tenantId: string, settings: PatientAppSettings)
+    updateFollowupSettings = async (tenantId: string, settings: FollowupSettings)
         : Promise<TenantSettingsDto> => {
         try {
-            const patientApp = this.validateJSONStringify(JSON.stringify(settings));
+            const followup = this.validateJSONStringify(JSON.stringify(settings));
             const record = await TenantSettings.findOne({ where: { TenantId: tenantId } });
-            record.PatientApp = patientApp;
+            record.Followup = followup;
             await record.save();
             return TenantSettingsMapper.toDto(record);
         }
         catch (error) {
             Logger.instance().log(error.message);
-            throw new ApiError(500, `Failed to update tenant feature settings: ${error.message}`);
+            throw new ApiError(500, `Failed to update tenant followup settings: ${error.message}`);
         }
     };
 
@@ -127,6 +110,23 @@ export class TenantSettingsRepo implements ITenantSettingsRepo {
             throw new ApiError(500, `Failed to update tenant feature settings: ${error.message}`);
         }
         
+    };
+    
+    updateConsentSettings = async (tenantId: string, settings: any): Promise<TenantSettingsDto> => {
+        try {
+            const consent = this.validateJSONStringify(JSON.stringify(settings));
+            const record = await TenantSettings.findOne({ where: { TenantId: tenantId } });
+            if (!record) {
+                throw new ApiError(404, `Tenant settings not found for tenant: ${tenantId}`);
+            }
+            record.Consent = consent;
+            await record.save();
+            return TenantSettingsMapper.toDto(record);
+        }
+        catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, `Failed to update tenant consent settings: ${error.message}`);
+        }
     };
     
     private validateJSONStringify = (str: string) => {

@@ -237,14 +237,16 @@ export class CAssessmentListNode extends CAssessmentNode {
 
 export class CAssessmentQuestionNode extends CAssessmentNode {
 
-    QueryResponseType: QueryResponseType;
-    DefaultPathId?   : uuid;
-    Paths?           : CAssessmentNodePath[];
-    Options?         : CAssessmentQueryOption[];
-    UserResponse?    : CAssessmentQueryResponse;
-    SkipCondition?   : CAssessmentPathCondition;
-    ScoringCondition?: CScoringCondition;
-    CorrectAnswer?   : string | any;
+    QueryResponseType   : QueryResponseType;
+    DefaultPathId?      : uuid;
+    Paths?              : CAssessmentNodePath[];
+    Options?            : CAssessmentQueryOption[];
+    UserResponse?       : CAssessmentQueryResponse;
+    SkipCondition?      : CAssessmentPathCondition;
+    ScoringCondition   ?: CScoringCondition;
+    CorrectAnswer?      : string | any;
+    FieldIdentifier?    : string;
+    FieldIdentifierUnit?: string;
 
     constructor() {
         super();
@@ -323,6 +325,7 @@ export class CAssessmentQueryResponse {
     SatisfiedConditionId?: uuid;
     ChosenPathId?        : uuid;
     CreatedAt?           : Date;
+    Skipped?             : boolean;
 
     constructor() {
         this.ResponseType = QueryResponseType.None;
@@ -470,6 +473,10 @@ export interface BiometricQueryAnswer extends BaseQueryAnswer {
     Values  : AssessmentBiometrics[] | AssessmentBiometrics;
 }
 
+export interface SkipQueryAnswer extends BaseQueryAnswer {
+    Skipped : boolean;
+}
+
 export class CScoringCondition {
 
     id?             : uuid;
@@ -495,5 +502,6 @@ export class CScoringCondition {
     }
 
 }
+
 
 //#endregion

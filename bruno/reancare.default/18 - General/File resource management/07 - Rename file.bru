@@ -1,0 +1,41 @@
+meta {
+  name: Rename file
+  type: http
+  seq: 6
+}
+
+post {
+  url: {{BASE_URL}}/file-resources/{{RESOURCE_ID}}/rename/{{RESOURCE_NEW_FILE_NAME}}
+  body: json
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{PATIENT_USER_JWT}}
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+  Content-Type: application/json
+}
+
+script:pre-request {
+  
+  bru.setEnvVar("RESOURCE_NEW_FILE_NAME", "2_new_name.jpg");
+}
+
+tests {
+  
+  test("Request is successfull", function () {
+      expect(res.getStatus()).to.equal(200);
+      var jsonRes = res.getBody();
+      expect(jsonRes.Status).to.eql('success');
+  });
+  
+  test("File is renamed with new namee", function () {
+  
+      var jsonRes = res.getBody();
+      expect(jsonRes.Data).to.have.property('Renamed');
+      var status = jsonRes.Data.Renamed;
+      expect(status).equals(true);
+  
+  });
+  
+}

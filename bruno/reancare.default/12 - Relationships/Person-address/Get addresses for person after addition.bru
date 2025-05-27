@@ -1,0 +1,45 @@
+meta {
+  name: Get addresses for person after addition
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{BASE_URL}}/persons/{{PATIENT_PERSON_ID}}/addresses
+  body: json
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{ADMIN_USER_JWT}}
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+  Content-Type: application/json
+}
+
+tests {
+  try {
+      var jsonRes = res.getBody();
+      var personAddressesCount = jsonRes.Data.Addresses.length;
+      bru.setEnvVar("PERSON_ADDRESS_COUNT", personAddressesCount);
+  } catch(error) {
+      console.log(error.message);
+  }
+  
+  test("Request is successfull", function () {
+      expect(res.getStatus()).to.equal(200);
+      var jsonRes = res.getBody();
+      expect(jsonRes.Status).to.eql('success');
+  });
+  
+  test("Addresses for person are returned", function () {
+      var jsonRes = res.getBody();
+      expect(jsonRes.Data).to.have.property('Addresses');
+      expect(jsonRes.Data.Addresses.length).to.be.greaterThan(0);
+  });
+  
+  
+}
+
+docs {
+  Get an address by address id.
+}

@@ -8,8 +8,7 @@ import {
     TenantSettingsTypes,
     CommonSettings,
     FollowupSettings,
-    FollowupSource
-} from '../../domain.types/tenant/tenant.settings.types';
+    FollowupSource } from '../../domain.types/tenant/tenant.settings.types';
 import { TenantSettingsDto } from '../../domain.types/tenant/tenant.settings.types';
 import { uuid } from '../../domain.types/miscellaneous/system.types';
 
@@ -54,7 +53,7 @@ export class TenantSettingsService {
     public updateTenantSettingsByType = async (
         tenantId: uuid,
         settingsType: TenantSettingsTypes,
-        settings: CommonSettings | FollowupSettings | ChatBotSettings | FormsSettings
+        settings: CommonSettings | FollowupSettings | ChatBotSettings | FormsSettings | TenantSettingsDto
     ): Promise<TenantSettingsDto> => {
         if (settingsType === TenantSettingsTypes.Common) {
             return await this._tenantSettingsRepo.updateCommonSettings(tenantId, settings as CommonSettings);
@@ -68,6 +67,9 @@ export class TenantSettingsService {
         if (settingsType === TenantSettingsTypes.Forms) {
             return await this._tenantSettingsRepo.updateFormsSettings(tenantId, settings as FormsSettings);
         }
+        if (settingsType === TenantSettingsTypes.Consent) {
+            return await this._tenantSettingsRepo.updateConsentSettings(tenantId, settings as TenantSettingsDto);
+        }
         
         return await this._tenantSettingsRepo.getTenantSettings(tenantId);
     };
@@ -77,6 +79,7 @@ export class TenantSettingsService {
         await this._tenantSettingsRepo.updateFollowupSettings(tenantId, model.Followup);
         await this._tenantSettingsRepo.updateChatBotSettings(tenantId, model.ChatBot);
         await this._tenantSettingsRepo.updateFormsSettings(tenantId, model.Forms);
+        await this._tenantSettingsRepo.updateConsentSettings(tenantId, model.Consent);
         return await this._tenantSettingsRepo.getTenantSettings(tenantId);
     };
 
@@ -91,7 +94,7 @@ export class TenantSettingsService {
                 ChatBot       : true,
                 Forms         : false,
                 PatientPortal : true,
-                Followup      : false,
+                Followup      : false
             },
 
             Clinical : {
@@ -372,6 +375,7 @@ export class TenantSettingsService {
             Followup : followup,
             ChatBot  : chatBot,
             Forms    : formSettings,
+            Consent  : null
         };
 
         return model;

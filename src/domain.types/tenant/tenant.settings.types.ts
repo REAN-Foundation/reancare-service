@@ -4,7 +4,8 @@ export enum TenantSettingsTypes {
     Common              = 'Common',
     Followup            = 'Followup',
     ChatBot             = 'ChatBot',
-    Forms               = 'Forms'
+    Forms               = 'Forms',
+    Consent             = 'Consent',
 }
 
 export enum WeekDay {
@@ -21,7 +22,8 @@ export const TenantSettingsTypesList = [
     TenantSettingsTypes.Common,
     TenantSettingsTypes.Followup,
     TenantSettingsTypes.ChatBot,
-    TenantSettingsTypes.Forms
+    TenantSettingsTypes.Forms,
+    TenantSettingsTypes.Consent,
 ];
 
 export interface UserInterfaces {
@@ -300,11 +302,26 @@ export interface FormsSettings {
         FieldApp      : boolean
 }
 
+export interface ConsentSettings {
+    TenantId?    : string;
+    TenantName?  : string;
+    TenantCode?  : string;
+    DefaultLanguage?: string;
+    Messages?: ConsentMessage[];
+}
+
+export interface ConsentMessage {
+    LanguageCode?  : string;
+    Content?: string;
+    WebsiteURL?  : string;
+}
+
 export interface TenantSettingsDomainModel {
     Common?                 : CommonSettings,
     Followup?               : FollowupSettings,
-    ChatBot                 : ChatBotSettings,
-    Forms                   : FormsSettings
+    ChatBot?                : ChatBotSettings,
+    Forms?                  : FormsSettings,
+    Consent?                : ConsentSettings,
 }
 
 export interface TenantSettingsDto extends TenantSettingsDomainModel {

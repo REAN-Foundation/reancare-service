@@ -15,6 +15,7 @@ export class TenantSettingsMapper {
             Followup : JSON.parse(record.Followup),
             ChatBot  : JSON.parse(record.ChatBot),
             Forms    : JSON.parse(record.Forms),
+            Consent  : record.Consent ? JSON.parse(record.Consent) : null,
         };
         return dto;
     };

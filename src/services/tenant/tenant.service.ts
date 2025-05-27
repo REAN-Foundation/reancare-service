@@ -4,7 +4,7 @@ import { TenantDomainModel } from '../../domain.types/tenant/tenant.domain.model
 import { TenantDto } from '../../domain.types/tenant/tenant.dto';
 import { TenantSearchFilters, TenantSearchResults } from '../../domain.types/tenant/tenant.search.types';
 import { uuid } from '../../domain.types/miscellaneous/system.types';
-import { ChatBotSettings, CommonSettings, FormsIntegrations, FormsSettings, TenantSettingsDomainModel, FollowupSettings, FollowupSource } from '../../domain.types/tenant/tenant.settings.types';
+import { ChatBotSettings, CommonSettings, FormsIntegrations, FormsSettings, TenantSettingsDomainModel, FollowupSettings, FollowupSource, ConsentSettings } from '../../domain.types/tenant/tenant.settings.types';
 import { ITenantSettingsRepo } from '../../database/repository.interfaces/tenant/tenant.settings.interface';
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -387,6 +387,7 @@ export class TenantService {
             Followup : followup,
             ChatBot  : chatBot,
             Forms    : formSettings,
+            Consent  : null
         };
         return model;
     };

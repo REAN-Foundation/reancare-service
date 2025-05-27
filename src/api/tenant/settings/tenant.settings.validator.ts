@@ -8,6 +8,7 @@ import {
     CommonSettings,
     FollowupSettings,
     FollowupSource,
+    ConsentSettings,
 } from '../../../domain.types/tenant/tenant.settings.types';
 import { BaseValidator, Where } from '../../base.validator';
 import { Logger } from '../../../common/logger';
@@ -586,8 +587,37 @@ export class TenantSettingsValidator extends BaseValidator {
         return model;
     };
 
+    updateConsentSettings = async (request: express.Request): Promise<ConsentSettings> => {
+        if (!request.body?.Consent) {
+            return null;
+        }
+        await this.validateUuid(request, 'Consent.TenantId', Where.Body, true, false);
+        await this.validateString(request, 'Consent.Name', Where.Body, false, false);
+        await this.validateString(request, 'Consent.TenantCode', Where.Body, true, false, false, 1);
+        await this.validateString(request, 'Consent.DefaultLanguage', Where.Body, true, false, false, 1);
+        await this.validateArray(request, 'Consent.Messages', Where.Body, true, false, 1);
+
+        const messages = request.body?.Consent?.Messages || [];
+        for (let i = 0; i < messages.length; i++) {
+            const path = `Consent.Messages[${i}]`;
+            await this.validateString(request, `${path}.LanguageCode`, Where.Body, true, false, false, 1);
+            await this.validateString(request, `${path}.Content`, Where.Body, true, false, false, 1);
+            await this.validateString(request, `${path}.WebsiteURL`, Where.Body, true, false, false, 1);
+        }
+
+        const model: ConsentSettings = {
+            TenantId        : request.body.Consent.TenantId,
+            TenantName      : request.body.Consent.TenantName,
+            TenantCode      : request.body.Consent.TenantCode,
+            DefaultLanguage : request.body.Consent.DefaultLanguage,
+            Messages        : request.body.Consent.Messages,
+        };
+
+        return model;
+    };
+
     updateTenantSettingsByType = async (request: express.Request, settingsType: TenantSettingsTypes)
-    : Promise<CommonSettings|FollowupSettings|ChatBotSettings|FormsSettings> => {
+    : Promise<CommonSettings | FollowupSettings | ChatBotSettings | FormsSettings | ConsentSettings> => {
         if (settingsType === TenantSettingsTypes.Common) {
             return await this.updateCommonSettings(request);
         }
@@ -600,6 +630,9 @@ export class TenantSettingsValidator extends BaseValidator {
         if (settingsType === TenantSettingsTypes.Forms) {
             return await this.updateFormsSettings(request);
         }
+        if (settingsType === TenantSettingsTypes.Consent) {
+            return await this.updateConsentSettings(request);
+        }
         return null;
     };
 
@@ -609,6 +642,7 @@ export class TenantSettingsValidator extends BaseValidator {
         const followup = await this.updateFollowUpSettings(request);
         const chatBotSettings = await this.updateChatBotSettings(request);
         const formsSettings = await this.updateFormsSettings(request);
+        const consentSettings = await this.updateConsentSettings(request);
 
         this.validateRequest(request);
 
@@ -617,6 +651,7 @@ export class TenantSettingsValidator extends BaseValidator {
             Followup : followup,
             ChatBot  : chatBotSettings,
             Forms    : formsSettings,
+            Consent  : consentSettings
         };
 
         return model;

@@ -17,4 +17,5 @@ export interface ITenantSettingsRepo {
     updateFollowupSettings(tenantId: string, settings: FollowupSettings): Promise<TenantSettingsDto>;
     updateChatBotSettings(tenantId: string, settings: ChatBotSettings): Promise<TenantSettingsDto>;
     updateFormsSettings(tenantId: string, settings: FormsSettings): Promise<TenantSettingsDto>;
+    updateConsentSettings(tenantId: string, settings: any): Promise<TenantSettingsDto>;
 }

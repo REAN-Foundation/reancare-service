@@ -29,7 +29,7 @@ export class GGHNActions {
                 throw new Error('Found no client or found multiple client with the same name');
             }
 
-            const isTodayValidForAppointmentFollowup = await this.isTodayValidForAppointmentFollowup(tenant.Items[0].id);
+            const isTodayValidForAppointmentFollowup = await this.isTodayValidForAppointmentFollowup(tenant.Items[0].Code);
 
             if (!isTodayValidForAppointmentFollowup) {
                 Logger.instance().log(`Appointment followup is cancelled for the date : ${new Date().toISOString()} `);
@@ -48,20 +48,20 @@ export class GGHNActions {
             const isDaily = this.isDailyFrequency(scheduleFrequency);
 
             if (isDaily) {
-                this.triggerFollowupService();
+                this.triggerFollowupScheduling();
                 Logger.instance().log('RUNNING DAILY');
             }
             const isWeekly = this.isWeeklyFrequency(scheduleFrequency);
             
             if (isWeekly) {
-                this.triggerFollowupService();
+                this.triggerFollowupScheduling();
                 Logger.instance().log('RUNNING WEEKLY');
             }
 
             const isMonthly = this.isMonthlyFrequency(scheduleFrequency);
             
             if (isMonthly) {
-                this.triggerFollowupService();
+                this.triggerFollowupScheduling();
                 Logger.instance().log('RUNNING MONTHLY');
             }
         }
@@ -96,18 +96,18 @@ export class GGHNActions {
         return dayOfMonth === todayDay;
     };
 
-    private isTodayValidForAppointmentFollowup = async (id: string): Promise<boolean> => {
+    private isTodayValidForAppointmentFollowup = async (tenantCode: string): Promise<boolean> => {
         try {
 
             const dateToday = new Date(new Date().toISOString()
                 .split('T')[0]);
           
-            const filters: FollowUpCancellationSearchFilters = {
-                TenantId   : id,
-                CancelDate : dateToday
+            const filters = {
+                tenant_code : tenantCode,
+                cancel_date : dateToday
             };
             Logger.instance().log(`CancelDate... ${dateToday}`);
-            const cancellationSchedules = await this._followpCancellationService.search(filters);
+            const cancellationSchedules = await this.searchCancellations(filters);
             if (cancellationSchedules.TotalCount) {
                 return false;
             }
@@ -118,30 +118,27 @@ export class GGHNActions {
         }
     };
 
-    private triggerFollowupService = async (): Promise<void> => {
+    private triggerFollowupScheduling = async (): Promise<void> => {
         try {
             const today = TimeHelper.getDateString(new Date(), DateStringFormat.YYYY_MM_DD);
-            var headers = {
-                'Content-Type'  : 'application/json',
-                Accept          : '*/*',
-                'Cache-Control' : 'no-cache',
-                Connection      : 'keep-alive',
-            };
-    
-            var options = {
-                headers    : headers,
-                compressed : true,
-                json       : true,
-            };
-    
-            var url = process.env.GGHN_API_BASE_URL + `/appointment-schedules/gghn/fetch-schedules-by-api`;
-    
-            var body = {
-                'reminder_date' : { today }
-            };
-    
-            needle('post', url, body, options);
+            const endpoint = `/appointment-schedules/gghn/fetch-schedules-by-api`;
+            const body = { reminder_date: today };
+
+            await this.sendHttpRequest(endpoint, 'post', body);
             
+        } catch (error) {
+            Logger.instance().log(JSON.stringify(error.stack));
+            Logger.instance().error('Error in schedule GGHN appointment followup!', error, null);
+        }
+        
+    };
+
+    private searchCancellations = async (filters): Promise <any> => {
+        try {
+            const queryParams = new URLSearchParams(filters).toString();
+            const endpoint = `/appointment-cancellations/search?${queryParams}`;
+            const response = await this.sendHttpRequest(endpoint, 'get');
+            return response;
         } catch (error) {
             Logger.instance().log(JSON.stringify(error.stack));
             Logger.instance().error('Error in schedule GGHN appointment followup!', error, null);
@@ -164,4 +161,51 @@ export class GGHNActions {
 
     };
 
+    private async sendHttpRequest(
+        endpoint: string,
+        method: 'get' | 'post' | 'put' | 'delete' = 'post',
+        payload: Record<string, any> = {}
+    ): Promise<void> {
+        try {
+            const baseUrl = process.env.GGHN_API_BASE_URL;
+            if (!baseUrl) throw new Error('GGHN_API_BASE_URL is not defined');
+
+            const url = `${baseUrl}${endpoint}`;
+
+            const headers = {
+                'Content-Type'  : 'application/json',
+                Accept          : '*/*',
+                'Cache-Control' : 'no-cache',
+                Connection      : 'keep-alive',
+            };
+
+            const options = {
+                headers,
+                compressed : true,
+                json       : true,
+            };
+
+            switch (method) {
+                case 'get':
+                    await needle('get', url, options);
+                    break;
+                case 'post':
+                    await needle('post', url, payload, options);
+                    break;
+                case 'put':
+                    await needle('put', url, payload, options);
+                    break;
+                case 'delete':
+                    await needle('delete', url, options);
+                    break;
+                default:
+                    throw new Error(`Unsupported HTTP method: ${method}`);
+            }
+
+        } catch (error: any) {
+            Logger.instance().error(`HTTP request to ${endpoint} failed`, error, null);
+        }
+    }
+
 }
+

@@ -8,7 +8,8 @@ import needle = require('needle');
 import { DateStringFormat } from '../../domain.types/miscellaneous/time.types';
 import { FollowupSource, ScheduleFrequency, TenantSettingsDto } from '../../domain.types/tenant/tenant.settings.types';
 import { FollowUpCancellationService } from '../../services/tenant/followups/cancellations/follow.up.cancellation.service';
-import { FollowUpCancellationSearchFilters } from '../../domain.types/tenant/followups/cancellations/follow.up.cancellation.search.types';
+
+///////////////////////////////////////////////////////////////////////////////
 
 export class GGHNActions {
 
@@ -28,8 +29,8 @@ export class GGHNActions {
             if (!tenant.RetrievedCount || tenant.RetrievedCount > 1){
                 throw new Error('Found no client or found multiple client with the same name');
             }
-
-            const isTodayValidForAppointmentFollowup = await this.isTodayValidForAppointmentFollowup(tenant.Items[0].Code);
+            const tenantCode = tenant.Items[0].Code;
+            const isTodayValidForAppointmentFollowup = await this.isTodayValidForAppointmentFollowup(tenantCode);
 
             if (!isTodayValidForAppointmentFollowup) {
                 Logger.instance().log(`Appointment followup is cancelled for the date : ${new Date().toISOString()} `);
@@ -48,20 +49,20 @@ export class GGHNActions {
             const isDaily = this.isDailyFrequency(scheduleFrequency);
 
             if (isDaily) {
-                this.triggerFollowupScheduling();
+                this.triggerFollowupScheduling(tenantCode);
                 Logger.instance().log('RUNNING DAILY');
             }
             const isWeekly = this.isWeeklyFrequency(scheduleFrequency);
             
             if (isWeekly) {
-                this.triggerFollowupScheduling();
+                this.triggerFollowupScheduling(tenantCode);
                 Logger.instance().log('RUNNING WEEKLY');
             }
 
             const isMonthly = this.isMonthlyFrequency(scheduleFrequency);
             
             if (isMonthly) {
-                this.triggerFollowupScheduling();
+                this.triggerFollowupScheduling(tenantCode);
                 Logger.instance().log('RUNNING MONTHLY');
             }
         }
@@ -98,17 +99,15 @@ export class GGHNActions {
 
     private isTodayValidForAppointmentFollowup = async (tenantCode: string): Promise<boolean> => {
         try {
-
-            const dateToday = new Date(new Date().toISOString()
-                .split('T')[0]);
-          
+            const dateToday = new Date().toISOString().
+                split('T')[0];
             const filters = {
                 tenant_code : tenantCode,
                 cancel_date : dateToday
             };
             Logger.instance().log(`CancelDate... ${dateToday}`);
             const cancellationSchedules = await this.searchCancellations(filters);
-            if (cancellationSchedules.TotalCount) {
+            if (cancellationSchedules.Data.TotalCount) {
                 return false;
             }
             return true;
@@ -118,17 +117,17 @@ export class GGHNActions {
         }
     };
 
-    private triggerFollowupScheduling = async (): Promise<void> => {
+    private triggerFollowupScheduling = async (tenantCode : string): Promise<void> => {
         try {
             const today = TimeHelper.getDateString(new Date(), DateStringFormat.YYYY_MM_DD);
-            const endpoint = `/appointment-schedules/gghn/fetch-schedules-by-api`;
+            const endpoint = `/appointment-schedules/${tenantCode}/fetch-schedules-by-api`;
             const body = { reminder_date: today };
 
             await this.sendHttpRequest(endpoint, 'post', body);
             
         } catch (error) {
             Logger.instance().log(JSON.stringify(error.stack));
-            Logger.instance().error('Error in schedule GGHN appointment followup!', error, null);
+            Logger.instance().error(`Error in schedule appointment followup for ${tenantCode}!`, error, null);
         }
         
     };
@@ -138,10 +137,10 @@ export class GGHNActions {
             const queryParams = new URLSearchParams(filters).toString();
             const endpoint = `/appointment-cancellations/search?${queryParams}`;
             const response = await this.sendHttpRequest(endpoint, 'get');
-            return response;
+            return response.Data;
         } catch (error) {
             Logger.instance().log(JSON.stringify(error.stack));
-            Logger.instance().error('Error in schedule GGHN appointment followup!', error, null);
+            Logger.instance().error('Error in search cancellation records for appointment followup', error, null);
         }
         
     };
@@ -161,51 +160,63 @@ export class GGHNActions {
 
     };
 
+    private buildRequestOptions(endpoint: string) {
+        const baseUrl = process.env.FOLLOW_UP_BASE_URL;
+        if (!baseUrl) {
+            throw new Error('FOLLOW_UP_BASE_URL is not defined');
+        }
+
+        const url = `${baseUrl}${endpoint}`;
+
+        const headers = {
+            'Content-Type'  : 'application/json',
+            Accept          : '*/*',
+            'Cache-Control' : 'no-cache',
+            Connection      : 'keep-alive'
+        };
+
+        const options: needle.NeedleOptions = {
+            headers,
+            compressed : true
+        };
+
+        return { url, options };
+    }
+
     private async sendHttpRequest(
         endpoint: string,
-        method: 'get' | 'post' | 'put' | 'delete' = 'post',
+        method: HttpMethod = 'post',
         payload: Record<string, any> = {}
-    ): Promise<void> {
+    ): Promise<HttpResponseData> {
+        const { url, options } = this.buildRequestOptions(endpoint);
+
         try {
-            const baseUrl = process.env.GGHN_API_BASE_URL;
-            if (!baseUrl) throw new Error('GGHN_API_BASE_URL is not defined');
-
-            const url = `${baseUrl}${endpoint}`;
-
-            const headers = {
-                'Content-Type'  : 'application/json',
-                Accept          : '*/*',
-                'Cache-Control' : 'no-cache',
-                Connection      : 'keep-alive',
+            const methodMap: Record<HttpMethod, () => Promise<needle.NeedleResponse>> = {
+                get    : () => needle('get', url, options),
+                post   : () => needle('post', url, payload, options),
+                put    : () => needle('put', url, payload, options),
+                delete : () => needle('delete', url, options)
             };
 
-            const options = {
-                headers,
-                compressed : true,
-                json       : true,
-            };
+            const response = await methodMap[method]();
 
-            switch (method) {
-                case 'get':
-                    await needle('get', url, options);
-                    break;
-                case 'post':
-                    await needle('post', url, payload, options);
-                    break;
-                case 'put':
-                    await needle('put', url, payload, options);
-                    break;
-                case 'delete':
-                    await needle('delete', url, options);
-                    break;
-                default:
-                    throw new Error(`Unsupported HTTP method: ${method}`);
+            if (response.status && response.status === 'error') {
+                Logger.instance().log(`HTTP ${method.toUpperCase()} request to ${url} failed`);
             }
 
+            return response.body as HttpResponseData;
         } catch (error: any) {
-            Logger.instance().error(`HTTP request to ${endpoint} failed`, error, null);
+            Logger.instance().error(`HTTP ${method.toUpperCase()} request to ${url} failed`, error, null);
+            throw error;
         }
     }
 
 }
 
+type HttpMethod = 'get' | 'post' | 'put' | 'delete';
+
+interface HttpResponseData {
+  Status: string;
+  Message: string;
+  Data: any;
+}

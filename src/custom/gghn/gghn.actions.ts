@@ -107,7 +107,7 @@ export class GGHNActions {
             };
             Logger.instance().log(`CancelDate... ${dateToday}`);
             const cancellationSchedules = await this.searchCancellations(filters);
-            if (cancellationSchedules.Data.TotalCount) {
+            if (cancellationSchedules.TotalCount) {
                 return false;
             }
             return true;

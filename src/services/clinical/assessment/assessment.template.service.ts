@@ -334,7 +334,7 @@ export class AssessmentTemplateService {
         const template = await this._assessmentHelperRepo.addTemplate(templateObj);
 
         if (!template) {
-            throw new ApiError(500, 'Failed to promote basic assessment template to tenant.');
+            throw new ApiError(500, 'Failed to copy basic assessment template to tenant.');
         }
         Logger.instance().log(`Successfully created basic assessment template for tenant.`);
     

@@ -20,6 +20,7 @@ import { TenantSettingsService } from '../../../services/tenant/tenant.settings.
 import { BaseController } from '../../../api/base.controller';
 import { UserHelper } from '../../../api/users/user.helper';
 import { PersonDetailsDto } from '../../../domain.types/person/person.dto';
+import { AssessmentTemplateService } from '../../../services/clinical/assessment/assessment.template.service';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -38,6 +39,8 @@ export class TenantController extends BaseController {
     _personRoleService: PersonRoleService = Injector.Container.resolve(PersonRoleService);
 
     _tenantSettingsService: TenantSettingsService = Injector.Container.resolve(TenantSettingsService);
+
+    _assessmentTemplateService: AssessmentTemplateService = Injector.Container.resolve(AssessmentTemplateService);
 
     _validator: TenantValidator = new TenantValidator();
 
@@ -130,6 +133,8 @@ export class TenantController extends BaseController {
 
             //Send email to the admin user with username and password
             await this.sendWelcomeEmail(tenant, adminUserName, adminPassword);
+
+            await this.setupBasicAssessmentTemplate(tenant.id);
 
             ResponseHandler.success(request, response, 'Tenant added successfully!', 201, {
                 Tenant   : tenant,
@@ -368,4 +373,12 @@ export class TenantController extends BaseController {
         }
     };
 
+    private setupBasicAssessmentTemplate = async (tenantId: uuid) => {
+        try {
+            await this._assessmentTemplateService.setupBasicAssessmentTemplate(tenantId);
+        } catch (error) {
+            Logger.instance().log(`Error setting up basic assessment templates: ${error.message}`);
+        }
+    };
+    
 }

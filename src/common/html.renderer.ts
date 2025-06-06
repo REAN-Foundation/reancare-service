@@ -22,7 +22,8 @@ export const htmlTextToPNG = async (htmlText: string, width: number, height: num
                 height            : height,
                 deviceScaleFactor : 1
             },
-            executablePath : '/usr/bin/chromium-browser'
+            executablePath  : '/usr/bin/chromium-browser',
+            protocolTimeout : 60000
         };
         const osType = Helper.getOSType();
         if (osType === OSType.Windows) {
@@ -37,9 +38,9 @@ export const htmlTextToPNG = async (htmlText: string, width: number, height: num
         await page.setContent(htmlText, { waitUntil: 'networkidle0' });
 
         await page.screenshot({
-            path: generatedFilePath,
-            type: 'png',
-            fullPage: true
+            path     : generatedFilePath,
+            type     : 'png',
+            fullPage : true
         });
 
         await browser.close();
@@ -54,7 +55,12 @@ export const htmlTextToPNG = async (htmlText: string, width: number, height: num
 
 export const htmlTextToPDFBuffer = async (htmlText: string): Promise<Buffer> => {
 
-    const browser = await puppeteer.launch({ args: ['--no-sandbox'], executablePath: '/usr/bin/chromium-browser' });
+    const browser = await puppeteer.launch(
+        {
+            args            : ['--no-sandbox'],
+            executablePath  : '/usr/bin/chromium-browser',
+            protocolTimeout : 60000
+        });
     const page = await browser.newPage();
 
     await page.setContent(htmlText);

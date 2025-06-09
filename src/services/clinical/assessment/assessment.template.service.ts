@@ -10,11 +10,17 @@ import { uuid } from "../../../domain.types/miscellaneous/system.types";
 import { AssessmentTemplateFileConverter } from "./assessment.template.file.converter";
 import { AssessmentNodeSearchFilters } from "../../../domain.types/clinical/assessment/assessment.node.search.types";
 import { AssessmentNodeSearchResults } from "../../../domain.types/clinical/assessment/assessment.node.search.types";
+import { Logger } from "../../../common/logger";
+import { ApiError } from "../../../common/api.error";
+import { AssessmentTemplateHelper } from "./assessment.template.helper";
+import { Injector } from "../../../startup/injector";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 @injectable()
 export class AssessmentTemplateService {
+
+    assessmentTemplateHelper = Injector.Container.resolve(AssessmentTemplateHelper);
 
     constructor(
         @inject('IAssessmentTemplateRepo') private _assessmentTemplateRepo: IAssessmentTemplateRepo,
@@ -61,7 +67,10 @@ export class AssessmentTemplateService {
     };
 
     public import = async (model: any): Promise<AssessmentTemplateDto> => {
-        var template: CAssessmentTemplate = model as CAssessmentTemplate;
+        let template: CAssessmentTemplate = model as CAssessmentTemplate;
+        template = this.assessmentTemplateHelper.copyAssessmentTemplate(template);
+        const serachResult = await this.search({ Title: template.Title });
+        template.Title = serachResult.TotalCount > 0 ? `${template?.Title}-Copy ${serachResult.TotalCount + 1}` : `${template?.Title}-Copy`;
         return await this.addTemplate(template);
     };
 
@@ -161,7 +170,8 @@ export class AssessmentTemplateService {
         return await this._assessmentHelperRepo.addPathCondition(pathId, condition);
     };
 
-    updatePathCondition = async (conditionId: uuid, updates: CAssessmentPathCondition): Promise<CAssessmentPathCondition> => {
+    updatePathCondition = async (conditionId: uuid, updates: CAssessmentPathCondition):
+    Promise<CAssessmentPathCondition> => {
         return await this._assessmentHelperRepo.updatePathCondition(conditionId, updates);
     };
 
@@ -199,6 +209,33 @@ export class AssessmentTemplateService {
 
     deleteOption = async (optionId: uuid): Promise<boolean> => {
         return await this._assessmentHelperRepo.deleteOption(optionId);
+    };
+
+    public setupBasicAssessmentTemplate = async (tenantId: uuid): Promise<void> => {
+        const displayCode = "BasicAssessmentTemplate";
+
+        const filters: AssessmentTemplateSearchFilters = {
+            DisplayCode : displayCode,
+        };
+
+        const searchResult = await this.search(filters);
+        if (searchResult.RetrievedCount === 0) {
+            throw new ApiError(404, 'Cannot find basic assessment Template!');
+        }
+
+        const assessmentTemplateId = searchResult.Items[0]?.id;
+          
+        let templateObj: CAssessmentTemplate = await this.readTemplateObjToExport(assessmentTemplateId);
+        templateObj.TenantId = tenantId;
+
+        templateObj = this.assessmentTemplateHelper.copyAssessmentTemplate(templateObj);
+        const template = await this._assessmentHelperRepo.addTemplate(templateObj);
+
+        if (!template) {
+            throw new ApiError(500, 'Failed to copy basic assessment template to tenant.');
+        }
+        Logger.instance().log(`Successfully created basic assessment template for tenant.`);
+    
     };
 
 }

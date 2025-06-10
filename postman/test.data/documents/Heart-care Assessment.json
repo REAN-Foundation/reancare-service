@@ -166,5 +166,9 @@
       "Sequence": 10,
       "QueryResponseType": "File"
     }
+  ],
+  "Tags": [
+    "Heart-care Assessment",
+    "Heart-care"
   ]
 }

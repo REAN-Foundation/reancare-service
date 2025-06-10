@@ -555,6 +555,7 @@
     "Users.User.Update",
     "Users.User.DeleteProfileImage",
     "Users.User.Delete",
+    "Users.User.ValidateUserById",
     "Users.UserTask.CancelTask",
     "Users.UserTask.Create",
     "Users.UserTask.Delete",

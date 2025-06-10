@@ -498,7 +498,7 @@ export class UserController extends BaseController {
                 return;
             }
             ResponseHandler.success(request, response, 'User retrieved successfully!', 200, {
-                user : user,
+                success : true,
             });
         } catch (error) {
             ResponseHandler.handleError(request, response, error);

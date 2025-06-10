@@ -13,4 +13,5 @@ export interface ParticipantDomainModel {
     WeightInLbs?   : number;
     MaritalStatus? : string;
     ZipCode?       : number;
+    TenantId?      : string;
 }

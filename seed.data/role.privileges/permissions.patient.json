@@ -751,7 +751,8 @@
             "Search": true,
             "Update": false,
             "DeleteProfileImage": true,
-            "Delete": false
+            "Delete": false,
+            "ValidateUserById":true
         },
         "UserTask": {
             "CancelTask": true,

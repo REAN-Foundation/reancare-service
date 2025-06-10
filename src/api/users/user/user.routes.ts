@@ -44,6 +44,8 @@ export const register = (app: express.Application): void => {
     router.get('/search', auth(UserAuth.search), controller.search);
     router.get('/:id', auth(UserAuth.getById), controller.getById);
 
+    router.get('/validate/:id', auth(UserAuth.validateUserById), controller.validateUserById);
+
     //router.get('/search', auth(UserAuth.search), controller.search);
     router.post('/login-with-password', auth(UserAuth.loginWithPassword), controller.loginWithPassword);
 

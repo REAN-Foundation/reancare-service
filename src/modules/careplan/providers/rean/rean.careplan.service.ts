@@ -20,6 +20,7 @@ import { HealthPriorityDto } from "../../../../domain.types/users/patient/health
 import { CareplanRepo } from "../../../../database/sql/sequelize/repositories/clinical/careplan/careplan.repo";
 import { CareplanService } from "../../../../services/clinical/careplan.service";
 import { Injector } from "../../../../startup/injector";
+import { Tenant } from "firebase-admin/lib/auth/tenant";
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -108,6 +109,7 @@ export class ReanCareplanService implements ICareplanService {
             Gender                 : patientDetails.Gender,
             CountryCode            : patientDetails.Phone.split('-')[0],
             Phone                  : patientDetails.Phone.split('-')[1],
+            TenantId               : patientDetails.TenantId
         };
 
         var url = process.env.CAREPLAN_API_BASE_URL + '/participants';
@@ -133,6 +135,7 @@ export class ReanCareplanService implements ICareplanService {
             WeekOffset     : model.WeekOffset,
             DayOffset      : model.DayOffset,
             IsTest         : model.IsTest,
+            TenantId       : model.TenantId
         };
 
         var url = process.env.CAREPLAN_API_BASE_URL + '/enrollments';
@@ -195,6 +198,8 @@ export class ReanCareplanService implements ICareplanService {
             activityEntities.push(entity);
 
         });
+
+        Logger.instance().log(`Number of activities retrived ${activityEntities.length}.`);
 
         return activityEntities;
 

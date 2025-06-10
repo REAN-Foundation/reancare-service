@@ -1191,6 +1191,8 @@ export class AssessmentService {
             RawData              : questionNode.RawData,
             Options              : questionNode.Options,
             ProviderGivenCode    : questionNode.ProviderGivenCode,
+            FieldIdentifier      : questionNode.FieldIdentifier,
+            FieldIdentifierUnit  : questionNode.FieldIdentifierUnit,
             CorrectAnswer        : questionNode.CorrectAnswer ? JSON.parse(questionNode.CorrectAnswer) : null,
         };
         return query;

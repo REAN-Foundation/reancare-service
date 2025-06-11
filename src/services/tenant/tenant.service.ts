@@ -1,7 +1,7 @@
 import { ITenantRepo } from '../../database/repository.interfaces/tenant/tenant.repo.interface';
 import { injectable, inject } from 'tsyringe';
-import { TenantDomainModel } from '../../domain.types/tenant/tenant.domain.model';
-import { TenantDto } from '../../domain.types/tenant/tenant.dto';
+import { TenantDomainModel, TenantSchemaDomainModel } from '../../domain.types/tenant/tenant.domain.model';
+import { TenantDto, TenantSchemaDto } from '../../domain.types/tenant/tenant.dto';
 import { TenantSearchFilters, TenantSearchResults } from '../../domain.types/tenant/tenant.search.types';
 import { uuid } from '../../domain.types/miscellaneous/system.types';
 import { ChatBotSettings, CommonSettings, FormsIntegrations, FormsSettings, TenantSettingsDomainModel, FollowupSettings, FollowupSource, ConsentSettings } from '../../domain.types/tenant/tenant.settings.types';
@@ -42,6 +42,10 @@ export class TenantService {
 
     public delete = async (id: uuid, hardDelete: boolean = false): Promise<boolean> => {
         return await this._tenantRepo.delete(id, hardDelete);
+    };
+
+    public createBotSchema = async (model: TenantSchemaDomainModel): Promise<TenantSchemaDto> => {
+        // return await this._tenantRepo.createBotSchema(tenantId, model);
     };
 
     public getTenantWithPhone = async (phone: string): Promise<TenantDto> => {

@@ -9,3 +9,8 @@ export interface TenantDomainModel {
     UserName   ?: string;
     Password   ?: string;
 }
+
+export interface TenantSchemaDomainModel {
+    SchemaName       ?: string;
+    Environment      ?: string;
+}

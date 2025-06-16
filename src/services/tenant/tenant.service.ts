@@ -1,11 +1,13 @@
 import { ITenantRepo } from '../../database/repository.interfaces/tenant/tenant.repo.interface';
 import { injectable, inject } from 'tsyringe';
-import { TenantDomainModel, TenantSchemaDomainModel } from '../../domain.types/tenant/tenant.domain.model';
-import { TenantDto, TenantSchemaDto } from '../../domain.types/tenant/tenant.dto';
+import { TenantDomainModel, TenantSecretDomainModel, GetSecretDomainModel } from '../../domain.types/tenant/tenant.domain.model';
+import { TenantDto, TenantSecretDto } from '../../domain.types/tenant/tenant.dto';
 import { TenantSearchFilters, TenantSearchResults } from '../../domain.types/tenant/tenant.search.types';
 import { uuid } from '../../domain.types/miscellaneous/system.types';
-import { ChatBotSettings, CommonSettings, FormsIntegrations, FormsSettings, TenantSettingsDomainModel, FollowupSettings, FollowupSource, ConsentSettings } from '../../domain.types/tenant/tenant.settings.types';
+import { ChatBotSettings, CommonSettings, FormsIntegrations, FormsSettings, TenantSettingsDomainModel, FollowupSettings, FollowupSource } from '../../domain.types/tenant/tenant.settings.types';
 import { ITenantSettingsRepo } from '../../database/repository.interfaces/tenant/tenant.settings.interface';
+import { Injector } from '../../startup/injector';
+import { AwsLambdaService } from '../../modules/cloud.services/aws.service';
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -16,6 +18,8 @@ export class TenantService {
         @inject('ITenantRepo') private _tenantRepo: ITenantRepo,
         @inject('ITenantSettingsRepo') private _tenantSettingsRepo: ITenantSettingsRepo,
     ) {}
+
+    _lambdaService: AwsLambdaService = Injector.Container.resolve(AwsLambdaService);
 
     //#region Publics
 
@@ -44,8 +48,20 @@ export class TenantService {
         return await this._tenantRepo.delete(id, hardDelete);
     };
 
-    public createBotSchema = async (model: TenantSchemaDomainModel): Promise<TenantSchemaDto> => {
-        // return await this._tenantRepo.createBotSchema(tenantId, model);
+    // public createBotSchema = async (model: TenantSchemaDomainModel): Promise<TenantSchemaDto> => {
+    //     // return await this._tenantRepo.createBotSchema(tenantId, model);
+    // };
+
+    public createBotSecret = async (model: TenantSecretDomainModel): Promise<TenantSecretDto> => {
+        return this._lambdaService.invokeLambdaFunction<TenantSecretDto>('create-secrets-lambda-function', model);
+    };
+
+    public getBotSecret = async (model: GetSecretDomainModel): Promise<TenantSecretDto> => {
+        return this._lambdaService.invokeLambdaFunction<TenantSecretDto>('get-secrets-lambda-function', { model });
+    };
+
+    public updateBotSecret = async (model: TenantSecretDomainModel): Promise<TenantSecretDto> => {
+        return this._lambdaService.invokeLambdaFunction<TenantSecretDto>('update-secrets-lambda-function', model);
     };
 
     public getTenantWithPhone = async (phone: string): Promise<TenantDto> => {
@@ -104,7 +120,7 @@ export class TenantService {
     private getDefaultSettings = (): TenantSettingsDomainModel => {
 
         const common: CommonSettings = {
-     
+
             UserInterfaces : {
                 PatientApp    : true,
                 ChatBot       : true,
@@ -185,7 +201,7 @@ export class TenantService {
                     Navigable : true,
                 },
             },
-    
+
             Wellness : {
                 Exercise : {
                     Name      : "Exercise",
@@ -338,7 +354,7 @@ export class TenantService {
                 },
             }
         };
- 
+
         const followup: FollowupSettings = {
             Source : FollowupSource.None,
         };
@@ -373,19 +389,19 @@ export class TenantService {
             ConversationHistory : false,
             Emojis              : false
         };
-            
+
         const forms: FormsIntegrations = {
             KoboToolbox : true,
             GoogleForm  : true,
             ODK         : true,
         };
-            
+
         const formSettings: FormsSettings = {
             Integrations   : forms,
             OfflineSupport : true,
             FieldApp       : true,
         };
-            
+
         const model: TenantSettingsDomainModel = {
             Common   : common,
             Followup : followup,

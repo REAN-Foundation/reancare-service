@@ -1,6 +1,6 @@
 import express from 'express';
 import { TenantSearchFilters } from '../../../domain.types/tenant/tenant.search.types';
-import { TenantDomainModel, TenantSchemaDomainModel } from '../../../domain.types/tenant/tenant.domain.model';
+import { TenantDomainModel, TenantSchemaDomainModel, TenantSecretDomainModel } from '../../../domain.types/tenant/tenant.domain.model';
 import { BaseValidator, Where } from '../../base.validator';
 
 ///////////////////////////////////////////////////////////////////////////////////////
@@ -44,7 +44,7 @@ export class TenantValidator extends BaseValidator {
     createBotSchema = async (request: express.Request): Promise<TenantSchemaDomainModel> => {
         await this.validateString(request, 'SchemaName', Where.Body, true, false);
         await this.validateString(request, 'Environment', Where.Body, true, false);
-   
+
         this.validateRequest(request);
         const body = request.body;
 
@@ -54,7 +54,21 @@ export class TenantValidator extends BaseValidator {
         };
         return model;
     };
-    
+
+    createBotSecret = async (request: express.Request): Promise<TenantSecretDomainModel> => {
+        await this.validateString(request, 'SecretName', Where.Body, true, false);
+        await this.validateObject(request, 'SecretValue', Where.Body, true, false);
+
+        this.validateRequest(request);
+        const body = request.body;
+
+        const model: TenantSecretDomainModel = {
+            SecretName  : body.SecretName,
+            SecretValue : body.SecretValue
+        };
+        return model;
+    };
+
     search = async (request: express.Request): Promise<TenantSearchFilters> => {
 
         await this.validateString(request, 'name', Where.Query, false, false);

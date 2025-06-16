@@ -57,7 +57,7 @@ export class TenantService {
     };
 
     public getBotSecret = async (model: GetSecretDomainModel): Promise<TenantSecretDto> => {
-        return this._lambdaService.invokeLambdaFunction<TenantSecretDto>('get-secrets-lambda-function', { model });
+        return this._lambdaService.invokeLambdaFunction<TenantSecretDto>('get-secrets-lambda-function', model );
     };
 
     public updateBotSecret = async (model: TenantSecretDomainModel): Promise<TenantSecretDto> => {

@@ -272,7 +272,7 @@ export class TenantController extends BaseController {
             }
             const tenantCode = tenant.Code.toLowerCase().replace(/_/g, "-");
             const secretName = `${environment}-${tenantCode}-v1`;
-            request.body.Secretname = secretName;
+            request.body.SecretName = secretName;
             const model = await this._validator.createBotSecret(request);
             await this.authorizeOne(request, null, tenant.id);
             const created = await this._service.createBotSecret(model);
@@ -304,7 +304,7 @@ export class TenantController extends BaseController {
             }
             const tenantCode = tenant.Code.toLowerCase().replace(/_/g, "-");
             const secretName = `${environment}-${tenantCode}-v1`;
-            request.body.Secretname = secretName;
+            request.body.SecretName = secretName;
             const model = {
                 SecretName : secretName,
             };
@@ -338,7 +338,7 @@ export class TenantController extends BaseController {
             }
             const tenantCode = tenant.Code.toLowerCase().replace(/_/g, "-");
             const secretName = `${environment}-${tenantCode}-v1`;
-            request.body.Secretname = secretName;
+            request.body.SecretName = secretName;
             const model = await this._validator.createBotSecret(request);
             await this.authorizeOne(request, null, tenant.id);
             const updated = await this._service.updateBotSecret(model);

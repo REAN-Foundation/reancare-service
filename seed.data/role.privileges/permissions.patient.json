@@ -631,7 +631,8 @@
             "GetTenantStats": false,
             "PromoteTenantUserAsAdmin": false,
             "Search": false,
-            "Update": false
+            "Update": false,
+            "CreateBotSchema": false
         },
         "Settings": {
             "GetTenantSettingsTypes": false,

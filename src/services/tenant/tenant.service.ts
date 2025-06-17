@@ -1,16 +1,20 @@
 import { ITenantRepo } from '../../database/repository.interfaces/tenant/tenant.repo.interface';
 import { injectable, inject } from 'tsyringe';
-import { TenantDomainModel } from '../../domain.types/tenant/tenant.domain.model';
-import { TenantDto } from '../../domain.types/tenant/tenant.dto';
+import { TenantDomainModel, TenantSchemaDomainModel } from '../../domain.types/tenant/tenant.domain.model';
+import { TenantDto, TenantSchemaDto } from '../../domain.types/tenant/tenant.dto';
 import { TenantSearchFilters, TenantSearchResults } from '../../domain.types/tenant/tenant.search.types';
 import { uuid } from '../../domain.types/miscellaneous/system.types';
-import { ChatBotSettings, CommonSettings, FormsIntegrations, FormsSettings, TenantSettingsDomainModel, FollowupSettings, FollowupSource, ConsentSettings } from '../../domain.types/tenant/tenant.settings.types';
+import { ChatBotSettings, CommonSettings, FormsIntegrations, FormsSettings, TenantSettingsDomainModel, FollowupSettings, FollowupSource } from '../../domain.types/tenant/tenant.settings.types';
 import { ITenantSettingsRepo } from '../../database/repository.interfaces/tenant/tenant.settings.interface';
+import { AwsLambdaService } from '../../modules/cloud.services/aws.service';
+import { Injector } from '../../startup/injector';
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 @injectable()
 export class TenantService {
+
+    _lambdaService: AwsLambdaService = Injector.Container.resolve(AwsLambdaService);
 
     constructor(
         @inject('ITenantRepo') private _tenantRepo: ITenantRepo,
@@ -42,6 +46,11 @@ export class TenantService {
 
     public delete = async (id: uuid, hardDelete: boolean = false): Promise<boolean> => {
         return await this._tenantRepo.delete(id, hardDelete);
+    };
+
+    public createBotSchema = async (lambdaFunctionName: string, model: TenantSchemaDomainModel):
+    Promise<TenantSchemaDto> => {
+        return await this._lambdaService.invokeLambdaFunction<TenantSchemaDto>(lambdaFunctionName, model);
     };
 
     public getTenantWithPhone = async (phone: string): Promise<TenantDto> => {

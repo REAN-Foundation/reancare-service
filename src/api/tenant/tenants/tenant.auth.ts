@@ -20,6 +20,14 @@ export class TenantAuth {
         RequestType : RequestType.CreateOne,
     };
 
+    static readonly createBotSchema: AuthOptions = {
+        ...DefaultAuthOptions,
+        Context     : `${this._baseContext}.CreateBotSchema`,
+        Ownership   : ResourceOwnership.Tenant,
+        ActionScope : ActionScope.System,
+        RequestType : RequestType.CreateOne,
+    };
+    
     static readonly search: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.Search`,

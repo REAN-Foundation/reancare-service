@@ -19,6 +19,7 @@ import {
 import { AssessmentDto } from '../../../domain.types/clinical/assessment/assessment.dto';
 import { IUserRepo } from '../../../database/repository.interfaces/users/user/user.repo.interface';
 import { parse } from 'path';
+import { Gender } from '../../../domain.types/miscellaneous/system.types';
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -144,6 +145,9 @@ export class AssessmentPersonalProfileHelper {
                     gender = a.Text;
                 }
                 if (gender) {
+                    if (gender && !(gender in Gender)) {
+                        gender = Gender.Unknown;
+                    }
                     const person = await this._personRepo.update(personId, {
                         Gender : gender,
                     });

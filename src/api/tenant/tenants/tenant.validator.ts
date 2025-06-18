@@ -57,14 +57,45 @@ export class TenantValidator extends BaseValidator {
 
     createBotSecret = async (request: express.Request): Promise<TenantSecretDomainModel> => {
         await this.validateString(request, 'SecretName', Where.Body, true, false);
-        await this.validateObject(request, 'SecretValue', Where.Body, true, false);
+        await this.validateString(request, 'TelegramBotToken', Where.Body, true, true);
+        await this.validateString(request, 'TelegramMediaPathUrl', Where.Body, true, true);
+        await this.validateString(request, 'WebhookTelegramClientUrlToken', Where.Body, true, true);
+        await this.validateString(request, 'WebhookWhatsappClientHeaderToken', Where.Body, true, true);
+        await this.validateString(request, 'WebhookWhatsappClientUrlToken', Where.Body, true, true);
+        await this.validateString(request, 'SlackTokenFeedback', Where.Body, true, true);
+        await this.validateString(request, 'WebhookClickupClientUrlToken', Where.Body, true, true);
+        await this.validateString(request, 'WebhookMockChannelClientUrlToken', Where.Body, true, true);
+        await this.validateString(request, 'DbPassword', Where.Body, true, true);
+        await this.validateString(request, 'DbUserName', Where.Body, true, true);
+        await this.validateString(request, 'DbHost', Where.Body, true, true);
+        await this.validateString(request, 'ClickupAuthentication', Where.Body, true, true);
+        await this.validateString(request, 'ReancareApiKey', Where.Body, true, true);
+        await this.validateString(request, 'NlpService', Where.Body, true, true);
+        await this.validateString(request, 'CustomMlModelUrl', Where.Body, true, true);
+        // await this.validateObject(request, 'SecretValue', Where.Body, true, false);
 
         this.validateRequest(request);
         const body = request.body;
 
         const model: TenantSecretDomainModel = {
             SecretName  : body.SecretName,
-            SecretValue : body.SecretValue
+            SecretValue : {
+                TelegramBotToken                 : body.TelegramBotToken ?? null,
+                TelegramMediaPathUrl             : body.TelegramMediaPathUrl ?? null,
+                WebhookTelegramClientUrlToken    : body.WebhookTelegramClientUrlToken ?? null,
+                WebhookWhatsappClientHeaderToken : body.WebhookWhatsappClientHeaderToken ?? null,
+                WebhookWhatsappClientUrlToken    : body.WebhookWhatsappClientUrlToken ?? null,
+                SlackTokenFeedback               : body.SlackTokenFeedback ?? null,
+                WebhookClickupClientUrlToken     : body.WebhookClickupClientUrlToken ?? null,
+                WebhookMockChannelClientUrlToken : body.WebhookMockChannelClientUrlToken ?? null,
+                DbPassword                       : body.DbPassword ?? null,
+                DbUserName                       : body.DbUserName ?? null,
+                DbHost                           : body.DbHost ?? null,
+                ClickupAuthentication            : body.ClickupAuthentication ?? null,
+                ReancareApiKey                   : body.ReancareApiKey ?? null,
+                NlpService                       : body.NlpService ?? null,
+                CustomMlModelUrl                 : body.CustomMlModelUrl ?? null
+            }
         };
         return model;
     };

@@ -49,7 +49,7 @@ export interface ClinicalFeatures{
     Orders               : Setting;
     Documents            : Setting;
     PatientHealthReports : Setting;
-    
+
 }
 
 export interface Wellness{
@@ -326,4 +326,22 @@ export interface TenantSettingsDomainModel {
 
 export interface TenantSettingsDto extends TenantSettingsDomainModel {
     TenantId ?: string;
+}
+
+export interface BotSecrets {
+  TelegramBotToken?                 : string;
+  TelegramMediaPathUrl?             : string;
+  WebhookTelegramClientUrlToken?    : string;
+  WebhookWhatsappClientHeaderToken? : string;
+  WebhookWhatsappClientUrlToken?    : string;
+  SlackTokenFeedback?               : string;
+  WebhookClickupClientUrlToken?     : string;
+  WebhookMockChannelClientUrlToken? : string;
+  DbPassword?                       : string;
+  DbUserName?                       : string;
+  DbHost?                           : string;
+  ClickupAuthentication?            : string;
+  ReancareApiKey?                   : string;
+  NlpService?                       : string;
+  CustomMlModelUrl?                 : string;
 }

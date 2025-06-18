@@ -1,6 +1,7 @@
 import { injectable } from 'tsyringe';
 import AWS from 'aws-sdk';
-import { Logger } from '../../common/logger';
+// import { Logger } from '../../common/logger';
+import { ApiError } from '../../common/api.error';
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -25,15 +26,15 @@ export class AwsLambdaService {
             LogType        : 'Tail',
             Payload        : JSON.stringify(payload),
         };
-
-        try {
-            const response = await this.lambda.invoke(params).promise();
-            const responsePayload = response.Payload ? JSON.parse(response.Payload.toString()) : null;
-            return responsePayload as T;
-        } catch (error) {
-            Logger.instance().log(`Error while invoking Lambda function! : ${error.message}`, );
-            return null;
+        const response = await this.lambda.invoke(params).promise();
+        const responsePayload = response.Payload ? JSON.parse(response.Payload.toString()) : null;
+        const data = responsePayload?.Data ? JSON.parse(responsePayload.Data.toString()) : null;
+        if (responsePayload?.Status === 'success') {
+            return data as T;
+        } else {
+            throw new ApiError(responsePayload?.HttpCode || 500, responsePayload?.Message || 'Lambda invocation failed');
         }
+        // return responsePayload as T;
     }
 
 }

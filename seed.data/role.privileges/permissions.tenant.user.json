@@ -632,6 +632,7 @@
             "PromoteTenantUserAsAdmin": false,
             "Search": false,
             "Update": false,
+            "CreateBotSchema": true,
             "CreateBotSecret": false,
             "GetBotSecret": false,
             "UpdateBotSecret": false

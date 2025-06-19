@@ -232,6 +232,30 @@ export class TenantController extends BaseController {
         }
     };
 
+    createBotSchema = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+            const id: uuid = await this._validator.getParamUuid(request, 'id');
+            const tenant = await this._service.getById(id);
+            if (tenant == null) {
+                throw new ApiError(404, 'Tenant not found.');
+            }
+
+            const model = await this._validator.createBotSchema(request);
+
+            await this.authorizeOne(request, null, tenant.id);
+
+            const lambdaFunctionName = process.env.CREATE_BOT_SCHEMA_LAMBDA_FUNCTION_NAME;
+            if (!lambdaFunctionName) {
+                throw new ApiError(500, 'Lambda function name for creating bot schema is not configured.');
+            }
+            
+            const created = await this._service.createBotSchema(lambdaFunctionName, model);
+            ResponseHandler.success(request, response, 'Bot schema created successfully!', 200, created);
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+    
     createBotSecret = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             const id: uuid = await this._validator.getParamUuid(request, 'id');

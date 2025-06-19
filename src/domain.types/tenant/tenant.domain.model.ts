@@ -18,3 +18,8 @@ export interface TenantSecretDomainModel {
 export interface GetSecretDomainModel{
     SecretName     ?: string;
 }
+
+export interface TenantSchemaDomainModel {
+    SchemaName       ?: string;
+    Environment      ?: string;
+}

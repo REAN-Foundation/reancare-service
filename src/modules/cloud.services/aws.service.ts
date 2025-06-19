@@ -1,6 +1,5 @@
 import { injectable } from 'tsyringe';
 import AWS from 'aws-sdk';
-// import { Logger } from '../../common/logger';
 import { ApiError } from '../../common/api.error';
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
@@ -34,7 +33,6 @@ export class AwsLambdaService {
         } else {
             throw new ApiError(responsePayload?.HttpCode || 500, responsePayload?.Message || 'Lambda invocation failed');
         }
-        // return responsePayload as T;
     }
 
 }

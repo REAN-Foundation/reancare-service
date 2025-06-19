@@ -10,11 +10,6 @@ export interface TenantDomainModel {
     Password   ?: string;
 }
 
-export interface TenantSchemaDomainModel {
-    SchemaName       ?: string;
-    Environment      ?: string;
-}
-
 export interface TenantSecretDomainModel {
     SecretName     ?: string;
     SecretValue    ?: object;

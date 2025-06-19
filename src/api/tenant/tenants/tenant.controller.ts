@@ -232,27 +232,6 @@ export class TenantController extends BaseController {
         }
     };
 
-    // createBotSchema = async (request: express.Request, response: express.Response): Promise<void> => {
-    //     try {
-    //         const id: uuid = await this._validator.getParamUuid(request, 'id');
-    //         const tenant = await this._service.getById(id);
-    //         if (tenant == null) {
-    //             throw new ApiError(404, 'Tenant not found.');
-    //         }
-
-    //         const model = await this._validator.createBotSchema(request);
-
-    //         await this.authorizeOne(request, null, tenant.id);
-
-    //         const created = await this._service.createBotSchema(model);
-    //         ResponseHandler.success(request, response, 'Bot schema created successfully!', 200, {
-    //             Created : created,
-    //         });
-    //     } catch (error) {
-    //         ResponseHandler.handleError(request, response, error);
-    //     }
-    // };
-
     createBotSecret = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             const id: uuid = await this._validator.getParamUuid(request, 'id');

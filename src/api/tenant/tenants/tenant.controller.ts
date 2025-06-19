@@ -21,6 +21,7 @@ import { BaseController } from '../../../api/base.controller';
 import { UserHelper } from '../../../api/users/user.helper';
 import { PersonDetailsDto } from '../../../domain.types/person/person.dto';
 import { AssessmentTemplateService } from '../../../services/clinical/assessment/assessment.template.service';
+import { Environment } from '../../../domain.types/tenant/tenant.settings.types';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -71,7 +72,7 @@ export class TenantController extends BaseController {
             if (existingUser) {
                 throw new ApiError(400, 'Username already exists');
             }
-           
+
             const adminPassword = model.Password ?? Helper.generatePassword();
             const role = await this._roleService.getByName(Roles.TenantAdmin);
             const userModel: UserDomainModel = {
@@ -137,9 +138,9 @@ export class TenantController extends BaseController {
             await this.setupBasicAssessmentTemplate(tenant.id);
 
             ResponseHandler.success(request, response, 'Tenant added successfully!', 201, {
-                Tenant   : tenant,
-                Settings : settings,
-                AdminUser: {
+                Tenant    : tenant,
+                Settings  : settings,
+                AdminUser : {
                     UserName : adminUserName
                 }
             });
@@ -226,6 +227,65 @@ export class TenantController extends BaseController {
             ResponseHandler.success(request, response, 'Tenant deleted successfully!', 200, {
                 Deleted : deleted,
             });
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
+    createBotSecret = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+            const id: uuid = await this._validator.getParamUuid(request, 'id');
+            const tenant = await this._service.getById(id);
+            if (tenant == null) {
+                throw new ApiError(404, 'Tenant not found.');
+            }
+            const tenantCode = tenant.Code;
+            const secretName = await this.getSecretName(tenantCode);
+            request.body.SecretName = secretName;
+            const model = await this._validator.createBotSecret(request);
+            await this.authorizeOne(request, null, tenant.id);
+            const created = await this._service.createBotSecret(model);
+            ResponseHandler.success(request, response, 'Bot secret created successfully!', 200, created);
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
+    getBotSecret = async(request: express.Request, response: express.Response): Promise<void> => {
+        try {
+            const id: uuid = await this._validator.getParamUuid(request, 'id');
+            const tenant = await this._service.getById(id);
+            if (tenant == null) {
+                throw new ApiError(404, 'Tenant not found.');
+            }
+            const tenantCode = tenant.Code;
+            const secretName = await this.getSecretName(tenantCode);
+            request.body.SecretName = secretName;
+            const model = {
+                SecretName : secretName,
+            };
+            const secret = await this._service.getBotSecret(model);
+            await this.authorizeOne(request, null, tenant.id);
+            ResponseHandler.success(request, response, 'Bot secret retrieved successfully!', 200, secret);
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
+    updateBotSecret = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+            const id: uuid = await this._validator.getParamUuid(request, 'id');
+            const tenant = await this._service.getById(id);
+            if (tenant == null) {
+                throw new ApiError(404, 'Tenant not found.');
+            }
+            const tenantCode = tenant.Code;
+            const secretName = await this.getSecretName(tenantCode);
+            request.body.SecretName = secretName;
+            const model = await this._validator.createBotSecret(request);
+            await this.authorizeOne(request, null, tenant.id);
+            const updated = await this._service.updateBotSecret(model);
+            ResponseHandler.success(request, response, 'Bot secret updated successfully!', 200, updated);
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
         }
@@ -380,5 +440,29 @@ export class TenantController extends BaseController {
             Logger.instance().log(`Error setting up basic assessment templates: ${error.message}`);
         }
     };
-    
+
+    private getEnvironment = async () => {
+        const env = process.env.NODE_ENV;
+        if (!env) {
+            throw new ApiError(500, 'NODE_ENV is not set.');
+        }
+
+        switch (env) {
+            case Environment.Development:
+                return 'dev';
+            case Environment.Production:
+                return 'prod';
+            case Environment.Uat:
+                return 'uat';
+            default:
+                throw new ApiError(500, `Invalid NODE_ENV value: ${env}`);
+        }
+    };
+
+    private getSecretName = async (tenantCode: string) => {
+        const environment = await this.getEnvironment();
+        const code = tenantCode.toLowerCase().replace(/_/g, "-");
+        return `${environment}-${code}-v1`;
+    };
+
 }

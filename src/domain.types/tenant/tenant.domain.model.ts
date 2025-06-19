@@ -9,3 +9,12 @@ export interface TenantDomainModel {
     UserName   ?: string;
     Password   ?: string;
 }
+
+export interface TenantSecretDomainModel {
+    SecretName     ?: string;
+    SecretValue    ?: object;
+}
+
+export interface GetSecretDomainModel{
+    SecretName     ?: string;
+}

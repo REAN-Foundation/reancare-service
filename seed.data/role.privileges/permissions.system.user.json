@@ -631,7 +631,10 @@
             "GetTenantStats": true,
             "PromoteTenantUserAsAdmin": true,
             "Search": true,
-            "Update": true
+            "Update": true,
+            "CreateBotSecret": false,
+            "GetBotSecret": false,
+            "UpdateBotSecret": false
         },
         "Settings": {
             "GetTenantSettingsTypes": true,
@@ -886,5 +889,5 @@
         "Update": false,
         "Delete": false
     }
-    
+
 }

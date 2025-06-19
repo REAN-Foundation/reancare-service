@@ -234,7 +234,7 @@ export class TenantSettingsValidator extends BaseValidator {
             Wellness : {
                 Exercise          : request.body.Common.Wellness.Exercise,
                 Nutrition         : request.body.Common.Wellness.Nutrition,
-                Meditation        : request.body.Common.Wellness.Medication,
+                Meditation        : request.body.Common.Wellness.Meditation,
                 Priorities        : request.body.Common.Wellness.Priorities,
                 Goals             : request.body.Common.Wellness.Goals,
                 DeviceIntegration : {
@@ -538,7 +538,7 @@ export class TenantSettingsValidator extends BaseValidator {
             OrganizationWebsite : request.body.ChatBot.OrganizationWebsite,
             Description         : request.body.ChatBot.Description,
             DefaultLanguage     : request.body.ChatBot.DefaultLanguage,
-            Favicon             : request.body.ChatBot.Icon,
+            Favicon             : request.body.ChatBot.Favicon,
             MessageChannels     : {
                 WhatsApp : request.body.ChatBot.MessageChannels.WhatsApp,
                 Telegram : request.body.ChatBot.MessageChannels.Telegram,

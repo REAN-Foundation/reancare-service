@@ -345,3 +345,9 @@ export interface BotSecrets {
   NlpService?                       : string;
   CustomMlModelUrl?                 : string;
 }
+
+export enum Environment {
+  Development = 'development',
+  Uat         = 'uat',
+  Production  = 'production'
+}

@@ -21,6 +21,7 @@ import { BaseController } from '../../../api/base.controller';
 import { UserHelper } from '../../../api/users/user.helper';
 import { PersonDetailsDto } from '../../../domain.types/person/person.dto';
 import { AssessmentTemplateService } from '../../../services/clinical/assessment/assessment.template.service';
+import { Environment } from '../../../domain.types/tenant/tenant.settings.types';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -468,11 +469,11 @@ export class TenantController extends BaseController {
         }
 
         switch (env) {
-            case 'development':
+            case Environment.Development:
                 return 'dev';
-            case 'production':
+            case Environment.Production:
                 return 'prod';
-            case 'uat':
+            case Environment.Uat:
                 return 'uat';
             default:
                 throw new ApiError(500, `Invalid NODE_ENV value: ${env}`);

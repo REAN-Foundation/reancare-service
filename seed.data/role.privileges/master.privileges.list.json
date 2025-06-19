@@ -472,6 +472,7 @@
     "Tenant.Tenants.PromoteTenantUserAsAdmin",
     "Tenant.Tenants.Search",
     "Tenant.Tenants.Update",
+    "Tenant.Tenants.CreateBotSchema",
     "Tenant.Tenants.CreateBotSecret",
     "Tenant.Tenants.GetBotSecret",
     "Tenant.Tenants.UpdateBotSecret",

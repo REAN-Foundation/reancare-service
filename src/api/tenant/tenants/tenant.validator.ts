@@ -1,6 +1,6 @@
 import express from 'express';
 import { TenantSearchFilters } from '../../../domain.types/tenant/tenant.search.types';
-import { TenantDomainModel, TenantSecretDomainModel } from '../../../domain.types/tenant/tenant.domain.model';
+import { TenantDomainModel, TenantSchemaDomainModel, TenantSecretDomainModel } from '../../../domain.types/tenant/tenant.domain.model';
 import { BaseValidator, Where } from '../../base.validator';
 
 ///////////////////////////////////////////////////////////////////////////////////////
@@ -38,6 +38,20 @@ export class TenantValidator extends BaseValidator {
         if (update) {
             model.id = await this.getParamUuid(request, 'id');
         }
+        return model;
+    };
+
+    createBotSchema = async (request: express.Request): Promise<TenantSchemaDomainModel> => {
+        await this.validateString(request, 'SchemaName', Where.Body, true, false, false, 1);
+        await this.validateString(request, 'Environment', Where.Body, true, false, false, 1);
+   
+        this.validateRequest(request);
+        const body = request.body;
+
+        const model: TenantSchemaDomainModel = {
+            SchemaName  : body.SchemaName,
+            Environment : body.Environment,
+        };
         return model;
     };
 

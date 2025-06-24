@@ -44,7 +44,7 @@ export class TenantValidator extends BaseValidator {
     createBotSchema = async (request: express.Request): Promise<TenantSchemaDomainModel> => {
         await this.validateString(request, 'SchemaName', Where.Body, true, false, false, 1);
         await this.validateString(request, 'Environment', Where.Body, true, false, false, 1);
-   
+
         this.validateRequest(request);
         const body = request.body;
 
@@ -57,6 +57,7 @@ export class TenantValidator extends BaseValidator {
 
     createBotSecret = async (request: express.Request): Promise<TenantSecretDomainModel> => {
         await this.validateString(request, 'SecretName', Where.Body, true, false);
+        await this.validateString(request, 'Environment', Where.Body, true, false);
         await this.validateString(request, 'TelegramBotToken', Where.Body, true, true);
         await this.validateString(request, 'TelegramMediaPathUrl', Where.Body, true, true);
         await this.validateString(request, 'WebhookTelegramClientUrlToken', Where.Body, true, true);
@@ -79,6 +80,7 @@ export class TenantValidator extends BaseValidator {
 
         const model: TenantSecretDomainModel = {
             SecretName  : body.SecretName,
+            Environment : body.Environment,
             SecretValue : {
                 TelegramBotToken                 : body.TelegramBotToken ?? null,
                 TelegramMediaPathUrl             : body.TelegramMediaPathUrl ?? null,

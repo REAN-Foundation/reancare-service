@@ -7,10 +7,6 @@ export interface TenantDto {
     Phone      ?: string;
     Email      ?: string;
 }
-export interface TenantSecretDto {
-    SecretName           ?: string;
-    SecretValue          ?: object;
-}
 
 export interface TenantSchemaDto {
     SchemaName  ?: string;

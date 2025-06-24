@@ -248,14 +248,14 @@ export class TenantController extends BaseController {
             if (!lambdaFunctionName) {
                 throw new ApiError(500, 'Lambda function name for creating bot schema is not configured.');
             }
-            
+
             const created = await this._service.createBotSchema(lambdaFunctionName, model);
             ResponseHandler.success(request, response, 'Bot schema created successfully!', 200, created);
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
         }
     };
-    
+
     createBotSecret = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             const id: uuid = await this._validator.getParamUuid(request, 'id');
@@ -265,7 +265,9 @@ export class TenantController extends BaseController {
             }
             const tenantCode = tenant.Code;
             const secretName = await this.getSecretName(tenantCode);
+            const environment = await this.getEnvironment();
             request.body.SecretName = secretName;
+            request.body.Environment = environment;
             const model = await this._validator.createBotSecret(request);
             await this.authorizeOne(request, null, tenant.id);
             const created = await this._service.createBotSecret(model);
@@ -305,7 +307,9 @@ export class TenantController extends BaseController {
             }
             const tenantCode = tenant.Code;
             const secretName = await this.getSecretName(tenantCode);
+            const environment = await this.getEnvironment();
             request.body.SecretName = secretName;
+            request.body.Environment = environment;
             const model = await this._validator.createBotSecret(request);
             await this.authorizeOne(request, null, tenant.id);
             const updated = await this._service.updateBotSecret(model);

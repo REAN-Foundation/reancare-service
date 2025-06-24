@@ -13,6 +13,7 @@ export interface TenantDomainModel {
 export interface TenantSecretDomainModel {
     SecretName     ?: string;
     SecretValue    ?: object;
+    Environment    ?: string;
 }
 
 export interface GetSecretDomainModel{

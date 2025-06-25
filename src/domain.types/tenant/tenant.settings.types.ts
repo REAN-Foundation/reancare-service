@@ -164,6 +164,7 @@ export interface ChatBotSettings {
     Favicon?             : string;
     Description?         : string;
     DefaultLanguage?     : string;
+    SchemaName?          : string;
     MessageChannels     : MessageChannels;
     SupportChannels     : SupportChannels;
     Personalization     : boolean,

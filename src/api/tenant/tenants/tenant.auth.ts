@@ -20,6 +20,14 @@ export class TenantAuth {
         RequestType : RequestType.CreateOne,
     };
 
+    static readonly createBotSchema: AuthOptions = {
+        ...DefaultAuthOptions,
+        Context     : `${this._baseContext}.CreateBotSchema`,
+        Ownership   : ResourceOwnership.Tenant,
+        ActionScope : ActionScope.System,
+        RequestType : RequestType.CreateOne,
+    };
+    
     static readonly search: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.Search`,
@@ -82,6 +90,30 @@ export class TenantAuth {
         Ownership   : ResourceOwnership.Tenant,
         ActionScope : ActionScope.Tenant,
         RequestType : RequestType.GetMany,
+    };
+
+    static readonly createBotSecret: AuthOptions = {
+        ...DefaultAuthOptions,
+        Context     : `${this._baseContext}.CreateBotSecret`,
+        Ownership   : ResourceOwnership.Tenant,
+        ActionScope : ActionScope.System,
+        RequestType : RequestType.CreateOne,
+    };
+
+    static readonly getBotSecret: AuthOptions = {
+        ...DefaultAuthOptions,
+        Context     : `${this._baseContext}.GetBotSecret`,
+        Ownership   : ResourceOwnership.Tenant,
+        ActionScope : ActionScope.System,
+        RequestType : RequestType.GetOne,
+    };
+
+    static readonly updateBotSecret: AuthOptions = {
+        ...DefaultAuthOptions,
+        Context     : `${this._baseContext}.UpdateBotSecret`,
+        Ownership   : ResourceOwnership.Tenant,
+        ActionScope : ActionScope.System,
+        RequestType : RequestType.UpdateOne,
     };
 
     static readonly getById: AuthOptions = {

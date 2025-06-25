@@ -15,7 +15,7 @@ import { AwsLambdaService } from '../../modules/cloud.services/aws.service';
 export class TenantService {
 
      _lambdaService: AwsLambdaService = Injector.Container.resolve(AwsLambdaService);
-     
+
      constructor(
         @inject('ITenantRepo') private _tenantRepo: ITenantRepo,
         @inject('ITenantSettingsRepo') private _tenantSettingsRepo: ITenantSettingsRepo,
@@ -52,16 +52,16 @@ export class TenantService {
     Promise<TenantSchemaDto> => {
         return await this._lambdaService.invokeLambdaFunction<TenantSchemaDto>(lambdaFunctionName, model);
     };
-    
-    public createBotSecret = async (model: TenantSecretDomainModel): Promise<BotSecrets> => {
+
+    public createSecret = async (model: TenantSecretDomainModel): Promise<BotSecrets> => {
         return this._lambdaService.invokeLambdaFunction<BotSecrets>('create-secrets-lambda-function', model);
     };
 
-    public getBotSecret = async (model: GetSecretDomainModel): Promise<BotSecrets> => {
+    public getSecret = async (model: GetSecretDomainModel): Promise<BotSecrets> => {
         return this._lambdaService.invokeLambdaFunction<BotSecrets>('get-secrets-lambda-function', model );
     };
 
-    public updateBotSecret = async (model: TenantSecretDomainModel): Promise<BotSecrets> => {
+    public updateSecret = async (model: TenantSecretDomainModel): Promise<BotSecrets> => {
         return this._lambdaService.invokeLambdaFunction<BotSecrets>('update-secrets-lambda-function', model);
     };
 

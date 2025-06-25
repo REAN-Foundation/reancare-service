@@ -271,7 +271,7 @@ export class TenantController extends BaseController {
             const model = await this._validator.createBotSecret(request);
             await this.authorizeOne(request, null, tenant.id);
             const created = await this._service.createSecret(model);
-            ResponseHandler.success(request, response, 'Bot secret created successfully!', 200, created);
+            ResponseHandler.success(request, response, 'Secret created successfully!', 200, created);
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
         }
@@ -292,7 +292,7 @@ export class TenantController extends BaseController {
             };
             const secret = await this._service.getSecret(model);
             await this.authorizeOne(request, null, tenant.id);
-            ResponseHandler.success(request, response, 'Bot secret retrieved successfully!', 200, secret);
+            ResponseHandler.success(request, response, 'Secret retrieved successfully!', 200, secret);
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
         }
@@ -313,7 +313,7 @@ export class TenantController extends BaseController {
             const model = await this._validator.createBotSecret(request);
             await this.authorizeOne(request, null, tenant.id);
             const updated = await this._service.updateSecret(model);
-            ResponseHandler.success(request, response, 'Bot secret updated successfully!', 200, updated);
+            ResponseHandler.success(request, response, 'Secret updated successfully!', 200, updated);
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
         }

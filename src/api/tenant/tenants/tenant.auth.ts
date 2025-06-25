@@ -27,7 +27,7 @@ export class TenantAuth {
         ActionScope : ActionScope.System,
         RequestType : RequestType.CreateOne,
     };
-    
+
     static readonly search: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.Search`,
@@ -92,25 +92,25 @@ export class TenantAuth {
         RequestType : RequestType.GetMany,
     };
 
-    static readonly createBotSecret: AuthOptions = {
+    static readonly createSecret: AuthOptions = {
         ...DefaultAuthOptions,
-        Context     : `${this._baseContext}.CreateBotSecret`,
+        Context     : `${this._baseContext}.CreateSecret`,
         Ownership   : ResourceOwnership.Tenant,
         ActionScope : ActionScope.System,
         RequestType : RequestType.CreateOne,
     };
 
-    static readonly getBotSecret: AuthOptions = {
+    static readonly getSecret: AuthOptions = {
         ...DefaultAuthOptions,
-        Context     : `${this._baseContext}.GetBotSecret`,
+        Context     : `${this._baseContext}.GetSecret`,
         Ownership   : ResourceOwnership.Tenant,
         ActionScope : ActionScope.System,
         RequestType : RequestType.GetOne,
     };
 
-    static readonly updateBotSecret: AuthOptions = {
+    static readonly updateSecret: AuthOptions = {
         ...DefaultAuthOptions,
-        Context     : `${this._baseContext}.UpdateBotSecret`,
+        Context     : `${this._baseContext}.UpdateSecret`,
         Ownership   : ResourceOwnership.Tenant,
         ActionScope : ActionScope.System,
         RequestType : RequestType.UpdateOne,

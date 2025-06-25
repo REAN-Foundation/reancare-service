@@ -513,6 +513,7 @@ export class TenantSettingsValidator extends BaseValidator {
         await this.validateString(request, 'ChatBot.Description', Where.Body, false, false);
         await this.validateString(request, 'ChatBot.DefaultLanguage', Where.Body, false, false);
         await this.validateString(request, 'ChatBot.Favicon', Where.Body, false, false);
+        await this.validateString(request, 'ChatBot.SchemaName', Where.Body, false, false);
         await this.validateBoolean(request, 'ChatBot.MessageChannels.WhatsApp', Where.Body, true, false);
         await this.validateBoolean(request, 'ChatBot.MessageChannels.Telegram', Where.Body, true, false);
         await this.validateBoolean(request, 'ChatBot.SupportChannels.Email', Where.Body, true, false);
@@ -539,6 +540,7 @@ export class TenantSettingsValidator extends BaseValidator {
             Description         : request.body.ChatBot.Description,
             DefaultLanguage     : request.body.ChatBot.DefaultLanguage,
             Favicon             : request.body.ChatBot.Favicon,
+            SchemaName          : request.body.ChatBot.SchemaName,
             MessageChannels     : {
                 WhatsApp : request.body.ChatBot.MessageChannels.WhatsApp,
                 Telegram : request.body.ChatBot.MessageChannels.Telegram,

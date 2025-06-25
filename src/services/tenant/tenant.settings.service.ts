@@ -335,6 +335,7 @@ export class TenantSettingsService {
             Favicon             : null,
             Description         : null,
             DefaultLanguage     : 'en',
+            SchemaName          : null,
             MessageChannels     : {
                 WhatsApp : false,
                 Telegram : false,

@@ -256,7 +256,7 @@ export class TenantController extends BaseController {
         }
     };
 
-    createBotSecret = async (request: express.Request, response: express.Response): Promise<void> => {
+    createSecret = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const tenant = await this._service.getById(id);
@@ -270,14 +270,14 @@ export class TenantController extends BaseController {
             request.body.Environment = environment;
             const model = await this._validator.createBotSecret(request);
             await this.authorizeOne(request, null, tenant.id);
-            const created = await this._service.createBotSecret(model);
-            ResponseHandler.success(request, response, 'Bot secret created successfully!', 200, created);
+            const created = await this._service.createSecret(model);
+            ResponseHandler.success(request, response, 'Secret created successfully!', 200, created);
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
         }
     };
 
-    getBotSecret = async(request: express.Request, response: express.Response): Promise<void> => {
+    getSecret = async(request: express.Request, response: express.Response): Promise<void> => {
         try {
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const tenant = await this._service.getById(id);
@@ -290,15 +290,15 @@ export class TenantController extends BaseController {
             const model = {
                 SecretName : secretName,
             };
-            const secret = await this._service.getBotSecret(model);
+            const secret = await this._service.getSecret(model);
             await this.authorizeOne(request, null, tenant.id);
-            ResponseHandler.success(request, response, 'Bot secret retrieved successfully!', 200, secret);
+            ResponseHandler.success(request, response, 'Secret retrieved successfully!', 200, secret);
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
         }
     };
 
-    updateBotSecret = async (request: express.Request, response: express.Response): Promise<void> => {
+    updateSecret = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const tenant = await this._service.getById(id);
@@ -312,8 +312,8 @@ export class TenantController extends BaseController {
             request.body.Environment = environment;
             const model = await this._validator.createBotSecret(request);
             await this.authorizeOne(request, null, tenant.id);
-            const updated = await this._service.updateBotSecret(model);
-            ResponseHandler.success(request, response, 'Bot secret updated successfully!', 200, updated);
+            const updated = await this._service.updateSecret(model);
+            ResponseHandler.success(request, response, 'Secret updated successfully!', 200, updated);
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
         }

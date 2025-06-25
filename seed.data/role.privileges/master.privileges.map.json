@@ -633,9 +633,9 @@
             "Search": true,
             "Update": true,
             "CreateBotSchema": true,
-            "CreateBotSecret": true,
-            "GetBotSecret": true,
-            "UpdateBotSecret": true
+            "CreateSecret": true,
+            "GetSecret": true,
+            "UpdateSecret": true
         },
         "Settings": {
             "GetTenantSettingsTypes": true,

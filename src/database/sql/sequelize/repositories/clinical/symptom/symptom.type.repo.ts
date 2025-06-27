@@ -67,9 +67,14 @@ export class SymptomTypeRepo implements ISymptomTypeRepo {
             }
 
             if (filters.Tag != null) {
-                search.where['Tags'] = { [Op.like]: '%' + filters.Tag + '%' };
+                const tags = filters.Tag.split(',').map(tag => tag.trim());
+                search.where[Op.or] = tags.map(tag => ({
+                    Tags : {
+                        [Op.like] : `%${tag}%`,
+                    },
+                }));
             }
-
+                       
             let orderByColum = 'Symptom';
             if (filters.OrderBy) {
                 orderByColum = filters.OrderBy;

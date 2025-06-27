@@ -100,7 +100,7 @@
         "ScheduleGGHNFollowUpReminder": "0 5 * * *",
         "UserActivityTracker": "5 21 13 1 *",
         "scheduleNotificationToInactiveUsers": "5 17 */7 * *",
-        "CreateMedicationConsumptionTask": "0 1 1 * *"
+        "CreateMedicationConsumptionTask": "30 16 * * 1"
     },
     "production": {
         "FileCleanup": "*/30 * * * *",

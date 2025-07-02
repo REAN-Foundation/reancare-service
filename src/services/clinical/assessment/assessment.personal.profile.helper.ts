@@ -109,7 +109,6 @@ export class AssessmentPersonalProfileHelper {
                     const [minAge, maxAge] = personAge.split('-').map(Number);
                     personAge  = String( (minAge + maxAge) / 2);
                 }
-                // age = parseInt(personAge);
                 age = parseInt(personAge.replace(/[^0-9.]/g, ''));
                 const now = new Date();
                 const dob = now.setFullYear(now.getFullYear() - age, 0, 1);

@@ -107,9 +107,10 @@ export class AssessmentPersonalProfileHelper {
                 if (personAge.includes('-')) // check if age is a range
                 {
                     const [minAge, maxAge] = personAge.split('-').map(Number);
-                    personAge  = (minAge + maxAge) / 2;
+                    personAge  = String( (minAge + maxAge) / 2);
                 }
-                age = parseInt(personAge);
+                // age = parseInt(personAge);
+                age = parseInt(personAge.replace(/[^0-9.]/g, ''));
                 const now = new Date();
                 const dob = now.setFullYear(now.getFullYear() - age, 0, 1);
                 const dateOfBirth = new Date(dob);

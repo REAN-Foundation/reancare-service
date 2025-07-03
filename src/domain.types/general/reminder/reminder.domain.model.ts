@@ -120,6 +120,7 @@ export interface ReminderDomainModel {
     HookUrl              ?: string;
     NotificationType     ?: ReminderNotificationType;
     RawContent            : string;
+    ParentActionId        ?: string;
 }
 
 export interface ReminderDto {
@@ -142,6 +143,7 @@ export interface ReminderDto {
     AcknowledgedSchedules?: number;
     NotificationType     ?: ReminderNotificationType;
     RawContent            : string;
+    ParentActionId       ?: string;
     CreatedAt             : Date;
     UpdatedAt             : Date;
 }
@@ -153,6 +155,7 @@ export interface ReminderSearchFilters extends BaseSearchFilters {
     NotificationType?: string;
     WhenDate?        : string;
     WhenTime?        : string;
+    ParentActionId?  : string;
 }
 
 export interface ReminderSearchResults extends BaseSearchResults {

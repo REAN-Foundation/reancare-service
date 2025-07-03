@@ -53,19 +53,13 @@ export default class TenantSettings extends Model {
         type      : DataType.TEXT,
         allowNull : false,
     })
-    UserInterfaces: string;
-
-    @Column({
-        type      : DataType.TEXT,
-        allowNull : false,
-    })
     Common: string;
 
     @Column({
         type      : DataType.TEXT,
         allowNull : false,
     })
-    PatientApp: string;
+    Followup: string;
 
     @Column({
         type      : DataType.TEXT,
@@ -79,6 +73,12 @@ export default class TenantSettings extends Model {
     })
     Forms: string;
 
+    @Column({
+        type      : DataType.TEXT,
+        allowNull : true,
+    })
+    Consent: string;
+    
     @Column
     @CreatedAt
     CreatedAt: Date;

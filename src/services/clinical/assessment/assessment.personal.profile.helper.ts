@@ -18,6 +18,8 @@ import {
 } from '../../../domain.types/clinical/assessment/assessment.types';
 import { AssessmentDto } from '../../../domain.types/clinical/assessment/assessment.dto';
 import { IUserRepo } from '../../../database/repository.interfaces/users/user/user.repo.interface';
+import { parse } from 'path';
+import { Gender } from '../../../domain.types/miscellaneous/system.types';
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -67,6 +69,7 @@ export class AssessmentPersonalProfileHelper {
                     LastName : name,
                 });
             } else if (fieldName === 'Name') {
+                
                 const a = answer as TextQueryAnswer;
                 const name = a.Text;
                 const tokens = name.split(' ');
@@ -82,19 +85,42 @@ export class AssessmentPersonalProfileHelper {
                     FirstName : firstName,
                     LastName  : lastName,
                 });
-            } else if (fieldName === 'Age') {
-                const a = answer as IntegerQueryAnswer;
-                const age = a.Value;
+            }
+            else if (fieldName === 'Age') {
+                const respType = answer.ResponseType;
+                let personAge = null;
+                let age = null;
+                if (respType === QueryResponseType.SingleChoiceSelection) {
+                    const a = answer as SingleChoiceQueryAnswer;
+                    const options = node.Options;
+                    const selectedOption = options.find((option) => option.Sequence === a.ChosenSequence);
+                    const fieldValue = selectedOption?.Text;
+                    if (fieldValue) {
+                        personAge = fieldValue;
+                    }
+                }
+                else if (respType === QueryResponseType.Integer) {
+                    const a = answer as IntegerQueryAnswer;
+                    personAge = String(a.Value); //a.Value;
+
+                }
+                if (personAge.includes('-')) // check if age is a range
+                {
+                    const [minAge, maxAge] = personAge.split('-').map(Number);
+                    personAge  = String( (minAge + maxAge) / 2);
+                }
+                age = parseInt(personAge.replace(/[^0-9.]/g, ''));
                 const now = new Date();
                 const dob = now.setFullYear(now.getFullYear() - age, 0, 1);
                 const dateOfBirth = new Date(dob);
                 const personDob = await this._personRepo.update(personId, {
                     BirthDate : dateOfBirth,
                 });
-                const personAge = await this._personRepo.update(personId, {
+                const personsAge = await this._personRepo.update(personId, {
                     Age : String(age),
                 });
-            } else if (fieldName === 'DateOfBirth') {
+            } 
+            else if (fieldName === 'DateOfBirth') {
                 const a = answer as DateQueryAnswer;
                 const dateOfBirth = a.Date;
                 if (dateOfBirth) {
@@ -119,6 +145,9 @@ export class AssessmentPersonalProfileHelper {
                     gender = a.Text;
                 }
                 if (gender) {
+                    if (gender && !(gender in Gender)) {
+                        gender = Gender.Unknown;
+                    }
                     const person = await this._personRepo.update(personId, {
                         Gender : gender,
                     });

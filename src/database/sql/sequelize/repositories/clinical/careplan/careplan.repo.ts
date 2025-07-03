@@ -69,6 +69,7 @@ export class CareplanRepo implements ICareplanRepo {
                 StartDate           : model.StartDate,
                 EndDate             : model.EndDate,
                 Gender              : model.Gender,
+                TenantId            : model.TenantId
             };
             const enrollment = await CareplanEnrollment.create(entity);
             return EnrollmentMapper.toDto(enrollment);

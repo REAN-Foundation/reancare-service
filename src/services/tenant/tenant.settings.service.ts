@@ -2,15 +2,13 @@ import { ITenantSettingsRepo } from '../../database/repository.interfaces/tenant
 import { injectable, inject } from 'tsyringe';
 import {
     ChatBotSettings,
-    CommonSettings,
     FormsIntegrations,
     FormsSettings,
-    UserInterfaces,
-    PatientAppSettings,
     TenantSettingsDomainModel,
     TenantSettingsTypes,
-    WeekDay
-} from '../../domain.types/tenant/tenant.settings.types';
+    CommonSettings,
+    FollowupSettings,
+    FollowupSource } from '../../domain.types/tenant/tenant.settings.types';
 import { TenantSettingsDto } from '../../domain.types/tenant/tenant.settings.types';
 import { uuid } from '../../domain.types/miscellaneous/system.types';
 
@@ -37,14 +35,11 @@ export class TenantSettingsService {
     public getTenantSettingsByType = async (tenantId: uuid, settingsType: TenantSettingsTypes)
         : Promise<any> => {
         const settings = await this._tenantSettingsRepo.getTenantSettings(tenantId);
-        if (settingsType === TenantSettingsTypes.UserInterfaces) {
-            return settings.UserInterfaces;
-        }
         if (settingsType === TenantSettingsTypes.Common) {
             return settings.Common;
         }
-        if (settingsType === TenantSettingsTypes.PatientApp) {
-            return settings.PatientApp;
+        if (settingsType === TenantSettingsTypes.Followup) {
+            return settings.Followup;
         }
         if (settingsType === TenantSettingsTypes.ChatBot) {
             return settings.ChatBot;
@@ -58,16 +53,13 @@ export class TenantSettingsService {
     public updateTenantSettingsByType = async (
         tenantId: uuid,
         settingsType: TenantSettingsTypes,
-        settings: UserInterfaces|CommonSettings|PatientAppSettings|ChatBotSettings|FormsSettings)
-            : Promise<TenantSettingsDto> => {
-        if (settingsType === TenantSettingsTypes.UserInterfaces) {
-            return await this._tenantSettingsRepo.updateHealthcareInterfaces(tenantId, settings as UserInterfaces);
-        }
+        settings: CommonSettings | FollowupSettings | ChatBotSettings | FormsSettings | TenantSettingsDto
+    ): Promise<TenantSettingsDto> => {
         if (settingsType === TenantSettingsTypes.Common) {
             return await this._tenantSettingsRepo.updateCommonSettings(tenantId, settings as CommonSettings);
         }
-        if (settingsType === TenantSettingsTypes.PatientApp) {
-            return await this._tenantSettingsRepo.updatePatientAppSettings(tenantId, settings as PatientAppSettings);
+        if (settingsType === TenantSettingsTypes.Followup) {
+            return await this._tenantSettingsRepo.updateFollowupSettings(tenantId, settings as FollowupSettings);
         }
         if (settingsType === TenantSettingsTypes.ChatBot) {
             return await this._tenantSettingsRepo.updateChatBotSettings(tenantId, settings as ChatBotSettings);
@@ -75,15 +67,19 @@ export class TenantSettingsService {
         if (settingsType === TenantSettingsTypes.Forms) {
             return await this._tenantSettingsRepo.updateFormsSettings(tenantId, settings as FormsSettings);
         }
+        if (settingsType === TenantSettingsTypes.Consent) {
+            return await this._tenantSettingsRepo.updateConsentSettings(tenantId, settings as TenantSettingsDto);
+        }
+        
         return await this._tenantSettingsRepo.getTenantSettings(tenantId);
     };
 
     public updateTenantSettings = async (tenantId: uuid, model: TenantSettingsDomainModel): Promise<TenantSettingsDto> => {
-        await this._tenantSettingsRepo.updateHealthcareInterfaces(tenantId, model.UserInterfaces);
         await this._tenantSettingsRepo.updateCommonSettings(tenantId, model.Common);
-        await this._tenantSettingsRepo.updatePatientAppSettings(tenantId, model.PatientApp);
+        await this._tenantSettingsRepo.updateFollowupSettings(tenantId, model.Followup);
         await this._tenantSettingsRepo.updateChatBotSettings(tenantId, model.ChatBot);
         await this._tenantSettingsRepo.updateFormsSettings(tenantId, model.Forms);
+        await this._tenantSettingsRepo.updateConsentSettings(tenantId, model.Consent);
         return await this._tenantSettingsRepo.getTenantSettings(tenantId);
     };
 
@@ -91,64 +87,258 @@ export class TenantSettingsService {
 
     private getDefaultSettings = (): TenantSettingsDomainModel => {
 
-        const healthcareInterfaces: UserInterfaces = {
-            PatientApp : true,
-            ChatBot    : true,
-            Forms      : true,
-        };
         const common: CommonSettings = {
+     
+            UserInterfaces : {
+                PatientApp    : true,
+                ChatBot       : true,
+                Forms         : false,
+                PatientPortal : true,
+                Followup      : false
+            },
+
             Clinical : {
-                Vitals          : true,
-                LabRecords      : true,
-                Symptoms        : true,
-                DrugsManagement : true,
-                Medications     : true,
-                Careplans       : false,
-                Assessments     : true,
+                Vitals : {
+                    Name      : "Vitals",
+                    Enabled   : true,
+                    Navigable : true,
+                },
+                LabRecords : {
+                    Name      : "Lab Records",
+                    Enabled   : true,
+                    Navigable : true,
+                },
+                Symptoms : {
+                    Name      : "Symptoms",
+                    Enabled   : true,
+                    Navigable : true,
+                },
+                SymptomAssessments : {
+                    Name      : "Symptom Assessments",
+                    Enabled   : true,
+                    Navigable : true,
+                },
+                DrugsManagement : {
+                    Name      : "Drugs Management",
+                    Enabled   : true,
+                    Navigable : true,
+                },
+                Medications : {
+                    Name      : "Medications",
+                    Enabled   : true,
+                    Navigable : true,
+                },
+                Careplans : {
+                    Name      : "Careplans",
+                    Enabled   : false,
+                    Navigable : false,
+                },
+                Assessments : {
+                    Name      : "Assessments",
+                    Enabled   : true,
+                    Navigable : true,
+                },
+                DailyAssessments : {
+                    Name      : "Daily Assessments",
+                    Enabled   : true,
+                    Navigable : true,
+                },
+                Appointments : {
+                    Name      : "Appointments",
+                    Enabled   : true,
+                    Navigable : true,
+                },
+                Visits : {
+                    Name      : "Visits",
+                    Enabled   : true,
+                    Navigable : true,
+                },
+                Orders : {
+                    Name      : "Orders",
+                    Enabled   : true,
+                    Navigable : true,
+                },
+                Documents : {
+                    Name      : "Documents",
+                    Enabled   : true,
+                    Navigable : true,
+                },
+                PatientHealthReports : {
+                    Name      : "Patient HealthReports",
+                    Enabled   : true,
+                    Navigable : true,
+                },
             },
-            External : {
-                FHIRStorage     : false,
-                EHRIntegration  : false,
-                ABDMIntegration : false,
+    
+            Wellness : {
+                Exercise : {
+                    Name      : "Exercise",
+                    Enabled   : true,
+                    Navigable : true,
+                },
+                Nutrition : {
+                    Name      : "Nutrition",
+                    Enabled   : true,
+                    Navigable : true,
+                },
+                Meditation : {
+                    Name      : "Meditation",
+                    Enabled   : true,
+                    Navigable : true,
+                },
+                Priorities : {
+                    Name      : "Priorities",
+                    Enabled   : true,
+                    Navigable : true,
+                },
+                Goals : {
+                    Name      : "Goals",
+                    Enabled   : true,
+                    Navigable : true,
+                },
+                DeviceIntegration : {
+                    Name      : "Device Integration",
+                    Enabled   : true,
+                    Navigable : true,
+                }
             },
-            AddOns : {
-                HospitalSystems          : false,
-                Gamification             : false,
-                LearningJourney          : false,
-                Community                : false,
-                PatientSelfServicePortal : false,
-                PatientStatusReports     : false,
-                DocumentsManagement      : false,
-                AppointmentReminders     : false,
-                Organizations            : false,
-                Cohorts                  : false,
-                Notifications            : true,
-                Newsfeeds                : false,
-                Notices                  : false,
+
+            EHR : {
+                FHIRStorage : {
+                    Name      : "FHIR Storage",
+                    Enabled   : false,
+                    Navigable : false,
+                },
+                EHRIntegration : {
+                    Name      : "EHR Integration",
+                    Enabled   : false,
+                    Navigable : false,
+                },
+                ABDM : {
+                    Name      : "ABDM",
+                    Enabled   : false,
+                    Navigable : false,
+                },
             },
+
+            Community : {
+                UserGroups : {
+                    Name      : "User Groups",
+                    Enabled   : true,
+                    Navigable : true,
+                },
+                Chat : {
+                    Name      : "Chat",
+                    Enabled   : true,
+                    Navigable : true,
+                },
+            },
+
+            Research : {
+                Cohorts : {
+                    Name      : "Cohorts",
+                    Enabled   : false,
+                    Navigable : false,
+                },
+            },
+
+            Affiliations : {
+                HealthCenters : {
+                    Name      : "Health Centers",
+                    Enabled   : true,
+                    Navigable : true,
+                },
+                HealthSystems : {
+                    Name      : "Health Systems",
+                    Enabled   : true,
+                    Navigable : true,
+                },
+            },
+
+            Miscellaneous : {
+                Gamification : {
+                    Name      : "Gamification",
+                    Enabled   : false,
+                    Navigable : false,
+                },
+                Notifications : {
+                    Name      : "Notifications",
+                    Enabled   : true,
+                    Navigable : true,
+                },
+                Newsfeeds : {
+                    Name      : "News feeds",
+                    Enabled   : false,
+                    Navigable : false,
+                },
+                Notices : {
+                    Name      : "Notices",
+                    Enabled   : false,
+                    Navigable : false,
+                },
+            },
+
+            Educational : {
+                Courses : {
+                    Name      : "Courses",
+                    Enabled   : true,
+                    Navigable : true,
+                },
+                LearningJourney : {
+                    Name      : "Learning Journey",
+                    Enabled   : false,
+                    Navigable : false,
+                },
+                KnowledgeNuggets : {
+                    Name      : "Knowledge Nuggets",
+                    Enabled   : true,
+                    Navigable : true,
+                },
+            },
+
             Analysis : {
-                CustomQueries : false,
-                Quicksight    : false,
+                CustomQueries : {
+                    Name      : "Custom Queries",
+                    Enabled   : false,
+                    Navigable : false,
+                },
+                Quicksight : {
+                    Name      : "Quicksight",
+                    Enabled   : false,
+                    Navigable : false,
+                },
             },
+
+            General : {
+                ViewPersonRoles : {
+                    Name      : "View PersonRoles",
+                    Enabled   : true,
+                    Navigable : true,
+                },
+                ViewUsers : {
+                    Name      : "View Users",
+                    Enabled   : true,
+                    Navigable : true,
+                },
+            }
         };
 
-        const patientApp: PatientAppSettings = {
-            Exercise          : true,
-            Nutrition         : true,
-            DeviceIntegration : {
-                Terra     : false,
-                SenseSemi : false,
-            },
+        const followup: FollowupSettings = {
+            Source : FollowupSource.None
         };
-
+       
         const chatBot: ChatBotSettings = {
-            Name            : 'Chatbot',
-            Icon            : null,
-            Description     : 'Chatbot for patient interaction',
-            DefaultLanguage : 'en',
-            MessageChannels : {
+            Name                : 'Chatbot',
+            OrganizationName    : null,
+            OrganizationLogo    : null,
+            OrganizationWebsite : null,
+            Favicon             : null,
+            Description         : null,
+            DefaultLanguage     : 'en',
+            SchemaName          : null,
+            MessageChannels     : {
                 WhatsApp : false,
-                Telegram : true,
+                Telegram : false,
             },
             SupportChannels : {
                 ClickUp : false,
@@ -158,46 +348,15 @@ export class TenantSettingsService {
             Personalization     : false,
             LocationContext     : false,
             Localization        : true,
-            AppointmentFollowup : {
-                UploadAppointmentDocument : false,
-                AppointmentEhrApi         : false,
-                AppointmentEhrApiDetails  : {
-                    CustomApi        : false,
-                    FhirApi          : false,
-                    CustomApiDetails : {
-                        Url         : null,
-                        Credentials : {
-                            UserName : null,
-                            Password : null,
-                        }
-                    },
-                    FhirApiDetails : {
-                        Url         : null,
-                        Credentials : {
-                            UserName : null,
-                            Password : null,
-                        }
-                    },
-                    FollowupMechanism : {
-                        ManualTrigger     : false,
-                        ScheduleTrigger   : false,
-                        ScheduleFrequency : {
-                            Daily      : false,
-                            Weekly     : false,
-                            WeekDay    : WeekDay.Monday,
-                            Monthly    : false,
-                            DayOfMonth : 1
-                        },
-                        ScheduleTiming   : null,
-                        FollowupMessages : false,
-                        MessageFrequency : {
-                            OneDayBefore  : false,
-                            OneHourBefore : false,
-                            OneWeekBefore : false
-                        }
-                    }
-                }
-            }
+            RemindersMedication : false,
+            QnA                 : false,
+            Consent             : true,
+            WelcomeMessage      : true,
+            Feedback            : false,
+            ReminderAppointment : false,
+            AppointmentFollowup : false,
+            ConversationHistory : false,
+            Emojis              : false
         };
 
         const forms: FormsIntegrations = {
@@ -213,11 +372,11 @@ export class TenantSettingsService {
         };
 
         const model: TenantSettingsDomainModel = {
-            UserInterfaces : healthcareInterfaces,
-            Common         : common,
-            PatientApp     : patientApp,
-            ChatBot        : chatBot,
-            Forms          : formSettings,
+            Common   : common,
+            Followup : followup,
+            ChatBot  : chatBot,
+            Forms    : formSettings,
+            Consent  : null
         };
 
         return model;

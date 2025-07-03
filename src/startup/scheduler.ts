@@ -54,8 +54,8 @@ export class Scheduler {
                 this.scheduleFetchDataFromDevices();
                 this.scheduleCurrentTimezoneUpdate();
                 this.scheduleDailyStatistics();
-                this.scheduleStrokeSurvey();
-                this.scheduleStrokeSurveyTextMessage();
+                // this.scheduleStrokeSurvey();
+                // this.scheduleStrokeSurveyTextMessage();
                 
                 //this.scheduleDaillyPatientTasks();
                 this.scheduleCareplanRegistrationRemindersForOldUsers();
@@ -195,25 +195,27 @@ export class Scheduler {
     //     });
     // };
 
-    private scheduleStrokeSurvey = () => {
-        cron.schedule(Scheduler._schedules['ScheduleStrokeSurvey'], () => {
-            (async () => {
-                Logger.instance().log('Running scheduled jobs: Schedule Stroke Survey notification...');
-                var customActionHandler = new CustomActionsHandler();
-                await customActionHandler.scheduleStrokeSurvey();
-            })();
-        });
-    };
+    //Shut down - Stroke survey text mesages on June 17, 2025
+    // private scheduleStrokeSurvey = () => {
+    //     cron.schedule(Scheduler._schedules['ScheduleStrokeSurvey'], () => {
+    //         (async () => {
+    //             Logger.instance().log('Running scheduled jobs: Schedule Stroke Survey notification...');
+    //             var customActionHandler = new CustomActionsHandler();
+    //             await customActionHandler.scheduleStrokeSurvey();
+    //         })();
+    //     });
+    // };
 
-    private scheduleStrokeSurveyTextMessage = () => {
-        cron.schedule(Scheduler._schedules['ScheduleStrokeSurveyTextMessage'], () => {
-            (async () => {
-                Logger.instance().log('Running scheduled jobs: Schedule Stroke Survey text message...');
-                var customActionHandler = new CustomActionsHandler();
-                await customActionHandler.scheduleStrokeSurveyTextMessage();
-            })();
-        });
-    };
+    //Shut down - Stroke survey text mesages on June 17, 2025
+    // private scheduleStrokeSurveyTextMessage = () => {
+    //     cron.schedule(Scheduler._schedules['ScheduleStrokeSurveyTextMessage'], () => {
+    //         (async () => {
+    //             Logger.instance().log('Running scheduled jobs: Schedule Stroke Survey text message...');
+    //             var customActionHandler = new CustomActionsHandler();
+    //             await customActionHandler.scheduleStrokeSurveyTextMessage();
+    //         })();
+    //     });
+    // };
 
     private scheduleReminderOnNoActionToDonationRequest = () => {
         cron.schedule(Scheduler._schedules['ReminderOnNoActionToDonationRequest'], () => {

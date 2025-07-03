@@ -71,6 +71,8 @@ export class CareplanService implements IUserActionService {
             throw new Error('Patient does not exist!');
         }
 
+        var tenantId = patient.User.TenantId;
+
         var participantId = null;
         const provider = enrollmentDetails.Provider;
         const planCode = enrollmentDetails.PlanCode;
@@ -106,6 +108,7 @@ export class CareplanService implements IUserActionService {
                 WeightInLbs    : null,
                 MaritalStatus  : null,
                 ZipCode        : null,
+                TenantId       : tenantId
             };
 
             participantId = await this._handler.registerPatientWithProvider(
@@ -121,6 +124,7 @@ export class CareplanService implements IUserActionService {
 
         enrollmentDetails.ParticipantId = participant.ParticipantId;
         enrollmentDetails.Gender = patient.User.Person.Gender;
+        enrollmentDetails.TenantId = tenantId;
 
         return await this.enrollAndCreateTask(enrollmentDetails);
     };

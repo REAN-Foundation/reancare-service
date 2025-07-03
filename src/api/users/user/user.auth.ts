@@ -185,6 +185,14 @@ export class UserAuth {
 
     /////////////////////////////////////////////////////////
 
+    static readonly validateUserById: AuthOptions = {
+        ...DefaultAuthOptions,
+        Context     : `${this._baseContext}.ValidateUserById`,
+        Ownership   : ResourceOwnership.System,
+        ActionScope : ActionScope.Public,
+        RequestType : RequestType.GetOne,
+    };
+
     // The following are implicitly handled through concrete roles
     // or by other means
     // static readonly update: AuthOptions = {

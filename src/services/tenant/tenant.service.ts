@@ -1,23 +1,27 @@
 import { ITenantRepo } from '../../database/repository.interfaces/tenant/tenant.repo.interface';
 import { injectable, inject } from 'tsyringe';
-import { TenantDomainModel } from '../../domain.types/tenant/tenant.domain.model';
-import { TenantDto } from '../../domain.types/tenant/tenant.dto';
+import { TenantDomainModel, TenantSecretDomainModel, GetSecretDomainModel, TenantSchemaDomainModel } from '../../domain.types/tenant/tenant.domain.model';
+import { TenantDto, TenantSchemaDto } from '../../domain.types/tenant/tenant.dto';
 import { TenantSearchFilters, TenantSearchResults } from '../../domain.types/tenant/tenant.search.types';
 import { uuid } from '../../domain.types/miscellaneous/system.types';
-import { ChatBotSettings, CommonSettings, FormsIntegrations, FormsSettings, PatientAppSettings, TenantSettingsDomainModel, UserInterfaces, WeekDay } from '../../domain.types/tenant/tenant.settings.types';
+import { ChatBotSettings, CommonSettings, FormsIntegrations, FormsSettings, TenantSettingsDomainModel, FollowupSettings, FollowupSource, BotSecrets } from '../../domain.types/tenant/tenant.settings.types';
 import { ITenantSettingsRepo } from '../../database/repository.interfaces/tenant/tenant.settings.interface';
+import { Injector } from '../../startup/injector';
+import { AwsLambdaService } from '../../modules/cloud.services/aws.service';
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 @injectable()
 export class TenantService {
 
-    constructor(
+     _lambdaService: AwsLambdaService = Injector.Container.resolve(AwsLambdaService);
+
+     constructor(
         @inject('ITenantRepo') private _tenantRepo: ITenantRepo,
         @inject('ITenantSettingsRepo') private _tenantSettingsRepo: ITenantSettingsRepo,
-    ) {}
+     ) {}
 
-    //#region Publics
+     //#region Publics
 
     create = async (model: TenantDomainModel): Promise<TenantDto> => {
         return await this._tenantRepo.create(model);
@@ -42,6 +46,23 @@ export class TenantService {
 
     public delete = async (id: uuid, hardDelete: boolean = false): Promise<boolean> => {
         return await this._tenantRepo.delete(id, hardDelete);
+    };
+
+    public createBotSchema = async (lambdaFunctionName: string, model: TenantSchemaDomainModel):
+    Promise<TenantSchemaDto> => {
+        return await this._lambdaService.invokeLambdaFunction<TenantSchemaDto>(lambdaFunctionName, model);
+    };
+
+    public createSecret = async (model: TenantSecretDomainModel): Promise<BotSecrets> => {
+        return this._lambdaService.invokeLambdaFunction<BotSecrets>('create-secrets-lambda-function', model);
+    };
+
+    public getSecret = async (model: GetSecretDomainModel): Promise<BotSecrets> => {
+        return this._lambdaService.invokeLambdaFunction<BotSecrets>('get-secrets-lambda-function', model );
+    };
+
+    public updateSecret = async (model: TenantSecretDomainModel): Promise<BotSecrets> => {
+        return this._lambdaService.invokeLambdaFunction<BotSecrets>('update-secrets-lambda-function', model);
     };
 
     public getTenantWithPhone = async (phone: string): Promise<TenantDto> => {
@@ -99,62 +120,256 @@ export class TenantService {
 
     private getDefaultSettings = (): TenantSettingsDomainModel => {
 
-        const healthcareInterfaces: UserInterfaces = {
-            PatientApp : true,
-            ChatBot    : true,
-            Forms      : true,
-        };
         const common: CommonSettings = {
+
+            UserInterfaces : {
+                PatientApp    : true,
+                ChatBot       : true,
+                Forms         : false,
+                PatientPortal : true,
+                Followup      : false,
+            },
+
             Clinical : {
-                Vitals          : true,
-                LabRecords      : true,
-                Symptoms        : true,
-                DrugsManagement : true,
-                Medications     : true,
-                Careplans       : true,
-                Assessments     : true,
+                Vitals : {
+                    Name      : "Vitals",
+                    Enabled   : true,
+                    Navigable : true,
+                },
+                LabRecords : {
+                    Name      : "Lab Records",
+                    Enabled   : true,
+                    Navigable : true,
+                },
+                Symptoms : {
+                    Name      : "Symptoms",
+                    Enabled   : true,
+                    Navigable : true,
+                },
+                SymptomAssessments : {
+                    Name      : "Symptom Assessments",
+                    Enabled   : true,
+                    Navigable : true,
+                },
+                DrugsManagement : {
+                    Name      : "Drugs Management",
+                    Enabled   : true,
+                    Navigable : true,
+                },
+                Medications : {
+                    Name      : "Medications",
+                    Enabled   : true,
+                    Navigable : true,
+                },
+                Careplans : {
+                    Name      : "Careplans",
+                    Enabled   : false,
+                    Navigable : false,
+                },
+                Assessments : {
+                    Name      : "Assessments",
+                    Enabled   : true,
+                    Navigable : true,
+                },
+                DailyAssessments : {
+                    Name      : "Daily Assessments",
+                    Enabled   : true,
+                    Navigable : true,
+                },
+                Appointments : {
+                    Name      : "Appointments",
+                    Enabled   : true,
+                    Navigable : true,
+                },
+                Visits : {
+                    Name      : "Visits",
+                    Enabled   : true,
+                    Navigable : true,
+                },
+                Orders : {
+                    Name      : "Orders",
+                    Enabled   : true,
+                    Navigable : true,
+                },
+                Documents : {
+                    Name      : "Documents",
+                    Enabled   : true,
+                    Navigable : true,
+                },
+                PatientHealthReports : {
+                    Name      : "Patient HealthReports",
+                    Enabled   : true,
+                    Navigable : true,
+                },
             },
-            External : {
-                FHIRStorage     : true,
-                EHRIntegration  : true,
-                ABDMIntegration : true,
+
+            Wellness : {
+                Exercise : {
+                    Name      : "Exercise",
+                    Enabled   : true,
+                    Navigable : true,
+                },
+                Nutrition : {
+                    Name      : "Nutrition",
+                    Enabled   : true,
+                    Navigable : true,
+                },
+                Meditation : {
+                    Name      : "Meditation",
+                    Enabled   : true,
+                    Navigable : true,
+                },
+                Priorities : {
+                    Name      : "Priorities",
+                    Enabled   : true,
+                    Navigable : true,
+                },
+                Goals : {
+                    Name      : "Goals",
+                    Enabled   : true,
+                    Navigable : true,
+                },
+                DeviceIntegration : {
+                    Name      : "Device Integration",
+                    Enabled   : true,
+                    Navigable : true,
+                }
             },
-            AddOns : {
-                HospitalSystems          : true,
-                Gamification             : true,
-                LearningJourney          : true,
-                Community                : true,
-                PatientSelfServicePortal : true,
-                PatientStatusReports     : true,
-                DocumentsManagement      : true,
-                AppointmentReminders     : true,
-                Organizations            : true,
-                Cohorts                  : true,
-                Notifications            : true,
-                Newsfeeds                : true,
-                Notices                  : true,
+
+            EHR : {
+                FHIRStorage : {
+                    Name      : "FHIR Storage",
+                    Enabled   : false,
+                    Navigable : false,
+                },
+                EHRIntegration : {
+                    Name      : "EHR Integration",
+                    Enabled   : false,
+                    Navigable : false,
+                },
+                ABDM : {
+                    Name      : "ABDM",
+                    Enabled   : false,
+                    Navigable : false,
+                },
             },
+
+            Community : {
+                UserGroups : {
+                    Name      : "User Groups",
+                    Enabled   : true,
+                    Navigable : true,
+                },
+                Chat : {
+                    Name      : "Chat",
+                    Enabled   : true,
+                    Navigable : true,
+                },
+            },
+
+            Research : {
+                Cohorts : {
+                    Name      : "Cohorts",
+                    Enabled   : false,
+                    Navigable : false,
+                },
+            },
+
+            Affiliations : {
+                HealthCenters : {
+                    Name      : "Health Centers",
+                    Enabled   : true,
+                    Navigable : true,
+                },
+                HealthSystems : {
+                    Name      : "Health Systems",
+                    Enabled   : true,
+                    Navigable : true,
+                },
+            },
+
+            Miscellaneous : {
+                Gamification : {
+                    Name      : "Gamification",
+                    Enabled   : false,
+                    Navigable : false,
+                },
+                Notifications : {
+                    Name      : "Notifications",
+                    Enabled   : true,
+                    Navigable : true,
+                },
+                Newsfeeds : {
+                    Name      : "News feeds",
+                    Enabled   : false,
+                    Navigable : false,
+                },
+                Notices : {
+                    Name      : "Notices",
+                    Enabled   : false,
+                    Navigable : false,
+                },
+            },
+
+            Educational : {
+                Courses : {
+                    Name      : "Courses",
+                    Enabled   : true,
+                    Navigable : true,
+                },
+                LearningJourney : {
+                    Name      : "Learning Journey",
+                    Enabled   : false,
+                    Navigable : false,
+                },
+                KnowledgeNuggets : {
+                    Name      : "Knowledge Nuggets",
+                    Enabled   : true,
+                    Navigable : true,
+                },
+            },
+
             Analysis : {
-                CustomQueries : true,
-                Quicksight    : true,
+                CustomQueries : {
+                    Name      : "Custom Queries",
+                    Enabled   : false,
+                    Navigable : false,
+                },
+                Quicksight : {
+                    Name      : "Quicksight",
+                    Enabled   : false,
+                    Navigable : false,
+                },
             },
+
+            General : {
+                ViewPersonRoles : {
+                    Name      : "View PersonRoles",
+                    Enabled   : true,
+                    Navigable : true,
+                },
+                ViewUsers : {
+                    Name      : "View Users",
+                    Enabled   : true,
+                    Navigable : true,
+                },
+            }
         };
-        
-        const patientApp: PatientAppSettings = {
-            Exercise          : true,
-            Nutrition         : true,
-            DeviceIntegration : {
-                Terra     : true,
-                SenseSemi : true,
-            },
+
+        const followup: FollowupSettings = {
+            Source : FollowupSource.None,
         };
 
         const chatBot: ChatBotSettings = {
-            Name            : 'Chatbot',
-            Icon            : null,
-            Description     : 'Chatbot for patient interaction',
-            DefaultLanguage : 'en',
-            MessageChannels : {
+            Name                : 'Chatbot',
+            OrganizationName    : null,
+            OrganizationLogo    : null,
+            OrganizationWebsite : null,
+            Favicon             : null,
+            Description         : null,
+            DefaultLanguage     : 'en',
+            SchemaName          : null,
+            MessageChannels     : {
                 WhatsApp : true,
                 Telegram : true,
             },
@@ -163,69 +378,38 @@ export class TenantService {
                 Slack   : true,
                 Email   : true,
             },
-            Personalization     : true,
-            LocationContext     : true,
+            Personalization     : false,
+            LocationContext     : false,
             Localization        : true,
-            AppointmentFollowup : {
-                UploadAppointmentDocument : false,
-                AppointmentEhrApi         : false,
-                AppointmentEhrApiDetails  : {
-                    CustomApi        : false,
-                    FhirApi          : false,
-                    CustomApiDetails : {
-                        Url         : null,
-                        Credentials : {
-                            UserName : null,
-                            Password : null,
-                        }
-                    },
-                    FhirApiDetails : {
-                        Url         : null,
-                        Credentials : {
-                            UserName : null,
-                            Password : null,
-                        }
-                    },
-                    FollowupMechanism : {
-                        ManualTrigger     : false,
-                        ScheduleTrigger   : false,
-                        ScheduleFrequency : {
-                            Daily      : false,
-                            Weekly     : false,
-                            WeekDay    : WeekDay.Monday,
-                            Monthly    : false,
-                            DayOfMonth : 1
-                        },
-                        ScheduleTiming   : null,
-                        FollowupMessages : false,
-                        MessageFrequency : {
-                            OneDayBefore  : false,
-                            OneHourBefore : false,
-                            OneWeekBefore : false
-                        }
-                    }
-                }
-            }
+            RemindersMedication : false,
+            QnA                 : false,
+            Consent             : true,
+            WelcomeMessage      : true,
+            Feedback            : false,
+            ReminderAppointment : false,
+            AppointmentFollowup : false,
+            ConversationHistory : false,
+            Emojis              : false
         };
-            
+
         const forms: FormsIntegrations = {
             KoboToolbox : true,
             GoogleForm  : true,
             ODK         : true,
         };
-            
+
         const formSettings: FormsSettings = {
             Integrations   : forms,
             OfflineSupport : true,
             FieldApp       : true,
         };
-            
+
         const model: TenantSettingsDomainModel = {
-            UserInterfaces : healthcareInterfaces,
-            Common         : common,
-            PatientApp     : patientApp,
-            ChatBot        : chatBot,
-            Forms          : formSettings,
+            Common   : common,
+            Followup : followup,
+            ChatBot  : chatBot,
+            Forms    : formSettings,
+            Consent  : null
         };
         return model;
     };

@@ -489,4 +489,20 @@ export class UserController extends BaseController {
         }
     };
 
+    validateUserById = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+            const id: string = await UserValidator.getById(request);
+            const user = await this._service.getById(id);
+            if (user == null) {
+                ResponseHandler.failure(request, response, 'User not found.', 404);
+                return;
+            }
+            ResponseHandler.success(request, response, 'User retrieved successfully!', 200, {
+                success : true,
+            });
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
 }

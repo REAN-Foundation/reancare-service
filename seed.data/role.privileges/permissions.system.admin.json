@@ -631,7 +631,11 @@
             "GetTenantStats": true,
             "PromoteTenantUserAsAdmin": true,
             "Search": true,
-            "Update": true
+            "Update": true,
+            "CreateBotSchema": true,
+            "CreateSecret": true,
+            "GetSecret": true,
+            "UpdateSecret": true
         },
         "Settings": {
             "GetTenantSettingsTypes": true,
@@ -752,7 +756,8 @@
             "Search": true,
             "Update": true,
             "DeleteProfileImage": true,
-            "Delete": true
+            "Delete": true,
+            "ValidateUserById":true
         },
         "UserTask": {
             "CancelTask": true,
@@ -885,5 +890,5 @@
         "Update": true,
         "Delete": true
     }
-   
+
 }

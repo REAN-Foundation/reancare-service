@@ -63,7 +63,16 @@ export class AssessmentMedicationHelper {
                 
                 const personMedication = await this._medicationRepo.create(medicationRecord);
             }
-
+            if (fieldName === 'Frequency') {
+                const a = answer as SingleChoiceQueryAnswer;
+                const frequency = a.ChosenOption;
+                const medicationRecord : MedicationDomainModel = {
+                    PatientUserId : userId,
+                    FrequencyUnit : frequency,
+                };
+                
+                const personMedication = await this._medicationRepo.create(medicationRecord);
+            }
             else if (fieldName === 'Duration') {
                 const a = answer as IntegerQueryAnswer;
                 const duration = a.Value;
@@ -77,7 +86,6 @@ export class AssessmentMedicationHelper {
             else if (fieldName === 'Unit') {
                 const a = answer as IntegerQueryAnswer;
                 const hdl = a.Value;
-                const labRecordType = await this._labRecordRepo.getTypeByDisplayName(fieldName);
                 const medicationRecord : MedicationDomainModel = {
                     PatientUserId : userId,
                     Dose          : ,

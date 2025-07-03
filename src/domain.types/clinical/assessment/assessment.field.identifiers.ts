@@ -36,7 +36,7 @@ export const AssessmentFieldIdentifiers = [
     'Clinical:Medication:Frequency',
     'Clinical:Medication:Duration',
     'Clinical:Medication:Unit',
-    'Clinical:Symptoms',
+    'Clinical:Symptoms:Symptom',
     'Wellness:Nutrition:Vegetables',
     'Wellness:Nutrition:Fruits',
     'Wellness:Nutrition:WholeGrains',
@@ -44,8 +44,6 @@ export const AssessmentFieldIdentifiers = [
     'Wellness:Nutrition:SugaryDrinks',
     'Wellness:Nutrition:Water',
     'Welness:Nutrition:Alcohol',
-    'Wellness:Nutrition:Protein',
-    'Wellness:Nutrition:Salt',
     'Wellness:Exercise:StandingDuration',
     'Wellness:Exercise:StepCount',
     'Wellness:Exercise:ExerciseDuration'

@@ -16,10 +16,13 @@ import {
     DateQueryAnswer,
     FileQueryAnswer,
     BooleanQueryAnswer,
-    SkipQueryAnswer
+    SkipQueryAnswer,
+    QueryResponseType
 } from '../../../domain.types/clinical/assessment/assessment.types';
 import { MedicationDomainModel } from '../../../domain.types/clinical/medication/medication/medication.domain.model';
 import { IMedicationRepo } from '../../../database/repository.interfaces/clinical/medication/medication.repo.interface';
+import { MedicationDosageUnits } from '../../../domain.types/clinical/medication/medication/medication.types';
+
 @injectable()
 export class AssessmentMedicationHelper {
     
@@ -64,8 +67,21 @@ export class AssessmentMedicationHelper {
                 const personMedication = await this._medicationRepo.create(medicationRecord);
             }
             if (fieldName === 'Frequency') {
-                const a = answer as SingleChoiceQueryAnswer;
-                const frequency = a.ChosenOption;
+                const respType = answer.ResponseType;
+                let frequency = null;
+                if (respType === QueryResponseType.SingleChoiceSelection) {
+                     const a = answer as SingleChoiceQueryAnswer;
+                     const options = node.Options;
+                     const selectedOption = options.find((option) => option.Sequence === a.ChosenSequence);
+                     const fieldValue = selectedOption?.Text;
+                      if (fieldValue) {
+                        frequency = fieldValue;
+                    }
+                }
+                else if (respType === QueryResponseType.Text) {
+                    const a = answer as TextQueryAnswer;
+                    frequency = a.Text;
+                }
                 const medicationRecord : MedicationDomainModel = {
                     PatientUserId : userId,
                     FrequencyUnit : frequency,
@@ -85,11 +101,11 @@ export class AssessmentMedicationHelper {
 
             else if (fieldName === 'Unit') {
                 const a = answer as IntegerQueryAnswer;
-                const hdl = a.Value;
+                const dose = a.Value;
                 const medicationRecord : MedicationDomainModel = {
                     PatientUserId : userId,
-                    Dose          : ,
-                    DosageUnit    : 
+                    Dose          : dose,
+                    DosageUnit: (FieldIdentifierUnit as MedicationDosageUnits) ?? MedicationDosageUnits.Unit
                 };
                 const personMedication = await this._medicationRepo.create(medicationRecord);
                 

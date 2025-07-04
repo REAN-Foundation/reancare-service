@@ -20,6 +20,11 @@ import {
 } from '../../../domain.types/clinical/assessment/assessment.types';
 import { PhysicalActivityDomainModel } from '../../../domain.types/wellness/exercise/physical.activity/physical.activity.domain.model';
 import { IPhysicalActivityRepo } from '../../../database/repository.interfaces/wellness/exercise/physical.activity.repo.interface';
+import { StepCountDomainModel } from '../../../domain.types/wellness/daily.records/step.count/step.count.domain.model';
+import { IStepCountRepo } from '../../../database/repository.interfaces/wellness/daily.records/step.count.interface';
+import { StandDomainModel } from '../../../domain.types/wellness/daily.records/stand/stand.domain.model';
+import { IStandRepo } from '../../../database/repository.interfaces/wellness/daily.records/stand.repo.interface';
+
 @injectable()
 export class AssessmentExerciseHelper {
     
@@ -27,7 +32,9 @@ export class AssessmentExerciseHelper {
         @inject('IPersonRepo') private _personRepo: IPersonRepo,
         @inject('IUserRepo') private _userRepo: IUserRepo,
         @inject('IPatientHealthProfileRepo') private _patientHealthProfileRepo: IHealthProfileRepo,
-        @inject('IPhysicalActivityRepo') private _physicalActivityRepo: IPhysicalActivityRepo
+        @inject('IPhysicalActivityRepo') private _physicalActivityRepo: IPhysicalActivityRepo,
+        @inject('IStepCountRepo') private _stepCountRepo: IStepCountRepo,
+        @inject('IStandRepo') private _standRepo: IStandRepo
     ) {
     }
 
@@ -56,14 +63,27 @@ export class AssessmentExerciseHelper {
             if (fieldName === 'StandingDuration') {
                 const a = answer as IntegerQueryAnswer;
                 const standing = a.Value;
-                const exerciseRecord : PhysicalActivityDomainModel = {
+                const exerciseRecord : StandDomainModel = {
                     PatientUserId : userId,
-                    Exercise      : 'Standing',
-                    Provider      : assessment.Provider,
-                    DurationInMin : standing
+                    Stand         : standing,
+                    Unit          : 'min',
+                    RecordDate    : new Date()
                 };
                 
-                const personStanding = await this._physicalActivityRepo.create(exerciseRecord);
+                const personStanding = await this._standRepo.create(exerciseRecord);
+            }
+             else if (fieldName === 'StepCount') {
+                const a = answer as IntegerQueryAnswer;
+                const stepCount = a.Value;
+                const exerciseRecord : StepCountDomainModel = {
+                    PatientUserId : userId,
+                    Provider      : assessment.Provider,
+                    StepCount     : stepCount,
+                    Unit          : 'steps',
+                    RecordDate    : new Date()
+                };
+                
+                const personStepCount = await this._stepCountRepo.create(exerciseRecord);
             }
              else if (fieldName === 'ExerciseDuration') {
                 const a = answer as IntegerQueryAnswer;
@@ -75,7 +95,7 @@ export class AssessmentExerciseHelper {
                     DurationInMin : exercise
                 };
                 
-                const personStanding = await this._physicalActivityRepo.create(exerciseRecord);
+                const personExercise = await this._physicalActivityRepo.create(exerciseRecord);
             }
 
         }

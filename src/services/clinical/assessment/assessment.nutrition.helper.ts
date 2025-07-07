@@ -73,72 +73,72 @@ export class AssessmentNutritionHelper {
             else if (fieldName === 'Fruits') {
                 const a = answer as IntegerQueryAnswer;
                 const fruits = a.Value;
-                const nutritionRecord : FoodConsumptionDomainModel = {
+                const nutritionFruitsRecord : FoodConsumptionDomainModel = {
                     PatientUserId : userId,
                     FoodTypes     : ["Fruits"],
                     Servings      : fruits,
                     Provider      : assessment.Provider,
                 };
-                const personFruits = await this._foodConsumptionRepo.create(nutritionRecord);
+                const personFruits = await this._foodConsumptionRepo.create(nutritionFruitsRecord);
             }
 
             else if (fieldName === 'WholeGrain') {
                 const a = answer as IntegerQueryAnswer;
                 const whole_grain = a.Value;
-                const nutritionRecord : FoodConsumptionDomainModel = {
+                const nutritionWholeGrainRecord : FoodConsumptionDomainModel = {
                     PatientUserId : userId,
                     FoodTypes     : ["Whole Grains"],
                     Servings      : whole_grain,
                     Provider      : assessment.Provider,
                 };
-                const personWholegrain = await this._foodConsumptionRepo.create(nutritionRecord);
+                const personWholegrain = await this._foodConsumptionRepo.create(nutritionWholeGrainRecord);
             }
 
             else if (fieldName === 'SeaFood') {
                 const a = answer as IntegerQueryAnswer;
                 const seafood = a.Value;
-                const nutritionRecord : FoodConsumptionDomainModel = {
+                const nutritionSeafoodRecord : FoodConsumptionDomainModel = {
                     PatientUserId : userId,
                     FoodTypes     : ["Sea Food"],
                     Servings      : seafood,
                     Provider      : assessment.Provider,
                 };
-                const personSeafood = await this._foodConsumptionRepo.create(nutritionRecord);
+                const personSeafood = await this._foodConsumptionRepo.create(nutritionSeafoodRecord);
                 
             }
 
             else if (fieldName === 'SugaryDrinks') {
                 const a = answer as IntegerQueryAnswer;
                 const sugary_drinks = a.Value;
-                const nutritionRecord : FoodConsumptionDomainModel = {
+                const nutritionDrinksRecord : FoodConsumptionDomainModel = {
                     PatientUserId : userId,
                     FoodTypes     : ["Sugary Drinks"],
                     Servings      : sugary_drinks,
                     Provider      : assessment.Provider,
                 };
-                const personSugarydrinks = await this._foodConsumptionRepo.create(nutritionRecord);
+                const personSugarydrinks = await this._foodConsumptionRepo.create(nutritionDrinksRecord);
             }
             else if (fieldName === 'Water') {
                 const a = answer as IntegerQueryAnswer;
                 const water = a.Value;
-                const nutritionRecord : WaterConsumptionDomainModel = {
+                const waterRecord : WaterConsumptionDomainModel = {
                     PatientUserId : userId,
                     Provider      : assessment.Provider,
                     Volume        : water
                 };
-                const personWater = await this._waterConsumptionRepo.create(nutritionRecord);
+                const personWater = await this._waterConsumptionRepo.create(waterRecord);
             }
             else if (fieldName === 'Alcohol') {
                 const a = answer as IntegerQueryAnswer;
                 const alcohol = a.Value;
-               const nutritionRecord : FoodConsumptionDomainModel = {
+               const nutritionAlcRecord : FoodConsumptionDomainModel = {
                     PatientUserId : userId,
                     FoodTypes     : ["Alcohol"],
                     Servings      : alcohol,
                     ServingUnit  : "Drinks",
                     Provider      : assessment.Provider,
                 };
-                const personA1c = await this._foodConsumptionRepo.create(nutritionRecord);
+                const personA1c = await this._foodConsumptionRepo.create(nutritionAlcRecord);
             }
         }
         catch (error) {

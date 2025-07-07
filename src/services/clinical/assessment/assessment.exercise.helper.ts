@@ -63,19 +63,19 @@ export class AssessmentExerciseHelper {
             if (fieldName === 'StandingDuration') {
                 const a = answer as IntegerQueryAnswer;
                 const standing = a.Value;
-                const exerciseRecord : StandDomainModel = {
+                const standingRecord : StandDomainModel = {
                     PatientUserId : userId,
                     Stand         : standing,
                     Unit          : 'min',
                     RecordDate    : new Date()
                 };
                 
-                const personStanding = await this._standRepo.create(exerciseRecord);
+                const personStanding = await this._standRepo.create(standingRecord);
             }
              else if (fieldName === 'StepCount') {
                 const a = answer as IntegerQueryAnswer;
                 const stepCount = a.Value;
-                const exerciseRecord : StepCountDomainModel = {
+                const stepCountRecord : StepCountDomainModel = {
                     PatientUserId : userId,
                     Provider      : assessment.Provider,
                     StepCount     : stepCount,
@@ -83,19 +83,19 @@ export class AssessmentExerciseHelper {
                     RecordDate    : new Date()
                 };
                 
-                const personStepCount = await this._stepCountRepo.create(exerciseRecord);
+                const personStepCount = await this._stepCountRepo.create(stepCountRecord);
             }
              else if (fieldName === 'ExerciseDuration') {
                 const a = answer as IntegerQueryAnswer;
                 const exercise = a.Value;
-                const exerciseRecord : PhysicalActivityDomainModel = {
+                const exerciseDurationRecord : PhysicalActivityDomainModel = {
                     PatientUserId : userId,
                     Exercise      : 'Exercise',
                     Provider      : assessment.Provider,
                     DurationInMin : exercise
                 };
                 
-                const personExercise = await this._physicalActivityRepo.create(exerciseRecord);
+                const personExerciseDuration = await this._physicalActivityRepo.create(exerciseDurationRecord);
             }
 
         }

@@ -82,32 +82,32 @@ export class AssessmentMedicationHelper {
                     const a = answer as TextQueryAnswer;
                     frequency = a.Text;
                 }
-                const medicationRecord : MedicationDomainModel = {
+                const medicationFrequencyRecord : MedicationDomainModel = {
                     PatientUserId : userId,
                     FrequencyUnit : frequency,
                 };
                 
-                const personMedication = await this._medicationRepo.create(medicationRecord);
+                const personMedicationFrequency = await this._medicationRepo.create(medicationFrequencyRecord);
             }
             else if (fieldName === 'Duration') {
                 const a = answer as IntegerQueryAnswer;
                 const duration = a.Value;
-                const medicationRecord : MedicationDomainModel = {
+                const medicationDurationRecord : MedicationDomainModel = {
                     PatientUserId : userId,
                     Duration      : duration
                 };
-                const personLdl = await this._medicationRepo.create(medicationRecord);
+                const personMedicationDuration = await this._medicationRepo.create(medicationDurationRecord);
             }
 
             else if (fieldName === 'Unit') {
                 const a = answer as IntegerQueryAnswer;
                 const dose = a.Value;
-                const medicationRecord : MedicationDomainModel = {
+                const medicationUnitRecord : MedicationDomainModel = {
                     PatientUserId : userId,
                     Dose          : dose,
                     DosageUnit: (FieldIdentifierUnit as MedicationDosageUnits) ?? MedicationDosageUnits.Unit
                 };
-                const personMedication = await this._medicationRepo.create(medicationRecord);
+                const personMedicationUnit = await this._medicationRepo.create(medicationUnitRecord);
                 
             }
         }

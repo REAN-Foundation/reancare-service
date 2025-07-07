@@ -53,87 +53,15 @@ export class AssessmentSymptomsHelper {
                 return;
             }
 
-            if (fieldName === 'Cholesterol') {
-                const a = answer as IntegerQueryAnswer;
-                const cholesterol = a.Value;
-                const labRecordType = await this._labRecordRepo.getTypeByDisplayName(LabRecordType.TotalCholesterol);
-                const labRecord : LabRecordDomainModel = {
+            if (fieldName === 'Symptom') {
+                const a = answer as TextQueryAnswer;
+                const symptom = a.Text;
+                const symptomRecord : SymptomDomainModel = {
                     PatientUserId : userId,
-                    TypeName      : 'Cholesterol',
-                    TypeId        : labRecordType.id,
-                    PrimaryValue  : cholesterol,
-                    Unit          : FieldIdentifierUnit ?? 'mg/dL',
-                    RecordedAt    : new Date(),
-                    DisplayName   : LabRecordType.TotalCholesterol
+                    Comments      : symptom
                 };
                 
-                const personCholesterol = await this._labRecordRepo.create(labRecord);
-            }
-
-            else if (fieldName === 'Triglycerides') {
-                const a = answer as IntegerQueryAnswer;
-                const triglycerides = a.Value;
-                const labRecordType = await this._labRecordRepo.getTypeByDisplayName(LabRecordType.TriglycerideLevel);
-                const labRecord : LabRecordDomainModel = {
-                    PatientUserId : userId,
-                    TypeName      : 'Cholesterol',
-                    TypeId        : labRecordType.id,
-                    PrimaryValue  : triglycerides,
-                    Unit          : FieldIdentifierUnit ?? 'mg/dL',
-                    RecordedAt    : new Date(),
-                    DisplayName   : LabRecordType.TriglycerideLevel
-                };
-                const personTriglycerides = await this._labRecordRepo.create(labRecord);
-            }
-
-            else if (fieldName === 'LDL') {
-                const a = answer as IntegerQueryAnswer;
-                const ldl = a.Value;
-                const labRecordType = await this._labRecordRepo.getTypeByDisplayName(fieldName);
-                const labRecord : LabRecordDomainModel = {
-                    PatientUserId : userId,
-                    TypeName      : 'Cholesterol',
-                    TypeId        : labRecordType.id,
-                    PrimaryValue  : ldl,
-                    Unit          : FieldIdentifierUnit ?? 'mg/dL',
-                    RecordedAt    : new Date(),
-                    DisplayName   : fieldName
-                };
-                const personLdl = await this._labRecordRepo.create(labRecord);
-            }
-
-            else if (fieldName === 'HDL') {
-                const a = answer as IntegerQueryAnswer;
-                const hdl = a.Value;
-                const labRecordType = await this._labRecordRepo.getTypeByDisplayName(fieldName);
-                const labRecord : LabRecordDomainModel = {
-                    PatientUserId : userId,
-                    TypeName      : 'Cholesterol',
-                    TypeId        : labRecordType.id,
-                    PrimaryValue  : hdl,
-                    Unit          : FieldIdentifierUnit ?? 'mg/dL',
-                    RecordedAt    : new Date(),
-                    DisplayName   : fieldName
-                };
-                const personHdl = await this._labRecordRepo.create(labRecord);
-                
-            }
-
-            else if (fieldName === 'A1C') {
-                const a = answer as FloatQueryAnswer;
-                const a1c = a.Value;
-                const displayName = fieldName + ' ' + 'Level';
-                const labRecordType = await this._labRecordRepo.getTypeByDisplayName(displayName);
-                const labRecord : LabRecordDomainModel = {
-                    PatientUserId : userId,
-                    TypeName      : 'Cholesterol',
-                    TypeId        : labRecordType.id,
-                    PrimaryValue  : a1c,
-                    Unit          : FieldIdentifierUnit ?? '%',
-                    RecordedAt    : new Date(),
-                    DisplayName   : displayName
-                };
-                const personA1c = await this._labRecordRepo.create(labRecord);
+                const personSymptom = await this._symptomRepo.create(symptomRecord);
             }
         }
         catch (error) {

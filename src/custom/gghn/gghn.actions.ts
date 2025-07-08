@@ -150,7 +150,7 @@ export class GGHNActions {
             return null;
         }
 
-        if (!tenantSettings.ChatBot?.AppointmentFollowup ||
+        if (!tenantSettings.Common?.UserInterfaces?.Followup ||
             tenantSettings.Followup.Source === FollowupSource.None ||
             tenantSettings.Followup.Source === FollowupSource.File) {
             return null;

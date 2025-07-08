@@ -24,7 +24,7 @@ export class AssessmentTemplateValidator extends BaseValidator {
             ScoringApplicable      : request.body.ScoringApplicable ?? false,
             ProviderAssessmentCode : request.body.ProviderAssessmentCode !== undefined &&
             request.body.ProviderAssessmentCode !== null ? request.body.ProviderAssessmentCode : null,
-            Provider : request.body.Provider !== undefined && request.body.Provider ?
+            Provider : request.body.Provider !== undefined && request.body.Provider !== null ?
                 request.body.Provider : null,
             ServeListNodeChildrenAtOnce : request.body.ServeListNodeChildrenAtOnce ?? null,
             TotalNumberOfQuestions      : request.body.TotalNumberOfQuestions ?? null,

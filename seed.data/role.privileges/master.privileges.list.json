@@ -479,6 +479,7 @@
     "Tenant.Settings.GetTenantSettingsTypes",
     "Tenant.Settings.GetTenantSettings",
     "Tenant.Settings.GetTenantSettingsByType",
+    "Tenant.Settings.GetTenantSettingsByCode",
     "Tenant.Settings.UpdateTenantSettingsByType",
     "Tenant.Settings.UpdateTenantSettings",
     "Users.CustomTask.Create",

@@ -641,6 +641,7 @@
             "GetTenantSettingsTypes": true,
             "GetTenantSettings": true,
             "GetTenantSettingsByType": true,
+            "GetTenantSettingsByCode": true,
             "UpdateTenantSettingsByType": true,
             "UpdateTenantSettings": true
         }

@@ -11,7 +11,7 @@ import { CareplanCode } from '../../../domain.types/statistics/aha/aha.type';
 export interface ICareplanRepo {
 
     addPatientWithProvider(
-        patientUserId: uuid, provider: string, participantId: string): Promise<ParticipantDto>;
+        patientUserId: uuid, provider: string, participantId: string, tenantId: string): Promise<ParticipantDto>;
 
     getPatientRegistrationDetails(patientUserId: uuid, provider?: string): Promise<ParticipantDto>;
 

@@ -165,6 +165,7 @@ export class AssessmentTemplateValidator extends BaseValidator {
                 Score                       : request.body.Score ?? 0,
                 ChildrenNodeDisplayCodes    : [],
                 ChildrenNodeIds             : [],
+                Sequence                    : request.body.Sequence ?? undefined,
                 ServeListNodeChildrenAtOnce : request.body.ServeListNodeChildrenAtOnce,
                 Tags                        : request.body.Tags ?? [],
             };

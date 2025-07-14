@@ -641,6 +641,7 @@
             "GetTenantSettingsTypes": false,
             "GetTenantSettings": false,
             "GetTenantSettingsByType": false,
+            "GetTenantSettingsByCode": false,
             "UpdateTenantSettingsByType": false,
             "UpdateTenantSettings": false
         }

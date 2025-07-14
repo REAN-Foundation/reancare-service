@@ -16,16 +16,13 @@ export class AssessmentTemplateValidator extends BaseValidator {
 
     getDomainModel = (request: express.Request): AssessmentTemplateDomainModel => {
         const model: AssessmentTemplateDomainModel = {
-            Type        : request.body.Type ?? null,
-            Title       : request.body.Title ?? null,
-            Description : request.body.Description !== undefined && request.body.Description !== null ?
-                request.body.Description : null,
-            DisplayCode            : request.body.DisplayCode ?? null,
-            ScoringApplicable      : request.body.ScoringApplicable ?? false,
-            ProviderAssessmentCode : request.body.ProviderAssessmentCode !== undefined &&
-            request.body.ProviderAssessmentCode !== null ? request.body.ProviderAssessmentCode : null,
-            Provider : request.body.Provider !== undefined && request.body.Provider ?
-                request.body.Provider : null,
+            Type                        : request.body.Type ?? null,
+            Title                       : request.body.Title ?? null,
+            Description                 : request.body.Description ?? null,
+            DisplayCode                 : request.body.DisplayCode ?? null,
+            ScoringApplicable           : request.body.ScoringApplicable ?? false,
+            ProviderAssessmentCode      : request.body.ProviderAssessmentCode ?? null,
+            Provider                    : request.body.Provider ?? null,
             ServeListNodeChildrenAtOnce : request.body.ServeListNodeChildrenAtOnce ?? null,
             TotalNumberOfQuestions      : request.body.TotalNumberOfQuestions ?? null,
             TenantId                    : request.body.TenantId ?? request.currentUser.TenantId,

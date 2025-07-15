@@ -108,6 +108,14 @@ export class TenantAuth {
         RequestType : RequestType.GetOne,
     };
 
+    static readonly getSecretByCode: AuthOptions = {
+        ...DefaultAuthOptions,
+        Context     : `${this._baseContext}.GetSecretByCode`,
+        Ownership   : ResourceOwnership.Tenant,
+        ActionScope : ActionScope.System,
+        RequestType : RequestType.GetOne,
+    };
+
     static readonly updateSecret: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.UpdateSecret`,

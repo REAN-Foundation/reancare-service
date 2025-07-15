@@ -119,7 +119,7 @@ export class AssessmentHelperMapper {
         dto.Sequence = node.Sequence;
         dto.Score = node.Score;
         dto.ServeListNodeChildrenAtOnce = node.ServeListNodeChildrenAtOnce;
-        dto.RawData = node.RawData;
+        dto.RawData = node.RawData ? JSON.parse(node.RawData) : {};
         dto.Tags = node.Tags ? JSON.parse(node.Tags) : [];
         dto.Required = node.Required;
     }

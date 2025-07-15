@@ -186,6 +186,7 @@ export class AssessmentTemplateValidator extends BaseValidator {
                 Score             : request.body.Score ?? 0,
                 Message           : request.body.Message,
                 Acknowledged      : false,
+                Sequence          : request.body.Sequence ?? undefined,
                 RawData           : request.body.RawData ? JSON.stringify(request.body.RawData) : null,
                 Tags              : request.body.Tags ?? [],
             };

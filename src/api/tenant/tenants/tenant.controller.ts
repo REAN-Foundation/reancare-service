@@ -302,7 +302,6 @@ export class TenantController extends BaseController {
           try {
               const tenantCode: string = request.params.tenantCode;
               const secretName = await this.getSecretName(tenantCode);
-              request.body.SecretName = secretName;
               const model = {
                   SecretName : secretName,
               };

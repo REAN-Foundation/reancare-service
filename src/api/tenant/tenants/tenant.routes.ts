@@ -22,6 +22,7 @@ export const register = (app: express.Application): void => {
 
     router.post('/:id/settings/secret/create-secret', auth(TenantAuth.createSecret), controller.createSecret);
     router.get('/:id/settings/secret/', auth(TenantAuth.getSecret), controller.getSecret);
+    router.get('/settings/secret/:tenantCode', auth(TenantAuth.getSecretByCode), controller.getSecretByCode);
     router.put('/:id/settings/secret/', auth(TenantAuth.updateSecret), controller.updateSecret);
 
     router.get('/:id/stats', auth(TenantAuth.getTenantStats), controller.getTenantStats);

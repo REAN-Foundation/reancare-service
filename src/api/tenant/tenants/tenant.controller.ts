@@ -298,6 +298,20 @@ export class TenantController extends BaseController {
         }
     };
 
+      getSecretByCode = async(request: express.Request, response: express.Response): Promise<void> => {
+          try {
+              const tenantCode: string = request.params.tenantCode;
+              const secretName = await this.getSecretName(tenantCode);
+              const model = {
+                  SecretName : secretName,
+              };
+              const secret = await this._service.getSecret(model);
+              ResponseHandler.success(request, response, 'Secret retrieved successfully!', 200, secret);
+          } catch (error) {
+              ResponseHandler.handleError(request, response, error);
+          }
+      };
+
     updateSecret = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             const id: uuid = await this._validator.getParamUuid(request, 'id');

@@ -635,6 +635,7 @@
             "CreateBotSchema": true,
             "CreateSecret": false,
             "GetSecret": false,
+            "GetSecretByCode": false,
             "UpdateSecret": false
         },
         "Settings": {

@@ -61,6 +61,13 @@ export class TenantController extends BaseController {
 
             await this.authorizeOne(request);
 
+            const searchResults = await this._service.search({
+                Code : model.Code,
+            });
+            if (searchResults.TotalCount > 0) {
+                throw new ApiError(400, 'Tenant with this code already exists.');
+            }
+            
             tenant = await this._service.create(model);
             if (tenant == null) {
                 throw new ApiError(400, 'Unable to create tenant.');

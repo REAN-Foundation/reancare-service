@@ -84,11 +84,11 @@ export class AssessmentNutritionHelper {
 
             else if (fieldName === 'WholeGrain') {
                 const a = answer as IntegerQueryAnswer;
-                const whole_grain = a.Value;
+                const wholeGrain = a.Value;
                 const nutritionWholeGrainRecord : FoodConsumptionDomainModel = {
                     PatientUserId : userId,
                     FoodTypes     : ["Whole Grains"],
-                    Servings      : whole_grain,
+                    Servings      : wholeGrain,
                     Provider      : assessment.Provider,
                 };
                 const personWholegrain = await this._foodConsumptionRepo.create(nutritionWholeGrainRecord);
@@ -109,11 +109,11 @@ export class AssessmentNutritionHelper {
 
             else if (fieldName === 'SugaryDrinks') {
                 const a = answer as IntegerQueryAnswer;
-                const sugary_drinks = a.Value;
+                const sugaryDrinks = a.Value;
                 const nutritionDrinksRecord : FoodConsumptionDomainModel = {
                     PatientUserId : userId,
                     FoodTypes     : ["Sugary Drinks"],
-                    Servings      : sugary_drinks,
+                    Servings      : sugaryDrinks,
                     Provider      : assessment.Provider,
                 };
                 const personSugarydrinks = await this._foodConsumptionRepo.create(nutritionDrinksRecord);

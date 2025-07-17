@@ -58,10 +58,10 @@ export class AssessmentMedicationHelper {
 
             if (fieldName === 'DrugName') {
                 const a = answer as TextQueryAnswer;
-                const drug_name = a.Text;
+                const drugName = a.Text;
                 const medicationRecord : MedicationDomainModel = {
                     PatientUserId : userId,
-                    DrugName     : drug_name,
+                    DrugName     : drugName,
                 };
                 
                 const personMedication = await this._medicationRepo.create(medicationRecord);

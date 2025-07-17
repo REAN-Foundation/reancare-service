@@ -21,6 +21,7 @@ import {
 } from '../../../domain.types/clinical/assessment/assessment.types';
 import { MedicationDomainModel } from '../../../domain.types/clinical/medication/medication/medication.domain.model';
 import { IMedicationRepo } from '../../../database/repository.interfaces/clinical/medication/medication.repo.interface';
+import { MedicationFrequencyUnits } from '../../../domain.types/clinical/medication/medication/medication.types';
 import { MedicationDosageUnits } from '../../../domain.types/clinical/medication/medication/medication.types';
 
 @injectable()
@@ -84,7 +85,7 @@ export class AssessmentMedicationHelper {
                 }
                 const medicationFrequencyRecord : MedicationDomainModel = {
                     PatientUserId : userId,
-                    FrequencyUnit : frequency,
+                    FrequencyUnit : frequency as MedicationFrequencyUnits ?? null
                 };
                 
                 const personMedicationFrequency = await this._medicationRepo.create(medicationFrequencyRecord);

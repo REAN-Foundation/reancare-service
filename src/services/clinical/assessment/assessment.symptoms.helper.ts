@@ -18,8 +18,8 @@ import {
     BooleanQueryAnswer,
     SkipQueryAnswer
 } from '../../../domain.types/clinical/assessment/assessment.types';
-import { SymptomDomainModel } from '../../../domain.types/clinical/symptom/symptom/symptom.domain.model';
-import { ISymptomRepo } from '../../../database/repository.interfaces/clinical/symptom/symptom.repo.interface';
+import { HowDoYouFeelDomainModel } from '../../../domain.types/clinical/symptom/how.do.you.feel/how.do.you.feel.domain.model';
+import { IHowDoYouFeelRepo } from '../../../database/repository.interfaces/clinical/symptom/how.do.you.feel.repo.interface';
 @injectable()
 export class AssessmentSymptomsHelper {
     
@@ -27,7 +27,7 @@ export class AssessmentSymptomsHelper {
         @inject('IPersonRepo') private _personRepo: IPersonRepo,
         @inject('IUserRepo') private _userRepo: IUserRepo,
         @inject('IPatientHealthProfileRepo') private _patientHealthProfileRepo: IHealthProfileRepo,
-        @inject('ISymptomRepo') private _symptomRepo: ISymptomRepo
+        @inject('IHowDoYouFeelRepo') private _howDoYouFeelRepo: IHowDoYouFeelRepo
     ) {
     }
 
@@ -54,15 +54,21 @@ export class AssessmentSymptomsHelper {
             }
 
             if (fieldName === 'Symptom') {
-                const a = answer as TextQueryAnswer;
-                const symptom = a.Text;
-                const symptomRecord : SymptomDomainModel = {
+                let feeling = null;
+                const a = answer as SingleChoiceQueryAnswer;
+                const options = node.Options;
+                const selectedOption = options.find((option) => option.Sequence === a.ChosenSequence);
+                const fieldValue = selectedOption?.Text;
+                if (fieldValue) {
+                    feeling = fieldValue;
+                }
+                const symptomRecord : HowDoYouFeelDomainModel = {
                     PatientUserId : userId,
-                    Comments      : symptom,
+                    Feeling       : feeling,
                     RecordDate    : new Date()
                 };
                 
-                const personSymptom = await this._symptomRepo.create(symptomRecord);
+                const personSymptom = await this._howDoYouFeelRepo.create(symptomRecord);
             }
         }
         catch (error) {

@@ -26,7 +26,6 @@ import { AssessmentVitalsHelper } from './assessment.vitals.helper';
 import { AssessmentNutritionHelper } from './assessment.nutrition.helper';
 import { AssessmentExerciseHelper } from './assessment.exercise.helper';
 import { AssessmentSymptomsHelper } from './assessment.symptoms.helper';
-import { AssessmentMedicationHelper } from './assessment.medication.helper';
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 @injectable()
@@ -87,10 +86,6 @@ export class AssessmentResponsePersistenceHelper {
                 }
                 else if (subCategory === 'Symptoms') {
                     const symptomsHelper = Injector.Container.resolve(AssessmentSymptomsHelper);
-                    await symptomsHelper.persist(assessment, questionNode, fieldName, FieldIdentifierUnit, answerDto);
-                }
-                else if (subCategory === 'Medication') {
-                    const symptomsHelper = Injector.Container.resolve(AssessmentMedicationHelper);
                     await symptomsHelper.persist(assessment, questionNode, fieldName, FieldIdentifierUnit, answerDto);
                 }
             }

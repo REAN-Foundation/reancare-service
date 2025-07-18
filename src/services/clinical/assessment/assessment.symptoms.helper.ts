@@ -58,7 +58,8 @@ export class AssessmentSymptomsHelper {
                 const symptom = a.Text;
                 const symptomRecord : SymptomDomainModel = {
                     PatientUserId : userId,
-                    Comments      : symptom
+                    Comments      : symptom,
+                    RecordDate    : new Date()
                 };
                 
                 const personSymptom = await this._symptomRepo.create(symptomRecord);

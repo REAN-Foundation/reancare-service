@@ -66,7 +66,7 @@ export class AssessmentExerciseHelper {
                 const standingRecord : StandDomainModel = {
                     PatientUserId : userId,
                     Stand         : standing,
-                    Unit          : 'min',
+                    Unit          : 'minutes',
                     RecordDate    : new Date()
                 };
                 

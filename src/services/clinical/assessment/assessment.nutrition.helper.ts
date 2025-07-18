@@ -124,7 +124,8 @@ export class AssessmentNutritionHelper {
                 const waterRecord : WaterConsumptionDomainModel = {
                     PatientUserId : userId,
                     Provider      : assessment.Provider,
-                    Volume        : water
+                    Volume        : water,
+                    Time          : new Date()
                 };
                 const personWater = await this._waterConsumptionRepo.create(waterRecord);
             }

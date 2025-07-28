@@ -29,13 +29,15 @@ export class CareplanRepo implements ICareplanRepo {
     public addPatientWithProvider = async (
         patientUserId: string,
         provider: string,
-        participantId: string
+        participantId: string,
+        tenantId: string
     ): Promise<ParticipantDto> => {
         try {
             const entity = {
                 PatientUserId : patientUserId,
                 Provider      : provider,
                 ParticipantId : participantId,
+                TenantId      : tenantId
             };
             return await CareplanParticipant.create(entity);
         } catch (error) {

@@ -635,12 +635,14 @@
             "CreateBotSchema": false,
             "CreateSecret": false,
             "GetSecret": false,
+            "GetSecretByCode": false,
             "UpdateSecret": false
         },
         "Settings": {
             "GetTenantSettingsTypes": true,
             "GetTenantSettings": true,
             "GetTenantSettingsByType": true,
+            "GetTenantSettingsByCode": true,
             "UpdateTenantSettingsByType": true,
             "UpdateTenantSettings": true
         }

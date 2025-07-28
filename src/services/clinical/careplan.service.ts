@@ -115,7 +115,7 @@ export class CareplanService implements IUserActionService {
                 participantDetails, enrollmentDetails.Provider);
 
             participant = await this._careplanRepo.addPatientWithProvider(
-                enrollmentDetails.PatientUserId, provider, participantId);
+                enrollmentDetails.PatientUserId, provider, participantId, tenantId);
 
             if (!participant) {
                 throw new Error('Error while adding care plan participant details to database.');

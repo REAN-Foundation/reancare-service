@@ -16,16 +16,13 @@ export class AssessmentTemplateValidator extends BaseValidator {
 
     getDomainModel = (request: express.Request): AssessmentTemplateDomainModel => {
         const model: AssessmentTemplateDomainModel = {
-            Type        : request.body.Type ?? null,
-            Title       : request.body.Title ?? null,
-            Description : request.body.Description !== undefined && request.body.Description !== null ?
-                request.body.Description : null,
-            DisplayCode            : request.body.DisplayCode ?? null,
-            ScoringApplicable      : request.body.ScoringApplicable ?? false,
-            ProviderAssessmentCode : request.body.ProviderAssessmentCode !== undefined &&
-            request.body.ProviderAssessmentCode !== null ? request.body.ProviderAssessmentCode : null,
-            Provider : request.body.Provider !== undefined && request.body.Provider ?
-                request.body.Provider : null,
+            Type                        : request.body.Type ?? null,
+            Title                       : request.body.Title ?? null,
+            Description                 : request.body.Description ?? null,
+            DisplayCode                 : request.body.DisplayCode ?? null,
+            ScoringApplicable           : request.body.ScoringApplicable ?? false,
+            ProviderAssessmentCode      : request.body.ProviderAssessmentCode ?? null,
+            Provider                    : request.body.Provider ?? null,
             ServeListNodeChildrenAtOnce : request.body.ServeListNodeChildrenAtOnce ?? null,
             TotalNumberOfQuestions      : request.body.TotalNumberOfQuestions ?? null,
             TenantId                    : request.body.TenantId ?? request.currentUser.TenantId,
@@ -137,6 +134,7 @@ export class AssessmentTemplateValidator extends BaseValidator {
                 Options             : [],
                 RawData             : request.body.RawData ? JSON.stringify(request.body.RawData)            : null,
                 Tags                : request.body.Tags ?? [],
+                Sequence            : request.body.Sequence ?? undefined,
                 FieldIdentifier     : request.body.FieldIdentifier ?? null,
                 FieldIdentifierUnit : request.body.FieldIdentifierUnit ?? null,
             };
@@ -168,6 +166,7 @@ export class AssessmentTemplateValidator extends BaseValidator {
                 Score                       : request.body.Score ?? 0,
                 ChildrenNodeDisplayCodes    : [],
                 ChildrenNodeIds             : [],
+                Sequence                    : request.body.Sequence ?? undefined,
                 ServeListNodeChildrenAtOnce : request.body.ServeListNodeChildrenAtOnce,
                 Tags                        : request.body.Tags ?? [],
             };
@@ -185,6 +184,7 @@ export class AssessmentTemplateValidator extends BaseValidator {
                 Score             : request.body.Score ?? 0,
                 Message           : request.body.Message,
                 Acknowledged      : false,
+                Sequence          : request.body.Sequence ?? undefined,
                 RawData           : request.body.RawData ? JSON.stringify(request.body.RawData) : null,
                 Tags              : request.body.Tags ?? [],
             };

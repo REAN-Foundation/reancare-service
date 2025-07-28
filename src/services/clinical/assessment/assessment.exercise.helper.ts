@@ -70,9 +70,9 @@ export class AssessmentExerciseHelper {
                     RecordDate    : new Date()
                 };
                 
-                const personStanding = await this._standRepo.create(standingRecord);
+                await this._standRepo.create(standingRecord);
             }
-             else if (fieldName === 'StepCount') {
+            else if (fieldName === 'StepCount') {
                 const a = answer as IntegerQueryAnswer;
                 const stepCount = a.Value;
                 const stepCountRecord : StepCountDomainModel = {
@@ -83,9 +83,9 @@ export class AssessmentExerciseHelper {
                     RecordDate    : new Date()
                 };
                 
-                const personStepCount = await this._stepCountRepo.create(stepCountRecord);
+                await this._stepCountRepo.create(stepCountRecord);
             }
-             else if (fieldName === 'ExerciseDuration') {
+            else if (fieldName === 'ExerciseDuration') {
                 const a = answer as IntegerQueryAnswer;
                 const exercise = a.Value;
                 const exerciseDurationRecord : PhysicalActivityDomainModel = {
@@ -95,7 +95,7 @@ export class AssessmentExerciseHelper {
                     DurationInMin : exercise
                 };
                 
-                const personExerciseDuration = await this._physicalActivityRepo.create(exerciseDurationRecord);
+                await this._physicalActivityRepo.create(exerciseDurationRecord);
             }
 
         }

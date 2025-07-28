@@ -22,7 +22,7 @@ import { FoodConsumptionDomainModel } from '../../../domain.types/wellness/nutri
 import { IFoodConsumptionRepo } from '../../../database/repository.interfaces/wellness/nutrition/food.consumption.repo.interface';
 import { WaterConsumptionDomainModel } from '../../../domain.types/wellness/nutrition/water.consumption/water.consumption.domain.model';
 import { IWaterConsumptionRepo } from '../../../database/repository.interfaces/wellness/nutrition/water.consumption.repo.interface';
-import { FoodConsumptionEvents } from '../../../domain.types/wellness/nutrition/food.consumption/food.consumption.types';
+
 @injectable()
 export class AssessmentNutritionHelper {
     
@@ -67,7 +67,7 @@ export class AssessmentNutritionHelper {
                     Provider      : assessment.Provider,
                 };
                 
-                const personVegetables = await this._foodConsumptionRepo.create(nutritionRecord);
+                await this._foodConsumptionRepo.create(nutritionRecord);
             }
 
             else if (fieldName === 'Fruits') {
@@ -79,7 +79,7 @@ export class AssessmentNutritionHelper {
                     Servings      : fruits,
                     Provider      : assessment.Provider,
                 };
-                const personFruits = await this._foodConsumptionRepo.create(nutritionFruitsRecord);
+                await this._foodConsumptionRepo.create(nutritionFruitsRecord);
             }
 
             else if (fieldName === 'WholeGrain') {
@@ -91,7 +91,7 @@ export class AssessmentNutritionHelper {
                     Servings      : wholeGrain,
                     Provider      : assessment.Provider,
                 };
-                const personWholegrain = await this._foodConsumptionRepo.create(nutritionWholeGrainRecord);
+                await this._foodConsumptionRepo.create(nutritionWholeGrainRecord);
             }
 
             else if (fieldName === 'SeaFood') {
@@ -103,7 +103,7 @@ export class AssessmentNutritionHelper {
                     Servings      : seafood,
                     Provider      : assessment.Provider,
                 };
-                const personSeafood = await this._foodConsumptionRepo.create(nutritionSeafoodRecord);
+                await this._foodConsumptionRepo.create(nutritionSeafoodRecord);
                 
             }
 
@@ -116,7 +116,7 @@ export class AssessmentNutritionHelper {
                     Servings      : sugaryDrinks,
                     Provider      : assessment.Provider,
                 };
-                const personSugarydrinks = await this._foodConsumptionRepo.create(nutritionDrinksRecord);
+                await this._foodConsumptionRepo.create(nutritionDrinksRecord);
             }
             else if (fieldName === 'Water') {
                 const a = answer as IntegerQueryAnswer;
@@ -127,19 +127,19 @@ export class AssessmentNutritionHelper {
                     Volume        : water,
                     Time          : new Date()
                 };
-                const personWater = await this._waterConsumptionRepo.create(waterRecord);
+                await this._waterConsumptionRepo.create(waterRecord);
             }
             else if (fieldName === 'Alcohol') {
                 const a = answer as IntegerQueryAnswer;
                 const alcohol = a.Value;
-               const nutritionAlcRecord : FoodConsumptionDomainModel = {
+                const nutritionAlcRecord : FoodConsumptionDomainModel = {
                     PatientUserId : userId,
                     FoodTypes     : ["Alcohol"],
                     Servings      : alcohol,
-                    ServingUnit  : "Drinks",
+                    ServingUnit   : "Drinks",
                     Provider      : assessment.Provider,
                 };
-                const personA1c = await this._foodConsumptionRepo.create(nutritionAlcRecord);
+                await this._foodConsumptionRepo.create(nutritionAlcRecord);
             }
         }
         catch (error) {

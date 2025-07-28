@@ -20,6 +20,7 @@ import {
 } from '../../../domain.types/clinical/assessment/assessment.types';
 import { HowDoYouFeelDomainModel } from '../../../domain.types/clinical/symptom/how.do.you.feel/how.do.you.feel.domain.model';
 import { IHowDoYouFeelRepo } from '../../../database/repository.interfaces/clinical/symptom/how.do.you.feel.repo.interface';
+
 @injectable()
 export class AssessmentSymptomsHelper {
     
@@ -68,7 +69,7 @@ export class AssessmentSymptomsHelper {
                     RecordDate    : new Date()
                 };
                 
-                const personSymptom = await this._howDoYouFeelRepo.create(symptomRecord);
+                await this._howDoYouFeelRepo.create(symptomRecord);
             }
         }
         catch (error) {

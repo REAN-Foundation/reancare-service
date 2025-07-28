@@ -6,7 +6,7 @@ import {
     FloatQueryAnswer,
     IntegerQueryAnswer,
     MessageAnswer,
-    MultipleChoiceQueryAnswer, 
+    MultipleChoiceQueryAnswer,
     CAssessmentQuestionNode,
     SingleChoiceQueryAnswer,
     TextQueryAnswer,
@@ -19,8 +19,6 @@ import {
 import { AssessmentDto } from '../../../domain.types/clinical/assessment/assessment.dto';
 import { IUserRepo } from '../../../database/repository.interfaces/users/user/user.repo.interface';
 import { IHealthProfileRepo } from '../../../database/repository.interfaces/users/patient/health.profile.repo.interface';
-import { BloodGroupList } from '../../../domain.types/miscellaneous/system.types';
-import { MaritalStatusList } from '../../../domain.types/miscellaneous/system.types';
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -76,7 +74,7 @@ export class AssessmentHealthProfileHelper {
                     bloodGroup = a.Text;
                 }
                 if (bloodGroup) {
-                    const person = await this._healthProfileRepo.updateByPatientUserId(userId, {
+                    await this._healthProfileRepo.updateByPatientUserId(userId, {
                         BloodGroup : bloodGroup,
                     });
                 }
@@ -99,7 +97,7 @@ export class AssessmentHealthProfileHelper {
                     ethnicity = a.Text;
                 }
                 if (ethnicity) {
-                    const personEthnicity = await this._healthProfileRepo.updateByPatientUserId(userId, {
+                    await this._healthProfileRepo.updateByPatientUserId(userId, {
                         Ethnicity : ethnicity,
                     });
                 }
@@ -121,7 +119,7 @@ export class AssessmentHealthProfileHelper {
                     race = a.Text;
                 }
                 if (race) {
-                    const personEthnicity = await this._healthProfileRepo.updateByPatientUserId(userId, {
+                    await this._healthProfileRepo.updateByPatientUserId(userId, {
                         Race : race,
                     });
                 }
@@ -144,7 +142,7 @@ export class AssessmentHealthProfileHelper {
                     maritalStatus = a.Text;
                 }
                 if (maritalStatus) {
-                    const personEthnicity = await this._healthProfileRepo.updateByPatientUserId(userId, {
+                    await this._healthProfileRepo.updateByPatientUserId(userId, {
                         MaritalStatus : maritalStatus,
                     });
                 }
@@ -152,7 +150,7 @@ export class AssessmentHealthProfileHelper {
             else if (fieldName === 'Occupation' && answer.ResponseType === QueryResponseType.Text) {
                 const a = answer as TextQueryAnswer;
                 const occupation = a.Text;
-                const personOccupation = await this._healthProfileRepo.updateByPatientUserId(userId, {
+                await this._healthProfileRepo.updateByPatientUserId(userId, {
                     Occupation : occupation,
                 });
             }
@@ -161,8 +159,6 @@ export class AssessmentHealthProfileHelper {
                 let smokingStatus = null;
                 if (respType === QueryResponseType.Boolean) {
                     const a = answer as BooleanQueryAnswer;
-                    // const options = node.Options;
-                    // const selectedOption = options.find((option) => option.Sequence === a.ChosenSequence);
                     const fieldValue = a.Value;
                     if (fieldValue) {
                         smokingStatus = fieldValue;
@@ -173,7 +169,7 @@ export class AssessmentHealthProfileHelper {
                     smokingStatus = a.Text;
                 }
                 if (smokingStatus) {
-                    const personEthnicity = await this._healthProfileRepo.updateByPatientUserId(userId, {
+                    await this._healthProfileRepo.updateByPatientUserId(userId, {
                         IsSmoker : smokingStatus,
                     });
                 }

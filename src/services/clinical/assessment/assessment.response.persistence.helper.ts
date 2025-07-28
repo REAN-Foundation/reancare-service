@@ -23,7 +23,9 @@ import { AssessmentPersonalProfileHelper } from './assessment.personal.profile.h
 import { AssessmentHealthProfileHelper } from './assessment.health.profile.helper';
 import { AssessmentLabRecordsHelper } from './assessment.lab.records.helper';
 import { AssessmentVitalsHelper } from './assessment.vitals.helper';
-
+import { AssessmentNutritionHelper } from './assessment.nutrition.helper';
+import { AssessmentExerciseHelper } from './assessment.exercise.helper';
+import { AssessmentSymptomsHelper } from './assessment.symptoms.helper';
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 @injectable()
@@ -81,6 +83,20 @@ export class AssessmentResponsePersistenceHelper {
                 else if (subCategory === 'Vitals') {
                     const labRecordsHelper = Injector.Container.resolve(AssessmentVitalsHelper);
                     await labRecordsHelper.persist(assessment, questionNode, fieldName, FieldIdentifierUnit, answerDto);
+                }
+                else if (subCategory === 'Symptoms') {
+                    const symptomsHelper = Injector.Container.resolve(AssessmentSymptomsHelper);
+                    await symptomsHelper.persist(assessment, questionNode, fieldName, FieldIdentifierUnit, answerDto);
+                }
+            }
+            else if (category === 'Wellness') {
+                if (subCategory === 'Nutrition') {
+                    const nutritionHelper = Injector.Container.resolve(AssessmentNutritionHelper);
+                    await nutritionHelper.persist(assessment, questionNode, fieldName, FieldIdentifierUnit, answerDto);
+                }
+                else if (subCategory === 'Exercise') {
+                    const exerciseHelper = Injector.Container.resolve(AssessmentExerciseHelper);
+                    await exerciseHelper.persist(assessment, questionNode, fieldName, FieldIdentifierUnit, answerDto);
                 }
             }
         }

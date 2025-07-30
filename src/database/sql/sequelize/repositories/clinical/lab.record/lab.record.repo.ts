@@ -19,7 +19,7 @@ import { LabRecordTypeSearchFilters, LabRecordTypeSearchResults }
     from '../../../../../../domain.types/clinical/lab.record/lab.recod.type/lab.record.type.search.types';
 import { ReportFrequency } from '../../../../../../domain.types/users/patient/health.report.setting/health.report.setting.domain.model';
 import { Helper } from '../../../../../../common/helper';
-import Patient from '../../../models/users/patient/patient.model';
+// import Patient from '../../../models/users/patient/patient.model';
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -199,7 +199,7 @@ export class LabRecordRepo implements ILabRecordRepo {
             if (filters.DisplayName != null) {
                 search.where['DisplayName'] = { [Op.like]: '%' + filters.DisplayName + '%' };
             }
-            
+
             if (filters.TypeName != null) {
                 search.where['TypeName'] = { [Op.like]: '%' + filters.TypeName + '%' };
             }
@@ -265,9 +265,9 @@ export class LabRecordRepo implements ILabRecordRepo {
             if (updateModel.DisplayName != null) {
                 labReport.DisplayName = updateModel.DisplayName;
             }
-            if (updateModel.TypeId != null) {
-                labReport.TypeId = updateModel.TypeId;
-            }
+            // if (updateModel.TypeId != null) {
+            //     labReport.TypeId = updateModel.TypeId;
+            // }
             if (updateModel.PrimaryValue != null) {
                 labReport.PrimaryValue = updateModel.PrimaryValue;
             }

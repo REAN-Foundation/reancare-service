@@ -44,7 +44,7 @@ export class LabRecordMapper {
             NormalRangeMin : labRecordType.NormalRangeMin,
             NormalRangeMax : labRecordType.NormalRangeMax,
             Unit           : labRecordType.Unit,
-    
+
         };
 
         return dto;

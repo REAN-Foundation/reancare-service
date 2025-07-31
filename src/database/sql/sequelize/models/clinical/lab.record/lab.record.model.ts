@@ -5,7 +5,7 @@ import {
 } from 'sequelize-typescript';
 import { v4 } from 'uuid';
 import User from '../../users/user/user.model';
-// import LabRecordType from './lab.record.type.model';
+import LabRecordType from './lab.record.type.model';
 // import { LabRecordTypeList } from '../../../../../../domain.types/clinical/lab.record/lab.record/lab.record.types';
 
 ///////////////////////////////////////////////////////////////////////
@@ -49,15 +49,15 @@ export default class LabRecord extends Model {
     EhrId: string;
 
     @IsUUID(4)
-    // @ForeignKey(() => LabRecordType)
+    @ForeignKey(() => LabRecordType)
     @Column({
         type      : DataType.UUID,
         allowNull : false,
     })
     TypeId: string;
 
-    // @BelongsTo(() => LabRecordType)
-    // LabRecordType: LabRecordType;
+    @BelongsTo(() => LabRecordType)
+    LabRecordType: LabRecordType;
 
     @Column({
         type      : DataType.STRING(128),

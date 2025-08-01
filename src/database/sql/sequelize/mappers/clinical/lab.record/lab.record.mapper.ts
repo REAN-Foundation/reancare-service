@@ -1,4 +1,3 @@
-// import { LabRecordType } from "../../../../../../domain.types/clinical/lab.record/lab.record/lab.record.types";
 import { LabRecordDto } from "../../../../../../domain.types/clinical/lab.record/lab.record/lab.record.dto";
 import { LabRecordTypeDto } from "../../../../../../domain.types/clinical/lab.record/lab.recod.type/lab.record.type.dto";
 

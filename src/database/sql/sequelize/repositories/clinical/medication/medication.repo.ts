@@ -21,7 +21,7 @@ export class MedicationRepo implements IMedicationRepo {
                 OrderId                   : model.OrderId ?? null,
                 DrugId                    : model.DrugId,
                 DrugName                  : model.DrugName,
-                Dose                      : model.Dose.toString(),
+                Dose                      : model.Dose ? model.Dose.toString() : null,
                 DosageUnit                : model.DosageUnit,
                 TimeSchedules             : JSON.stringify(model.TimeSchedules),
                 Frequency                 : model.Frequency,

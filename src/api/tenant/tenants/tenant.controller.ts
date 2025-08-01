@@ -230,6 +230,14 @@ export class TenantController extends BaseController {
             if (tenant.Code === 'default') {
                 throw new ApiError(400, 'Cannot delete tenant with code "default"!');
             }
+            const user = await this._userService.getUserByTenantIdAndRole(id, Roles.TenantAdmin);
+            if (!user) {
+                throw new ApiError(400, 'Tenant admin user not found!');
+            }
+            await this._userService.delete(user.id);
+
+            await this._personService.delete(user.PersonId);
+
             const deleted = await this._service.delete(id);
             ResponseHandler.success(request, response, 'Tenant deleted successfully!', 200, {
                 Deleted : deleted,

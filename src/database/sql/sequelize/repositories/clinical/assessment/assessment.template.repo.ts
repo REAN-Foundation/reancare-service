@@ -88,6 +88,9 @@ export class AssessmentTemplateRepo implements IAssessmentTemplateRepo {
                     },
                 }));
             }
+            if (filters.TenantId != null) {
+                search.where['TenantId'] = filters.TenantId;
+            }
             let orderByColum = 'Title';
             if (filters.OrderBy) {
                 orderByColum = filters.OrderBy;

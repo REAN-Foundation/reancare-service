@@ -216,9 +216,9 @@ export class AHAActions {
         }
     };
 
-    public performActions_PostAssessmentScoring = async (patientUserId: uuid, assessmentId: uuid): Promise<any> => {
+    public performActionsAHAPostAssessmentScoring = async (patientUserId: uuid, assessmentId: uuid): Promise<any> => {
         try {
-            Logger.instance().log(`Performing post assessment scoring actions ...`);
+            Logger.instance().log(`Performing AHA post assessment scoring actions ...`);
             const assessment = await this._assessmentService.getById(assessmentId);
             const userResponses = assessment.UserResponses;
 
@@ -228,6 +228,20 @@ export class AHAActions {
                 Logger.instance().log('Calculating the score...');
                 score = KccqAssessmentUtils.scoreKCCQAssessment(userResponses);
             }
+            Logger.instance().log(`Score: ${JSON.stringify(score, null, 2)}`);
+            return score;
+        }
+        catch (error) {
+            Logger.instance().log(`Error performing post registration custom actions.`);
+            Logger.instance().log(error.message);
+        }
+    };
+
+    public performActionsDefaultPostAssessmentScoring = async (patientUserId: uuid, assessmentId: uuid): Promise<any> => {
+        try {
+            Logger.instance().log(`Performing default post assessment scoring actions ...`);
+            const assessment = await this._assessmentService.getById(assessmentId);
+            var score = assessment?.ScoreDetails ?? null;
             Logger.instance().log(`Score: ${JSON.stringify(score, null, 2)}`);
             return score;
         }

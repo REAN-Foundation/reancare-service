@@ -79,7 +79,8 @@
                 "ScoreAssessment": false,
                 "Search": true,
                 "StartAssessment": false,
-                "Update": false
+                "Update": false,
+                "SkipQuestion": true
             },
             "AssessmentTemplate": {
                 "AddNode": true,

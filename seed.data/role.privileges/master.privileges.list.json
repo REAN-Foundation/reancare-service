@@ -55,6 +55,7 @@
     "Clinical.Assessments.Assessment.Search",
     "Clinical.Assessments.Assessment.StartAssessment",
     "Clinical.Assessments.Assessment.Update",
+    "Clinical.Assessments.Assessment.SkipQuestion",
     "Clinical.Assessments.AssessmentTemplate.AddNode",
     "Clinical.Assessments.AssessmentTemplate.AddScoringCondition",
     "Clinical.Assessments.AssessmentTemplate.Create",

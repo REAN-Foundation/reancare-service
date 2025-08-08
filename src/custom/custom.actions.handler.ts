@@ -181,7 +181,7 @@ export class CustomActionsHandler {
         const isForAHA =
         systemIdentifier.includes('AHA') ||
         systemIdentifier.includes('AHA Helper') ||
-        systemIdentifier.includes('HF Helper')
+        systemIdentifier.includes('HF Helper');
 
         return isForAHA;
     };

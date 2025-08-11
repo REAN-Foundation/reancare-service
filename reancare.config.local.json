@@ -17,7 +17,7 @@
         "Provider": "GCP-FHIR"
     },
     "FileStorage" : {
-        "Provider": "Custom"
+        "Provider": "Azure-Storage"
     },
     "FeatureFlags" : {
         "Provider": "Custom"

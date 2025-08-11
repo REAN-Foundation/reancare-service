@@ -2,6 +2,7 @@ import 'reflect-metadata';
 import { ConfigurationManager } from '../../config/configuration.manager';
 import { DependencyContainer } from 'tsyringe';
 import { AWSS3FileStorageService } from './providers/aws.s3.file.storage.service';
+import { AzureStorageFileStorageService } from './providers/azure.storage.file.storage.service';
 import { CustomFileStorageService } from './providers/custom.file.storage.service';
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -14,9 +15,12 @@ export class FileStorageInjector {
         if (provider === 'AWS-S3') {
             container.register('IFileStorageService', AWSS3FileStorageService);
         }
+        else if (provider === 'Azure-Storage') {
+            container.register('IFileStorageService', AzureStorageFileStorageService);
+        }
         else if (provider === 'Custom') {
             container.register('IFileStorageService', CustomFileStorageService);
         }
     }
-    
+
 }

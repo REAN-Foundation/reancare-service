@@ -22,7 +22,10 @@ export class AzureStorageFileStorageService implements IFileStorageService {
     exists = async (storageKey: string): Promise<string> => {
         try {
             this.initializeAzureClient();
-            const blobClient = this.containerClient.getBlobClient(storageKey);
+            const containerName = storageKey.split('/')[0]; // Extract container name from storage key
+            this.containerClient = this.blobServiceClient.getContainerClient(containerName);
+            const updatedStorageKey = storageKey.replace(`${containerName}/`, '');
+            const blobClient = this.containerClient.getBlobClient(updatedStorageKey);
             const exists = await blobClient.exists();
 
             if (exists) {

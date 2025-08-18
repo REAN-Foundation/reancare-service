@@ -26,10 +26,11 @@ export class CareplanValidator extends BaseValidator {
             IsTest         : request.body.IsTest ?? false,
             ScheduleConfig : request.body.ScheduleConfig ? {
                 NumberOfDays      : request.body.ScheduleConfig.NumberOfDays ?? 1,
-                StartHour         : request.body.ScheduleConfig.StartHour,
+                StartHour         : request.body.ScheduleConfig.StartHour ?? 1,
                 StartMinutes      : request.body.ScheduleConfig.StartMinutes ?? 0,
                 IntervalMinutes   : request.body.ScheduleConfig.IntervalMinutes ?? 0,
-                StartFromTomorrow : request.body.ScheduleConfig.StartFromTomorrow ?? false
+                StartFromTomorrow : request.body.ScheduleConfig.StartFromTomorrow ?? false,
+                Timezone          : request.body.ScheduleConfig.Timezone ?? '+05:30'
             } : undefined,
         };
 
@@ -83,8 +84,10 @@ export class CareplanValidator extends BaseValidator {
         if (request.body.ScheduleConfig) {
             await this.validateInt(request, 'ScheduleConfig.NumberOfDays', Where.Body, true, false);
             await this.validateInt(request, 'ScheduleConfig.StartHour', Where.Body, true, false);
+            await this.validateInt(request, 'ScheduleConfig.StartMinutes', Where.Body, true, false);
             await this.validateInt(request, 'ScheduleConfig.IntervalMinutes', Where.Body, true, false);
             await this.validateBoolean(request, 'ScheduleConfig.StartFromTomorrow', Where.Body, true, false);
+            await this.validateString(request, 'ScheduleConfig.Timezone', Where.Body, true, false);
         }
         
         this.validateRequest(request);

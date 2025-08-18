@@ -4,6 +4,7 @@ export interface ScheduleConfig {
     StartMinutes:number;
     IntervalMinutes: number;
     StartFromTomorrow: boolean;
+    Timezone: string;
 }
 
 export interface EnrollmentDomainModel {

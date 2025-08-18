@@ -1,3 +1,11 @@
+export interface ScheduleConfig {
+    NumberOfDays: number;
+    StartHour: number;
+    StartMinutes:number;
+    IntervalMinutes: number;
+    StartFromTomorrow: boolean;
+}
+
 export interface EnrollmentDomainModel {
     id?             : string;
     Name?           : string;
@@ -26,4 +34,5 @@ export interface EnrollmentDomainModel {
     TenantName?     : string;
     TenantId?       : string;
     IsTest?         : boolean;
+    ScheduleConfig? : ScheduleConfig;
 }

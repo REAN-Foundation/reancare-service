@@ -135,13 +135,13 @@ export class ReanCareplanService implements ICareplanService {
             WeekOffset     : model.WeekOffset,
             DayOffset      : model.DayOffset,
             IsTest         : model.IsTest,
-            TenantId       : model.TenantId
+            TenantId       : model.TenantId,
+            ScheduleConfig : model.ScheduleConfig
         };
 
         var url = process.env.CAREPLAN_API_BASE_URL + '/enrollments';
         var headerOptions = await this.getHeaderOptions();
-        var response = await needle('post', url, enrollmentData, headerOptions);
-
+        var response = await needle('post', url, enrollmentData, headerOptions); 
         if (response.statusCode !== 201) {
             Logger.instance().log(`ResponseCode: ${response.statusCode}, Body: ${JSON.stringify(response.body.error)}`);
             throw new ApiError(500, 'Rean Careplan enrollment service error: ' + response.body.error);

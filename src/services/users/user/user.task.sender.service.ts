@@ -76,7 +76,7 @@ export class UserTaskSenderService {
             for await (const userTask of userTasks) {
                 if (userTask.ActionId != null && userTask.ActionType === 'Careplan') {
                     await this.sendUserTaskOnBot(userTask.UserId, userTask);
-                    await this.timer(300);
+                    await this.timer(1000);
                 } else {
                     continue;
                 }

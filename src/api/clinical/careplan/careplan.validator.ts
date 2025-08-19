@@ -13,17 +13,25 @@ export class CareplanValidator extends BaseValidator {
     getEnrollmentDomainModel = (request: express.Request): EnrollmentDomainModel => {
 
         const model: EnrollmentDomainModel = {
-            PatientUserId : request.params.patientUserId,
-            Provider      : request.body.Provider,
-            PlanName      : request.body.PlanName,
-            PlanCode      : request.body.PlanCode,
-            StartDateStr  : request.body.StartDate,
-            EndDateStr    : request.body.EndDate,
-            DayOffset     : request.body.DayOffset,
-            WeekOffset    : request.body.WeekOffset,
-            Channel       : request.body.Channel,
-            TenantName    : request.body.TenantName,
-            IsTest        : request.body.IsTest ?? false,
+            PatientUserId  : request.params.patientUserId,
+            Provider       : request.body.Provider,
+            PlanName       : request.body.PlanName,
+            PlanCode       : request.body.PlanCode,
+            StartDateStr   : request.body.StartDate,
+            EndDateStr     : request.body.EndDate,
+            DayOffset      : request.body.DayOffset,
+            WeekOffset     : request.body.WeekOffset,
+            Channel        : request.body.Channel,
+            TenantName     : request.body.TenantName,
+            IsTest         : request.body.IsTest ?? false,
+            ScheduleConfig : request.body.ScheduleConfig ? {
+                NumberOfDays      : request.body.ScheduleConfig.NumberOfDays ?? 1,
+                StartHour         : request.body.ScheduleConfig.StartHour ?? 9,
+                StartMinutes      : request.body.ScheduleConfig.StartMinutes ?? 0,
+                IntervalMinutes   : request.body.ScheduleConfig.IntervalMinutes ?? 0,
+                StartFromTomorrow : request.body.ScheduleConfig.StartFromTomorrow ?? false,
+                Timezone          : request.body.ScheduleConfig.Timezone ?? '+05:30'
+            } : undefined,
         };
 
         return model;
@@ -71,6 +79,15 @@ export class CareplanValidator extends BaseValidator {
         await this.validateString(request, 'TenantName', Where.Body, false, false);
         await this.validateString(request, 'Channel', Where.Body, false, false);
         await this.validateBoolean(request, 'IsTest', Where.Body, false, false);
+        if (request.body.ScheduleConfig) {
+            await this.validateInt(request, 'ScheduleConfig.NumberOfDays', Where.Body, false, false);
+            await this.validateInt(request, 'ScheduleConfig.StartHour', Where.Body, false, false);
+            await this.validateInt(request, 'ScheduleConfig.StartMinutes', Where.Body, false, false);
+            await this.validateInt(request, 'ScheduleConfig.IntervalMinutes', Where.Body, false, false);
+            await this.validateBoolean(request, 'ScheduleConfig.StartFromTomorrow', Where.Body, false, false);
+            await this.validateString(request, 'ScheduleConfig.Timezone', Where.Body, false, false);
+        }
+        
         this.validateRequest(request);
     }
 

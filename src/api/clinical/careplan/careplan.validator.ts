@@ -26,7 +26,7 @@ export class CareplanValidator extends BaseValidator {
             IsTest         : request.body.IsTest ?? false,
             ScheduleConfig : request.body.ScheduleConfig ? {
                 NumberOfDays      : request.body.ScheduleConfig.NumberOfDays ?? 1,
-                StartHour         : request.body.ScheduleConfig.StartHour ?? 1,
+                StartHour         : request.body.ScheduleConfig.StartHour ?? 9,
                 StartMinutes      : request.body.ScheduleConfig.StartMinutes ?? 0,
                 IntervalMinutes   : request.body.ScheduleConfig.IntervalMinutes ?? 0,
                 StartFromTomorrow : request.body.ScheduleConfig.StartFromTomorrow ?? false,
@@ -79,15 +79,13 @@ export class CareplanValidator extends BaseValidator {
         await this.validateString(request, 'TenantName', Where.Body, false, false);
         await this.validateString(request, 'Channel', Where.Body, false, false);
         await this.validateBoolean(request, 'IsTest', Where.Body, false, false);
-        
-        // Validate ScheduleConfig if provided
         if (request.body.ScheduleConfig) {
-            await this.validateInt(request, 'ScheduleConfig.NumberOfDays', Where.Body, true, false);
-            await this.validateInt(request, 'ScheduleConfig.StartHour', Where.Body, true, false);
-            await this.validateInt(request, 'ScheduleConfig.StartMinutes', Where.Body, true, false);
-            await this.validateInt(request, 'ScheduleConfig.IntervalMinutes', Where.Body, true, false);
-            await this.validateBoolean(request, 'ScheduleConfig.StartFromTomorrow', Where.Body, true, false);
-            await this.validateString(request, 'ScheduleConfig.Timezone', Where.Body, true, false);
+            await this.validateInt(request, 'ScheduleConfig.NumberOfDays', Where.Body, false, false);
+            await this.validateInt(request, 'ScheduleConfig.StartHour', Where.Body, false, false);
+            await this.validateInt(request, 'ScheduleConfig.StartMinutes', Where.Body, false, false);
+            await this.validateInt(request, 'ScheduleConfig.IntervalMinutes', Where.Body, false, false);
+            await this.validateBoolean(request, 'ScheduleConfig.StartFromTomorrow', Where.Body, false, false);
+            await this.validateString(request, 'ScheduleConfig.Timezone', Where.Body, false, false);
         }
         
         this.validateRequest(request);

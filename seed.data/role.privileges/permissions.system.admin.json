@@ -79,7 +79,8 @@
                 "ScoreAssessment": true,
                 "Search": true,
                 "StartAssessment": true,
-                "Update": false
+                "Update": false,
+                "SkipQuestion": true
             },
             "AssessmentTemplate": {
                 "AddNode": true,
@@ -635,6 +636,7 @@
             "CreateBotSchema": true,
             "CreateSecret": true,
             "GetSecret": true,
+            "GetSecretByCode": true,
             "UpdateSecret": true
         },
         "Settings": {

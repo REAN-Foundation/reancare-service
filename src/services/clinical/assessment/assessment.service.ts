@@ -283,9 +283,10 @@ export class AssessmentService {
         const scoringApplicable = assessment.ScoringApplicable;
         if (scoringApplicable) {
             const scoreDetails = await this.scoreAssessment(assessmentId);
+            const scoreDetailsStr = JSON.stringify(scoreDetails, null, 2);
             assessment.ScoreDetails = scoreDetails;
             assessment = await this._assessmentRepo.update(assessmentId, {
-                ScoreDetails : scoreDetails,
+                ScoreDetails : scoreDetailsStr,
             });
         }
         var responses = await this._assessmentHelperRepo.getUserResponses(assessmentId);

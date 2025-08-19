@@ -490,7 +490,7 @@ export class AssessmentController extends BaseController {
     private async generateScoreReport(assessment: AssessmentDto) {
         var customActions = new CustomActionsHandler();
 
-        var score = await customActions.performActions_PostAssessmentScoring(assessment.PatientUserId, assessment.id);
+        var score = await customActions.performActionsPostAssessmentScoring(assessment.PatientUserId, assessment.id);
 
         Logger.instance().log(`Score: ${JSON.stringify(score, null, 2)}`);
 

@@ -200,7 +200,7 @@
             }
         },
         "Careplan": {
-            "Enroll": false,
+            "Enroll": true,
             "FetchTasks": false,
             "GetAvailableCareplans": true,
             "GetPatientEligibility": true,

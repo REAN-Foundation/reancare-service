@@ -30,7 +30,7 @@ import { ActivityTrackerHandler } from "../../users/patient/activity.tracker/act
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-export const MEDICATION_CONSUMPTION_DURATION_DAYS = 10;
+export const MEDICATION_CONSUMPTION_DURATION_DAYS = 40;
 
 @injectable()
 export class MedicationConsumptionService implements IUserActionService {

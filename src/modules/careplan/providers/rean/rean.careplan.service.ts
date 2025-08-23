@@ -141,7 +141,7 @@ export class ReanCareplanService implements ICareplanService {
 
         var url = process.env.CAREPLAN_API_BASE_URL + '/enrollments';
         var headerOptions = await this.getHeaderOptions();
-        var response = await needle('post', url, enrollmentData, headerOptions); 
+        var response = await needle('post', url, enrollmentData, headerOptions);
         if (response.statusCode !== 201) {
             Logger.instance().log(`ResponseCode: ${response.statusCode}, Body: ${JSON.stringify(response.body.error)}`);
             throw new ApiError(500, 'Rean Careplan enrollment service error: ' + response.body.error);
@@ -247,6 +247,25 @@ export class ReanCareplanService implements ICareplanService {
             Logger.instance().log(`No enrollments fetched from careplan task.`);
         }
 
+    };
+
+    public deleteParticipantData = async (participantId: string): Promise<boolean> => {
+        try {
+            var url = process.env.CAREPLAN_API_BASE_URL + `/participants/${participantId}`;
+            var headerOptions = await this.getHeaderOptions();
+            var response = await needle('delete', url, headerOptions);
+
+            if (response.statusCode !== 200) {
+                Logger.instance().log(`ResponseCode: ${response.statusCode}, Body: ${JSON.stringify(response.body.error)}`);
+                throw new ApiError(500, 'Careplan participant deletion error: ' + response.body.error);
+            }
+
+            Logger.instance().log(`Successfully deleted participant ${participantId} from careplan service`);
+            return true;
+        } catch (error) {
+            Logger.instance().log(`Error deleting participant from careplan service: ${error.message}`);
+            throw error;
+        }
     };
 
     //#endregion

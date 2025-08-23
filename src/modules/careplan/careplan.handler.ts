@@ -210,11 +210,17 @@ export class CareplanHandler {
         return true;
     };
 
+    public deleteParticipantData = async (participantId: string, provider: string): Promise<boolean> => {
+        var service = CareplanHandler._services.getItem(provider);
+        await service.deleteParticipantData(participantId);
+        return true;
+    };
+
     private isEnabledProvider(provider: string) {
         var careplans = ConfigurationManager.careplans();
         return careplans.find(x => {
             return x.Provider === provider && x.Enabled;
         });
     }
-
+  
 }

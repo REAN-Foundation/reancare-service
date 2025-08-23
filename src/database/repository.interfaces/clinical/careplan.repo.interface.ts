@@ -78,4 +78,8 @@ export interface ICareplanRepo {
     deleteEnrollmentByUserId(patientUserId: string, hardDelete: boolean): Promise<boolean>;
 
     deleteActivitiesByUserId(patientUserId: string, hardDelete: boolean): Promise<boolean>;
+
+    getParticipantByUserId(patientUserId: string): Promise<ParticipantDto>;
+
+    deleteParticipantByUserId(patientUserId: string, hardDelete: boolean): Promise<boolean>;
 }

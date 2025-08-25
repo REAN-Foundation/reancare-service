@@ -13,6 +13,8 @@ export interface IUserRepo {
 
     getByPhoneAndRole(phone: string, roleId: number);
 
+    getByUniqueReferenceIdAndRole(uniqueReferenceId: string, roleId: number): Promise<UserDetailsDto>;
+
     create(userDomainModel: UserDomainModel): Promise<UserDetailsDto>;
 
     getById(id: uuid): Promise<UserDetailsDto>;

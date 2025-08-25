@@ -164,7 +164,7 @@ export class CareplanService implements IUserActionService {
 
                 let phoneNumber = null;
                 if (message.includes("Messages")) {
-                    phoneNumber = patient.Person.TelegramChatId;
+                    phoneNumber = patient.Person.UniqueReferenceId;
                 } else {
                     phoneNumber = patient.Person.Phone;
                 }

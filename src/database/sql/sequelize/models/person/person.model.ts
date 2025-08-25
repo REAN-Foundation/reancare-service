@@ -76,7 +76,13 @@ export default class Person extends Model {
         type      : DataType.STRING(64),
         allowNull : true,
     })
-    TelegramChatId: string;
+    UniqueReferenceId: string;
+
+    @Column({
+        type      : DataType.STRING(128),
+        allowNull : true,
+    })
+    UniqueReferenceIdType: string;
 
     @Column({
         type         : DataType.ENUM,

@@ -26,6 +26,7 @@ export interface UserDomainModel {
 export interface UserBasicDetails {
     Phone      ?: string,
     Email      ?: string,
+    UniqueReferenceId ?: string,
     UserName   ?: string;
     TenantId   ?: uuid,
     TenantCode ?: string,

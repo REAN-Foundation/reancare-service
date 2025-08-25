@@ -150,7 +150,7 @@ export class UserTaskSenderService {
         const user = await this._userRepo.getById(userId);
         const person = await this._personRepo.getById(user.PersonId);
         if (channel === NotificationChannel.Telegram) {
-            personPhone = person.TelegramChatId;
+            personPhone = person.UniqueReferenceId;
         } else if (channel === NotificationChannel.WhatsApp ||
             channel === NotificationChannel.WhatsappWati ) {
             personPhone = person.Phone;

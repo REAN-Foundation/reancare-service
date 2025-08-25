@@ -264,7 +264,6 @@ export class ReanCareplanService implements ICareplanService {
             return true;
         } catch (error) {
             Logger.instance().log(`Error deleting participant from careplan service: ${error.message}`);
-            throw error;
         }
     };
 

@@ -22,6 +22,7 @@ import { IMeditationRepo } from '../../../database/repository.interfaces/wellnes
 import { IPhysicalActivityRepo } from '../../../database/repository.interfaces/wellness/exercise/physical.activity.repo.interface';
 import { IEmergencyContactRepo } from '../../../database/repository.interfaces/users/patient/emergency.contact.repo.interface';
 import { IUserDeviceDetailsRepo } from '../../../database/repository.interfaces/users/user/user.device.details.repo.interface ';
+import { CareplanHandler } from '../../../modules/careplan/careplan.handler';
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -29,7 +30,9 @@ const ASYNC_TASK_COUNT = 4;
 @injectable()
 export class PatientDeleteService {
 
-    constructor(
+ _handler: CareplanHandler = new CareplanHandler();
+
+ constructor(
         @inject('IUserTaskRepo') private _userTaskRepo: IUserTaskRepo,
         @inject('IMedicationConsumptionRepo') private _medicationConsumptionRepo: IMedicationConsumptionRepo,
         @inject('IBloodCholesterolRepo') private _bloodCholesterolRepo: IBloodCholesterolRepo,
@@ -50,9 +53,9 @@ export class PatientDeleteService {
         @inject('IMeditationRepo') private _meditationRepo: IMeditationRepo,
         @inject('IPhysicalActivityRepo') private _physicalActivityRepo: IPhysicalActivityRepo,
         @inject('IEmergencyContactRepo') private _emergencyContactRepo: IEmergencyContactRepo,
-        @inject('IUserDeviceDetailsRepo') private _userDeviceDetailsRepo: IUserDeviceDetailsRepo
+        @inject('IUserDeviceDetailsRepo') private _userDeviceDetailsRepo: IUserDeviceDetailsRepo,
 
-    ){}
+ ){}
 
     public _q = asyncLib.queue((userId: string, onCompleted) => {
         (async () => {
@@ -128,6 +131,13 @@ export class PatientDeleteService {
             await this._userDeviceDetailsRepo.deleteByUserId(userId, true);
 
             await this._userTaskRepo.deleteByUserId(userId, true);
+
+            const participant = await this._careplanRepo.getParticipantByUserId(userId);
+            
+            if (participant) {
+                await this._careplanRepo.deleteParticipantByUserId(userId, true);
+                await this._handler.deleteParticipantData(participant.ParticipantId, participant.Provider);
+            }
 
         } catch (error) {
             Logger.instance().log(`${JSON.stringify(error.message, null, 2)}`);

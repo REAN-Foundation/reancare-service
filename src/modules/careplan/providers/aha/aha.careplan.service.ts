@@ -1057,6 +1057,10 @@ export class AhaCareplanService implements ICareplanService {
         throw new Error("Method not implemented.");
     }
 
+    deleteParticipantData(participantId: string): Promise<boolean> {
+        throw new Error("Method not implemented.");
+    }
+
     private checkIfMedicalProfileTaskExist = async (
         patientUserId: uuid,
         templateName : string

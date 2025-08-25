@@ -79,7 +79,8 @@
                 "ScoreAssessment": false,
                 "Search": false,
                 "StartAssessment": false,
-                "Update": false
+                "Update": false,
+                "SkipQuestion": false
             },
             "AssessmentTemplate": {
                 "AddNode": true,
@@ -199,7 +200,7 @@
             }
         },
         "Careplan": {
-            "Enroll": false,
+            "Enroll": true,
             "FetchTasks": false,
             "GetAvailableCareplans": true,
             "GetPatientEligibility": true,

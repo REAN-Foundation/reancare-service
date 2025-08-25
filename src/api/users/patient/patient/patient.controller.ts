@@ -247,6 +247,13 @@ export class PatientController extends BaseUserController {
                 }
             }
 
+            if (userDomainModel.Person.UniqueReferenceId && (updatedUser.Person.UniqueReferenceId !== userDomainModel.Person.UniqueReferenceId)) {
+                const isPersonExistsWithUniqueReferenceId = await this._personService.getPersonWithUniqueReferenceId(userDomainModel.Person.UniqueReferenceId);
+                if (isPersonExistsWithUniqueReferenceId) {
+                    throw new ApiError(409, `Person already exists with the unique reference id ${userDomainModel.Person.UniqueReferenceId}`);
+                }
+            }
+
             const updatedPerson = await this._personService.update(user.Person.id, personDomainModel);
             if (!updatedPerson) {
                 throw new ApiError(400, 'Unable to update person!');

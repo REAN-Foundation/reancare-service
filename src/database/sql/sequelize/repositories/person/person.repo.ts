@@ -144,6 +144,15 @@ export class PersonRepo implements IPersonRepo {
         return null;
     };
 
+    getPersonWithUniqueReferenceId = async (uniqueReferenceId: string): Promise<PersonDetailsDto> => {
+
+        if (uniqueReferenceId !== null && uniqueReferenceId !== undefined && uniqueReferenceId !== '') {
+            const person = await Person.findOne({ where: { UniqueReferenceId: uniqueReferenceId } });
+            return PersonMapper.toDetailsDto(person);
+        }
+        return null;
+    };
+
     personExistsWithPersonname = async (personName: string): Promise<boolean> => {
         if (personName != null && typeof personName !== 'undefined') {
             const existing = await Person.findOne({
@@ -165,7 +174,8 @@ export class PersonRepo implements IPersonRepo {
                 LastName                  : personDomainModel.LastName ?? null,
                 Phone                     : personDomainModel.Phone ?? null,
                 Email                     : personDomainModel.Email ?? null,
-                TelegramChatId            : personDomainModel.TelegramChatId ?? null,
+                UniqueReferenceId         : personDomainModel.UniqueReferenceId ?? null,
+                UniqueReferenceIdType     : personDomainModel.UniqueReferenceIdType ?? null,
                 Gender                    : personDomainModel.Gender ?? 'Unknown',
                 SelfIdentifiedGender      : personDomainModel.SelfIdentifiedGender ?? null,
                 MaritalStatus             : personDomainModel.MaritalStatus ?? null,
@@ -227,8 +237,11 @@ export class PersonRepo implements IPersonRepo {
             if (personDomainModel.Email != null) {
                 person.Email = personDomainModel.Email;
             }
-            if (personDomainModel.TelegramChatId != null) {
-                person.TelegramChatId = personDomainModel.TelegramChatId;
+            if (personDomainModel.UniqueReferenceId != null) {
+                person.UniqueReferenceId = personDomainModel.UniqueReferenceId;
+            }
+            if (personDomainModel.UniqueReferenceIdType != null) {
+                person.UniqueReferenceIdType = personDomainModel.UniqueReferenceIdType;
             }
             if (personDomainModel.Gender != null) {
                 person.Gender = Helper.getEnumKeyFromValue(Gender, personDomainModel.Gender);
@@ -274,6 +287,9 @@ export class PersonRepo implements IPersonRepo {
             }
             if (filters.Email) {
                 search.where['Email'] = filters.Email;
+            }
+            if (filters.UniqueReferenceId) {
+                search.where['UniqueReferenceId'] = filters.UniqueReferenceId;
             }
             if (filters.CreatedDateFrom != null && filters.CreatedDateTo != null) {
                 search.where['CreatedAt'] = {

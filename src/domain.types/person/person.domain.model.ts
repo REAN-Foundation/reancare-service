@@ -11,7 +11,8 @@ export interface PersonDomainModel {
     DisplayName?               : string;
     Phone?                     : string;
     Email?                     : string;
-    TelegramChatId?            : string;
+    UniqueReferenceId?         : string;
+    UniqueReferenceIdType?     : string;
     Gender?                    : Gender;
     SelfIdentifiedGender?      : string;
     MaritalStatus?             : string;

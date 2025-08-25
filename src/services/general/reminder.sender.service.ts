@@ -196,7 +196,7 @@ export class ReminderSenderService {
         const personRepo = Injector.Container.resolve<IPersonRepo>('IPersonRepo');
         const messagingService = Loader.messagingService;
         const person = await personRepo.getById(user.PersonId);
-        const telegramChatId = person.TelegramChatId;
+        const telegramChatId = person.UniqueReferenceId;
         const templateData = JSON.parse(reminder.RawContent);
         const clientName = templateData.ClientName;
         const message =

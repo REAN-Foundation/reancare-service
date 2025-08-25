@@ -54,6 +54,10 @@ export class PersonService {
         return await this._personRepo.getPersonWithEmail(email);
     };
 
+    public getPersonWithUniqueReferenceId = async (uniqueReferenceId: string): Promise<PersonDetailsDto> => {
+        return await this._personRepo.getPersonWithUniqueReferenceId(uniqueReferenceId);
+    };
+
     public search = async (filters: PersonSearchFilters): Promise<PersonSearchResults> => {
         return await this._personRepo.search(filters);
     };
@@ -79,6 +83,21 @@ export class PersonService {
         }
         const persons = await this._personRepo.search({
             Email : email
+        });
+
+        if (persons.TotalCount > 1) {
+            return true;
+        }
+
+        return false;
+    };
+
+    public multiplePersonsWithSameUniqueReferenceId = async (uniqueReferenceId: string): Promise<boolean> => {
+        if (!uniqueReferenceId) {
+            return false;
+        }
+        const persons = await this._personRepo.search({
+            UniqueReferenceId : uniqueReferenceId
         });
 
         if (persons.TotalCount > 1) {

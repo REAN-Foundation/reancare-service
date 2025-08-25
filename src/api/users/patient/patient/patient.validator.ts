@@ -6,6 +6,7 @@ import { PatientSearchFilters } from '../../../../domain.types/users/patient/pat
 import { BaseValidator, Where } from '../../../base.validator';
 import { Helper } from '../../../../common/helper';
 import { SupportedLanguage } from '../../../../domain.types/users/user/user.types';
+import { ApiError } from '../../../../common/api.error';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -32,7 +33,8 @@ export class PatientValidator extends BaseValidator {
                     Prefix                    : request.body.Prefix ?? null,
                     Phone                     : phone,
                     Email                     : request.body.Email ?? null,
-                    TelegramChatId            : request.body.TelegramChatId ?? null,
+                    UniqueReferenceId         : request.body.UniqueReferenceId ?? null,
+                    UniqueReferenceIdType     : request.body.UniqueReferenceIdType ?? null,
                     Gender                    : request.body.Gender ?? null,
                     SelfIdentifiedGender      : request.body.SelfIdentifiedGender ?? null,
                     MaritalStatus             : request.body.MaritalStatus ?? null,
@@ -86,7 +88,8 @@ export class PatientValidator extends BaseValidator {
                     Prefix                    : body.Prefix !== undefined ? body.Prefix                                      : undefined,
                     Phone                     : body.Phone !== undefined ? body.Phone                                        : undefined,
                     Email                     : body.Email !== undefined ? body.Email                                        : undefined,
-                    TelegramChatId            : body.TelegramChatId !== undefined ? body.TelegramChatId                      : undefined,
+                    UniqueReferenceId         : body.UniqueReferenceId !== undefined ? body.UniqueReferenceId                    : undefined,
+                    UniqueReferenceIdType     : body.UniqueReferenceIdType !== undefined ? body.UniqueReferenceIdType              : undefined,
                     Gender                    : body.Gender !== undefined ? body.Gender                                      : undefined,
                     SelfIdentifiedGender      : body.SelfIdentifiedGender !== undefined ? body.SelfIdentifiedGender          : undefined,
                     MaritalStatus             : body.MaritalStatus !== undefined ? body.MaritalStatus                        : undefined,
@@ -167,11 +170,19 @@ export class PatientValidator extends BaseValidator {
     };
 
     private async validateBody(request: express.Request, create = true): Promise<void> {
+        const hasPhone = request.body.Phone !== undefined && request.body.Phone !== null && request.body.Phone !== '';
+        const hasEmail = request.body.Email !== undefined && request.body.Email !== null && request.body.Email !== '';
+        const hasUniqueRefId = request.body.UniqueReferenceId !== undefined && request.body.UniqueReferenceId !== null && request.body.UniqueReferenceId !== '';
+        
+        if (create && !hasPhone && !hasEmail && !hasUniqueRefId) {
+            throw new ApiError(422, 'At least one of Phone, Email, or Unique Reference Id must be provided');
+        }
 
         await this.validateString(request, 'Phone', Where.Body, create, false);
         await this.validateEmail(request, 'Email', Where.Body, false, true);
         await this.validateString(request, 'UserName', Where.Body, false, true, false, 6, 12);
-        await this.validateString(request, 'TelegramChatId', Where.Body, false, true);
+        await this.validateString(request, 'UniqueReferenceId', Where.Body, false, true);
+        await this.validateString(request, 'UniqueReferenceIdType', Where.Body, false, true);
         await this.validateString(request, 'Prefix', Where.Body, false, true);
         await this.validateString(request, 'FirstName', Where.Body, false, true);
         await this.validateString(request, 'LastName', Where.Body, false, true);

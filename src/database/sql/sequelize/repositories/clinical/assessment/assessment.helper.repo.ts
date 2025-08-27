@@ -1494,6 +1494,9 @@ export class AssessmentHelperRepo implements IAssessmentHelperRepo {
             if (Helper.hasProperty(updates, 'Sequence')) {
                 option.Sequence = updates['Sequence'];
             }
+            if (Helper.hasProperty(updates, 'ProviderGivenCode')) {
+                option.ProviderGivenCode = updates['ProviderGivenCode'];
+            }
             if (Helper.hasProperty(updates, 'ImageUrl')) {
                 option.ImageUrl = updates['ImageUrl'];
             }

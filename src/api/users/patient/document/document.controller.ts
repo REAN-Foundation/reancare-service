@@ -274,8 +274,6 @@ export class DocumentController extends PatientBaseController {
 
     getSharedDocument = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            request.context = 'PatientDocument.GetSharedDocument';
-
             const key: string = await this._validator.getParamStr(request, 'key');
 
             const record: SharedDocumentDetailsDto = await this._service.getSharedDocument(key);

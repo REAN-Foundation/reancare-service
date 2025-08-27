@@ -688,7 +688,8 @@
                 "Search": true,
                 "Share": true,
                 "Update": true,
-                "Upload": true
+                "Upload": true,
+                "GetSharedDocument": true
             },
             "EmergencyContact": {
                 "Create": true,

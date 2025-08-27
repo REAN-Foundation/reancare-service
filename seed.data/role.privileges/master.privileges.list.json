@@ -515,6 +515,7 @@
     "Users.Patients.Document.Share",
     "Users.Patients.Document.Update",
     "Users.Patients.Document.Upload",
+    "Users.Patients.Document.GetSharedDocument",
     "Users.Patients.EmergencyContact.Create",
     "Users.Patients.EmergencyContact.Delete",
     "Users.Patients.EmergencyContact.GetById",

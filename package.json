@@ -24,6 +24,8 @@
         "@aws-sdk/credential-provider-node": "^3.501.0",
         "@aws-sdk/lib-storage": "^3.405.0",
         "@aws-sdk/s3-request-presigner": "^3.498.0",
+        "@azure/identity": "^4.11.1",
+        "@azure/storage-blob": "^12.28.0",
         "@faker-js/faker": "^8.0.2",
         "@types/adm-zip": "^0.5.1",
         "@types/bcryptjs": "^2.4.3",

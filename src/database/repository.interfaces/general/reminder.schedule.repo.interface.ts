@@ -26,4 +26,6 @@ export interface IReminderScheduleRepo {
 
     isReminderHasFutureSchedule(reminderId: string): Promise<boolean>;
 
+    deleteByUserId(userId: string, hardDelete: boolean): Promise<boolean>;
+
 }

@@ -1,0 +1,65 @@
+meta {
+  name: Create an API client - with validity period
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{BASE_URL}}/api-clients
+  body: json
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{ADMIN_USER_JWT}}
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+  Content-Type: application/json
+}
+
+body:json {
+  {
+      "ClientName": "Excellent Medicos",
+      "Password": "{{API_CLIENT_PASSWORD}}",
+      "Phone": "+91 9876543219",
+      "Email": "dev@excell-medicos.com",
+      "ValidFrom": "2021-07-21",
+      "ValidTill": "2024-07-20"
+  }
+}
+
+script:pre-request {
+  var password = "";
+  bru.setEnvVar("API_CLIENT_PASSWORD", password);
+  
+}
+
+tests {
+  try {
+      var jsonRes = res.getBody();
+      bru.setEnvVar("API_CLIENT_ID", jsonRes.Data.Client.id);
+      bru.setEnvVar("API_CLIENT_CODE", jsonRes.Data.Client.ClientCode);
+  }
+  catch (error) {
+      console.log(error.message);
+  }
+  
+  test("Request is successfull", function () {
+      expect(res.getStatus()).to.equal(201);
+      var jsonRes = res.getBody();
+      expect(jsonRes.Status).to.eql('success');
+  });
+  
+  test("Api client is created", function () {
+      var jsonRes = res.getBody();
+      expect(jsonRes.Data).to.have.property('Client');
+      expect(jsonRes.Data.Client).to.not.be.empty;
+      expect(jsonRes.Data.Client).to.have.property('id');
+      expect(jsonRes.Data.Client).to.have.property('ClientCode');
+      expect(jsonRes.Data.Client.ClientCode).to.not.be.null;
+  });
+  
+}
+
+docs {
+  Register an API client. This example shows how you can set custom validity period for the API key. This API will register a new API client and returns generated 'client code' and 'api-key'.
+}

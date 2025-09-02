@@ -1,0 +1,48 @@
+meta {
+  name: Get medication consumption by id
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{BASE_URL}}/clinical/medication-consumptions/{{MEDICATION_CONSUMPTION_ID}}
+  body: none
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{PATIENT_USER_JWT}}
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+  Content-Type: application/json
+}
+
+tests {
+  
+  test("Request is successfull", function () {
+      expect(res.getStatus()).to.equal(200);
+      var jsonRes = res.getBody();
+      expect(jsonRes.Status).to.eql('success');
+  });
+  
+  test("Medication consumption is returned", function () {
+     
+      var jsonRes = res.getBody();
+      expect(jsonRes.Data).to.have.property('MedicationConsumption');
+      expect(jsonRes.Data.MedicationConsumption).to.not.be.empty;
+      expect(jsonRes.Data.MedicationConsumption).to.have.property('id');
+      expect(jsonRes.Data.MedicationConsumption).to.have.property('PatientUserId');
+      expect(jsonRes.Data.MedicationConsumption).to.have.property('MedicationId');
+      expect(jsonRes.Data.MedicationConsumption).to.have.property('DrugName');
+      expect(jsonRes.Data.MedicationConsumption).to.have.property('DrugId');
+      expect(jsonRes.Data.MedicationConsumption).to.have.property('Dose');
+      expect(jsonRes.Data.MedicationConsumption).to.have.property('Details');
+      expect(jsonRes.Data.MedicationConsumption).to.have.property('TimeScheduleStart');
+      expect(jsonRes.Data.MedicationConsumption).to.have.property('TimeScheduleEnd');
+      expect(jsonRes.Data.MedicationConsumption).to.have.property('Status');
+      
+      // expect(jsonRes.Data.MedicationConsumption.Dose).greaterThan(0);    
+    expect(Number(jsonRes.Data.MedicationConsumption.Dose)).to.be.greaterThan(0);
+  });
+  
+  
+}

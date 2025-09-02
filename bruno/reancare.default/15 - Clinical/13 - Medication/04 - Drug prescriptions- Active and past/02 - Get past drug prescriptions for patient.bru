@@ -1,0 +1,17 @@
+meta {
+  name: Get past drug prescriptions for patient
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{BASE_URL}}/drug-order/past-for-patient/{{PATIENT_ROLE_USER_ID}}
+  body: none
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{PATIENT_USER_JWT}}
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+  Content-Type: application/json
+}

@@ -1,0 +1,51 @@
+meta {
+  name: Mark list of med consumptions as taken
+  type: http
+  seq: 9
+}
+
+put {
+  url: {{BASE_URL}}/clinical/medication-consumptions/mark-list-as-taken
+  body: json
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{PATIENT_USER_JWT}}
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+  Content-Type: application/json
+}
+
+body:json {
+  {
+      "MedicationConsumptionIds": [
+          "{{MEDICATION_CONSUMPTION_ID_03}}",
+          "{{MEDICATION_CONSUMPTION_ID_05}}"
+      ]
+  }
+}
+
+tests {
+  
+  test("Request is successfull", function () {
+      expect(res.getStatus()).to.equal(200);
+      var jsonRes = res.getBody();
+      expect(jsonRes.Status).to.eql('success');
+  });
+  
+  test("Medication consumption schedules in list are marked as taken", function () {
+     
+      var jsonRes = res.getBody();
+      expect(jsonRes.Data).to.have.property('MedicationConsumptions');
+      expect(jsonRes.Data.MedicationConsumptions).to.not.be.empty;
+      expect(jsonRes.Data.MedicationConsumptions.length).equals(2);
+  
+      var firstMed = jsonRes.Data.MedicationConsumptions[0];
+      var secondMed = jsonRes.Data.MedicationConsumptions[1];
+  
+      expect(firstMed.Status).equals("Taken");
+      expect(secondMed.Status).equals("Taken");
+    
+  });
+  
+}

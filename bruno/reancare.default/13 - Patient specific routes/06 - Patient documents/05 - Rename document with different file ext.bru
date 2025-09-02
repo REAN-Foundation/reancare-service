@@ -1,0 +1,33 @@
+meta {
+  name: Rename document with different file ext
+  type: http
+  seq: 6
+}
+
+put {
+  url: {{BASE_URL}}/patient-documents/{{PATIENT_DOCUMENT_ID}}/rename
+  body: json
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+  Authorization: Bearer {{PATIENT_USER_JWT}}
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+}
+
+body:json {
+  {
+      "NewName": "abc.jpg"
+  }
+  
+}
+
+tests {
+  test("Request is failure", function () {
+      expect(res.getStatus()).to.equal(409);
+      var jsonRes = res.getBody();
+      expect(jsonRes.Status).to.eql('failure');
+  });
+  
+}

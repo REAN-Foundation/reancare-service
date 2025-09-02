@@ -1,0 +1,21 @@
+meta {
+  name: Get user with phone and role
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{BASE_URL}}/users/by-phone/{{PHONE_COUNTRY_CODE}}-{{PHONE_NUMBER}}/role/{{ROLE_PATIENT}}
+  body: none
+  auth: none
+}
+
+headers {
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+  Content-Type: application/json
+}
+
+script:pre-request {
+  bru.setEnvVar("PHONE_NUMBER", "1599511599");
+  bru.setEnvVar("PHONE_COUNTRY_CODE", "+91");
+}

@@ -1,0 +1,70 @@
+meta {
+  name: Add blood pressure record
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{BASE_URL}}/clinical/biometrics/blood-pressures/
+  body: json
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{PATIENT_USER_JWT}}
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+  Content-Type: application/json
+}
+
+body:json {
+  {
+      "PatientUserId": "{{PATIENT_USER_ID}}",
+      "Systolic": 120,
+      "Diastolic": 90,
+      "Unit": "mm Hg",
+      "RecordDate": "2021-09-22",
+      "RecordedByUserId": "{{PATIENT_USER_ID}}"
+  }
+}
+
+tests {
+  var jsonRes = res.getBody();
+  
+  try {
+      bru.setEnvVar("BIOMETRICS_BLOOD_PRESSURE_ID", jsonRes.Data.BloodPressure.id);
+  }
+  catch (error) {
+      console.log(error.message);
+  }
+  
+  
+  test("Request is successfull", function () {
+      expect(res.getStatus()).to.equal(201);
+      var jsonRes = res.getBody();
+      expect(jsonRes.Status).to.eql('success');
+  });
+  
+  test("Updated blood pressure record is returned", function () {
+  
+      var expectedSystolic = 120;
+      var expectedDiastolic = 90;
+      var expectedRecordDate = "2021-09-22T00:00:00.000Z";
+      var expectedRecordedByUserId = bru.getEnvVar("PATIENT_USER_ID");
+      
+      var jsonRes = res.getBody();
+      expect(jsonRes.Data).to.have.property('BloodPressure');
+      expect(jsonRes.Data.BloodPressure).to.not.be.empty;
+      expect(jsonRes.Data.BloodPressure).to.have.property('Systolic');
+      expect(jsonRes.Data.BloodPressure).to.have.property('Diastolic');
+      expect(jsonRes.Data.BloodPressure).to.have.property('RecordDate');
+      expect(jsonRes.Data.BloodPressure).to.have.property('RecordedByUserId');
+  
+      expect(jsonRes.Data.BloodPressure.Systolic).equals(expectedSystolic);
+      expect(jsonRes.Data.BloodPressure.Diastolic).equals(expectedDiastolic);
+      expect(jsonRes.Data.BloodPressure.RecordDate).equals(expectedRecordDate);
+      expect(jsonRes.Data.BloodPressure.RecordedByUserId).equals(expectedRecordedByUserId);
+      
+  });
+  
+  
+}

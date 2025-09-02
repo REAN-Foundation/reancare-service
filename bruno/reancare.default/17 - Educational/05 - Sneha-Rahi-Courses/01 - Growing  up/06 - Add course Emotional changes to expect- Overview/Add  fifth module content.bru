@@ -1,0 +1,67 @@
+meta {
+  name: Add  fifth module content
+  type: http
+  seq: 4
+}
+
+post {
+  url: {{BASE_URL}}/educational/course-contents
+  body: json
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{ADMIN_USER_JWT}}
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+  Content-Type: application/json
+}
+
+body:json {
+  {
+      "CourseId": "{{COURSE_ID}}",
+      "LearningPathId": "{{LEARNING_PATH_ID}}",
+      "ModuleId": "{{FIFTH_COURSE_MODULE_ID}}",
+      "Title": "Emotional changes to expect: Overview",
+      "Description": "Learn the emotional social changes that you go through during puberty. Being a step ahead of the game will help you manage yourself for the better.",
+      "DurationInMins": 3,
+      "ContentType": "Video",
+      "ResourceLink": "https://www.youtube.com/watch?v=Bjee0QgqC10",
+      "ImageUrl": "{{FILE_RESOURCE_URL}}",
+      "Sequence": 1
+  }
+}
+
+tests {
+  var jsonRes = res.getBody();
+  
+  try {
+      bru.setEnvVar("FIFTH_MODULE_CONTENT_ID", jsonRes.Data.CourseContent.id);
+  }
+  catch (error) {
+      console.log(error.message);
+  }
+  
+  
+  test("Request is successfull", function () {
+      expect(res.getStatus()).to.equal(201);
+      var jsonRes = res.getBody();
+      expect(jsonRes.Status).to.eql('success');
+  });
+  
+  test("New course content is returned", function () {
+  
+      var expectedTitle = "Emotional changes to expect: Overview";
+      var expectedDurationInMins = 3;
+      
+      var jsonRes = res.getBody();
+      expect(jsonRes.Data).to.have.property('CourseContent');
+      expect(jsonRes.Data.CourseContent).to.not.be.empty;
+      expect(jsonRes.Data.CourseContent).to.have.property('Title');
+      expect(jsonRes.Data.CourseContent).to.have.property('DurationInMins');
+      
+      expect(jsonRes.Data.CourseContent.Title).equals(expectedTitle );
+      expect(jsonRes.Data.CourseContent.DurationInMins).equals(expectedDurationInMins);
+  });
+  
+  
+}

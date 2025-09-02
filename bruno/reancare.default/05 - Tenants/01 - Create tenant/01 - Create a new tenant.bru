@@ -1,0 +1,105 @@
+meta {
+  name: Create a new tenant
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{BASE_URL}}/tenants
+  body: json
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+  Authorization: Bearer {{ADMIN_USER_JWT}}
+}
+
+body:json {
+  {
+      "Name": "Snehaa",
+      "Description": "SNEHA is a non-profit organisation that works with women, children and families in communities; and with public health and safety systems. Our innovative work in vulnerable settlements aims to reduce maternal and neonatal mortality and morbidity, child malnutrition, reduce adolescent anaemia and gender-based violence - all key determinants of health equity for the family and the community at large.",
+      "Code": "{{ORG_CODE}}",
+      "Phone": "{{PHONE_COUNTRY_CODE}}-{{PHONE_NUMBER}}",
+      "Email": "{{ORG_EMAIL}}",
+      "UserName": "{{TENANT_USERNAME}}",
+      "AdminPassword": "{{TENANT_ADMIN_PASSWORD}}"
+    
+  }
+}
+
+script:pre-request {
+  function generateRandomCode(length = 6) {
+      const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+      let result = '';
+      for (let i = 0; i < length; i++) {
+          result += chars.charAt(Math.floor(Math.random() * chars.length));
+      }
+      return result;
+  }
+  
+  // Generate org code and email
+  const orgCode = generateRandomCode();
+  const orgEmail = `org_${orgCode.toLowerCase()}@example.com`;
+  const userName = `tenant_${orgCode.toLowerCase()}`;
+  
+  // Set env vars
+  bru.setEnvVar("ORG_CODE", orgCode);
+  bru.setEnvVar("ORG_EMAIL", orgEmail);
+  bru.setEnvVar("TENANT_USERNAME", userName);
+  
+}
+
+tests {
+  try {
+      var jsonRes = res.getBody();
+  
+      bru.setEnvVar("TENANT_ID", jsonRes.Data.Tenant.id);
+      bru.setEnvVar("TENANT_ADMIN_USERNAME", jsonRes.Data.AdminUser.UserName);
+    var password = "";
+  bru.setEnvVar("TENANT_ADMIN_PASSWORD", password);
+      // bru.setEnvVar("TENANT_ADMIN_PASSWORD", jsonRes.Data.AdminUser.Password);
+  } catch (error) {
+      console.log("Error setting tenant environment vars:", error.message);
+  }
+  test("Request is successfull", function () {
+      expect(res.getStatus()).to.equal(201);
+      var jsonRes = res.getBody();
+      expect(jsonRes.Status).to.eql('success');
+  });
+  
+  test("Tenant is created", function () {
+      var jsonRes = res.getBody();
+      expect(jsonRes.Data).to.have.property('Tenant');
+      expect(jsonRes.Data.Tenant).to.not.be.empty;
+      expect(jsonRes.Data.Tenant).to.have.property('id');
+      expect(jsonRes.Data.Tenant).to.have.property('Name');
+      expect(jsonRes.Data.Tenant.Name).to.not.be.empty;
+      expect(jsonRes.Data.Tenant).to.have.property('Description');
+      expect(jsonRes.Data.Tenant).to.have.property('Code');
+      expect(jsonRes.Data.Tenant).to.have.property('Phone');
+      expect(jsonRes.Data.Tenant).to.have.property('Email');
+      
+  });
+  
+}
+
+docs {
+  Registers patient. Phone number is the only mandatory field. The rest of the fields are optional. Phone number has to be specified in this format - 'country-code-phone-number'. e.g. "+91-1234567890".
+  
+  The typical request body is as follows - 
+  `
+  {
+      "Phone": "+91-1234567890",
+      "Prefix": "Mr.",
+      "FirstName": "John",
+      "MiddleName": "X",
+      "LastName": "Doe",
+      "Email": "john.doe@gmail.com",
+      "Gender": "Male",
+      "BirthDate": "1979-01-01",
+      "ImageResourceId": "  id"
+  }
+  `
+}

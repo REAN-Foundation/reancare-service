@@ -1,0 +1,42 @@
+meta {
+  name: Score the assessment
+  type: http
+  seq: 14
+}
+
+get {
+  url: {{BASE_URL}}/clinical/assessments/{{ASSESSMENT_ID}}/score
+  body: json
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{PATIENT_USER_JWT}}
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+  Content-Type: application/json
+}
+
+tests {
+  // try {
+  //     var jsonRes = res.getBody();
+  //     for (i = 0; i<jsonRes.Data.Next.ChildrenQuestions.length;i++ ) {
+  //         bru.setEnvVar("ASSESSMENT_LIST_QUESTION_ID_"+i, jsonRes.Data.Next.ChildrenQuestions[i].id);
+  //     }
+  // }
+  // catch (error) {
+  //     console.log(error.message);
+  // }
+  
+  test("Request is successfull", function () {
+      expect(res.getStatus()).to.equal(200);
+      var jsonRes = res.getBody();
+      expect(jsonRes.Status).to.eql('success');
+  });
+  
+  test("Assessment is started", function () {
+      var jsonRes = res.getBody();
+      expect(jsonRes.Data).to.have.property('AssessmentId');
+      // expect(jsonRes.Data.AnswerResponse).to.have.property('Answer');
+      // expect(jsonRes.Data.AnswerResponse.Next).to.have.property('ChildrenNodeIds');
+  });
+}

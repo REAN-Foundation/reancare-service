@@ -1,0 +1,43 @@
+meta {
+  name: Search
+  type: http
+  seq: 4
+}
+
+get {
+  url: {{BASE_URL}}/clinical/maternity/maternity-deliveries/{{DELIVERY_ID}}/postnatal-visits/search?DeliveryId={{DELIVERY_ID}}
+  body: none
+  auth: none
+}
+
+params:query {
+  DeliveryId: {{DELIVERY_ID}}
+  ~DateOfVisit: 2
+  ~PatientUserId: {{PATIENT_USER_ID}}
+  ~BodyWeightId: null
+  ~ComplicationId: null
+  ~BodyTemperatureId: null
+  ~BloodPressureId: null
+}
+
+headers {
+  Authorization: Bearer {{ADMIN_USER_JWT}}
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+  Content-Type: application/json
+  ~: 
+}
+
+tests {
+  test("Request is successfull", function () {
+      expect(res.getStatus()).to.equal(200);
+      var jsonRes = res.getBody();
+      expect(jsonRes.Status).to.eql('success');
+  });
+  
+  test("List of Postnatal visit  records returned successfully", function () {
+      var jsonRes = res.getBody();
+      expect(jsonRes.Data).to.have.property('PostnatalVisits');
+      expect(jsonRes.Data.PostnatalVisits.Items.length).to.be.greaterThan(0);
+  });
+  
+}

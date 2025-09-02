@@ -1,0 +1,78 @@
+meta {
+  name: Update API client by id
+  type: http
+  seq: 4
+}
+
+put {
+  url: {{BASE_URL}}/api-clients/{{API_CLIENT_ID}}
+  body: json
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{ADMIN_USER_JWT}}
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+  Content-Type: application/json
+}
+
+body:json {
+  {
+      "ClientName": "{{API_CLIENT_NEW_NAME}}",
+      "Password": "{{API_CLIENT_PASSWORD}}",
+      "Phone": "{{API_CLIENT_NEW_PHONE}}",
+      "Email": "{{API_CLIENT_NEW_EMAIL}}"
+  }
+  
+}
+
+script:pre-request {
+  var password = "";
+  bru.setEnvVar("API_CLIENT_PASSWORD", password);
+  
+  bru.setEnvVar("API_CLIENT_NEW_NAME", "My health app - New name");
+  bru.setEnvVar("API_CLIENT_NEW_PHONE", "+91 4444455555");
+  bru.setEnvVar("API_CLIENT_NEW_EMAIL", "new.client.email@client.com");
+  
+}
+
+tests {
+  try {
+      var jsonRes = res.getBody();
+      bru.setEnvVar("API_CLIENT_ID", jsonRes.Data.Client.id);
+      bru.setEnvVar("API_CLIENT_CODE", jsonRes.Data.Client.ClientCode);
+  }
+  catch (error) {
+      console.log(error.message);
+  }
+  
+  test("Request is successfull", function () {
+      expect(res.getStatus()).to.equal(200);
+      var jsonRes = res.getBody();
+      expect(jsonRes.Status).to.eql('success');
+  });
+  
+  test("Updated api client is returned", function () {
+  
+      var expectedClientName = bru.getEnvVar("API_CLIENT_NEW_NAME");
+      var expectedClientPhone = bru.getEnvVar("API_CLIENT_NEW_PHONE");
+      var expectedClientEmail = bru.getEnvVar("API_CLIENT_NEW_EMAIL");
+  
+      var jsonRes = res.getBody();
+      expect(jsonRes.Data).to.have.property('Client');
+      expect(jsonRes.Data.Client).to.not.be.empty;
+      expect(jsonRes.Data.Client).to.have.property('id');
+      expect(jsonRes.Data.Client).to.have.property('ClientCode');
+      expect(jsonRes.Data.Client.ClientCode).to.not.be.null;
+  
+      expect(jsonRes.Data.Client.ClientName).equals(expectedClientName);
+      expect(jsonRes.Data.Client.Phone).equals(expectedClientPhone);
+      expect(jsonRes.Data.Client.Email).equals(expectedClientEmail);
+  
+  });
+  
+}
+
+docs {
+  Update an API client info by client id.
+}

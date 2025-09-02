@@ -1,0 +1,37 @@
+meta {
+  name: Delete patient emergency event record
+  type: http
+  seq: 5
+}
+
+delete {
+  url: {{BASE_URL}}/clinical/emergency-events/{{EMERGENCY_EVENT_ID}}
+  body: json
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{PATIENT_USER_JWT}}
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+  Content-Type: application/json
+}
+
+tests {
+  test("Request is successfull", function () {
+      expect(res.getStatus()).to.equal(200);
+      var jsonRes = res.getBody();
+      expect(jsonRes.Status).to.eql('success');
+  });
+  
+  test("Deleted is true", function () {
+  
+      var jsonRes = res.getBody();
+      expect(jsonRes.Data).to.have.property('Deleted');
+      expect(jsonRes.Data.Deleted).equals(true);
+  
+  });
+}
+
+docs {
+  Deletes emergency event using ID
+}

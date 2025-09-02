@@ -1,0 +1,40 @@
+meta {
+  name: Get by id
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{BASE_URL}}/clinical/maternity/maternity-deliveries/{{DELIVERY_ID}}/postnatal-medications/{{POSTNATAL_MEDICATION_ID}}
+  body: none
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{ADMIN_USER_JWT}}
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+  Content-Type: application/json
+}
+
+tests {
+  test("Request is successfull", function () {
+      expect(res.getStatus()).to.equal(200);
+      var jsonRes = res.getBody();
+      expect(jsonRes.Status).to.eql('success');
+  });
+  
+  test("Postnatal medication record retrieved successfully!", function () {
+  
+      var jsonRes = res.getBody();
+      expect(jsonRes.Data).to.have.property('PostnatalMedication');
+      
+      expect(jsonRes.Data.PostnatalMedication).to.have.property('id');
+      expect(jsonRes.Data.PostnatalMedication).to.have.property('PostNatalVisitId');
+      expect(jsonRes.Data.PostnatalMedication).to.have.property('DeliveryId');
+      expect(jsonRes.Data.PostnatalMedication).to.have.property('VisitId');
+      expect(jsonRes.Data.PostnatalMedication).to.have.property('Name');
+      expect(jsonRes.Data.PostnatalMedication).to.have.property('Given');
+      expect(jsonRes.Data.PostnatalMedication).to.have.property('MedicationId');
+  });
+  
+}

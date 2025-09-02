@@ -1,0 +1,66 @@
+meta {
+  name: Answer the eighth question
+  type: http
+  seq: 12
+}
+
+post {
+  url: {{BASE_URL}}/clinical/assessments/{{ASSESSMENT_ID}}/question-lists/{{ASSESSMENT_QUESTION_ID}}/answer
+  body: json
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{PATIENT_USER_JWT}}
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+  Content-Type: application/json
+}
+
+body:json {
+  {
+      "Answers": [
+          {
+              "QuestionId": "{{ASSESSMENT_LIST_QUESTION_ID_0}}",
+              "ResponseType": "Single Choice Selection",
+              "Answer": 3
+          },
+          {
+              "QuestionId": "{{ASSESSMENT_LIST_QUESTION_ID_1}}",
+              "ResponseType": "Single Choice Selection",
+              "Answer": 5
+          },
+          {
+              "QuestionId": "{{ASSESSMENT_LIST_QUESTION_ID_2}}",
+              "ResponseType": "Single Choice Selection",
+              "Answer": 5
+          }
+      ]
+  }
+}
+
+tests {
+  try {
+      var jsonRes = res.getBody();
+      for (i = 0; i<jsonRes.Data.Next.ChildrenQuestions.length;i++ ) {
+          bru.setEnvVar("ASSESSMENT_LIST_QUESTION_ID_"+i, jsonRes.Data.Next.ChildrenQuestions[i].id);
+      }
+  }
+  catch (error) {
+      console.log(error.message);
+  }
+  
+  test("Request is successfull", function () {
+      expect(res.getStatus()).to.equal(200);
+      var jsonRes = res.getBody();
+      expect(jsonRes.Status).to.eql('success');
+  });
+  
+  test("Assessment has completed successfully", function () {
+      var jsonRes = res.getBody();
+      expect(jsonRes.Data.AnswerResponse).to.have.property('AssessmentId');
+      expect(jsonRes.Data.AnswerResponse).to.have.property('Parent');
+      expect(jsonRes.Data.AnswerResponse).to.have.property('Answer');
+      // expect(jsonRes.Data.AnswerResponse.Next).to.have.property('Next');
+    // expect(jsonRes.Data.AnswerResponse).to.have.property('Next');
+  });
+}

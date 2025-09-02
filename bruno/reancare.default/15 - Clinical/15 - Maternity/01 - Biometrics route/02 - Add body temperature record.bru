@@ -1,0 +1,62 @@
+meta {
+  name: Add body temperature record Copy
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{BASE_URL}}/clinical/biometrics/body-temperatures
+  body: json
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{PATIENT_USER_JWT}}
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+  Content-Type: application/json
+}
+
+body:json {
+  {
+      "PatientUserId": "{{PATIENT_USER_ID}}",
+      "BodyTemperature": 36,
+      "Unit": "Celsius",
+      "RecordDate": "2021-09-14"
+      // "RecordedByUserId": "{{RECORDED_BY_USER_ID}}"
+  }
+}
+
+tests {
+  var jsonRes = res.getBody();
+  
+  try {
+      bru.setEnvVar("BIOMETRICS_BODY_TEMPERATURE_ID", jsonRes.Data.BodyTemperature.id);
+  }
+  catch (error) {
+      console.log(error.message);
+  }
+  
+  test("Request is successfull", function () {
+      expect(res.getStatus()).to.equal(201);
+      var jsonRes = res.getBody();
+      expect(jsonRes.Status).to.eql('success');
+  });
+  
+  test("New body temperature record is created", function () {
+  
+      var expectedValue = 36;
+      var expectedPatientUserId = bru.getEnvVar("PATIENT_USER_ID");
+      
+      var jsonRes = res.getBody();
+      expect(jsonRes.Data).to.have.property('BodyTemperature');
+      expect(jsonRes.Data.BodyTemperature).to.not.be.empty;
+      expect(jsonRes.Data.BodyTemperature).to.have.property('id');
+      expect(jsonRes.Data.BodyTemperature).to.have.property('BodyTemperature');
+      expect(jsonRes.Data.BodyTemperature).to.have.property('PatientUserId');
+      
+      expect(jsonRes.Data.BodyTemperature.BodyTemperature).equals(expectedValue);
+      expect(jsonRes.Data.BodyTemperature.PatientUserId).equals(expectedPatientUserId);
+      
+  });
+  
+}

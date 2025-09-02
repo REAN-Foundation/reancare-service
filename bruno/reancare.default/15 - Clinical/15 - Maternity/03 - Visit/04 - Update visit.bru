@@ -1,0 +1,60 @@
+meta {
+  name: Update
+  type: http
+  seq: 3
+}
+
+put {
+  url: {{BASE_URL}}/clinical/visits/{{VISIT_ID}}
+  body: json
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{ADMIN_USER_JWT}}
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+  Content-Type: application/json
+}
+
+body:json {
+  {
+      "VisitType": "DoctorVisit",
+      "EhrId": "EHR-12345",
+      "DisplayId": "VIS-001",
+      "PatientUserId": "{{PATIENT_USER_ID}}",
+      "MedicalPractitionerUserId": "{{MEDICAL_PRACTITIONER_USER_ID}}",
+      "ReferenceVisitId": "{{VISIT_ID}}",
+      "CurrentState": "InProgress",
+      "StartDate": "2025-03-30T09:00:00Z",
+      "EndDate": "2025-03-30T10:00:00Z",
+      "FulfilledAtOrganizationId": "550e8400-e29b-41d4-a716-446655440003",
+      "AdditionalInformation": "Patient reported mild headache and dizziness."
+  }
+  
+}
+
+tests {
+  test("Request is successfull", function () {
+      expect(res.getStatus()).to.equal(200);
+      var jsonRes = res.getBody();
+      expect(jsonRes.Status).to.eql('success');
+  });
+  
+  test("Visit record updated successfully", function () {
+  
+      var jsonRes = res.getBody();
+      expect(jsonRes.Data).to.have.property('Visit');
+      
+      expect(jsonRes.Data.Visit).to.have.property('id');
+      expect(jsonRes.Data.Visit).to.have.property('VisitType');
+      expect(jsonRes.Data.Visit).to.have.property('EhrId');
+      expect(jsonRes.Data.Visit).to.have.property('DisplayId');
+      expect(jsonRes.Data.Visit).to.have.property('PatientUserId');
+      expect(jsonRes.Data.Visit).to.have.property('MedicalPractitionerUserId');
+      expect(jsonRes.Data.Visit).to.have.property('CurrentState');
+      expect(jsonRes.Data.Visit).to.have.property('StartDate');
+      expect(jsonRes.Data.Visit).to.have.property('EndDate');
+      expect(jsonRes.Data.Visit).to.have.property('FulfilledAtOrganizationId');
+      expect(jsonRes.Data.Visit).to.have.property('AdditionalInformation');
+  });
+}

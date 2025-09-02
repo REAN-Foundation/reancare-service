@@ -1,0 +1,51 @@
+meta {
+  name: Get organizations by person id
+  type: http
+  seq: 3
+}
+
+get {
+  url: {{BASE_URL}}/persons/{{DOCTOR_PERSON_ID_2}}/organizations
+  body: json
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{DOCTOR_USER_JWT}}
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+  Content-Type: application/json
+}
+
+tests {
+  
+  test("Request is successfull", function () {
+      expect(res.getStatus()).to.equal(200);
+      var jsonRes = res.getBody();
+      expect(jsonRes.Status).to.eql('success');
+  });
+  
+  test("Organizations for person are returned", function () {
+  
+      var jsonRes = res.getBody();
+      expect(jsonRes.Data).to.have.property('Organizations');
+      expect(jsonRes.Data.Organizations).to.not.be.empty;
+  
+      var count = jsonRes.Data.Organizations.length;
+      expect(count).to.be.greaterThan(0);
+      expect(jsonRes.Data.Organizations[0]).to.have.property('id');
+      expect(jsonRes.Data.Organizations[0]).to.have.property('Type');
+      expect(jsonRes.Data.Organizations[0]).to.have.property('Name');
+      expect(jsonRes.Data.Organizations[0]).to.have.property('ContactEmail');
+      expect(jsonRes.Data.Organizations[0]).to.have.property('ContactPhone');
+      expect(jsonRes.Data.Organizations[0]).to.have.property('OperationalSince');
+      expect(jsonRes.Data.Organizations[0]).to.have.property('IsHealthFacility');
+  
+      expect(jsonRes.Data.Organizations.length).to.be.greaterThan(0);
+  });
+  
+  
+}
+
+docs {
+  Get an address by address id.
+}

@@ -14,4 +14,6 @@ export interface ISymptomAssessmentRepo {
 
     delete(id: string): Promise<boolean>;
 
+    deleteByUserId(patientUserId: string, hardDelete: boolean): Promise<boolean>;
+
 }

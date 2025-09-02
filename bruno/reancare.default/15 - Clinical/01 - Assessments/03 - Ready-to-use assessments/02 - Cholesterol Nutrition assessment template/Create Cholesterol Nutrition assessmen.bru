@@ -1,0 +1,65 @@
+meta {
+  name: Create Cholesterol Nutrition assessmen
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{BASE_URL}}/clinical/assessment-templates
+  body: json
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{ADMIN_USER_JWT}}
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+  Content-Type: application/json
+}
+
+body:json {
+  {
+      "Title": "Nutrition assessment template",
+      "Description": "Food checklist for better nutrition",
+      "DisplayCode": "AssessmtTmpl#cholNutri",
+      "Type": "Careplan",
+      "Provider": "REAN",
+      "ProviderAssessmentCode": "1",
+      "ServeListNodeChildrenAtOnce": false
+  }
+  
+}
+
+tests {
+  var jsonRes = res.getBody();
+  
+  try {
+      bru.setEnvVar("ASSESSMENT_TEMPLATE_ID", jsonRes.Data.AssessmentTemplate.id);
+      bru.setEnvVar("ASSESSMENT_TEMPLATE_ROOT_NODE_ID", jsonRes.Data.AssessmentTemplate.RootNodeId);
+  }
+  catch (error) {
+      console.log(error.message);
+  }
+  
+  test("Request is successfull", function () {
+      expect(res.getStatus()).to.equal(201);
+      var jsonRes = res.getBody();
+      expect(jsonRes.Status).to.eql('success');
+  });
+  
+  test("New assessment template is created", function () {
+     
+      var jsonRes = res.getBody();
+      expect(jsonRes.Data).to.have.property('AssessmentTemplate');
+      expect(jsonRes.Data.AssessmentTemplate).to.not.be.empty;
+      expect(jsonRes.Data.AssessmentTemplate).to.have.property('id');
+      expect(jsonRes.Data.AssessmentTemplate).to.have.property('Title');
+      expect(jsonRes.Data.AssessmentTemplate).to.have.property('Description');
+      expect(jsonRes.Data.AssessmentTemplate).to.have.property('Type');
+      
+      expect(jsonRes.Data.AssessmentTemplate.Title).equals("Nutrition assessment template");
+      expect(jsonRes.Data.AssessmentTemplate.Description).equals("Food checklist for better nutrition");
+      expect(jsonRes.Data.AssessmentTemplate.Type).equals("Careplan");
+      
+  });
+  
+}

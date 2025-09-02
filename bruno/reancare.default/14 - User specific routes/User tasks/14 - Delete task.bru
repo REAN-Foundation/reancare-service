@@ -1,0 +1,40 @@
+meta {
+  name: Delete task
+  type: http
+  seq: 16
+}
+
+delete {
+  url: {{BASE_URL}}/user-tasks/{{USER_TASK_ID}}
+  body: none
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{ADMIN_USER_JWT}}
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+  Content-Type: application/json
+}
+
+tests {
+  test("Request is successfull", function () {
+      expect(res.getStatus()).to.equal(200);
+      var jsonRes = res.getBody();
+      expect(jsonRes.Status).to.eql('success');
+  });
+  
+  test("User Task record is deleted", function () {
+  
+      var expectedValue = true;
+      
+      var jsonRes = res.getBody();
+      expect(jsonRes.Data).to.have.property('Deleted');
+      expect(jsonRes.Data.Deleted).equals(expectedValue);
+  
+  });
+  
+}
+
+docs {
+  Delete User Task record with id
+}

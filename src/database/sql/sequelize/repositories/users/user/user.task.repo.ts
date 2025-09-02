@@ -554,6 +554,24 @@ export class UserTaskRepo implements IUserTaskRepo {
         }
     };
 
+    deleteByUserId = async(userId: string, hardDelete: boolean = false): Promise<boolean> => {
+        try {
+            const deletedCount = await UserTask.destroy({
+                where : {
+                    UserId : userId
+                },
+                force : hardDelete
+            });
+
+            if (deletedCount === 0) {
+                Logger.instance().log(`No UserTask record found for user: ${userId}`);
+            }
+            return true;
+        } catch (error) {
+            Logger.instance().log(error.message);
+        }
+    };
+
     private async getDayByDayStats(patientUserId: string, numDays: number) {
 
         const offsetMinutes = await HelperRepo.getPatientTimezoneOffsets(patientUserId);

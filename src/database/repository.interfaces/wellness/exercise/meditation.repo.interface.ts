@@ -7,7 +7,7 @@ export interface IMeditationRepo {
     create(meditationDomainModel: MeditationDomainModel): Promise<MeditationDto>;
 
     getById(id: string): Promise<MeditationDto>;
-    
+
     search(filters: MeditationSearchFilters): Promise<MeditationSearchResults>;
 
     update(id: string, meditationDomainModel: MeditationDomainModel):
@@ -20,4 +20,6 @@ export interface IMeditationRepo {
     getAllUserResponsesBefore(patientUserId: string, date: Date): Promise<any[]>;
 
     getMeditationByStartDateAndPatientUserId(startDate: Date, patientUserId: string): Promise<MeditationDto>;
+
+    deleteByUserId(patientUserId: string, hardDelete: boolean): Promise<boolean>;
 }

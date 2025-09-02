@@ -198,7 +198,7 @@ export class LabRecordRepo implements ILabRecordRepo {
             if (filters.DisplayName != null) {
                 search.where['DisplayName'] = { [Op.like]: '%' + filters.DisplayName + '%' };
             }
-            
+
             if (filters.TypeName != null) {
                 search.where['TypeName'] = { [Op.like]: '%' + filters.TypeName + '%' };
             }

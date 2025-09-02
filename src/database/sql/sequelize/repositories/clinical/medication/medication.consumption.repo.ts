@@ -88,7 +88,7 @@ export class MedicationConsumptionRepo implements IMedicationConsumptionRepo {
         }
     };
 
-    deleteFutureMedicationSchedules = async(medicationId: uuid): Promise<number> => {
+    deleteFutureMedicationSchedules = async(medicationId: uuid, hardDelete: boolean = false): Promise<number> => {
         try {
             let deletedCount: number = 0;
             var selector = {
@@ -111,17 +111,20 @@ export class MedicationConsumptionRepo implements IMedicationConsumptionRepo {
                         ParentActionId     : medicationId,
                         ScheduledStartTime : { [Op.gte] : new Date(new Date().toISOString()
                             .split('T')[0]) }
-                    }
+                    },
+                    force : hardDelete
                 });
             } else {
                 const ids = (await MedicationConsumption.findAll(selector)).map(x => x.id);
                 deletedCount = await UserTask.destroy({
                     where : {
                         ActionId : ids, //ActionType : UserTaskActionType.Medication
-                    }
+                    },
+                    force : hardDelete
                 });
             }
 
+            selector['force'] = hardDelete;
             const deletedConsumptionCount = await MedicationConsumption.destroy(selector);
             Logger.instance().log(`Deleted ${deletedCount} users tasks.`);
             Logger.instance().log(`Deleted ${deletedConsumptionCount} medication consumptions.`);
@@ -180,6 +183,21 @@ export class MedicationConsumptionRepo implements IMedicationConsumptionRepo {
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
+        }
+    };
+
+    getScheduledMedicationCountById = async (id: string): Promise<number> => {
+        try {
+            const count = await MedicationConsumption.count({
+                where : {
+                    MedicationId : id
+                }
+            });
+
+            return count;
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(error.statusCode || 500, error.message);
         }
     };
 
@@ -520,6 +538,24 @@ export class MedicationConsumptionRepo implements IMedicationConsumptionRepo {
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
+        }
+    };
+
+    deleteByUserId = async(patientUserId: string, hardDelete: boolean = false): Promise<boolean> => {
+        try {
+            const deletedCount = await MedicationConsumption.destroy({
+                where : {
+                    PatientUserId : patientUserId
+                },
+                force : hardDelete
+            });
+
+            if (deletedCount === 0) {
+                Logger.instance().log(`No Medication Consumption records found for user: ${patientUserId}`);
+            }
+            return true;
+        } catch (error) {
+            Logger.instance().log(error.message);
         }
     };
 

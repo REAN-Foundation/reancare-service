@@ -1,0 +1,52 @@
+meta {
+  name: Get Goal by id
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{BASE_URL}}/patient-goals/{{GOAL_ID}}
+  body: none
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{PATIENT_USER_JWT}}
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+  Content-Type: application/json
+}
+
+tests {
+  test("Request is successfull", function () {
+      expect(res.getStatus()).to.equal(200);
+      var jsonRes = res.getBody();
+      expect(jsonRes.Status).to.eql('success');
+  });
+  
+  test("New Goal record is created", function () {
+  
+      var expectedPatientUserId = bru.getEnvVar("GOAL_PATIENTUSERID");
+      var expectedGoalAchieved = bru.getEnvVar("GOAL_GOALACHIEVED");
+    
+    var expectedGoalAbandoned = bru.getEnvVar("GOAL_GOALABANDONED") === 'true';
+  
+      var jsonRes = res.getBody();
+      expect(jsonRes.Data).to.have.property('Goal');
+      expect(jsonRes.Data.Goal).to.not.be.empty;
+      expect(jsonRes.Data.Goal).to.have.property('id');
+      expect(jsonRes.Data.Goal).to.have.property('PatientUserId');
+      expect(jsonRes.Data.Goal).to.have.property('GoalAchieved');
+      expect(jsonRes.Data.Goal).to.have.property('GoalAbandoned');
+  
+      expect(jsonRes.Data.Goal.PatientUserId).equals(expectedPatientUserId);
+      expect(jsonRes.Data.Goal.GoalAchieved).equals(expectedGoalAchieved);
+      expect(jsonRes.Data.Goal.GoalAbandoned).equals(expectedGoalAbandoned);
+  
+  });
+  
+  
+}
+
+docs {
+  Gets list of Goal records
+}

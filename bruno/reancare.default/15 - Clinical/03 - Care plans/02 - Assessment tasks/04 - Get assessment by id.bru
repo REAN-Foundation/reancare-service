@@ -1,0 +1,60 @@
+meta {
+  name: Get assessment by id
+  type: http
+  seq: 4
+}
+
+get {
+  url: {{BASE_URL}}/clinical/assessments/{{CAREPLAN_ASSESSMENT_ID}}
+  body: none
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{PATIENT_USER_JWT}}
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+  Content-Type: application/json
+}
+
+tests {
+  var jsonRes = res.getBody();
+  
+  try {
+      bru.setEnvVar("USER_TASK_ID", jsonRes.Data.UserTask.id);
+      var assessmentId = jsonRes.Data.UserTask.Action.Assessment.id;
+      bru.setEnvVar("CAREPLAN_ASSESSMENT_ID", assessmentId);
+  }
+  catch (error) {
+      console.log(error.message);
+  }
+  
+  test("Request is successfull", function () {
+      expect(res.getStatus()).to.equal(200);
+      var jsonRes = res.getBody();
+      expect(jsonRes.Status).to.eql('success');
+  });
+  
+  test("User Task is created", function () {
+  
+      var jsonRes = res.getBody();
+      expect(jsonRes.Data.Assessment).to.not.be.empty;
+      expect(jsonRes.Data.Assessment).to.have.property("id");
+      expect(jsonRes.Data.Assessment).to.have.property("DisplayCode");
+      expect(jsonRes.Data.Assessment).to.have.property("Type");
+      expect(jsonRes.Data.Assessment).to.have.property("Title");
+      expect(jsonRes.Data.Assessment).to.have.property("PatientUserId");
+      expect(jsonRes.Data.Assessment).to.have.property("AssessmentTemplateId");
+      expect(jsonRes.Data.Assessment).to.have.property("Provider");
+      expect(jsonRes.Data.Assessment).to.have.property("ProviderEnrollmentId");
+      expect(jsonRes.Data.Assessment).to.have.property("ProviderAssessmentCode");
+      expect(jsonRes.Data.Assessment).to.have.property("Status");
+      expect(jsonRes.Data.Assessment).to.have.property("ScheduledAt");
+      expect(jsonRes.Data.Assessment).to.have.property("UserTaskId");
+  
+  });
+  
+}
+
+docs {
+  Gets list of User Task records
+}

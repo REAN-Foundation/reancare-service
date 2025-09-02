@@ -1,0 +1,51 @@
+meta {
+  name: Search patient emergency contact
+  type: http
+  seq: 6
+}
+
+get {
+  url: {{BASE_URL}}/patient-emergency-contacts/search?patientUserId={{PATIENT_USER_ID}}
+  body: json
+  auth: none
+}
+
+params:query {
+  patientUserId: {{PATIENT_USER_ID}}
+  ~isAvailableForEmergency: true
+  ~createdDateFrom: 2021-05-01
+  ~createdDateTo: 2021-12-12
+  ~orderBy: IsAvailableForEmergency
+  ~order: ascending
+  ~pageIndex: 0
+  ~itemsPerPage: 25
+  ~contactPersonId: 
+  ~contactRelation: Doctor
+}
+
+headers {
+  Authorization: Bearer {{PATIENT_USER_JWT}}
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+  Content-Type: application/json
+}
+
+tests {
+  test("Request is successfull", function () {
+      expect(res.getStatus()).to.equal(200);
+      var jsonRes = res.getBody();
+      expect(jsonRes.Status).to.eql('success');
+  });
+  
+  test("List of Calorie Record is returned", function () {
+  
+      var jsonRes = res.getBody();
+      expect(jsonRes.Data).to.have.property('EmergencyContacts');
+      expect(jsonRes.Data.EmergencyContacts.Items.length).to.be.greaterThan(0);
+  
+  });
+  
+}
+
+docs {
+  Search emergency contact using query parameters.
+}

@@ -1,0 +1,59 @@
+meta {
+  name: Add learning path - journey
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{BASE_URL}}/educational/learning-paths
+  body: json
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{ADMIN_USER_JWT}}
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+  Content-Type: application/json
+}
+
+body:json {
+  {
+      "Name": "Reproductive Health",
+      "ImageUrl": "{{FILE_RESOURCE_URL}}"
+  }
+}
+
+tests {
+  var jsonRes = res.getBody();
+  
+  try {
+      bru.setEnvVar("LEARNING_PATH_ID", jsonRes.Data.LearningPath.id);
+  }
+  catch (error) {
+      console.log(error.message);
+  }
+  
+  
+  test("Request is successfull", function () {
+      expect(res.getStatus()).to.equal(201);
+      var jsonRes = res.getBody();
+      expect(jsonRes.Status).to.eql('success');
+  });
+  
+  test("New course is returned", function () {
+  
+      var expectedName = "Reproductive Health";
+     
+      
+      var jsonRes = res.getBody();
+      expect(jsonRes.Data).to.have.property('LearningPath');
+      expect(jsonRes.Data.LearningPath).to.not.be.empty;
+      expect(jsonRes.Data.LearningPath).to.have.property('Name');
+      // expect(jsonRes.Data.LearningPath).to.have.property('StartDate');
+      
+      expect(jsonRes.Data.LearningPath.Name).equals(expectedName);
+     
+  });
+  
+  
+}

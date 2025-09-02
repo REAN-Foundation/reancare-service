@@ -130,6 +130,12 @@ export default class AssessmentQueryResponse extends Model {
     })
     Additional: string;
 
+    @Column({
+        type      : DataType.BOOLEAN,
+        allowNull : true,
+    })
+    Skipped: boolean;
+
     @Column
     @CreatedAt
     CreatedAt: Date;

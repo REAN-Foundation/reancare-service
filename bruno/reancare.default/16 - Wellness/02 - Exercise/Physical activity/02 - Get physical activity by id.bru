@@ -1,0 +1,45 @@
+meta {
+  name: Get physical activity by id
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{BASE_URL}}/wellness/exercise/physical-activities/{{EXERCISE_PHYSICAL_ACTIVITY_ID}}
+  body: json
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{PATIENT_USER_JWT}}
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+  Content-Type: application/json
+}
+
+tests {
+  test("Request is successfull", function () {
+      expect(res.getStatus()).to.equal(200);
+      var jsonRes = res.getBody();
+      expect(jsonRes.Status).to.eql('success');
+  });
+  
+  test("Physical activity record is returned", function () {
+  
+      var expectedExercise = "Dead lift";
+      var expectedPatientUserId = bru.getEnvVar("PATIENT_USER_ID");
+  
+      var jsonRes = res.getBody();
+      expect(jsonRes.Data).to.have.property('PhysicalActivity');
+      expect(jsonRes.Data.PhysicalActivity).to.not.be.empty;
+      expect(jsonRes.Data.PhysicalActivity).to.have.property('id');
+      expect(jsonRes.Data.PhysicalActivity).to.have.property('Exercise');
+      expect(jsonRes.Data.PhysicalActivity).to.have.property('Category');
+      expect(jsonRes.Data.PhysicalActivity).to.have.property('CaloriesBurned');
+      expect(jsonRes.Data.PhysicalActivity).to.have.property('PatientUserId');
+      
+  
+      expect(jsonRes.Data.PhysicalActivity.Exercise).equals(expectedExercise);
+      expect(jsonRes.Data.PhysicalActivity.PatientUserId).equals(expectedPatientUserId);
+  
+  });
+}

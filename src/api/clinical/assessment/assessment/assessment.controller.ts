@@ -275,8 +275,7 @@ export class AssessmentController extends BaseController {
 
             var answerResponse: AssessmentQuestionResponseDto = await this._service.answerQuestion(answerModel);
 
-            var options = await this._service.getQuestionById(assessment.id, answerResponse.Answer.NodeId);
-            await this._ehrAssessmentService.addEHRRecordForAppNames(assessment, answerResponse, options);
+            await this._ehrAssessmentService.addEHRRecordForAppNames(assessment, answerResponse, question);
 
             //check if questions are related to race and ethnicity
             if (assessment.Provider && assessment.Provider === 'REAN' ) {
@@ -397,6 +396,67 @@ export class AssessmentController extends BaseController {
         }
     };
 
+    skipQuestion = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+            const id: uuid = await this._validator.getParamUuid(request, 'id');
+            const questionId: uuid = await this._validator.getParamUuid(request, 'questionId');
+
+            const assessment = await this._service.getById(id);
+            if (assessment == null) {
+                throw new ApiError(404, 'Assessment record not found.');
+            }
+            await this.authorizeOne(request, assessment.PatientUserId);
+
+            const question = await this._service.getQuestionById(id, questionId);
+            if (question == null) {
+                throw new ApiError(404, 'Assessment question not found.');
+            }
+
+            const isAnswered = await this._service.isAnswered(assessment.id, questionId);
+            if (isAnswered) {
+                throw new ApiError(400, `The question has already been answered!`);
+            }
+
+            if (question.Required) {
+                throw new ApiError(400, `The question is not skippable!`);
+            }
+            //Check if the question is of type list
+            if (question.NodeType !== AssessmentNodeType.Question) {
+                throw new ApiError(400, `The node is not skippable!`);
+            }
+
+            var skipResponse: AssessmentQuestionResponseDto = await this._service.skipQuestion(id, questionId);
+            const isAssessmentCompleted = skipResponse === null || skipResponse?.Next === null;
+            if (isAssessmentCompleted) {
+                //Assessment has no more questions left and is completed successfully!
+                await this.completeAssessmentTask(id);
+                //If the assessment has scoring enabled, score the assessment
+                if (assessment.ScoringApplicable) {
+                    var { score, reportUrl } = await this.generateScoreReport(assessment);
+                    if (score) {
+                        skipResponse['AssessmentScore'] = score;
+                        skipResponse['AssessmentScoreReport'] = reportUrl;
+                    }
+                }
+                var updatedAssessment = await this._service.getById(assessment.id);
+                updatedAssessment['Score'] = JSON.stringify(skipResponse['AssessmentScore']);
+                await this._ehrAssessmentService.addEHRRecordForAppNames(updatedAssessment, null, null);
+
+                AssessmentEvents.onAssessmentCompleted(request, updatedAssessment, 'assessment');
+            }
+
+            const message = skipResponse === null || skipResponse?.Next === null
+                ? 'Assessment has completed successfully!'
+                : 'Assessment question skipped successfully!';
+
+            AssessmentEvents.onAssessmentQuestionSkipped(request, skipResponse, assessment, 'assessment');
+
+            ResponseHandler.success(request, response, message, 200, { AnswerResponse: skipResponse });
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
     //#endregion
 
     //#region Privates
@@ -430,7 +490,7 @@ export class AssessmentController extends BaseController {
     private async generateScoreReport(assessment: AssessmentDto) {
         var customActions = new CustomActionsHandler();
 
-        var score = await customActions.performActions_PostAssessmentScoring(assessment.PatientUserId, assessment.id);
+        var score = await customActions.performActionsPostAssessmentScoring(assessment.PatientUserId, assessment.id);
 
         Logger.instance().log(`Score: ${JSON.stringify(score, null, 2)}`);
 

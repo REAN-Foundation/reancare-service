@@ -1,0 +1,101 @@
+meta {
+  name: Get med schedule for duration in past
+  type: http
+  seq: 4
+}
+
+get {
+  url: {{BASE_URL}}/clinical/medication-consumptions/schedule-for-duration/{{PATIENT_USER_ID}}?duration=1w&when=past
+  body: none
+  auth: none
+}
+
+params:query {
+  duration: 1w
+  when: past
+}
+
+headers {
+  Authorization: Bearer {{PATIENT_USER_JWT}}
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+  Content-Type: application/json
+}
+
+script:pre-request {
+  
+  Date.prototype.addDays = function(days) {
+      var date = new Date(this.valueOf());
+      date.setDate(date.getDate() + days);
+      return date;
+  }
+  
+  function formatDate(date) {
+      var d = new Date(date),
+          month = '' + (d.getMonth() + 1),
+          day = '' + d.getDate(),
+          year = d.getFullYear();
+  
+      if (month.length < 2) 
+          month = '0' + month;
+      if (day.length < 2) 
+          day = '0' + day;
+  
+      return [year, month, day].join('-');
+  }
+  
+  var d = new Date();
+  
+  var fromDate = formatDate(d);
+  var toDate = formatDate((new Date()).addDays(10));
+  
+  bru.setEnvVar("MEDICATION_CONSUMPTION_SCHEDULE_FROM", fromDate);
+  bru.setEnvVar("MEDICATION_CONSUMPTION_SCHEDULE_TO", toDate);
+}
+
+tests {
+  try {
+  
+      var jsonData = res.getBody();
+      var consumptions = jsonData.Data.MedicationConsumptions;
+  
+      var count = 1;
+      for(var c of consumptions) {
+          var name = "MEDICATION_CONSUMPTION_ID_" + String(count).padStart(2, '0');
+          bru.setEnvVar(name, c.id);
+          if(count > 5) {
+              break;
+          }
+          count++;
+      }
+  
+  }
+  catch (error) {
+      console.log(error.message);
+  }
+  
+  test("Request is successfull", function () {
+      expect(res.getStatus()).to.equal(200);
+      var jsonRes = res.getBody();
+      expect(jsonRes.Status).to.eql('success');
+  });
+  
+  test("Medication consumption for duration is returned", function () {
+     
+      var jsonRes = res.getBody();
+      expect(jsonRes.Data).to.have.property('MedicationConsumptions');
+      expect(jsonRes.Data.MedicationConsumptions).to.not.be.empty;
+      expect(jsonRes.Data.MedicationConsumptions.length).greaterThan(0);
+  
+      var firstMed = jsonRes.Data.MedicationConsumptions[0];
+  
+      expect(firstMed).to.have.property('id');
+      expect(firstMed).to.have.property('DrugName');
+      expect(firstMed).to.have.property('Details');
+      expect(firstMed).to.have.property('TimeScheduleStart');
+      expect(firstMed).to.have.property('TimeScheduleEnd');
+      expect(firstMed).to.have.property('Status');
+    
+  });
+  
+  
+}

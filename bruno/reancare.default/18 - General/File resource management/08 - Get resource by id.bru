@@ -1,0 +1,35 @@
+meta {
+  name: Get resource by id
+  type: http
+  seq: 7
+}
+
+get {
+  url: {{BASE_URL}}/file-resources/{{RESOURCE_ID}}
+  body: none
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{PATIENT_USER_JWT}}
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+}
+
+tests {
+  
+  test("Request is successfull", function () {
+      expect(res.getStatus()).to.equal(200);
+      var jsonRes = res.getBody();
+      expect(jsonRes.Status).to.eql('success');
+  });
+  
+  test("A file resource by id is returned with new name", function () {
+  
+      var jsonRes = res.getBody();
+      expect(jsonRes.Data).to.have.property('FileResource');
+      var resource = jsonRes.Data.FileResource;
+      var expectedNewFileName = bru.getEnvVar("RESOURCE_NEW_FILE_NAME");
+      expect(resource.FileName).equals(expectedNewFileName);
+  
+  });
+}

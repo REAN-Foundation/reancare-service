@@ -1,0 +1,28 @@
+meta {
+  name: Download by resource id as an attachment
+  type: http
+  seq: 8
+}
+
+get {
+  url: {{BASE_URL}}/file-resources/{{RESOURCE_ID}}/download?disposition=attachment
+  body: none
+  auth: none
+}
+
+params:query {
+  disposition: attachment
+}
+
+headers {
+  Authorization: Bearer {{PATIENT_USER_JWT}}
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+}
+
+tests {
+  
+  test("Request is successfull", function () {
+      expect(res.getStatus()).to.equal(200);
+  });
+  
+}

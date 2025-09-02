@@ -1,0 +1,74 @@
+meta {
+  name: Create heart points record
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{BASE_URL}}/wellness/daily-records/heart-points
+  body: json
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{PATIENT_USER_JWT}}
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+  Content-Type: application/json
+}
+
+body:json {
+  {
+      "PersonId": "{{HEART_POINT_PERSONID}}",
+      "PatientUserId": "{{HEART_POINT_PATIENTUSERID}}",
+      "HeartPoints": {{HEART_POINT_VALUE}},
+      "Unit": "{{HEART_POINT_UNIT}}"
+  }
+}
+
+script:pre-request {
+  let personId = bru.getEnvVar('PERSON_ID');
+  let patientUserId = bru.getEnvVar('PATIENT_USER_ID');
+  bru.setEnvVar("HEART_POINT_PERSONID", personId);
+  bru.setEnvVar("HEART_POINT_PATIENTUSERID", patientUserId);
+  bru.setEnvVar("HEART_POINT_VALUE", 120);
+  bru.setEnvVar("HEART_POINT_UNIT", "bpm");
+}
+
+tests {
+  var jsonRes = res.getBody();
+  
+  try {
+      bru.setEnvVar("HEART_POINT_ID", jsonRes.Data.HeartPoints.id);
+  }
+  catch (error) {
+      console.log(error.message);
+  }
+  
+  test("Request is successfull", function () {
+      expect(res.getStatus()).to.equal(201);
+      var jsonRes = res.getBody();
+      expect(jsonRes.Status).to.eql('success');
+  });
+  
+  test("New Heart point record is created", function () {
+  
+      var expectedPatientUserId = bru.getEnvVar("HEART_POINT_PATIENTUSERID");
+      var expectedHeartPoints = bru.getEnvVar("HEART_POINT_VALUE");
+  
+      var jsonRes = res.getBody();
+      expect(jsonRes.Data).to.have.property('HeartPoints');
+      expect(jsonRes.Data.HeartPoints).to.not.be.empty;
+      expect(jsonRes.Data.HeartPoints).to.have.property('PatientUserId');
+      expect(jsonRes.Data.HeartPoints).to.have.property('HeartPoints');
+  
+      expect(jsonRes.Data.HeartPoints.PatientUserId).equals(expectedPatientUserId);
+      expect(jsonRes.Data.HeartPoints.HeartPoints).equals(120);
+  
+  });
+  
+  
+}
+
+docs {
+  Add A HeartPoint.
+}

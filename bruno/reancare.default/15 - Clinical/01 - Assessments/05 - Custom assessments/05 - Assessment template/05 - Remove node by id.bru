@@ -1,0 +1,17 @@
+meta {
+  name: Remove node by id
+  type: http
+  seq: 5
+}
+
+delete {
+  url: {{BASE_URL}}/clinical/assessment-templates/{{ASSESSMENT_TEMPLATE_ID}}/nodes/{{ASSESSMENT_NODE_01_ID}}
+  body: none
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{ADMIN_USER_JWT}}
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+  Content-Type: application/json
+}

@@ -184,6 +184,24 @@ export class PhysicalActivityRepo implements IPhysicalActivityRepo {
         }
     };
 
+    public deleteByUserId = async (patientUserId: string, hardDelete: boolean = false): Promise<boolean> => {
+        try {
+            const deletedCount = await PhysicalActivity.destroy({
+                where : {
+                    PatientUserId : patientUserId,
+                },
+                force : hardDelete
+            });
+
+            if (deletedCount === 0) {
+                Logger.instance().log(`No PhysicalActivity records found for user: ${patientUserId}`);
+            }
+            return true;
+        } catch (error) {
+            Logger.instance().log(error.message);
+        }
+    };
+
     //#region Privates
 
     private async getQuestionnaireStats(patientUserId: string, numDays: number) {

@@ -21,7 +21,7 @@ export class MedicationRepo implements IMedicationRepo {
                 OrderId                   : model.OrderId ?? null,
                 DrugId                    : model.DrugId,
                 DrugName                  : model.DrugName,
-                Dose                      : model.Dose.toString(),
+                Dose                      : model.Dose ? model.Dose.toString() : null,
                 DosageUnit                : model.DosageUnit,
                 TimeSchedules             : JSON.stringify(model.TimeSchedules),
                 Frequency                 : model.Frequency,
@@ -92,6 +92,23 @@ export class MedicationRepo implements IMedicationRepo {
 
             return medications.map(x => MedicationMapper.toDto(x));
 
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    };
+
+    getAllActiveMedications = async (): Promise<MedicationDto[]> => {
+        try {
+            var today = new Date();
+            const medications = await Medication.findAll({
+                where : {
+                    EndDate : {
+                        [Op.gte] : today
+                    }
+                }
+            });
+            return medications.map(x => MedicationMapper.toDto(x));
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);

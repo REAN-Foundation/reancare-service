@@ -1,0 +1,98 @@
+meta {
+  name: Register patient- with username
+  type: http
+  seq: 4
+}
+
+post {
+  url: {{BASE_URL}}/patients
+  body: json
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+}
+
+body:json {
+  {
+      "UserName": "{{USER_NAME}}"
+  }
+}
+
+script:pre-request {
+  var password = "";
+  
+  // Generate a random alphanumeric string for the username
+  function generateRandomUserName(length = 10) {
+      const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+      let result = '';
+      for (let i = 0; i < length; i++) {
+          result += chars.charAt(Math.floor(Math.random() * chars.length));
+      }
+      return result;
+  }
+  
+  const userName = generateRandomUserName();
+  
+  // Set environment variables
+  bru.setEnvVar("PATIENT_PASSWORD", password);
+  bru.setEnvVar("USER_NAME", userName);
+  
+  
+  // var phonenumber = (Math.floor(Math.random() * 9000000000) + 1000000000).toString();
+  // var password = "";
+  
+  // bru.setEnvVar("PHONE_NUMBER", phonenumber);
+  // bru.setEnvVar("PASSWORD", password);
+  
+  // // Generate a random alphanumeric string for the username
+  // function generateRandomUserName(length = 10) {
+  //     const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  //     let result = '';
+  //     for (let i = 0; i < length; i++) {
+  //         result += chars.charAt(Math.floor(Math.random() * chars.length));
+  //     }
+  //     return result;
+  // }
+  
+  // const userName = generateRandomUserName();
+  
+  // // Set it as an environment variable
+  // bru.setEnvVar("USER_NAME", userName);
+  
+}
+
+tests {
+  try {
+      var jsonRes = res.getBody();
+      bru.setEnvVar("PATIENT_USER_ID", jsonRes.Data.Patient.User.id);
+      bru.setEnvVar("PATIENT_PERSON_ID", jsonRes.Data.Patient.User.Person.id);
+      bru.setEnvVar("PERSON_ID", jsonRes.Data.Patient.User.Person.id);
+      bru.setEnvVar("PERSON_ID_2", jsonRes.Data.Patient.User.Person.id);
+  
+  }
+  catch (error) {
+      console.log(error.message);
+  }
+  
+  test("Request is successfull", function () {
+      expect(res.getStatus()).to.equal(201);
+      var jsonRes = res.getBody();
+      expect(jsonRes.Status).to.eql('success');
+  });
+  
+  test("Patient is created", function () {
+      var jsonRes = res.getBody();
+      expect(jsonRes.Data).to.have.property('Patient');
+      expect(jsonRes.Data.Patient).to.not.be.empty;
+      expect(jsonRes.Data.Patient).to.have.property('id');
+      expect(jsonRes.Data.Patient).to.have.property('User');
+      expect(jsonRes.Data.Patient.User).to.not.be.empty;
+      expect(jsonRes.Data.Patient.User).to.have.property('id');
+      expect(jsonRes.Data.Patient.User.Person).to.not.be.empty;
+      expect(jsonRes.Data.Patient.User.Person).to.have.property('id');
+  });
+  
+}

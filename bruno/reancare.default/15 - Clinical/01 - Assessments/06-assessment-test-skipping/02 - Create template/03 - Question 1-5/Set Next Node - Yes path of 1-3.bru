@@ -1,0 +1,33 @@
+meta {
+  name: Set Next Node - Yes path of 1-3
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{BASE_URL}}/clinical/assessment-templates/{{ASSESSMENT_TEMPLATE_ID}}/nodes/{{COMB_ASSESSMENT_NODE_ID_1_1}}/paths/{{COMB_QUESTION_1_1_DONTKNOW}}/set-next-node/{{COMB_ASSESSMENT_NODE_ID_1_5}}
+  body: json
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{ADMIN_USER_JWT}}
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+  Content-Type: application/json
+}
+
+body:json {
+  {
+  }
+  
+}
+
+tests {
+  
+  test("Request is successfull", function () {
+      expect(res.getStatus()).to.equal(201);
+      var jsonRes = res.getBody();
+      expect(jsonRes.Status).to.eql('success');
+  });
+  
+}

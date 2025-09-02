@@ -1,0 +1,41 @@
+meta {
+  name: Search drug details
+  type: http
+  seq: 4
+}
+
+get {
+  url: {{BASE_URL}}/clinical/drugs/search?order=ascending&pageIndex=0&itemsPerPage=25
+  body: none
+  auth: none
+}
+
+params:query {
+  order: ascending
+  pageIndex: 0
+  itemsPerPage: 25
+  ~name: sinarest
+}
+
+headers {
+  Authorization: Bearer {{PATIENT_USER_JWT}}
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+  Content-Type: application/json
+}
+
+tests {
+  test("Request is successfull", function () {
+      expect(res.getStatus()).to.equal(200);
+      var jsonRes = res.getBody();
+      expect(jsonRes.Status).to.eql('success');
+  });
+  
+  test("List of drug records is returned", function () {
+  
+      var jsonRes = res.getBody();
+      expect(jsonRes.Data).to.have.property('Drugs');
+      expect(jsonRes.Data.Drugs.Items.length).to.be.greaterThan(0);
+  
+  });
+  
+}

@@ -1,0 +1,60 @@
+meta {
+  name: Add course
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{BASE_URL}}/educational/courses
+  body: json
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{ADMIN_USER_JWT}}
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+  Content-Type: application/json
+}
+
+body:json {
+  {
+      "LearningPathId": "{{LEARNING_PATH_ID}}",
+      "Name": "Section 377",
+      "ImageUrl": "{{FILE_RESOURCE_URL}}"
+  }
+}
+
+tests {
+  var jsonRes = res.getBody();
+  
+  try {
+      bru.setEnvVar("COURSE_ID", jsonRes.Data.Course.id);
+  }
+  catch (error) {
+      console.log(error.message);
+  }
+  
+  
+  test("Request is successfull", function () {
+      expect(res.getStatus()).to.equal(201);
+      var jsonRes = res.getBody();
+      expect(jsonRes.Status).to.eql('success');
+  });
+  
+  test("New course is returned", function () {
+  
+      var expectedName = "Section 377";
+     
+      
+      var jsonRes = res.getBody();
+      expect(jsonRes.Data).to.have.property('Course');
+      expect(jsonRes.Data.Course).to.not.be.empty;
+      expect(jsonRes.Data.Course).to.have.property('Name');
+      // expect(jsonRes.Data.Course).to.have.property('StartDate');
+      
+      expect(jsonRes.Data.Course.Name).equals(expectedName);
+     
+  });
+  
+  
+}

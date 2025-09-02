@@ -79,7 +79,8 @@
                 "ScoreAssessment": false,
                 "Search": true,
                 "StartAssessment": false,
-                "Update": false
+                "Update": false,
+                "SkipQuestion": true
             },
             "AssessmentTemplate": {
                 "AddNode": true,
@@ -631,12 +632,18 @@
             "GetTenantStats": true,
             "PromoteTenantUserAsAdmin": true,
             "Search": true,
-            "Update": true
+            "Update": true,
+            "CreateBotSchema": false,
+            "CreateSecret": false,
+            "GetSecret": false,
+            "GetSecretByCode": false,
+            "UpdateSecret": false
         },
         "Settings": {
             "GetTenantSettingsTypes": true,
             "GetTenantSettings": true,
             "GetTenantSettingsByType": true,
+            "GetTenantSettingsByCode": true,
             "UpdateTenantSettingsByType": true,
             "UpdateTenantSettings": true
         }
@@ -752,7 +759,8 @@
             "Search": true,
             "Update": true,
             "DeleteProfileImage": true,
-            "Delete": true
+            "Delete": true,
+            "ValidateUserById":true
         },
         "UserTask": {
             "CancelTask": false,
@@ -885,5 +893,5 @@
         "Update": false,
         "Delete": false
     }
-    
+
 }

@@ -33,6 +33,7 @@ export class ReminderValidator extends BaseValidator {
         await this.validateString(request, 'HookUrl', Where.Body, false, true);
         await this.validateString(request, 'NotificationType', Where.Body, true, false);
         await this.validateString(request, 'RawContent', Where.Body, false, false);
+        await this.validateString(request, 'ParentActionId', Where.Body, false, true);
 
         await this.validateRequest(request);
 
@@ -50,6 +51,7 @@ export class ReminderValidator extends BaseValidator {
             HookUrl          : requestBody.HookUrl ?? null,
             NotificationType : requestBody.NotificationType ?? ReminderNotificationType.SMS,
             RawContent       : requestBody.RawContent ?? null,
+            ParentActionId   : requestBody.ParentActionId ?? null,
         };
 
         return createModel;
@@ -68,6 +70,7 @@ export class ReminderValidator extends BaseValidator {
         await this.validateInt(request, 'EndAfterNRepetitions', Where.Body, false, true);
         await this.validateString(request, 'NotificationType', Where.Body, true, false);
         await this.validateString(request, 'RawContent', Where.Body, false, false);
+        await this.validateString(request, 'ParentActionId', Where.Body, false, true);
 
         await this.validateRequest(request);
 
@@ -106,6 +109,7 @@ export class ReminderValidator extends BaseValidator {
             EndAfterNRepetitions  : requestBody.EndAfterNRepetitions ?? null,
             NotificationType      : requestBody.NotificationType ?? ReminderNotificationType.SMS,
             RawContent            : requestBody.RawContent ?? null,
+            ParentActionId        : requestBody.ParentActionId ?? null,
         };
 
         return createModel;
@@ -123,6 +127,7 @@ export class ReminderValidator extends BaseValidator {
         await this.validateInt(request, 'EndAfterNRepetitions', Where.Body, false, true);
         await this.validateString(request, 'NotificationType', Where.Body, true, false);
         await this.validateString(request, 'RawContent', Where.Body, false, false);
+        await this.validateString(request, 'ParentActionId', Where.Body, false, true);
 
         await this.validateRequest(request);
 
@@ -150,6 +155,7 @@ export class ReminderValidator extends BaseValidator {
             EndAfterNRepetitions : requestBody.EndAfterNRepetitions ?? null,
             NotificationType     : requestBody.NotificationType ?? ReminderNotificationType.SMS,
             RawContent           : requestBody.RawContent ?? null,
+            ParentActionId       : requestBody.ParentActionId ?? null,
         };
 
         return createModel;
@@ -168,6 +174,7 @@ export class ReminderValidator extends BaseValidator {
         await this.validateInt(request, 'EndAfterNRepetitions', Where.Body, false, true);
         await this.validateString(request, 'NotificationType', Where.Body, true, false);
         await this.validateString(request, 'RawContent', Where.Body, false, false);
+        await this.validateString(request, 'ParentActionId', Where.Body, false, true);
 
         await this.validateRequest(request);
 
@@ -196,6 +203,7 @@ export class ReminderValidator extends BaseValidator {
             EndAfterNRepetitions : requestBody.EndAfterNRepetitions ?? null,
             NotificationType     : requestBody.NotificationType ?? ReminderNotificationType.SMS,
             RawContent           : requestBody.RawContent ?? null,
+            ParentActionId       : requestBody.ParentActionId ?? null,
         };
 
         return createModel;
@@ -214,6 +222,7 @@ export class ReminderValidator extends BaseValidator {
         await this.validateInt(request, 'EndAfterNRepetitions', Where.Body, false, true);
         await this.validateString(request, 'NotificationType', Where.Body, true, false);
         await this.validateString(request, 'RawContent', Where.Body, false, false);
+        await this.validateString(request, 'ParentActionId', Where.Body, false, true);
 
         await this.validateRequest(request);
 
@@ -242,6 +251,7 @@ export class ReminderValidator extends BaseValidator {
             EndAfterNRepetitions : requestBody.EndAfterNRepetitions ?? null,
             NotificationType     : requestBody.NotificationType ?? ReminderNotificationType.SMS,
             RawContent           : requestBody.RawContent ?? null,
+            ParentActionId       : requestBody.ParentActionId ?? null,
         };
 
         return createModel;
@@ -259,6 +269,7 @@ export class ReminderValidator extends BaseValidator {
         await this.validateInt(request, 'EndAfterNRepetitions', Where.Body, false, true);
         await this.validateString(request, 'NotificationType', Where.Body, true, false);
         await this.validateString(request, 'RawContent', Where.Body, false, false);
+        await this.validateString(request, 'ParentActionId', Where.Body, false, true);
 
         await this.validateRequest(request);
 
@@ -286,6 +297,7 @@ export class ReminderValidator extends BaseValidator {
             EndAfterNRepetitions : requestBody.EndAfterNRepetitions ?? null,
             NotificationType     : requestBody.NotificationType ?? ReminderNotificationType.SMS,
             RawContent           : requestBody.RawContent ?? null,
+            ParentActionId       : requestBody.ParentActionId ?? null,
         };
 
         return createModel;
@@ -303,6 +315,7 @@ export class ReminderValidator extends BaseValidator {
         await this.validateInt(request, 'EndAfterNRepetitions', Where.Body, false, true);
         await this.validateString(request, 'NotificationType', Where.Body, true, false);
         await this.validateString(request, 'RawContent', Where.Body, false, false);
+        await this.validateString(request, 'ParentActionId', Where.Body, false, true);
 
         await this.validateRequest(request);
 
@@ -330,6 +343,7 @@ export class ReminderValidator extends BaseValidator {
             EndDate              : requestBody.EndDate ?? null,
             EndAfterNRepetitions : requestBody.EndAfterNRepetitions ?? null,
             RawContent           : requestBody.RawContent ?? null,
+            ParentActionId       : requestBody.ParentActionId ?? null,
         };
 
         return createModel;
@@ -347,6 +361,7 @@ export class ReminderValidator extends BaseValidator {
         await this.validateInt(request, 'EndAfterNRepetitions', Where.Body, false, true);
         await this.validateString(request, 'NotificationType', Where.Body, true, false);
         await this.validateString(request, 'RawContent', Where.Body, false, false);
+        await this.validateString(request, 'ParentActionId', Where.Body, false, true);
 
         await this.validateRequest(request);
 
@@ -374,6 +389,7 @@ export class ReminderValidator extends BaseValidator {
             EndAfterNRepetitions : requestBody.EndAfterNRepetitions ?? null,
             NotificationType     : requestBody.NotificationType ?? ReminderNotificationType.SMS,
             RawContent           : requestBody.RawContent ?? null,
+            ParentActionId       : requestBody.ParentActionId ?? null,
         };
 
         return createModel;
@@ -387,6 +403,7 @@ export class ReminderValidator extends BaseValidator {
         await this.validateString(request, 'notificationType', Where.Query, false, false);
         await this.validateString(request, 'whenDate', Where.Query, false, false);
         await this.validateString(request, 'whenTime', Where.Query, false, false);
+        await this.validateString(request, 'parentActionId', Where.Query, false, false);
         await this.validateBaseSearchFilters(request);
 
         this.validateRequest(request);
@@ -546,7 +563,8 @@ export class ReminderValidator extends BaseValidator {
             ReminderType     : request.query.reminderType ?? null,
             NotificationType : request.query.notificationType ?? null,
             WhenDate         : request.query.whenDate ?? null,
-            WhenTime         : request.query.whenTime ?? null
+            WhenTime         : request.query.whenTime ?? null,
+            ParentActionId   : request.query.parentActionId ?? null
         };
 
         return this.updateBaseSearchFilters(request, filters);

@@ -1,0 +1,93 @@
+meta {
+  name: Add question node- 3
+  type: http
+  seq: 4
+}
+
+post {
+  url: {{BASE_URL}}/clinical/assessment-templates/{{ASSESSMENT_TEMPLATE_ID}}/nodes
+  body: json
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{ADMIN_USER_JWT}}
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+  Content-Type: application/json
+}
+
+body:json {
+  {
+      "ParentNodeId": "{{ASSESSMENT_TEMPLATE_ROOT_NODE_ID}}",
+      "NodeType": "Question",
+      "Title": "Q 3/4. What gender do you most identify with?",
+      "Description": "Self realisation of gender",
+      "QueryResponseType": "Single Choice Selection",
+      "Options": [
+          {
+              "ProviderGivenCode": "male",
+              "Text": "Male",
+              "Sequence": 1
+          },
+          {
+              "ProviderGivenCode": "female",
+              "Text": "Female",
+              "Sequence": 2
+          },
+          {
+              "ProviderGivenCode": "non-binary",
+              "Text": "Non-binary",
+              "Sequence": 3
+          },
+          {
+              "ProviderGivenCode": "prefer to self-describe",
+              "Text": "Prefer to self-describe",
+              "Sequence": 4
+          },
+          {
+              "ProviderGivenCode": "prefer to not answer",
+              "Text": "Prefer to not answer",
+              "Sequence": 5
+          }
+      ]
+  }
+  
+}
+
+tests {
+  var jsonRes = res.getBody();
+  
+  try {
+      bru.setEnvVar("ASSESSMENT_NODE_ID", jsonRes.Data.AssessmentNode.id);
+  }
+  catch (error) {
+      console.log(error.message);
+  }
+  
+  test("Request is successfull", function () {
+      expect(res.getStatus()).to.equal(201);
+      var jsonRes = res.getBody();
+      expect(jsonRes.Status).to.eql('success');
+  });
+  
+  test("Assessment question node - single choice selection is created", function () {
+     
+      var jsonRes = res.getBody();
+      expect(jsonRes.Data).to.have.property('AssessmentNode');
+      expect(jsonRes.Data.AssessmentNode).to.not.be.empty;
+      expect(jsonRes.Data.AssessmentNode).to.have.property('id');
+      expect(jsonRes.Data.AssessmentNode).to.have.property('ParentNodeId');
+      expect(jsonRes.Data.AssessmentNode).to.have.property('NodeType');
+      expect(jsonRes.Data.AssessmentNode).to.have.property('Title');
+      expect(jsonRes.Data.AssessmentNode).to.have.property('Description');
+      expect(jsonRes.Data.AssessmentNode).to.have.property('QueryResponseType');
+      expect(jsonRes.Data.AssessmentNode).to.have.property('TemplateId');
+      
+      expect(jsonRes.Data.AssessmentNode.Title).equals("Q 3/4. What gender do you most identify with?");
+      expect(jsonRes.Data.AssessmentNode.QueryResponseType).equals("Single Choice Selection");
+      expect(jsonRes.Data.AssessmentNode.NodeType).equals("Question");
+          
+      expect(jsonRes.Data.AssessmentNode.Sequence).greaterThan(0);   
+  });
+  
+}

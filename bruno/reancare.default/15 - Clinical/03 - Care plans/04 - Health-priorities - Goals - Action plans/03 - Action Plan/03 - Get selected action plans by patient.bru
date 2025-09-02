@@ -1,0 +1,35 @@
+meta {
+  name: Get selected action plans by patient
+  type: http
+  seq: 3
+}
+
+get {
+  url: {{BASE_URL}}/action-plans/for-patient/{{PATIENT_USER_ID}}
+  body: none
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{PATIENT_USER_JWT}}
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+  Content-Type: application/json
+}
+
+tests {
+  
+  test("Request is successfull", function () {
+      expect(res.getStatus()).to.equal(200);
+      var jsonRes = res.getBody();
+      expect(jsonRes.Status).to.eql('success');
+  });
+  
+  test("List of action plans for patient is returned", function () {
+  
+      var jsonRes = res.getBody();
+      expect(jsonRes.Data).to.have.property('ActionPlans');
+      expect(jsonRes.Data.ActionPlans.length).greaterThan(0);
+  
+  });
+  
+}

@@ -20,8 +20,6 @@ import {
 import { PersonDetailsDto } from '../../../domain.types/person/person.dto';
 import { UserHelper } from '../user.helper';
 import { RoleService } from '../../../services/role/role.service';
-import { Roles } from '../../../domain.types/role/role.types';
-import { PersonDomainModel } from '../../../domain.types/person/person.domain.model';
 import { UserEvents } from './user.events';
 import { ActivityTrackerHandler } from '../../../services/users/patient/activity.tracker/activity.tracker.handler';
 
@@ -77,12 +75,12 @@ export class UserController extends BaseController {
                 if (existingUserWithRole) {
                     throw new ApiError(409, `User already exists with the same role.`);
                 }
-                await this.checkMultipleAdministrativeRoles(model.RoleId, existingPerson.id);
+                await this._userHelper.checkMultipleAdministrativeRoles(model.RoleId, existingPerson.id);
             }
 
             model.Person.id = person.id;
 
-            const updatedPerson = await this.updatePersonInformation(person, model);
+            const updatedPerson = await this._userHelper.updatePersonInformation(person, model);
 
             if (!updatedPerson) {
                 throw new ApiError(409, `User already exists with the same email.`);
@@ -491,54 +489,20 @@ export class UserController extends BaseController {
         }
     };
 
-    private async checkMultipleAdministrativeRoles(newRoleId: number, existingPersonId: string) {
-        var allRoles = await this._roleService.search({});
-        var newRoleName = allRoles.Items.find(r => r.id === newRoleId)?.RoleName;
-        if (!newRoleName) {
-            const msg = 'Role not found.';
-            Logger.instance().log(`Role not found: Role id ${newRoleId}`);
-            throw new ApiError(404, msg);
-        }
-        if (newRoleName !== Roles.TenantAdmin &&
-            newRoleName !== Roles.TenantUser &&
-            newRoleName !== Roles.SystemAdmin &&
-            newRoleName !== Roles.SystemUser) {
-            return;
-        }
-        var existingUsers = await this._service.getByPersonId(existingPersonId);
-        for (var i = 0; i < existingUsers.length; i++) {
-            var existingUserRoleName = allRoles.Items.find(r => r.id === existingUsers[i].RoleId)?.RoleName;
-            if (!existingUserRoleName) {
-                const msg = 'Role not found.';
-                throw new ApiError(404, msg);
+    validateUserById = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+            const id: string = await UserValidator.getById(request);
+            const user = await this._service.getById(id);
+            if (user == null) {
+                ResponseHandler.failure(request, response, 'User not found.', 404);
+                return;
             }
-            if (existingUserRoleName === Roles.TenantAdmin ||
-                existingUserRoleName === Roles.TenantUser ||
-                existingUserRoleName === Roles.SystemAdmin ||
-                existingUserRoleName === Roles.SystemUser) {
-                const msg = `User cannot have multiple administrative roles.`;
-                throw new ApiError(409, msg);
-            }
+            ResponseHandler.success(request, response, 'User retrieved successfully!', 200, {
+                success : true,
+            });
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
         }
-    }
-
-    private async updatePersonInformation (person: PersonDetailsDto, model: UserDomainModel) {
-        const personUpdateModel: PersonDomainModel = {};
-        if (!person.Email && model.Person.Email) {
-            const personWithEmail = await this._personService.getPersonWithEmail(model.Person.Email);
-            if (personWithEmail) {
-                return null;
-            }
-            personUpdateModel.Email = model.Person.Email;
-        }
-        if (!person.FirstName && model.Person.FirstName) {
-            personUpdateModel.FirstName = model.Person.FirstName;
-        }
-        if (!person.LastName && model.Person.LastName) {
-            personUpdateModel.LastName = model.Person.LastName;
-        }
-        const updatedPerson = await this._personService.update(person.id, personUpdateModel);
-        return updatedPerson;
-    }
+    };
 
 }

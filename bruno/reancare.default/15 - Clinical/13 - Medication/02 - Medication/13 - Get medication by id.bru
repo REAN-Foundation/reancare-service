@@ -1,0 +1,69 @@
+meta {
+  name: Get medication by id
+  type: http
+  seq: 13
+}
+
+get {
+  url: {{BASE_URL}}/clinical/medications/{{MEDICATION_ID}}
+  body: json
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{PATIENT_USER_JWT}}
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+  Content-Type: application/json
+}
+
+tests {
+  
+  test("Request is successfull", function () {
+      expect(res.getStatus()).to.equal(200);
+      var jsonRes = res.getBody();
+      expect(jsonRes.Status).to.eql('success');
+  });
+  
+  test("Medication with given id is returned", function () {
+     
+      var jsonRes = res.getBody();
+      expect(jsonRes.Data).to.have.property('Medication');
+      expect(jsonRes.Data.Medication).to.not.be.empty;
+      expect(jsonRes.Data.Medication).to.have.property('id');
+      expect(jsonRes.Data.Medication).to.have.property('PatientUserId');
+      expect(jsonRes.Data.Medication).to.have.property('DrugName');
+      expect(jsonRes.Data.Medication).to.have.property('DrugId');
+      expect(jsonRes.Data.Medication).to.have.property('Dose');
+      expect(jsonRes.Data.Medication).to.have.property('Dose');
+      expect(jsonRes.Data.Medication).to.have.property('DosageUnit');
+      expect(jsonRes.Data.Medication).to.have.property('TimeSchedules');
+      expect(jsonRes.Data.Medication).to.have.property('Frequency');
+      expect(jsonRes.Data.Medication).to.have.property('FrequencyUnit');
+      expect(jsonRes.Data.Medication).to.have.property('Route');
+      expect(jsonRes.Data.Medication).to.have.property('Duration');
+      expect(jsonRes.Data.Medication).to.have.property('DurationUnit');
+      expect(jsonRes.Data.Medication).to.have.property('StartDate');
+      expect(jsonRes.Data.Medication).to.have.property('RefillNeeded');
+      expect(jsonRes.Data.Medication).to.have.property('IsExistingMedication');
+      expect(jsonRes.Data.Medication).to.have.property('ConsumptionSummary');
+      expect(jsonRes.Data.Medication.ConsumptionSummary).to.have.property('TotalConsumptionCount');
+      expect(jsonRes.Data.Medication.ConsumptionSummary).to.have.property('TotalDoseCount');
+      expect(jsonRes.Data.Medication.ConsumptionSummary).to.have.property('PendingConsumptionCount');
+      expect(jsonRes.Data.Medication.ConsumptionSummary).to.have.property('PendingDoseCount');
+      
+      expect(jsonRes.Data.Medication.ConsumptionSummary.TotalConsumptionCount).greaterThan(0);    
+      expect(jsonRes.Data.Medication.TimeSchedules.length).greaterThan(0); 
+  
+      var expectedDrugId = bru.getEnvVar("DRUG_ID");
+      expect(jsonRes.Data.Medication.DrugId).equals(expectedDrugId);    
+    
+      var expectedDuration = 2;
+      expect(jsonRes.Data.Medication.Duration).equals(expectedDuration);    
+    
+  });
+  
+}
+
+docs {
+  Returns the list of drugs/medicines stored in the system.
+}

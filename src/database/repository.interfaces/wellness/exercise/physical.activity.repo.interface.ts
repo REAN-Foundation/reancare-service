@@ -22,4 +22,6 @@ export interface IPhysicalActivityRepo {
 
     getRecent(patientUserId: string): Promise<PhysicalActivityDto>;
 
+    deleteByUserId(patientUserId: string, hardDelete: boolean): Promise<boolean>;
+
 }

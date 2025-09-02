@@ -1,0 +1,64 @@
+meta {
+  name: Add food consumption record
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{BASE_URL}}/wellness/nutrition/food-consumptions
+  body: json
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{PATIENT_USER_JWT}}
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+  Content-Type: application/json
+}
+
+body:json {
+  {
+      "PatientUserId": "{{PATIENT_USER_ID}}",
+      "Food": "roti",
+      "Description": "mins",
+      "ConsumedAs": "Lunch",
+      "Calories": 100,
+      "StartTime": "2021-09-16",
+      "EndTime": "2021-09-16"
+  }
+}
+
+tests {
+  var jsonRes = res.getBody();
+  
+  try {
+      bru.setEnvVar("NUTRITION_FOOD_CONSUMPTION_ID", jsonRes.Data.FoodConsumption.id);
+  }
+  catch (error) {
+      console.log(error.message);
+  }
+  
+  test("Request is successfull", function () {
+      expect(res.getStatus()).to.equal(201);
+      var jsonRes = res.getBody();
+      expect(jsonRes.Status).to.eql('success');
+  });
+  
+  test("Food consumption record is created", function () {
+  
+      var expectedValue = "roti";
+      var expectedPatientUserId = bru.getEnvVar("PATIENT_USER_ID");
+      
+      var jsonRes = res.getBody();
+      expect(jsonRes.Data).to.have.property('FoodConsumption');
+      expect(jsonRes.Data.FoodConsumption).to.not.be.empty;
+      expect(jsonRes.Data.FoodConsumption).to.have.property('id');
+      expect(jsonRes.Data.FoodConsumption).to.have.property('Food');
+      expect(jsonRes.Data.FoodConsumption).to.have.property('PatientUserId');
+      
+      expect(jsonRes.Data.FoodConsumption.Food).equals(expectedValue);
+      expect(jsonRes.Data.FoodConsumption.PatientUserId).equals(expectedPatientUserId);
+      
+  });
+  
+}

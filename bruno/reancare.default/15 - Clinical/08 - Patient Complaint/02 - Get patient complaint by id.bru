@@ -1,0 +1,69 @@
+meta {
+  name: Get patient complaint by id
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{BASE_URL}}/clinical/complaints/{{PATIENT_COMPLAINT_ID}}
+  body: json
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{PATIENT_USER_JWT}}
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+  Content-Type: application/json
+}
+
+tests {
+  var jsonRes = res.getBody();
+  
+  try {
+      bru.setEnvVar("PATIENT_COMPLAINT_ID", jsonRes.Data.Complaint.id);
+  }
+  catch (error) {
+      console.log(error.message);
+  }
+  
+  test("Request is successfull", function () {
+      expect(res.getStatus()).to.equal(200);
+      var jsonRes = res.getBody();
+      expect(jsonRes.Status).to.eql('success');
+  });
+  
+  test("Patient Complaint record should have correct values", function () {
+  
+      let expectedPatientUserID = bru.getEnvVar("PATIENT_COMPLAINT_PATIENTUSERID");
+      let expectedMedicalPractitionerUserID = bru.getEnvVar("PATIENT_COMPLAINT_MEDICALPRACTITIONERUSERID");
+      let expectedVisitID = bru.getEnvVar("PATIENT_COMPLAINT_VISITID");
+      let expectedEHRID = bru.getEnvVar("PATIENT_COMPLAINT_EHRID");
+      let expectedComplaint = bru.getEnvVar("PATIENT_COMPLAINT_COMPLAINT");
+      let expectedSeverity = bru.getEnvVar("PATIENT_COMPLAINT_SEVERITY");
+      let expectedRecordDate = bru.getEnvVar("PATIENT_COMPLAINT_RECORDDATE");
+  
+      var jsonRes = res.getBody();
+      expect(jsonRes.Data).to.have.property('Complaint');
+      expect(jsonRes.Data.Complaint).to.not.be.empty;
+      expect(jsonRes.Data.Complaint).to.have.property('PatientUserId');
+      expect(jsonRes.Data.Complaint).to.have.property('MedicalPractitionerUserId');
+      expect(jsonRes.Data.Complaint).to.have.property('VisitId');
+      expect(jsonRes.Data.Complaint).to.have.property('EhrId');
+      expect(jsonRes.Data.Complaint).to.have.property('Complaint');
+      expect(jsonRes.Data.Complaint).to.have.property('Severity');
+      expect(jsonRes.Data.Complaint).to.have.property('RecordDate');
+  
+      expect(jsonRes.Data.Complaint.PatientUserId).equals(expectedPatientUserID);
+      expect(jsonRes.Data.Complaint.MedicalPractitionerUserId).equals(expectedMedicalPractitionerUserID);
+      expect(jsonRes.Data.Complaint.VisitId).equals(expectedVisitID);
+      expect(jsonRes.Data.Complaint.EhrId).equals(expectedEHRID);
+      expect(jsonRes.Data.Complaint.Complaint).equals(expectedComplaint);
+      expect(jsonRes.Data.Complaint.Severity).equals(expectedSeverity);
+  });
+  
+  
+}
+
+docs {
+  Get Patient Complaint by Patient Complaint id.
+}

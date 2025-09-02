@@ -19,4 +19,6 @@ export interface IBodyHeightRepo {
 
     getMostRecentBodyHeightActivity(patientUserId: string): Promise<MostRecentActivityDto>;
 
+    deleteByUserId(patientUserId: string, hardDelete: boolean): Promise<boolean>;
+
 }

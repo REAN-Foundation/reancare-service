@@ -20,6 +20,7 @@ import { HealthPriorityDto } from "../../../../domain.types/users/patient/health
 import { CareplanRepo } from "../../../../database/sql/sequelize/repositories/clinical/careplan/careplan.repo";
 import { CareplanService } from "../../../../services/clinical/careplan.service";
 import { Injector } from "../../../../startup/injector";
+import { Tenant } from "firebase-admin/lib/auth/tenant";
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -108,6 +109,7 @@ export class ReanCareplanService implements ICareplanService {
             Gender                 : patientDetails.Gender,
             CountryCode            : patientDetails.Phone.split('-')[0],
             Phone                  : patientDetails.Phone.split('-')[1],
+            TenantId               : patientDetails.TenantId
         };
 
         var url = process.env.CAREPLAN_API_BASE_URL + '/participants';
@@ -133,12 +135,13 @@ export class ReanCareplanService implements ICareplanService {
             WeekOffset     : model.WeekOffset,
             DayOffset      : model.DayOffset,
             IsTest         : model.IsTest,
+            TenantId       : model.TenantId,
+            ScheduleConfig : model.ScheduleConfig
         };
 
         var url = process.env.CAREPLAN_API_BASE_URL + '/enrollments';
         var headerOptions = await this.getHeaderOptions();
         var response = await needle('post', url, enrollmentData, headerOptions);
-
         if (response.statusCode !== 201) {
             Logger.instance().log(`ResponseCode: ${response.statusCode}, Body: ${JSON.stringify(response.body.error)}`);
             throw new ApiError(500, 'Rean Careplan enrollment service error: ' + response.body.error);
@@ -196,6 +199,8 @@ export class ReanCareplanService implements ICareplanService {
 
         });
 
+        Logger.instance().log(`Number of activities retrived ${activityEntities.length}.`);
+
         return activityEntities;
 
     };
@@ -242,6 +247,24 @@ export class ReanCareplanService implements ICareplanService {
             Logger.instance().log(`No enrollments fetched from careplan task.`);
         }
 
+    };
+
+    public deleteParticipantData = async (participantId: string): Promise<boolean> => {
+        try {
+            var url = process.env.CAREPLAN_API_BASE_URL + `/participants/${participantId}`;
+            var headerOptions = await this.getHeaderOptions();
+            var response = await needle('delete', url, headerOptions);
+
+            if (response.statusCode !== 200) {
+                Logger.instance().log(`ResponseCode: ${response.statusCode}, Body: ${JSON.stringify(response.body.error)}`);
+                throw new ApiError(500, 'Careplan participant deletion error: ' + response.body.error);
+            }
+
+            Logger.instance().log(`Successfully deleted participant ${participantId} from careplan service`);
+            return true;
+        } catch (error) {
+            Logger.instance().log(`Error deleting participant from careplan service: ${error.message}`);
+        }
     };
 
     //#endregion

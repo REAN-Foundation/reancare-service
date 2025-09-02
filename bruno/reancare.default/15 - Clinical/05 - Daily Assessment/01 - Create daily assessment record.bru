@@ -1,0 +1,62 @@
+meta {
+  name: Create daily assessment record
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{BASE_URL}}/clinical/daily-assessments
+  body: json
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{PATIENT_USER_JWT}}
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+  Content-Type: application/json
+}
+
+body:json {
+  {
+      "PatientUserId": "{{PATIENT_USER_ID}}",
+      "Feeling": "Worst",
+      "Mood": "Stressed",
+      "EnergyLevels": [
+          "Eat",
+          "Get off the bed"
+      ]
+  }
+}
+
+tests {
+  // Extract and store DailyAssessment ID
+  try {
+      var jsonRes = res.getBody();
+      bru.setEnvVar("DAILY_ASSESSMENT_ID", jsonRes.Data.DailyAssessment.id);
+  }
+  catch (error) {
+      console.log(error.message);
+  }
+  
+  test("Request is successful", function () {
+      expect(res.getStatus()).to.equal(201);
+      var jsonRes = res.getBody();
+      expect(jsonRes.Status).to.eql('success');
+  });
+  
+  test("Daily Assessment is created", function () {
+      var jsonRes = res.getBody();
+      expect(jsonRes.Data).to.have.property('DailyAssessment');
+      expect(jsonRes.Data.DailyAssessment).to.not.be.empty;
+      expect(jsonRes.Data.DailyAssessment).to.have.property('id');
+      expect(jsonRes.Data.DailyAssessment).to.have.property('PatientUserId');
+      expect(jsonRes.Data.DailyAssessment).to.have.property('Feeling');
+      expect(jsonRes.Data.DailyAssessment.Feeling).to.not.be.empty;
+      expect(jsonRes.Data.DailyAssessment).to.have.property('Mood');
+      expect(jsonRes.Data.DailyAssessment.Mood).to.not.be.empty;
+      expect(jsonRes.Data.DailyAssessment).to.have.property('EnergyLevels');
+      expect(jsonRes.Data.DailyAssessment.EnergyLevels).to.be.an('array');
+      expect(jsonRes.Data.DailyAssessment).to.have.property('RecordDate');
+  });
+  
+}

@@ -1,0 +1,74 @@
+meta {
+  name: Update patient details - reset params
+  type: http
+  seq: 11
+}
+
+put {
+  url: {{BASE_URL}}/patients/{{PATIENT_USER_ID}}
+  body: json
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{ADMIN_USER_JWT}}
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+  Content-Type: application/json
+}
+
+body:json {
+  {
+      "Prefix": "Mr.",
+      "FirstName": null,
+      "MiddleName": "X",
+      "LastName": "Doe",
+      "Email": null,
+      "Gender": "Male",
+      "BirthDate": null,
+      "ImageResourceId": null,
+      "Address": {
+          "Type": "Official",
+          "AddressLine": "99/4, Hosur Mn Rd, Opp Bts Bus Stop, Bommana Halli",
+          "City": null,
+          "District": null,
+          "State": "Maharashtra",
+          "Country": "",
+          "PostalCode": "412407"
+      }
+  }
+}
+
+tests {
+  try {
+      var jsonRes = res.getBody();
+      bru.setEnvVar("PATIENT_FIRST_NAME", jsonRes.Data.Patient.User.Person.FirstName);
+      bru.setEnvVar("PATIENT_EMAIL", jsonRes.Data.Patient.User.Person.Email);
+  
+      var phone = jsonRes.Data.Patient.User.Person.Phone;
+      var tokens = phone.split('-');
+      var phoneNumber = tokens[1];
+  
+      bru.setEnvVar("PATIENT_PHONE_NUMBER", phoneNumber);
+  }
+  catch (error) {
+      console.log(error.message);
+  }
+  
+  test("Request is successfull", function () {
+      expect(res.getStatus()).to.equal(200);
+      var jsonRes = res.getBody();
+      expect(jsonRes.Status).to.eql('success');
+  });
+  
+  test("Patient is updated", function () {
+      var jsonRes = res.getBody();
+      expect(jsonRes.Data).to.have.property('Patient');
+      expect(jsonRes.Data.Patient).to.not.be.empty;
+      expect(jsonRes.Data.Patient).to.have.property('id');
+      expect(jsonRes.Data.Patient).to.have.property('User');
+      expect(jsonRes.Data.Patient.User).to.not.be.empty;
+      expect(jsonRes.Data.Patient.User).to.have.property('id');
+      expect(jsonRes.Data.Patient.User.Person).to.not.be.empty;
+      expect(jsonRes.Data.Patient.User.Person).to.have.property('id');
+  });
+}

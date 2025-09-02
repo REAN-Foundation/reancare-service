@@ -1,0 +1,61 @@
+meta {
+  name: Add move minutes record
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{BASE_URL}}/wellness/daily-records/move-minutes
+  body: json
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{PATIENT_USER_JWT}}
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+  Content-Type: application/json
+}
+
+body:json {
+  {
+      "PatientUserId": "{{PATIENT_USER_ID}}",
+      "MoveMinutes": 50,
+      "Unit": "mins",
+      "RecordDate": "2021-09-15"
+  }
+}
+
+tests {
+  var jsonRes = res.getBody();
+  
+  try {
+      bru.setEnvVar("DAILY_MOVE_MINUTES_ID", jsonRes.Data.MoveMinutes.id);
+  }
+  catch (error) {
+      console.log(error.message);
+  }
+  
+  test("Request is successfull", function () {
+      expect(res.getStatus()).to.equal(201);
+      var jsonRes = res.getBody();
+      expect(jsonRes.Status).to.eql('success');
+  });
+  
+  test("New move minutes record is created", function () {
+  
+      var expectedValue = 50;
+      var expectedPatientUserId = bru.getEnvVar("PATIENT_USER_ID");
+      
+      var jsonRes = res.getBody();
+      expect(jsonRes.Data).to.have.property('MoveMinutes');
+      expect(jsonRes.Data.MoveMinutes).to.not.be.empty;
+      expect(jsonRes.Data.MoveMinutes).to.have.property('id');
+      expect(jsonRes.Data.MoveMinutes).to.have.property('MoveMinutes');
+      expect(jsonRes.Data.MoveMinutes).to.have.property('PatientUserId');
+      
+      expect(jsonRes.Data.MoveMinutes.MoveMinutes).equals(expectedValue);
+      expect(jsonRes.Data.MoveMinutes.PatientUserId).equals(expectedPatientUserId);
+      
+  });
+  
+}

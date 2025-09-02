@@ -1,0 +1,62 @@
+meta {
+  name: Create
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{BASE_URL}}/clinical/maternity/maternity-pregnancies/
+  body: json
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{ADMIN_USER_JWT}}
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+  Content-Type: application/json
+}
+
+body:json {
+  {
+      "PatientUserId": "{{PATIENT_USER_ID}}",
+      "ExternalPregnancyId": "1",
+      "DateOfLastMenstrualPeriod":"2024-11-01",
+      "EstimatedDateOfChildBirth" : "2025-08-09",
+      "Gravidity" : 3,
+      "Parity" : 2
+  }
+}
+
+tests {
+  try {
+  
+      var jsonData = res.getBody();
+      var id = jsonData.Data.Pregnancy.id;
+      bru.setEnvVar("PREGNANCY_ID", id);
+  
+  }
+  catch (error) {
+      console.log(error.message);
+  }
+  
+  test("Request is successfull", function () {
+      expect(res.getStatus()).to.equal(201);
+      var jsonRes = res.getBody();
+      expect(jsonRes.Status).to.eql('success');
+  });
+  
+  test("New Pregnancy record is created", function () {
+  
+      var jsonRes = res.getBody();
+      expect(jsonRes.Data).to.have.property('Pregnancy');
+      
+      expect(jsonRes.Data.Pregnancy).to.have.property('id');
+      expect(jsonRes.Data.Pregnancy).to.have.property('PatientUserId');
+      expect(jsonRes.Data.Pregnancy).to.have.property('ExternalPregnancyId');
+      expect(jsonRes.Data.Pregnancy).to.have.property('DateOfLastMenstrualPeriod');
+      expect(jsonRes.Data.Pregnancy).to.have.property('EstimatedDateOfChildBirth');
+      expect(jsonRes.Data.Pregnancy).to.have.property('Gravidity');
+      expect(jsonRes.Data.Pregnancy).to.have.property('Parity');
+  });
+  
+}

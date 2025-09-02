@@ -1,0 +1,80 @@
+meta {
+  name: Create calorie balance record
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{BASE_URL}}/wellness/daily-records/calorie-balances
+  body: json
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{PATIENT_USER_JWT}}
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+  Content-Type: application/json
+}
+
+body:json {
+  {
+      "PersonId": "{{CALORIE_BALANCE_PERSONID}}",
+      "PatientUserId": "{{CALORIE_BALANCE_PATIENTUSERID}}",
+      "CaloriesConsumed": {{CALORIE_BALANCE_CALORIESCONSUMED}},
+      "CaloriesBurned": {{CALORIE_BALANCE_CALORIESBURNED}},
+      "Unit": "{{CALORIE_BALANCE_UNIT}}"
+  }
+}
+
+script:pre-request {
+  let personId = bru.getEnvVar('PERSON_ID');
+  let patientUserId = bru.getEnvVar('PATIENT_USER_ID');
+  bru.setEnvVar("CALORIE_BALANCE_PATIENTUSERID", patientUserId);
+  bru.setEnvVar("CALORIE_BALANCE_CALORIESCONSUMED", 120);
+  bru.setEnvVar("CALORIE_BALANCE_CALORIESBURNED", 100);
+  bru.setEnvVar("CALORIE_BALANCE_UNIT", 'kcal');
+}
+
+tests {
+  var jsonRes = res.getBody();
+  
+  try {
+      bru.setEnvVar("CALORIE_BALANCE_ID", jsonRes.Data.CalorieBalance.id);
+  }
+  catch (error) {
+      console.log(error.message);
+  }
+  
+  test("Request is successfull", function () {
+      expect(res.getStatus()).to.equal(201);
+      var jsonRes = res.getBody();
+      expect(jsonRes.Status).to.eql('success');
+  });
+  
+  test("New Calorie Balance record is created", function () {
+  
+      var expectedPatientUserId = bru.getEnvVar("CALORIE_BALANCE_PATIENTUSERID");
+      var expectedCalorieConsumed = bru.getEnvVar("CALORIE_BALANCE_CALORIESCONSUMED");
+      var expectedCalorieBurned = bru.getEnvVar("CALORIE_BALANCE_CALORIESBURNED");
+      var expectedCalorieUnit = bru.getEnvVar("CALORIE_BALANCE_UNIT");
+  
+      var jsonRes = res.getBody();
+      expect(jsonRes.Data).to.have.property('CalorieBalance');
+      expect(jsonRes.Data.CalorieBalance).to.not.be.empty;
+      expect(jsonRes.Data.CalorieBalance).to.have.property('PatientUserId');
+      expect(jsonRes.Data.CalorieBalance).to.have.property('CaloriesConsumed');
+      expect(jsonRes.Data.CalorieBalance).to.have.property('CaloriesBurned');
+      expect(jsonRes.Data.CalorieBalance).to.have.property('Unit');
+  
+      expect(jsonRes.Data.CalorieBalance.PatientUserId).equals(expectedPatientUserId);
+      expect(jsonRes.Data.CalorieBalance.CaloriesConsumed).equals(expectedCalorieConsumed);
+      expect(jsonRes.Data.CalorieBalance.CaloriesBurned).equals(expectedCalorieBurned);
+      expect(jsonRes.Data.CalorieBalance.Unit).equals(expectedCalorieUnit);
+  });
+  
+  
+}
+
+docs {
+  Add an address.
+}

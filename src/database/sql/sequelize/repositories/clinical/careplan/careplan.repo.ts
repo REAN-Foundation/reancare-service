@@ -21,6 +21,7 @@ import UserTask from '../../../models/users/user/user.task.model';
 import { TimeHelper } from '../../../../../../common/time.helper';
 import { DurationType } from '../../../../../../domain.types/miscellaneous/time.types';
 import { CareplanCode } from '../../../../../../domain.types/statistics/aha/aha.type';
+import { ParticipantMapper } from '../../../mappers/clinical/careplan/participant.mapper';
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -29,13 +30,15 @@ export class CareplanRepo implements ICareplanRepo {
     public addPatientWithProvider = async (
         patientUserId: string,
         provider: string,
-        participantId: string
+        participantId: string,
+        tenantId: string
     ): Promise<ParticipantDto> => {
         try {
             const entity = {
                 PatientUserId : patientUserId,
                 Provider      : provider,
                 ParticipantId : participantId,
+                TenantId      : tenantId
             };
             return await CareplanParticipant.create(entity);
         } catch (error) {
@@ -69,6 +72,7 @@ export class CareplanRepo implements ICareplanRepo {
                 StartDate           : model.StartDate,
                 EndDate             : model.EndDate,
                 Gender              : model.Gender,
+                TenantId            : model.TenantId
             };
             const enrollment = await CareplanEnrollment.create(entity);
             return EnrollmentMapper.toDto(enrollment);
@@ -556,7 +560,7 @@ export class CareplanRepo implements ICareplanRepo {
         try {
             var where_clause = { PatientUserId: patientUserId, IsActive: true };
             where_clause['EndDate'] = { [Op.gte]: new Date() };
-            
+
             const enrollments = await CareplanEnrollment.findAll({
                 where : where_clause
             });
@@ -582,6 +586,81 @@ export class CareplanRepo implements ICareplanRepo {
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
+        }
+    };
+
+    public deleteEnrollmentByUserId = async (patientUserId: string, hardDelete: boolean = false): Promise<boolean> =>{
+        try {
+            const deletedCount = await CareplanEnrollment.destroy({
+                where : {
+                    PatientUserId : patientUserId
+                },
+                force : hardDelete
+            });
+
+            if (deletedCount === 0) {
+                Logger.instance().log(`No Careplan Enrollment records found for user: ${patientUserId}`);
+            }
+            return true;
+        } catch (error) {
+            Logger.instance().log(error.message);
+        }
+    };
+
+    public deleteActivitiesByUserId = async (patientUserId: string, hardDelete: boolean = false): Promise<boolean> =>{
+        try {
+            const deletedCount = await CareplanActivity.destroy({
+                where : {
+                    PatientUserId : patientUserId
+                },
+                force : hardDelete
+            });
+
+            if (deletedCount === 0) {
+                Logger.instance().log(`No Careplan Activity records found for user: ${patientUserId}`);
+            }
+            return true;
+        } catch (error) {
+            Logger.instance().log(error.message);
+        }
+    };
+
+    public getParticipantByUserId = async (patientUserId: string): Promise<ParticipantDto> => {
+        try {
+            const participant = await CareplanParticipant.findOne({
+                where : {
+                    PatientUserId : patientUserId
+                }
+            });
+            
+            if (participant) {
+                return ParticipantMapper.toDto(participant);
+            }
+            return null;
+        } catch (error) {
+            Logger.instance().log(error.message);
+            return null;
+        }
+    };
+
+    public deleteParticipantByUserId = async (patientUserId: string, hardDelete: boolean = false): Promise<boolean> => {
+        try {
+            const deletedCount = await CareplanParticipant.destroy({
+                where : {
+                    PatientUserId : patientUserId
+                },
+                force : hardDelete
+            });
+
+            if (deletedCount === 0) {
+                Logger.instance().log(`No Careplan Participant records found for user: ${patientUserId}`);
+            } else {
+                Logger.instance().log(`Deleted ${deletedCount} Careplan Participant records for user: ${patientUserId}`);
+            }
+            return true;
+        } catch (error) {
+            Logger.instance().log(error.message);
+            return false;
         }
     };
 

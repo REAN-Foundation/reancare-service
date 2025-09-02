@@ -1,0 +1,52 @@
+meta {
+  name: Get after removing symptom type
+  type: http
+  seq: 6
+}
+
+get {
+  url: {{BASE_URL}}/clinical/symptom-assessment-templates/{{ASSESSMENT_TEMPLATE_ID}}
+  body: none
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+  authorization: Bearer {{ADMIN_USER_JWT}}
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+}
+
+tests {
+  test("Request is successful", function () {
+      expect(res.getStatus()).to.equal(200);
+      var jsonRes = res.getBody();
+      expect(jsonRes.Status).to.eql('success');
+  });
+  
+  test("Assessment template is returned", function () {
+      var jsonRes = res.getBody();
+  
+      expect(jsonRes.Data).to.have.property('SymptomAssessmentTemplate');
+  
+      var template = jsonRes.Data.SymptomAssessmentTemplate;
+  
+      expect(template).to.have.property('id');
+      expect(template).to.have.property('Title');
+      expect(template).to.have.property('Description');
+      expect(template).to.have.property('Tags');
+      expect(template).to.have.property('TemplateSymptomTypes');
+  
+      expect(template.Tags.length).to.be.greaterThan(0);
+      expect(template.TemplateSymptomTypes.length).to.be.greaterThan(0);
+  
+      // Optional: validate properties of each TemplateSymptomType
+      template.TemplateSymptomTypes.forEach(function(symptomType) {
+          expect(symptomType).to.have.property('Index');
+          expect(symptomType).to.have.property('SymptomTypeId');
+          expect(symptomType).to.have.property('Symptom');
+          expect(symptomType).to.have.property('Description');
+          expect(symptomType).to.have.property('ImageResourceId');
+      });
+  });
+  
+}

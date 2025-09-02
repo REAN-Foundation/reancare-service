@@ -1,0 +1,36 @@
+meta {
+  name: Patient log-in with otp
+  type: http
+  seq: 5
+}
+
+post {
+  url: {{BASE_URL}}/users/login-with-otp
+  body: json
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+}
+
+body:json {
+  {
+      "Phone": "{{PHONE_COUNTRY_CODE}}-{{PHONE_NUMBER}}",
+      "Otp": "538747",
+      "LoginRoleId": "{{PATIENT_ROLE_ID}}"
+  }
+  
+}
+
+tests {
+  try {
+      var jsonRes = res.getBody();
+      bru.setEnvVar("PATIENT_USER_JWT", jsonRes.Data.AccessToken);
+  }
+  catch (error) {
+      console.log(error.message);
+  }
+  
+}

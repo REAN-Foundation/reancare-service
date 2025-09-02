@@ -11,7 +11,7 @@ import { CareplanCode } from '../../../domain.types/statistics/aha/aha.type';
 export interface ICareplanRepo {
 
     addPatientWithProvider(
-        patientUserId: uuid, provider: string, participantId: string): Promise<ParticipantDto>;
+        patientUserId: uuid, provider: string, participantId: string, tenantId: string): Promise<ParticipantDto>;
 
     getPatientRegistrationDetails(patientUserId: uuid, provider?: string): Promise<ParticipantDto>;
 
@@ -74,4 +74,12 @@ export interface ICareplanRepo {
     stop(enrollmentId: uuid): Promise<EnrollmentDto>;
 
     getAllCareplanEnrollmentByPlanCode(planCode: CareplanCode): Promise<EnrollmentDto[]>;
+
+    deleteEnrollmentByUserId(patientUserId: string, hardDelete: boolean): Promise<boolean>;
+
+    deleteActivitiesByUserId(patientUserId: string, hardDelete: boolean): Promise<boolean>;
+
+    getParticipantByUserId(patientUserId: string): Promise<ParticipantDto>;
+
+    deleteParticipantByUserId(patientUserId: string, hardDelete: boolean): Promise<boolean>;
 }

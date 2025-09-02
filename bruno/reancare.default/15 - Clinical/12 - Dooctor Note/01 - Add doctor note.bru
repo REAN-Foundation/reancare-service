@@ -1,0 +1,70 @@
+meta {
+  name: Add doctor note
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{BASE_URL}}/clinical/doctor-notes
+  body: json
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{DOCTOR_USER_JWT}}
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+  Content-Type: application/json
+}
+
+body:json {
+  {
+      "PatientUserId": "{{PATIENT_USER_ID}}",
+      "VisitId": "{{DOCTOR_NOTE_VISIT_ID}}",
+      "ValidationStatus": "Confirmed",
+      "Notes": "Prescribing two days bed rest and more liquid no fried food",
+      "RecordDate": "2021-09-22"
+  }
+}
+
+script:pre-request {
+  var userId = bru.getEnvVar("PATIENT_USER_ID");
+  bru.setEnvVar("DOCTOR_NOTE_VISIT_ID", userId);
+  
+}
+
+tests {
+  var jsonRes = res.getBody();
+  
+  try {
+      bru.setEnvVar("DOCTOR_NOTE_ID", jsonRes.Data.DoctorNote.id);
+  }
+  catch (error) {
+      console.log(error.message);
+  }
+  
+  test("Request is successfull", function () {
+      expect(res.getStatus()).to.equal(201);
+      var jsonRes = res.getBody();
+      expect(jsonRes.Status).to.eql('success');
+  });
+  
+  test("A New doctor note record is created", function () {
+  
+      var expectedValidationStatus = "Confirmed";
+      var expectedPatientUserId = bru.getEnvVar("PATIENT_USER_ID");
+  
+      var jsonRes = res.getBody();
+      expect(jsonRes.Data).to.have.property('DoctorNote');
+      expect(jsonRes.Data.DoctorNote).to.not.be.empty;
+      expect(jsonRes.Data.DoctorNote).to.have.property('id');
+      expect(jsonRes.Data.DoctorNote).to.have.property('VisitId');
+      expect(jsonRes.Data.DoctorNote).to.have.property('ValidationStatus');
+      expect(jsonRes.Data.DoctorNote).to.have.property('Notes');
+      expect(jsonRes.Data.DoctorNote).to.have.property('RecordDate');
+      
+  
+      expect(jsonRes.Data.DoctorNote.ValidationStatus).equals(expectedValidationStatus);
+      expect(jsonRes.Data.DoctorNote.PatientUserId).equals(expectedPatientUserId);
+  
+  });
+}

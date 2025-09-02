@@ -1,0 +1,44 @@
+meta {
+  name: Get by id
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{BASE_URL}}/clinical/maternity/maternity-deliveries/{{DELIVERY_ID}}
+  body: none
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{ADMIN_USER_JWT}}
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+  Content-Type: application/json
+}
+
+tests {
+  test("Request is successfull", function () {
+      expect(res.getStatus()).to.equal(200);
+      var jsonRes = res.getBody();
+      expect(jsonRes.Status).to.eql('success');
+  });
+  
+  test("Delivery record retrived successfully", function () {
+  
+      var jsonRes = res.getBody();
+      expect(jsonRes.Data).to.have.property('Delivery');
+      
+      expect(jsonRes.Data.Delivery).to.have.property('id');
+      expect(jsonRes.Data.Delivery).to.have.property('PatientUserId');
+      expect(jsonRes.Data.Delivery).to.have.property('PregnancyId');
+      expect(jsonRes.Data.Delivery).to.have.property('DeliveryDate');
+      expect(jsonRes.Data.Delivery).to.have.property('DeliveryTime');
+      expect(jsonRes.Data.Delivery).to.have.property('GestationAtBirth');
+      expect(jsonRes.Data.Delivery).to.have.property('DeliveryMode');
+      expect(jsonRes.Data.Delivery).to.have.property('DeliveryPlace');
+      expect(jsonRes.Data.Delivery).to.have.property('DeliveryOutcome');
+      expect(jsonRes.Data.Delivery).to.have.property('DateOfDischarge');
+      expect(jsonRes.Data.Delivery).to.have.property('OverallDiagnosis');
+  });
+  
+}

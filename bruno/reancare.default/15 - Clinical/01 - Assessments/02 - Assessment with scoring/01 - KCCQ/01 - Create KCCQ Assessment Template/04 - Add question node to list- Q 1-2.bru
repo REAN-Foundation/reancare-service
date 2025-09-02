@@ -1,0 +1,98 @@
+meta {
+  name: Add question node to list- Q 1-2
+  type: http
+  seq: 4
+}
+
+post {
+  url: {{BASE_URL}}/clinical/assessment-templates/{{ASSESSMENT_TEMPLATE_ID}}/nodes
+  body: json
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{ADMIN_USER_JWT}}
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+  Content-Type: application/json
+}
+
+body:json {
+  {
+      "ParentNodeId": "{{KCCQ_ASSESSMENT_NODE_Q1_ID}}",
+      "NodeType": "Question",
+      "Title": "1.2 How frequently do you walk 1 block on level ground?",
+      "Description": "Unscheduled daily checks",
+      "QueryResponseType": "Single Choice Selection",
+      "Options": [
+          {
+              "ProviderGivenCode": "extremely limited",
+              "Text": "Extremely limited",
+              "Sequence": 1
+          },
+          {
+              "ProviderGivenCode": "quite a bit limited",
+              "Text": "Quite a bit limited",
+              "Sequence": 2
+          },
+          {
+              "ProviderGivenCode": "moderately limited",
+              "Text": "Moderately limited",
+              "Sequence": 3
+          },
+          {
+              "ProviderGivenCode": "slightly limited",
+              "Text": "Slightly limited",
+              "Sequence": 4
+          },
+          {
+              "ProviderGivenCode": "not at all limited",
+              "Text": "Not at all limited",
+              "Sequence": 5
+          },
+          {
+              "ProviderGivenCode": "limited for other reasons or did not do the activity",
+              "Text": "Limited for other reasons or did not do the activity",
+              "Sequence": 6
+          }
+      ]
+  }
+  
+}
+
+tests {
+  var jsonRes = res.getBody();
+  
+  try {
+      bru.setEnvVar("KCCQ_ASSESSMENT_NODE_Q1_2_ID", jsonRes.Data.AssessmentNode.id);
+  }
+  catch (error) {
+      console.log(error.message);
+  }
+  
+  test("Request is successfull", function () {
+      expect(res.getStatus()).to.equal(201);
+      var jsonRes = res.getBody();
+      expect(jsonRes.Status).to.eql('success');
+  });
+  
+  test("Assessment question node - single choice selection is created", function () {
+     
+      var jsonRes = res.getBody();
+      expect(jsonRes.Data).to.have.property('AssessmentNode');
+      expect(jsonRes.Data.AssessmentNode).to.not.be.empty;
+      expect(jsonRes.Data.AssessmentNode).to.have.property('id');
+      expect(jsonRes.Data.AssessmentNode).to.have.property('ParentNodeId');
+      expect(jsonRes.Data.AssessmentNode).to.have.property('NodeType');
+      expect(jsonRes.Data.AssessmentNode).to.have.property('Title');
+      expect(jsonRes.Data.AssessmentNode).to.have.property('Description');
+      expect(jsonRes.Data.AssessmentNode).to.have.property('QueryResponseType');
+      expect(jsonRes.Data.AssessmentNode).to.have.property('TemplateId');
+      
+      expect(jsonRes.Data.AssessmentNode.Title).equals("1.2 How frequently do you walk 1 block on level ground?");
+      expect(jsonRes.Data.AssessmentNode.QueryResponseType).equals("Single Choice Selection");
+      expect(jsonRes.Data.AssessmentNode.NodeType).equals("Question");
+          
+      expect(jsonRes.Data.AssessmentNode.Sequence).greaterThan(0);   
+  });
+  
+}

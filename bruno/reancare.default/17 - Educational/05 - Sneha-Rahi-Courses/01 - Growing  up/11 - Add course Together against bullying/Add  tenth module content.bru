@@ -1,0 +1,67 @@
+meta {
+  name: Add  tenth module content
+  type: http
+  seq: 4
+}
+
+post {
+  url: {{BASE_URL}}/educational/course-contents
+  body: json
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{ADMIN_USER_JWT}}
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+  Content-Type: application/json
+}
+
+body:json {
+  {
+      "CourseId": "{{COURSE_ID}}",
+      "LearningPathId": "{{LEARNING_PATH_ID}}",
+      "ModuleId": "{{TENTH_COURSE_MODULE_ID}}",
+      "Title": "Together against bullying",
+      "Description": "If you know someone who has been bullied or you have been a victim of bullying then this module will help you understand the effects and the steps you can take to stop bullying.",
+      "DurationInMins": 4.3,
+      "ContentType": "Video",
+      "ResourceLink": "https://www.youtube.com/watch?v=4mrE5zgEvt4",
+      "ImageUrl": "{{FILE_RESOURCE_URL}}",
+      "Sequence": 1
+  }
+}
+
+tests {
+  var jsonRes = res.getBody();
+  
+  try {
+      bru.setEnvVar("TENTH_MODULE_CONTENT_ID", jsonRes.Data.CourseContent.id);
+  }
+  catch (error) {
+      console.log(error.message);
+  }
+  
+  
+  test("Request is successfull", function () {
+      expect(res.getStatus()).to.equal(201);
+      var jsonRes = res.getBody();
+      expect(jsonRes.Status).to.eql('success');
+  });
+  
+  test("New course content is returned", function () {
+  
+      var expectedTitle = "Together against bullying";
+      var expectedDurationInMins = 4.3;
+      
+      var jsonRes = res.getBody();
+      expect(jsonRes.Data).to.have.property('CourseContent');
+      expect(jsonRes.Data.CourseContent).to.not.be.empty;
+      expect(jsonRes.Data.CourseContent).to.have.property('Title');
+      expect(jsonRes.Data.CourseContent).to.have.property('DurationInMins');
+      
+      expect(jsonRes.Data.CourseContent.Title).equals(expectedTitle );
+      expect(jsonRes.Data.CourseContent.DurationInMins).equals(expectedDurationInMins);
+  });
+  
+  
+}

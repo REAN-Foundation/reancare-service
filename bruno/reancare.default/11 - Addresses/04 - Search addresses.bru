@@ -1,0 +1,108 @@
+meta {
+  name: Search addresses
+  type: http
+  seq: 5
+}
+
+get {
+  url: {{BASE_URL}}/addresses/search?district={{ADDRESS_DISTRICT_SEARCH_STRING}}
+  body: json
+  auth: none
+}
+
+params:query {
+  district: {{ADDRESS_DISTRICT_SEARCH_STRING}}
+  ~type: Home
+  ~city: Pune
+  ~state: {{ADDRESS_STATE_SEARCH_STRING}}
+  ~country: {{ADDRESS_COUNTRY_SEARCH_STRING}}
+  ~postalCode: 412
+  ~orderBy: City
+  ~order: ascending
+  ~pageIndex: 0
+  ~itemsPerPage: 25
+  ~addressLine: {{ADDRESS_LINE_SEARCH_STRING}}
+  ~longitudeFrom: {{ADDRESS_LONGITUDE_SEARCH_FROM}}
+  ~longitudeTo: {{ADDRESS_LONGITUDE_SEARCH_TO}}
+  ~lattitudeFrom: {{ADDRESS_LATTITUDE_SEARCH_FROM}}
+  ~lattitudeTo: {{ADDRESS_LATTITUDE_SEARCH_TO}}
+  ~createdDateFrom: 2021-05-01
+  ~createdDateTo: 2021-12-12
+}
+
+headers {
+  Authorization: Bearer {{PATIENT_USER_JWT}}
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+  Content-Type: application/json
+}
+
+script:pre-request {
+  var str = '';
+  var search = '';
+  var num = 0.0;
+  
+  var expectedType = bru.getEnvVar("ADDRESS_TYPE");
+  var expectedAddressLine = bru.getEnvVar("ADDRESS_LINE");
+  var expectedCity = bru.getEnvVar("ADDRESS_CITY");
+  var expectedDistrict = bru.getEnvVar("ADDRESS_DISTRICT");
+  var expectedState = bru.getEnvVar("ADDRESS_STATE");
+  var expectedCountry = bru.getEnvVar("ADDRESS_COUNTRY");
+  var expectedPostalCode = bru.getEnvVar("ADDRESS_POSTAL_CODE");
+  var expectedLongitude = bru.getEnvVar("ADDRESS_LONGITUDE");
+  var expectedLattitude = bru.getEnvVar("ADDRESS_LATTITUDE");
+  
+  str = bru.getEnvVar("ADDRESS_LINE");
+  search = str.substring(0, 3).toLowerCase();
+  bru.setEnvVar("ADDRESS_LINE_SEARCH_STRING", search);
+  
+  str = bru.getEnvVar("ADDRESS_CITY");
+  search = str.substring(0, 3).toLowerCase();
+  bru.setEnvVar("ADDRESS_CITY_SEARCH_STRING", search);
+  
+  str = bru.getEnvVar("ADDRESS_DISTRICT");
+  search = str.substring(0, 3).toLowerCase();
+  bru.setEnvVar("ADDRESS_DISTRICT_SEARCH_STRING", search);
+  
+  str = bru.getEnvVar("ADDRESS_STATE");
+  search = str.substring(0, 3).toLowerCase();
+  bru.setEnvVar("ADDRESS_STATE_SEARCH_STRING", search);
+  
+  str = bru.getEnvVar("ADDRESS_COUNTRY");
+  search = str.substring(0, 3).toLowerCase();
+  bru.setEnvVar("ADDRESS_COUNTRY_SEARCH_STRING", search);
+  
+  str = bru.getEnvVar("ADDRESS_POSTAL_CODE");
+  search = str.substring(0, 3).toLowerCase();
+  bru.setEnvVar("ADDRESS_POSTAL_CODE_SEARCH_STRING", search);
+  
+  num = bru.getEnvVar("ADDRESS_LONGITUDE");
+  bru.setEnvVar("ADDRESS_LONGITUDE_SEARCH_FROM", num - 1);
+  bru.setEnvVar("ADDRESS_LONGITUDE_SEARCH_TO", num + 1);
+  
+  num = bru.getEnvVar("ADDRESS_LATTITUDE");
+  bru.setEnvVar("ADDRESS_LATTITUDE_SEARCH_FROM", num - 1);
+  bru.setEnvVar("ADDRESS_LATTITUDE_SEARCH_TO", num + 1);
+  
+  
+}
+
+tests {
+  test("Request is successfull", function () {
+      expect(res.getStatus()).to.equal(200);
+      var jsonRes = res.getBody();
+      expect(jsonRes.Status).to.eql('success');
+  });
+  
+  test("List of addresses is returned", function () {
+  
+      var jsonRes = res.getBody();
+      expect(jsonRes.Data).to.have.property('Addresses');
+      expect(jsonRes.Data.Addresses.Items.length).to.be.greaterThan(0);
+  
+  });
+  
+}
+
+docs {
+  Search addresses using query parameters.
+}

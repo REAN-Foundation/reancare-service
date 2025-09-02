@@ -27,4 +27,6 @@ export interface IBloodPressureRepo {
     getAllUserResponsesBefore(patientUserId: string, date: Date): Promise<any[]>;
 
     getMostRecentBloodPressureActivity(patientUserId: string): Promise<MostRecentActivityDto>;
+
+    deleteByUserId(patientUserId: string, hardDelete: boolean): Promise<boolean>;
 }

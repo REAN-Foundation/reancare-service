@@ -1,0 +1,68 @@
+meta {
+  name: Create task without associated action id
+  type: http
+  seq: 4
+}
+
+post {
+  url: {{BASE_URL}}/user-tasks
+  body: json
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{ADMIN_USER_JWT}}
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+  Content-Type: application/json
+}
+
+body:json {
+  {
+      "UserId": "{{PATIENT_USER_ID}}",
+      "Task": "Take a dog for walk",
+      "Category": "Custom",
+      "ScheduledStartTime": "2021-10-11T05:30:00.000Z",
+      "ScheduledEndTime": "2021-10-11T07:30:00.000Z",
+      "IsRecurrent": false
+  }
+}
+
+tests {
+  var jsonRes = res.getBody();
+  
+  try {
+      bru.setEnvVar("USER_TASK_ID", jsonRes.Data.UserTask.id);
+      bru.setEnvVar("USER_TASK_DISPLAY_ID", jsonRes.Data.UserTask.DisplayId);
+  }
+  catch (error) {
+      console.log(error.message);
+  }
+  
+  test("Request is successfull", function () {
+      expect(res.getStatus()).to.equal(201);
+      var jsonRes = res.getBody();
+      expect(jsonRes.Status).to.eql('success');
+  });
+  
+  test("New User Task is created", function () {
+  
+      var jsonRes = res.getBody();
+      expect(jsonRes.Data).to.have.property('UserTask');
+      expect(jsonRes.Data.UserTask).to.not.be.empty;
+      expect(jsonRes.Data.UserTask).to.have.property("id");
+      expect(jsonRes.Data.UserTask).to.have.property("DisplayId");
+      expect(jsonRes.Data.UserTask).to.have.property("UserId");
+      expect(jsonRes.Data.UserTask).to.have.property("Task");
+      expect(jsonRes.Data.UserTask).to.have.property("ScheduledStartTime");
+      expect(jsonRes.Data.UserTask).to.have.property("ScheduledEndTime");
+      expect(jsonRes.Data.UserTask).to.have.property("Status");
+      expect(jsonRes.Data.UserTask).to.have.property("IsRecurrent");
+  
+      expect(jsonRes.Data.UserTask.Task).eqls("Take a dog for walk");
+  });
+  
+}
+
+docs {
+  Create new User Task record
+}

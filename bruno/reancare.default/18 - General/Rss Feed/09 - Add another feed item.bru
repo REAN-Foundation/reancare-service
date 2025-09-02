@@ -1,0 +1,65 @@
+meta {
+  name: Add another feed item
+  type: http
+  seq: 10
+}
+
+post {
+  url: {{BASE_URL}}/rss-feeds/feed-items
+  body: json
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{ADMIN_USER_JWT}}
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+  Content-Type: application/json
+}
+
+body:json {
+  {
+      "FeedId": "{{RSS_FEED_ID}}",
+      "Title": "Over 83 per cent of toddlers eat unhealthy food in Mumbai slums, reveals survey",
+      "Description": "High prices of fruits and vegetables, and parents not having enough time to feed their children, results in the consumption of easily available, low-cost unhealthy foods such as wafers, vada pav, fried food, Chinese bhel, toast, butter, khari and instant noodles among kids",
+      "Content": "A survey released last week by SNEHA, a non-profit working in the field of malnourishment across the slums of Mumbai, shows over 83 per cent of infants, aged six months to 23 months, in these areas are consuming unhealthy, low-cost food. ",
+      "Link": "https://www.snehamumbai.org/media/",
+      "Image": "https://images.mid-day.com/images/images/2022/apr/April%2012-junk_e.jpg",
+      "AuthorName": "Sneha Foundation",
+      "AuthorEmail": "crisis@snehamumbai.org",
+      "AuthorLink": "https://www.snehamumbai.org/"
+  }
+}
+
+tests {
+  var jsonRes = res.getBody();
+  
+  try {
+      bru.setEnvVar("RSS_FEED_ITEM_ID", jsonRes.Data.RssfeedItem.id);
+  }
+  catch (error) {
+      console.log(error.message);
+  }
+  
+  
+  test("Request is successfull", function () {
+      expect(res.getStatus()).to.equal(201);
+      var jsonRes = res.getBody();
+      expect(jsonRes.Status).to.eql('success');
+  });
+  
+  test("Created RSS feed item is successfully", function () {
+      var expectedTitle = "Over 83 per cent of toddlers eat unhealthy food in Mumbai slums, reveals survey";
+      var expectedDescription = "High prices of fruits and vegetables, and parents not having enough time to feed their children, results in the consumption of easily available, low-cost unhealthy foods such as wafers, vada pav, fried food, Chinese bhel, toast, butter, khari and instant noodles among kids";
+      var expectedAuthor = "Sneha Foundation";
+  
+      var jsonRes = res.getBody();
+      expect(jsonRes.Data).to.have.property('RssfeedItem');
+      expect(jsonRes.Data.RssfeedItem).to.not.be.empty;
+  
+      expect(jsonRes.Data.RssfeedItem.Title).to.equal(expectedTitle);
+      expect(jsonRes.Data.RssfeedItem.Description).to.equal(expectedDescription);
+      expect(jsonRes.Data.RssfeedItem.AuthorName).to.equal(expectedAuthor);
+  });
+  
+  
+}

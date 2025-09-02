@@ -1,0 +1,48 @@
+meta {
+  name: Get organization types
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{BASE_URL}}/types/organization-types
+  body: none
+  auth: none
+}
+
+headers {
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+  Content-Type: application/json
+}
+
+tests {
+  try {
+      var jsonRes = res.getBody();
+      var organizationTypes = jsonRes.Data.OrganizationTypes;
+      for(var i = 0; i < organizationTypes.length; i++) {
+          var r = organizationTypes[i];
+          var name = r.Name;
+          var id = r.id;
+          var str = "ORGANIZATION_TYPE_" + name.toUpperCase();
+          bru.setEnvVar(str, id);
+      }
+  }
+  catch (error) {
+      console.log(error.message);
+  }
+  
+  test("Request is successfull", function () {
+      expect(res.getStatus()).to.equal(200);
+      var jsonRes = res.getBody();
+      expect(jsonRes.Status).to.eql('success');
+  });
+  
+  test("Organization types are retrieved", function () {
+      var jsonRes = res.getBody();
+      expect(jsonRes.Data).to.have.property('OrganizationTypes');
+      expect(jsonRes.Data.OrganizationTypes).to.not.be.empty;
+      var count = jsonRes.Data.OrganizationTypes.length;
+      expect(count).greaterThan(0);
+  });
+  
+}

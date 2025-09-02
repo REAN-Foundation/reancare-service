@@ -1,0 +1,105 @@
+meta {
+  name: Create patient allergy
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{BASE_URL}}/clinical/allergies
+  body: json
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{PATIENT_USER_JWT}}
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+  Content-Type: application/json
+}
+
+body:json {
+  
+  {
+      "PatientUserId": "{{PATIENT_USER_ID}}",
+      "Allergy": "{{PATIENT_ALLERGY}}",
+      "AllergenCategory": "{{PATIENT_ALLERGY_ALLERGEN_CATEGORY}}",
+      "AllergenExposureRoute": "{{PATIENT_ALLERGY_ALLERGEN_EXPOSURE_ROUTE}}",
+      "Severity": "{{PATIENT_ALLERGY_SEVERITY}}",
+      "Reaction": "{{PATIENT_ALLERGY_REACTION}}",
+      "OtherInformation": "{{PATIENT_ALLERGY_OTHER_INFORMATION}}",
+      "LastOccurrence": "{{PATIENT_ALLERGY_LAST_OCCURANCE}}"
+  }
+}
+
+script:pre-request {
+  let PatientUserId = bru.getEnvVar('PATIENT_USER_ID');
+  bru.setEnvVar("PATIENT_ALLERGY_PATIENTUSERID", PatientUserId);
+  
+  bru.setEnvVar("PATIENT_ALLERGY", 'Peanut');
+  bru.setEnvVar("PATIENT_ALLERGY_ALLERGEN_CATEGORY", 'Food');
+  bru.setEnvVar("PATIENT_ALLERGY_ALLERGEN_EXPOSURE_ROUTE", 'Food');
+  bru.setEnvVar("PATIENT_ALLERGY_SEVERITY", 'Medium');
+  bru.setEnvVar("PATIENT_ALLERGY_REACTION", 'Difficulty Breathing');
+  bru.setEnvVar("PATIENT_ALLERGY_OTHER_INFORMATION", 'Na');
+  bru.setEnvVar("PATIENT_ALLERGY_LAST_OCCURANCE", '2025-01-01');
+  
+  
+  
+}
+
+tests {
+  var jsonRes = res.getBody();
+  
+  try {
+      bru.setEnvVar("PATIENT_ALLERGY_ID", jsonRes.Data.Allergy.id);
+  }
+  catch (error) {
+      console.log(error.message);
+  }
+  
+  test("Request is successfull", function () {
+      expect(res.getStatus()).to.equal(201);
+      var jsonRes = res.getBody();
+      expect(jsonRes.Status).to.eql('success');
+  });
+  
+  test("New allergy record is created", function () {
+  
+      let expectedPatientUserId = bru.getEnvVar("PATIENT_USER_ID");
+      let expectedAllergy = bru.getEnvVar("PATIENT_ALLERGY");
+      let expectedAllergenCategory = bru.getEnvVar("PATIENT_ALLERGY_ALLERGEN_CATEGORY");
+      let expectedAllergenExposureRoute = bru.getEnvVar("PATIENT_ALLERGY_ALLERGEN_EXPOSURE_ROUTE");
+      let expectedSeverity = bru.getEnvVar("PATIENT_ALLERGY_SEVERITY");
+      let expectedReaction = bru.getEnvVar("PATIENT_ALLERGY_REACTION");
+      let expectedOtherInformation = bru.getEnvVar("PATIENT_ALLERGY_OTHER_INFORMATION");
+      let expectedLastOccurrence = bru.getEnvVar("PATIENT_ALLERGY_LAST_OCCURANCE");
+  
+      var jsonRes = res.getBody();
+      expect(jsonRes.Data).to.have.property('Allergy');
+      expect(jsonRes.Data.Allergy).to.not.be.empty;
+      expect(jsonRes.Data.Allergy).to.have.property('PatientUserId');
+      expect(jsonRes.Data.Allergy).to.have.property('Allergy');
+      expect(jsonRes.Data.Allergy).to.have.property('AllergenCategory');
+      expect(jsonRes.Data.Allergy).to.have.property('AllergenExposureRoute');
+      expect(jsonRes.Data.Allergy).to.have.property('Severity');
+      expect(jsonRes.Data.Allergy).to.have.property('Reaction');
+      expect(jsonRes.Data.Allergy).to.have.property('OtherInformation');
+      expect(jsonRes.Data.Allergy).to.have.property('LastOccurrence');
+  
+      expect(jsonRes.Data.Allergy.PatientUserId).equals(expectedPatientUserId);
+      expect(jsonRes.Data.Allergy.Allergy).equals(expectedAllergy);
+      expect(jsonRes.Data.Allergy.AllergenCategory).equals(expectedAllergenCategory);
+      expect(jsonRes.Data.Allergy.AllergenExposureRoute).equals(expectedAllergenExposureRoute);
+      expect(jsonRes.Data.Allergy.Severity).equals(expectedSeverity);
+      expect(jsonRes.Data.Allergy.Reaction).equals(expectedReaction);
+      expect(jsonRes.Data.Allergy.OtherInformation).equals(expectedOtherInformation);
+  
+      var lastOccurrence = jsonRes.Data.Allergy.LastOccurrence.split('T')[0];
+      expect(lastOccurrence).equals(expectedLastOccurrence);
+  });
+  
+  
+}
+
+docs {
+  Add A PatientAllergy.
+}

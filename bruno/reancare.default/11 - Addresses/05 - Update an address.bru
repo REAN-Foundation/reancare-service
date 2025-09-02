@@ -1,0 +1,89 @@
+meta {
+  name: Update an address
+  type: http
+  seq: 4
+}
+
+put {
+  url: {{BASE_URL}}/addresses/{{ADDRESS_ID}}
+  body: json
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{PATIENT_USER_JWT}}
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+  Content-Type: application/json
+}
+
+body:json {
+  {
+      "Type": "Official",
+      "AddressLine": "99/4, Hosur Mn Rd, Opp Bts Bus Stop, Bommana Halli",
+      "City": "Mumbai",
+      "District": "Greater Mumbai",
+      "State": "Maharashtra",
+      "Country": "India",
+      "PostalCode": "412407",
+      "Longitude": 23.45545,
+      "Lattitude": 54.65466
+  }
+}
+
+tests {
+  test("Request is successfull", function () {
+      expect(res.getStatus()).to.equal(200);
+      var jsonRes = res.getBody();
+      expect(jsonRes.Status).to.eql('success');
+  });
+  
+  test("Updated address is returned", function () {
+  
+      var expectedType = "Official";
+      var expectedAddressLine = "99/4, Hosur Mn Rd, Opp Bts Bus Stop, Bommana Halli";
+      var expectedCity = "Mumbai";
+      var expectedDistrict = "Greater Mumbai";
+      var expectedState = "Maharashtra";
+      var expectedCountry = "India";
+      var expectedPostalCode = "412407";
+      var expectedLongitude = 23.45545;
+      var expectedLattitude = 54.65466;
+  
+      var jsonRes = res.getBody();
+      expect(jsonRes.Data).to.have.property('Address');
+      expect(jsonRes.Data.Address).to.not.be.empty;
+      expect(jsonRes.Data.Address).to.have.property('id');
+      expect(jsonRes.Data.Address).to.have.property('Type');
+      expect(jsonRes.Data.Address).to.have.property('AddressLine');
+      expect(jsonRes.Data.Address).to.have.property('City');
+      expect(jsonRes.Data.Address).to.have.property('District');
+      expect(jsonRes.Data.Address).to.have.property('State');
+      expect(jsonRes.Data.Address).to.have.property('Country');
+      expect(jsonRes.Data.Address).to.have.property('PostalCode');
+      expect(jsonRes.Data.Address).to.have.property('Longitude');
+      expect(jsonRes.Data.Address).to.have.property('Lattitude');
+  
+      expect(jsonRes.Data.Address.Type).equals(expectedType);
+      expect(jsonRes.Data.Address.AddressLine).equals(expectedAddressLine);
+      expect(jsonRes.Data.Address.City).equals(expectedCity);
+      expect(jsonRes.Data.Address.District).equals(expectedDistrict);
+      expect(jsonRes.Data.Address.State).equals(expectedState);
+      expect(jsonRes.Data.Address.Country).equals(expectedCountry);
+      expect(jsonRes.Data.Address.PostalCode).equals(expectedPostalCode);
+  
+      var diffLong = Math.abs(expectedLongitude - jsonRes.Data.Address.Longitude) * 100.0 / Math.abs(expectedLongitude);
+      expect(diffLong).to.be.lessThan(1.0); //difference less than 1%
+  
+      var diffLatt = Math.abs(expectedLattitude - jsonRes.Data.Address.Lattitude) * 100.0 / Math.abs(expectedLattitude);
+      expect(diffLong).to.be.lessThan(1.0); //difference less than 1%
+  
+  
+  
+  });
+  
+  
+}
+
+docs {
+  Update the details for an address.
+}

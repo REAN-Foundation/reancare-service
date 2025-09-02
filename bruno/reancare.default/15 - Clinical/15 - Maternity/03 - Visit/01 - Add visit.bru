@@ -1,0 +1,74 @@
+meta {
+  name: Create
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{BASE_URL}}/clinical/visits
+  body: json
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{ADMIN_USER_JWT}}
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+  Content-Type: application/json
+}
+
+body:json {
+  {
+      "VisitType": "DoctorVisit",
+      "EhrId": "EHR-12345",
+      "DisplayId": "VIS-001",
+      "PatientUserId": "{{PATIENT_USER_ID}}",
+      "MedicalPractitionerUserId": "{{MEDICAL_PRACTITIONER_USER_ID}}",
+      "CurrentState": "InProgress",
+      "StartDate": "2025-03-30T09:00:00Z",
+      "EndDate": "2025-03-30T10:00:00Z",
+      "FulfilledAtOrganizationId": "{{ORGANIZATION_ID}}",
+      "AdditionalInformation": "Patient reported mild headache and dizziness."
+  }
+  
+}
+
+script:pre-request {
+  var doctorId = bru.getEnvVar("DOCTOR_USER_ID");
+  bru.setEnvVar("MEDICAL_PRACTITIONER_USER_ID", doctorId);
+   // "FulfilledAtOrganizationId": "550e8400-e29b-41d4-a716-446655440003",
+}
+
+script:post-response {
+  var jsonRes = res.getBody();
+  if (jsonRes?.Data?.Visit?.id) {
+      bru.setEnvVar("VISIT_ID", jsonRes.Data.Visit.id);
+  }
+}
+
+tests {
+  
+  test("Request is successfull", function () {
+      expect(res.getStatus()).to.equal(201);
+      var jsonRes = res.getBody();
+      expect(jsonRes.Status).to.eql('success');
+  });
+  
+  test("New Visit record is created", function () {
+  
+      var jsonRes = res.getBody();
+      expect(jsonRes.Data).to.have.property('Visit');
+      
+      expect(jsonRes.Data.Visit).to.have.property('id');
+      expect(jsonRes.Data.Visit).to.have.property('VisitType');
+      expect(jsonRes.Data.Visit).to.have.property('EhrId');
+      expect(jsonRes.Data.Visit).to.have.property('DisplayId');
+      expect(jsonRes.Data.Visit).to.have.property('PatientUserId');
+      expect(jsonRes.Data.Visit).to.have.property('MedicalPractitionerUserId');
+      expect(jsonRes.Data.Visit).to.have.property('CurrentState');
+      expect(jsonRes.Data.Visit).to.have.property('StartDate');
+      expect(jsonRes.Data.Visit).to.have.property('EndDate');
+      expect(jsonRes.Data.Visit).to.have.property('FulfilledAtOrganizationId');
+      expect(jsonRes.Data.Visit).to.have.property('AdditionalInformation');
+  });
+  
+}

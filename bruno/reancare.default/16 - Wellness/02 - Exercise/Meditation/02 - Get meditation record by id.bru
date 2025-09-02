@@ -1,0 +1,44 @@
+meta {
+  name: Get meditation record by id
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{BASE_URL}}/wellness/exercise/meditations/{{EXERCISE_MEDITATION_ID}}
+  body: none
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{PATIENT_USER_JWT}}
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+  Content-Type: application/json
+}
+
+tests {
+  test("Request is successfull", function () {
+      expect(res.getStatus()).to.equal(200);
+      var jsonRes = res.getBody();
+      expect(jsonRes.Status).to.eql('success');
+  });
+  
+  test("Meditation record is returned", function () {
+  
+      var expectedValue = "Breathing";
+      var expectedPatientUserId = bru.getEnvVar("PATIENT_USER_ID");
+  
+      var jsonRes = res.getBody();
+      expect(jsonRes.Data).to.have.property('Meditation');
+      expect(jsonRes.Data.Meditation).to.not.be.empty;
+      expect(jsonRes.Data.Meditation).to.have.property('id');
+      expect(jsonRes.Data.Meditation).to.have.property('Meditation');
+      expect(jsonRes.Data.Meditation).to.have.property('PatientUserId');
+  
+      expect(jsonRes.Data.Meditation.Meditation).equals(expectedValue);
+      expect(jsonRes.Data.Meditation.PatientUserId).equals(expectedPatientUserId);
+  
+  });
+  
+  
+}

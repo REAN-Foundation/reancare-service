@@ -1,9 +1,11 @@
+import { Setting } from "./setting";
+
 export enum TenantSettingsTypes {
-    UserInterfaces      = 'UserInterfaces',
     Common              = 'Common',
-    PatientApp          = 'PatientApp',
+    Followup            = 'Followup',
     ChatBot             = 'ChatBot',
-    Forms               = 'Forms'
+    Forms               = 'Forms',
+    Consent             = 'Consent',
 }
 
 export enum WeekDay {
@@ -17,33 +19,84 @@ export enum WeekDay {
 }
 
 export const TenantSettingsTypesList = [
-    TenantSettingsTypes.UserInterfaces,
     TenantSettingsTypes.Common,
-    TenantSettingsTypes.PatientApp,
+    TenantSettingsTypes.Followup,
     TenantSettingsTypes.ChatBot,
-    TenantSettingsTypes.Forms
+    TenantSettingsTypes.Forms,
+    TenantSettingsTypes.Consent,
 ];
 
 export interface UserInterfaces {
-    PatientApp: boolean,
-    ChatBot   : boolean,
-    Forms     : boolean
+    PatientApp    : boolean,
+    ChatBot       : boolean,
+    Forms         : boolean,
+    PatientPortal : boolean,
+    Followup      : boolean,
 }
 
-export interface ClinicalFeatures {
-    Vitals              : boolean;
-    LabRecords          : boolean;
-    Symptoms            : boolean;
-    DrugsManagement     : boolean;
-    Medications         : boolean;
-    Careplans           : boolean;
-    Assessments         : boolean;
+export interface ClinicalFeatures{
+    Vitals               : Setting;
+    LabRecords           : Setting;
+    Symptoms             : Setting;
+    SymptomAssessments   : Setting;
+    DrugsManagement      : Setting;
+    Medications          : Setting;
+    Careplans            : Setting;
+    Assessments          : Setting;
+    DailyAssessments     : Setting;
+    Appointments         : Setting;
+    Visits               : Setting;
+    Orders               : Setting;
+    Documents            : Setting;
+    PatientHealthReports : Setting;
+
 }
 
-export interface ExternalIntegrations {
-    FHIRStorage    : boolean;
-    EHRIntegration : boolean;
-    ABDMIntegration: boolean;
+export interface Wellness{
+    Exercise      : Setting;
+    Nutrition     : Setting;
+    Meditation    : Setting;
+    Priorities    : Setting;
+    Goals         : Setting;
+    DeviceIntegration: Setting;
+}
+
+export interface EHR {
+    FHIRStorage    : Setting;
+    EHRIntegration : Setting;
+    ABDM           : Setting;
+}
+
+export interface Community{
+    UserGroups : Setting;
+    Chat       : Setting;
+}
+
+export interface Research{
+    Cohorts  : Setting;
+}
+
+export interface Affiliations{
+    HealthCenters  : Setting;
+    HealthSystems  : Setting;
+}
+
+export interface Miscellaneous{
+    Gamification  : Setting;
+    Notifications : Setting;
+    Newsfeeds     : Setting;
+    Notices       : Setting;
+}
+
+export interface Educational{
+    Courses          : Setting;
+    LearningJourney  : Setting;
+    KnowledgeNuggets : Setting;
+}
+
+export interface General{
+    ViewPersonRoles : Setting;
+    ViewUsers       : Setting;
 }
 
 export interface DeviceIntegration {
@@ -68,15 +121,22 @@ export interface AddOnFeatures {
 }
 
 export interface AnalysisSettings {
-    CustomQueries: boolean;
-    Quicksight   : boolean;
+    CustomQueries: Setting;
+    Quicksight   : Setting;
 }
 
 export interface CommonSettings {
-    Clinical : ClinicalFeatures;
-    External : ExternalIntegrations;
-    AddOns   : AddOnFeatures;
-    Analysis : AnalysisSettings;
+    UserInterfaces  : UserInterfaces;
+    Clinical        : ClinicalFeatures;
+    Wellness        : Wellness;
+    EHR             : EHR;
+    Community       : Community;
+    Research        : Research;
+    Affiliations    : Affiliations;
+    Miscellaneous   : Miscellaneous;
+    Educational     : Educational;
+    Analysis        : AnalysisSettings;
+    General         : General;
 }
 
 export interface PatientAppSettings {
@@ -97,22 +157,106 @@ export interface SupportChannels {
 }
 
 export interface ChatBotSettings {
-    Name               : string;
-    Icon               : string;
-    Description        : string;
-    DefaultLanguage    : string;
-    MessageChannels    : MessageChannels;
-    SupportChannels    : SupportChannels;
-    Personalization    : boolean,
-    LocationContext    : boolean,
-    Localization       : boolean,
-    AppointmentFollowup: AppointmentFollowup
+    Name                : string;
+    OrganizationName?    : string;
+    OrganizationLogo?    : string;
+    OrganizationWebsite? : string;
+    Favicon?             : string;
+    Description?         : string;
+    DefaultLanguage?     : string;
+    SchemaName?          : string;
+    MessageChannels     : MessageChannels;
+    SupportChannels     : SupportChannels;
+    Personalization     : boolean,
+    LocationContext     : boolean,
+    Localization        : boolean,
+    RemindersMedication : boolean,
+    QnA                 : boolean,
+    Consent             : boolean,
+    WelcomeMessage      : boolean,
+    Feedback            : boolean,
+    ReminderAppointment : boolean   ,
+    AppointmentFollowup : boolean,
+    ConversationHistory : boolean,
+    Emojis              : boolean
 }
 
-export interface AppointmentFollowup {
-    UploadAppointmentDocument: boolean,
-    AppointmentEhrApi: boolean,
-    AppointmentEhrApiDetails: AppointmentEhrApiDetails
+export enum FollowupSource {
+  File = 'File',
+  Api = 'Api',
+  None = 'None',
+}
+
+export enum ScheduleFrequency {
+  Daily = 'daily',
+  Weekly = 'weekly',
+  Monthly = 'monthly',
+}
+
+type ReminderTriggerType =
+  | 'PreviousDay'
+  | 'SameDayMorning'
+  | 'StartOfDay'
+  | 'XHoursBefore'
+  | 'XMinutesBefore'
+  | 'CustomTimeBefore'
+  | 'AfterAppointment'
+  | 'EndOfDay'
+  | 'NoReminder';
+
+export interface ReminderTrigger {
+    Type: ReminderTriggerType;
+    OffsetValue?: number;
+    OffsetUnit?: 'minutes' | 'hours' | 'days';
+    TimeOfDay?: string;
+}
+
+export interface FileUploadConfig {
+    FileColumnFormat: string;
+    FileType: 'csv' | 'xlsx' | 'json'| 'xml'| 'txt'| 'pdf';
+    ReminderSchedule: ReminderTrigger[];
+}
+
+type HttpMethod = 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
+
+type ResponseType = 'json' | 'text' | 'form' | 'xml';
+
+interface ApiAuthConfig {
+    Method: HttpMethod;
+    Url: string;
+    Body?: any;
+    QueryParams?: Record<string, string>;
+    Headers?: Record<string, string>;
+    TokenPath: string;
+    ResponseType?: ResponseType;
+    TokenInjection: {
+        Location: 'header' | 'query' | 'body';
+        Key: string;
+        Prefix?: string;
+  };
+}
+
+interface ApiFetchConfig {
+    Method: HttpMethod;
+    Url: string;
+    QueryParams?: Record<string, string>;
+    Body?: any;
+    Headers?: Record<string, string>;
+    ResponseType?: ResponseType;
+    ResponseField?: string;
+}
+
+export interface ApiIntegrationConfig {
+    Auth?: ApiAuthConfig;
+    Fetch: ApiFetchConfig;
+    ReminderSchedule: ReminderTrigger[];
+    ScheduleFrequency: ScheduleFrequency;
+}
+
+export interface FollowupSettings {
+    Source: FollowupSource,
+    FileUploadSettings?: FileUploadConfig,
+    ApiIntegrationSettings?: ApiIntegrationConfig,
 }
 
 export interface AppointmentEhrApiDetails {
@@ -138,14 +282,6 @@ export interface MessageFrequency {
     OneWeekBefore: boolean,
 }
 
-export interface ScheduleFrequency {
-    Daily : boolean,
-    Weekly : boolean,
-    WeekDay: WeekDay,
-    Monthly : boolean,
-    DayOfMonth: number,
-}
-
 export interface ApiDetails {
     Url? : string,
     Credentials?: Credentials,
@@ -167,14 +303,52 @@ export interface FormsSettings {
         FieldApp      : boolean
 }
 
+export interface ConsentSettings {
+    TenantId?    : string;
+    TenantName?  : string;
+    TenantCode?  : string;
+    DefaultLanguage?: string;
+    Messages?: ConsentMessage[];
+}
+
+export interface ConsentMessage {
+    LanguageCode?  : string;
+    Content?: string;
+    WebsiteURL?  : string;
+}
+
 export interface TenantSettingsDomainModel {
-    UserInterfaces       : UserInterfaces,
-    Common               : CommonSettings,
-    PatientApp           : PatientAppSettings,
-    ChatBot              : ChatBotSettings,
-    Forms                : FormsSettings
+    Common?                 : CommonSettings,
+    Followup?               : FollowupSettings,
+    ChatBot?                : ChatBotSettings,
+    Forms?                  : FormsSettings,
+    Consent?                : ConsentSettings,
 }
 
 export interface TenantSettingsDto extends TenantSettingsDomainModel {
     TenantId ?: string;
+}
+
+export interface BotSecrets {
+  TelegramBotToken?                 : string;
+  TelegramMediaPathUrl?             : string;
+  WebhookTelegramClientUrlToken?    : string;
+  WebhookWhatsappClientHeaderToken? : string;
+  WebhookWhatsappClientUrlToken?    : string;
+  SlackTokenFeedback?               : string;
+  WebhookClickupClientUrlToken?     : string;
+  WebhookMockChannelClientUrlToken? : string;
+  DbPassword?                       : string;
+  DbUserName?                       : string;
+  DbHost?                           : string;
+  ClickupAuthentication?            : string;
+  ReancareApiKey?                   : string;
+  NlpService?                       : string;
+  CustomMlModelUrl?                 : string;
+}
+
+export enum Environment {
+  Development = 'development',
+  Uat         = 'uat',
+  Production  = 'production'
 }

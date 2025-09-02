@@ -1,0 +1,50 @@
+meta {
+  name: Get Priority Types
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{BASE_URL}}/patient-health-priorities/for-patient/types
+  body: none
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{PATIENT_USER_JWT}}
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+  Content-Type: application/json
+}
+
+tests {
+  try {
+      var jsonRes = res.getBody();
+      var types = jsonRes.Data.PriorityTypes;
+      for(var i = 0; i < types.length; i++) {
+          var t = types[i].Type;
+          var str = "HEALTH_PRIORITY_TYPE_" + i.toString();
+          bru.setEnvVar(str, t);
+      }
+      bru.setEnvVar("HEALTH_PRIORITY_TYPE", types[1].Type)
+  }
+  catch (error) {
+      console.log(error.message);
+  }
+  
+  
+  test("Request is successfull", function () {
+      expect(res.getStatus()).to.equal(200);
+      var jsonRes = res.getBody();
+      expect(jsonRes.Status).to.eql('success');
+  });
+  
+  test("List of health priority types is returned", function () {
+  
+      var jsonRes = res.getBody();
+      expect(jsonRes.Data).to.have.property('PriorityTypes');
+      expect(jsonRes.Data.PriorityTypes.length).greaterThan(0);
+  
+  });
+  
+  
+}

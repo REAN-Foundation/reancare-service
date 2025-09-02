@@ -16,16 +16,13 @@ export class AssessmentTemplateValidator extends BaseValidator {
 
     getDomainModel = (request: express.Request): AssessmentTemplateDomainModel => {
         const model: AssessmentTemplateDomainModel = {
-            Type        : request.body.Type ?? null,
-            Title       : request.body.Title ?? null,
-            Description : request.body.Description !== undefined && request.body.Description !== null ?
-                request.body.Description : null,
-            DisplayCode            : request.body.DisplayCode ?? null,
-            ScoringApplicable      : request.body.ScoringApplicable ?? false,
-            ProviderAssessmentCode : request.body.ProviderAssessmentCode !== undefined &&
-            request.body.ProviderAssessmentCode !== null ? request.body.ProviderAssessmentCode : null,
-            Provider : request.body.Provider !== undefined && request.body.Provider ?
-                request.body.Provider : null,
+            Type                        : request.body.Type ?? null,
+            Title                       : request.body.Title ?? null,
+            Description                 : request.body.Description ?? null,
+            DisplayCode                 : request.body.DisplayCode ?? null,
+            ScoringApplicable           : request.body.ScoringApplicable ?? false,
+            ProviderAssessmentCode      : request.body.ProviderAssessmentCode ?? null,
+            Provider                    : request.body.Provider ?? null,
             ServeListNodeChildrenAtOnce : request.body.ServeListNodeChildrenAtOnce ?? null,
             TotalNumberOfQuestions      : request.body.TotalNumberOfQuestions ?? null,
             TenantId                    : request.body.TenantId ?? request.currentUser.TenantId,
@@ -45,6 +42,7 @@ export class AssessmentTemplateValidator extends BaseValidator {
         await this.validateString(request, 'type', Where.Query, false, false, true);
         await this.validateString(request, 'displayCode', Where.Query, false, false, true);
         await this.validateString(request, 'tags', Where.Query, false, false);
+        await this.validateString(request, 'tenantId', Where.Query, false, false);
         await this.validateBaseSearchFilters(request);
         this.validateRequest(request);
         return this.getFilter(request);
@@ -56,6 +54,7 @@ export class AssessmentTemplateValidator extends BaseValidator {
             Type        : request.query.type ?? null,
             DisplayCode : request.query.displayCode ?? null,
             Tags        : request.query.tags ?? null,
+            TenantId    : request.query.tenantId ?? null
         };
 
         return this.updateBaseSearchFilters(request, filters);
@@ -115,26 +114,31 @@ export class AssessmentTemplateValidator extends BaseValidator {
         await this.validateAny(request, 'CorrectAnswer', Where.Body, false, false);
         await this.validateObject(request, 'RawData', Where.Body, false, false);
         await this.validateArray(request, 'Tags', Where.Body, false, true);
-
+        await this.validateString(request, 'FieldIdentifier', Where.Body, false, true);
+        await this.validateString(request, 'FieldIdentifierUnit', Where.Body, false, true);
+        
         this.validateRequest(request);
 
         if (request.body.NodeType === AssessmentNodeType.Question) {
             var questionNode: CAssessmentQuestionNode = {
-                ParentNodeId      : request.body.ParentNodeId,
-                NodeType          : AssessmentNodeType.Question,
-                DisplayCode       : request.body.DisplayCode ?? Helper.generateDisplayCode('QNode'),
-                QueryResponseType : request.body.QueryResponseType,
-                Required          : true,
-                ProviderGivenId   : request.body.ProviderGivenId ?? null,
-                ProviderGivenCode : request.body.ProviderGivenCode ?? null,
-                Title             : request.body.Title,
-                Description       : request.body.Description ?? null,
-                TemplateId        : templateId,
-                Score             : request.body.Score ?? 0,
-                CorrectAnswer     : request.body.CorrectAnswer ? JSON.stringify(request.body.CorrectAnswer) : null,
-                Options           : [],
-                RawData           : request.body.RawData ? JSON.stringify(request.body.RawData) : null,
-                Tags              : request.body.Tags ?? [],
+                ParentNodeId        : request.body.ParentNodeId,
+                NodeType            : AssessmentNodeType.Question,
+                DisplayCode         : request.body.DisplayCode ?? Helper.generateDisplayCode('QNode'),
+                QueryResponseType   : request.body.QueryResponseType,
+                Required            : request.body.Required ?? true,
+                ProviderGivenId     : request.body.ProviderGivenId ?? null,
+                ProviderGivenCode   : request.body.ProviderGivenCode ?? null,
+                Title               : request.body.Title,
+                Description         : request.body.Description ?? null,
+                TemplateId          : templateId,
+                Score               : request.body.Score ?? 0,
+                CorrectAnswer       : request.body.CorrectAnswer ? JSON.stringify(request.body.CorrectAnswer) : null,
+                Options             : [],
+                RawData             : request.body.RawData ? JSON.stringify(request.body.RawData)            : null,
+                Tags                : request.body.Tags ?? [],
+                Sequence            : request.body.Sequence ?? undefined,
+                FieldIdentifier     : request.body.FieldIdentifier ?? null,
+                FieldIdentifierUnit : request.body.FieldIdentifierUnit ?? null,
             };
             if (request.body.Options && request.body.Options.length > 0) {
                 var options: CAssessmentQueryOption[] = [];
@@ -155,7 +159,7 @@ export class AssessmentTemplateValidator extends BaseValidator {
                 ParentNodeId                : request.body.ParentNodeId,
                 NodeType                    : AssessmentNodeType.NodeList,
                 DisplayCode                 : Helper.generateDisplayCode('LNode'),
-                Required                    : true,
+                Required                    : request.body.Required ?? true,
                 ProviderGivenId             : request.body.ProviderGivenId ?? null,
                 ProviderGivenCode           : request.body.ProviderGivenCode ?? null,
                 Title                       : request.body.Title,
@@ -164,6 +168,7 @@ export class AssessmentTemplateValidator extends BaseValidator {
                 Score                       : request.body.Score ?? 0,
                 ChildrenNodeDisplayCodes    : [],
                 ChildrenNodeIds             : [],
+                Sequence                    : request.body.Sequence ?? undefined,
                 ServeListNodeChildrenAtOnce : request.body.ServeListNodeChildrenAtOnce,
                 Tags                        : request.body.Tags ?? [],
             };
@@ -172,7 +177,7 @@ export class AssessmentTemplateValidator extends BaseValidator {
             var messageNode: CAssessmentMessageNode = {
                 ParentNodeId      : request.body.ParentNodeId,
                 NodeType          : AssessmentNodeType.Message,
-                Required          : true,
+                Required          : request.body.Required ?? true,
                 ProviderGivenId   : request.body.ProviderGivenId ?? null,
                 ProviderGivenCode : request.body.ProviderGivenCode ?? null,
                 Title             : request.body.Title,
@@ -181,6 +186,7 @@ export class AssessmentTemplateValidator extends BaseValidator {
                 Score             : request.body.Score ?? 0,
                 Message           : request.body.Message,
                 Acknowledged      : false,
+                Sequence          : request.body.Sequence ?? undefined,
                 RawData           : request.body.RawData ? JSON.stringify(request.body.RawData) : null,
                 Tags              : request.body.Tags ?? [],
             };
@@ -202,6 +208,8 @@ export class AssessmentTemplateValidator extends BaseValidator {
         await this.validateObject(request, 'RawData', Where.Body, false, false);
         await this.validateArray(request, 'Tags', Where.Body, false, false);
         await this.validateArray(request, 'Options', Where.Body, false, false);
+        await this.validateString(request, 'FieldIdentifier', Where.Body, false, true);
+        await this.validateString(request, 'FieldIdentifierUnit', Where.Body, false, true);
 
         this.validateRequest(request);
         return request.body;

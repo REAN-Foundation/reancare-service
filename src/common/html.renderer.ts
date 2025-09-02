@@ -1,4 +1,3 @@
-
 import puppeteer from 'puppeteer';
 import { DateStringFormat } from '../domain.types/miscellaneous/time.types';
 import { TimeHelper } from './time.helper';
@@ -6,9 +5,9 @@ import { ConfigurationManager } from '../config/configuration.manager';
 import path from 'path';
 import fs from 'fs';
 import { Logger } from './logger';
-import nodeHtmlToImage from 'node-html-to-image';
 import { Helper } from './helper';
 import { OSType } from '../domain.types/miscellaneous/system.types';
+import nodeHtmlToImage from 'node-html-to-image';
 
 ////////////////////////////////////////////////////////////////////////////////////
 
@@ -78,29 +77,3 @@ async function getGeneratedFilePath(filename: string, extension = '.png'): Promi
     const absFilepath = path.join(fileFolder, filename);
     return absFilepath;
 }
-
-// export const htmlTextToPNG = async (htmlText: string, width: number, height: number, filename?: string) => {
-//     try {
-//         const browser: puppeteer.Browser = await puppeteer.launch();
-//         const page = await browser.newPage();
-//         await page.setViewport({
-//             width  : width,
-//             height : height,
-//
-//         });
-//         //await page.goto('file:///F:/service-1/index.html');
-//         await page.setContent(htmlText);
-//
-//         const generatedFilePath = await getGeneratedFilePath(filename);
-//         await page.screenshot({
-//             path     : generatedFilePath,
-//             fullPage : false,
-//         });
-//         await browser.close();
-//
-//         return generatedFilePath;
-//     }
-//     catch (error) {
-//         Logger.instance().log(`HTML Error: ${error.message}`);
-//     }
-// };

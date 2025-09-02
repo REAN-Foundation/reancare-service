@@ -1,0 +1,28 @@
+meta {
+  name: Health-check
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{BASE_URL}}
+  body: none
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+}
+
+tests {
+  test("Request is successfull", function () {
+      expect(res.getStatus()).to.equal(200);
+      var jsonRes = res.getBody();
+      expect(jsonRes).to.have.property('message');
+  });
+  
+}
+
+docs {
+  This request will be used by API monitor to check the health of the service.
+}

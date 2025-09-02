@@ -1,0 +1,51 @@
+meta {
+  name: Get patient emergency event by id
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{BASE_URL}}/clinical/emergency-events/{{EMERGENCY_EVENT_ID}}
+  body: json
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{PATIENT_USER_JWT}}
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+  Content-Type: application/json
+}
+
+tests {
+  var jsonRes = res.getBody();
+  
+  test("Request is successfull", function () {
+      expect(res.getStatus()).to.equal(200);
+      var jsonRes = res.getBody();
+      expect(jsonRes.Status).to.eql('success');
+  });
+  
+  test("Patient Allergy should have correct data", function () {
+  
+      let expectedEhrId = bru.getEnvVar("EMERGENCY_EHRID");
+      let expectedPatientUserId = bru.getEnvVar("EMERGENCY_PATIENTUSERID");
+      let expectedDetails = bru.getEnvVar("EMERGENCY_DETAILS");
+      let expectedEmergencyDate = bru.getEnvVar("EMERGENCY_EMERGENCYDATE");
+  
+      var jsonRes = res.getBody();
+      expect(jsonRes.Data).to.have.property('EmergencyEvent');
+      expect(jsonRes.Data.EmergencyEvent).to.not.be.empty;
+      expect(jsonRes.Data.EmergencyEvent).to.have.property('EhrId');
+      expect(jsonRes.Data.EmergencyEvent).to.have.property('PatientUserId');
+      expect(jsonRes.Data.EmergencyEvent).to.have.property('Details');
+      expect(jsonRes.Data.EmergencyEvent).to.have.property('EmergencyDate');
+  
+      expect(jsonRes.Data.EmergencyEvent.Details).equals(expectedDetails);
+  });
+  
+  
+}
+
+docs {
+  Get an emergency event by emergency event id.
+}

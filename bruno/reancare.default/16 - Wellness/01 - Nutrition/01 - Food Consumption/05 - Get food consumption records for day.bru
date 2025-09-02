@@ -1,0 +1,42 @@
+meta {
+  name: Get food consumption records for day
+  type: http
+  seq: 6
+}
+
+get {
+  url: {{BASE_URL}}/wellness/nutrition/food-consumptions/{{PATIENT_USER_ID}}/for-day/2021-09-16
+  body: none
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{PATIENT_USER_JWT}}
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+  Content-Type: application/json
+}
+
+tests {
+  test("Request is successfull", function () {
+      expect(res.getStatus()).to.equal(200);
+      var jsonRes = res.getBody();
+      expect(jsonRes.Status).to.eql('success');
+  });
+  
+  test("Food consumption records are returned", function () {
+  
+      var expectedPatientUserId = bru.getEnvVar("PATIENT_USER_ID");
+  
+      var jsonRes = res.getBody();
+      expect(jsonRes.Data).to.have.property('FoodConsumptionForDay');
+      expect(jsonRes.Data.FoodConsumptionForDay).to.not.be.empty;
+      expect(jsonRes.Data.FoodConsumptionForDay).to.have.property('Events');
+      expect(jsonRes.Data.FoodConsumptionForDay).to.have.property('PatientUserId');
+      expect(jsonRes.Data.FoodConsumptionForDay).to.have.property('Date');
+  
+      expect(jsonRes.Data.FoodConsumptionForDay.Events.length).greaterThan(0);
+      expect(jsonRes.Data.FoodConsumptionForDay.PatientUserId).equals(expectedPatientUserId);
+  
+  });
+  
+}

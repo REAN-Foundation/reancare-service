@@ -1,0 +1,62 @@
+meta {
+  name: Create Again
+  type: http
+  seq: 6
+}
+
+post {
+  url: {{BASE_URL}}/clinical/maternity/maternity-pregnancies/{{PREGNANCY_ID}}/vaccinations
+  body: json
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{ADMIN_USER_JWT}}
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+  Content-Type: application/json
+}
+
+body:json {
+  {
+      "PregnancyId": "{{PREGNANCY_ID}}",
+      "VaccineName": "Tetanus Toxoid",
+      "DoseNumber": 1,
+      "DateAdministered": "2024-08-08T10:30:00Z",
+      "MedicationId": "{{MEDICATION_ID}}",
+      "MedicationConsumptionId": "{{MEDICATION_CONSUMPTION_ID}}"
+  }
+}
+
+tests {
+  try {
+  
+      var jsonData = res.getBody();
+      var id = jsonData.Data.Vaccination.id;
+      bru.setEnvVar("VACCINATION_ID", id);
+  
+  }
+  catch (error) {
+      console.log(error.message);
+  }
+  
+  test("Request is successfull", function () {
+      expect(res.getStatus()).to.equal(201);
+      var jsonRes = res.getBody();
+      expect(jsonRes.Status).to.eql('success');
+  });
+  
+  test("New Vaccination record is created", function () {
+  
+      var jsonRes = res.getBody();
+      expect(jsonRes.Data).to.have.property('Vaccination');
+      
+      expect(jsonRes.Data.Vaccination).to.have.property('id');
+      expect(jsonRes.Data.Vaccination).to.have.property('PregnancyId');
+      expect(jsonRes.Data.Vaccination).to.have.property('VaccineName');
+      expect(jsonRes.Data.Vaccination).to.have.property('DoseNumber');
+      expect(jsonRes.Data.Vaccination).to.have.property('DateAdministered');
+      expect(jsonRes.Data.Vaccination).to.have.property('MedicationId');
+      expect(jsonRes.Data.Vaccination).to.have.property('MedicationConsumptionId');
+  });
+  
+}

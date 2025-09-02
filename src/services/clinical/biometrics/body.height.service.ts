@@ -59,4 +59,8 @@ export class BodyHeightService {
         return await this._bodyHeightRepo.getMostRecentBodyHeightActivity(patientUserId);
     };
 
+    deleteByUserId = async (patientUserId: string, hardDelete: boolean = true): Promise<boolean> => {
+        return await this._bodyHeightRepo.deleteByUserId(patientUserId, hardDelete);
+    };
+
 }

@@ -1,0 +1,51 @@
+meta {
+  name: Search heart points records
+  type: http
+  seq: 4
+}
+
+get {
+  url: {{BASE_URL}}/wellness/daily-records/heart-points/search?pageIndex=0&itemsPerPage=25&minValue=10
+  body: json
+  auth: none
+}
+
+params:query {
+  pageIndex: 0
+  itemsPerPage: 25
+  minValue: 10
+  ~createdDateFrom: 2021-05-01
+  ~createdDateTo: 2021-12-12
+  ~orderBy: CaloriesBurned
+  ~order: ascending
+  ~personId: 
+  ~patientUserId: 
+  ~maxValue: 100
+}
+
+headers {
+  Authorization: Bearer {{PATIENT_USER_JWT}}
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+  Content-Type: application/json
+}
+
+tests {
+  test("Request is successfull", function () {
+      expect(res.getStatus()).to.equal(200);
+      var jsonRes = res.getBody();
+      expect(jsonRes.Status).to.eql('success');
+  });
+  
+  test("List of heart point records is returned", function () {
+  
+      var jsonRes = res.getBody();
+      expect(jsonRes.Data).to.have.property('HeartPointsRecords');
+      expect(jsonRes.Data.HeartPointsRecords.Items.length).to.be.greaterThan(0);
+  
+  });
+  
+}
+
+docs {
+  Search HeartPoints using query parameters.
+}

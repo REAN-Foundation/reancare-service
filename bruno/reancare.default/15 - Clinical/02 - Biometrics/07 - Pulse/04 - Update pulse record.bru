@@ -1,0 +1,57 @@
+meta {
+  name: Update pulse record
+  type: http
+  seq: 3
+}
+
+put {
+  url: {{BASE_URL}}/clinical/biometrics/pulse/{{BIOMETRICS_PULSE_ID}}
+  body: json
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{PATIENT_USER_JWT}}
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+  Content-Type: application/json
+}
+
+body:json {
+  {
+      "Pulse": 74,
+      "RecordDate": "2021-09-07"
+  }
+}
+
+tests {
+  test("Request is successfull", function () {
+      expect(res.getStatus()).to.equal(200);
+      var jsonRes = res.getBody();
+      expect(jsonRes.Status).to.eql('success');
+  });
+  
+  test("Updated pulse record is returned", function () {
+  
+      var expectedPulse = 74;
+      var expectedRecordDate = "2021-09-07";
+      var expectedRecordedByUserId = bru.getEnvVar("RECORDED_BY_USER_ID");
+      
+      var jsonRes = res.getBody();
+      expect(jsonRes.Data).to.have.property('Pulse');
+      expect(jsonRes.Data.Pulse).to.not.be.empty;
+      expect(jsonRes.Data.Pulse).to.have.property('Pulse');
+      expect(jsonRes.Data.Pulse).to.have.property('RecordDate');
+      expect(jsonRes.Data.Pulse).to.have.property('RecordedByUserId');
+  
+      expect(jsonRes.Data.Pulse.Pulse).equals(expectedPulse);
+      expect(jsonRes.Data.Pulse.RecordedByUserId).equals(expectedRecordedByUserId);
+      var recordDate = jsonRes.Data.Pulse.RecordDate;
+      if (recordDate) {
+          recordDate = recordDate.split('T')[0];
+      }
+      expect(recordDate).equals(expectedRecordDate);
+      
+  });
+  
+  
+}

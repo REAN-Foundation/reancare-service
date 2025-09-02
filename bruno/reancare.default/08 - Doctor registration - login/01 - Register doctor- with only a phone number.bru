@@ -1,0 +1,100 @@
+meta {
+  name: Register doctor- with only a phone number
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{BASE_URL}}/doctors
+  body: json
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+}
+
+body:json {
+  {
+      "Phone": "{{PHONE_COUNTRY_CODE}}-{{PHONE_NUMBER}}"
+  }
+}
+
+script:pre-request {
+  //Randomly generated user details
+  
+  var first_names = ['Jerry', 'Tom', 'Garfield', 'Jerome', 'Hobbes', 'Calvin', 'Nate', 'Peanuts', 'John', 'Abigale', 'Erin'];
+  
+  var last_names = ['Smith', 'Johnson',  'Williams', 'Jones', 'Brown', 'Davis', 'Miller', 'Wilson', 'Moore', 'Taylor', 'Anderson', 'Thomas', 'Jackson', 'White', 'Harris', 'Martin', 'Thompson', 'Garcia', 'Martinez', 'Robinson', 'Clark', 'Rodriguez', 'Lewis', 'Lee', 'Walker', 'Hall'];
+  
+  var first = first_names[Math.floor(Math.random() * first_names.length)];
+  var last = last_names[Math.floor(Math.random() * last_names.length)];
+  var phonenumber = (Math.floor(Math.random() * 9000000000) + 1000000000).toString();
+  var random_postfix = (Math.floor(Math.random() * 90000) + 10000).toString();
+  var email = first + "." + random_postfix + "." + last + "@gmail.com";
+  var password = "";
+  
+  bru.setEnvVar("FIRST_NAME", first);
+  bru.setEnvVar("LAST_NAME", last);
+  bru.setEnvVar("PHONE_NUMBER", phonenumber);
+  bru.setEnvVar("PHONE_COUNTRY_CODE", "+91");
+  bru.setEnvVar("EMAIL", email);
+  bru.setEnvVar("PASSWORD", password);
+  
+  //Profile images
+  
+}
+
+tests {
+  try {
+      var jsonRes = res.getBody();
+      bru.setEnvVar("DOCTOR_USER_ID", jsonRes.Data.Doctor.User.id);
+      bru.setEnvVar("DOCTOR_PERSON_ID", jsonRes.Data.Doctor.User.Person.id);
+      bru.setEnvVar("DOCTOR_PERSON_ID_1", jsonRes.Data.Doctor.User.Person.id);
+      bru.setEnvVar("PERSON_ID", jsonRes.Data.Doctor.User.Person.id);
+      bru.setEnvVar("PERSON_ID_3", jsonRes.Data.Doctor.User.Person.id);
+  
+  }
+  catch (error) {
+      console.log(error.message);
+  }
+  
+  test("Request is successfull", function () {
+      expect(res.getStatus()).to.equal(201);
+      var jsonRes = res.getBody();
+      expect(jsonRes.Status).to.eql('success');
+  });
+  
+  test("Doctor is created", function () {
+      var jsonRes = res.getBody();
+      expect(jsonRes.Data).to.have.property('Doctor');
+      expect(jsonRes.Data.Doctor).to.not.be.empty;
+      expect(jsonRes.Data.Doctor).to.have.property('id');
+      expect(jsonRes.Data.Doctor).to.have.property('User');
+      expect(jsonRes.Data.Doctor.User).to.not.be.empty;
+      expect(jsonRes.Data.Doctor.User).to.have.property('id');
+      expect(jsonRes.Data.Doctor.User.Person).to.not.be.empty;
+      expect(jsonRes.Data.Doctor.User.Person).to.have.property('id');
+  });
+  
+}
+
+docs {
+  Registers patient. Phone number is the only mandatory field. The rest of the fields are optional. Phone number has to be specified in this format - 'country-code-phone-number'. e.g. "+91-1234567890".
+  
+  The typical request body is as follows - 
+  `
+  {
+      "Phone": "+91-1234567890",
+      "Prefix": "Mr.",
+      "FirstName": "John",
+      "MiddleName": "X",
+      "LastName": "Doe",
+      "Email": "john.doe@gmail.com",
+      "Gender": "Male",
+      "BirthDate": "1979-01-01",
+      "ImageResourceId": ""
+  }
+  `
+}

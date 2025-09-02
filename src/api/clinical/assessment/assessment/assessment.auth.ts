@@ -107,4 +107,13 @@ export class AssessmentAuth {
         CustomAuthorization : true,
     };
 
+    static readonly skipQuestion: AuthOptions = {
+        ...DefaultAuthOptions,
+        Context             : `${this._baseContext}.SkipQuestion`,
+        Ownership           : ResourceOwnership.Owner,
+        ActionScope         : ActionScope.Tenant,
+        RequestType         : RequestType.UpdateOne,
+        CustomAuthorization : true,
+    };
+
 }

@@ -1,0 +1,69 @@
+meta {
+  name: Update an calorie balance record
+  type: http
+  seq: 3
+}
+
+put {
+  url: {{BASE_URL}}/wellness/daily-records/calorie-balances/{{CALORIE_BALANCE_ID}}
+  body: json
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{PATIENT_USER_JWT}}
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+  Content-Type: application/json
+}
+
+body:json {
+  {
+      "PersonId": "{{CALORIE_BALANCE_PERSONID}}",
+      "PatientUserId": "{{CALORIE_BALANCE_PATIENTUSERID}}",
+      "CaloriesConsumed": {{CALORIE_BALANCE_CALORIESCONSUMED}},
+      "CaloriesBurned": {{CALORIE_BALANCE_CALORIESBURNED}},
+      "Unit": "{{CALORIE_BALANCE_UNIT}}"
+  }
+}
+
+script:pre-request {
+  let height = bru.getEnvVar("CALORIE_BALANCE_CALORIESBURNED");
+  bru.setEnvVar("CALORIE_BALANCE_CALORIESBURNED", Number(height) + 10);
+}
+
+tests {
+  var jsonRes = res.getBody();
+  
+  test("Request is successfull", function () {
+      expect(res.getStatus()).to.equal(200);
+      var jsonRes = res.getBody();
+      expect(jsonRes.Status).to.eql('success');
+  });
+  
+  test("Correct updates should be reflected", function () {
+  
+      var expectedPatientUserId = bru.getEnvVar("CALORIE_BALANCE_PATIENTUSERID");
+      var expectedCalorieConsumed = bru.getEnvVar("CALORIE_BALANCE_CALORIESCONSUMED");
+      var expectedCalorieBurned = bru.getEnvVar("CALORIE_BALANCE_CALORIESBURNED");
+      var expectedCalorieUnit = bru.getEnvVar("CALORIE_BALANCE_UNIT");
+  
+      var jsonRes = res.getBody();
+      expect(jsonRes.Data).to.have.property('CalorieBalance');
+      expect(jsonRes.Data.CalorieBalance).to.not.be.empty;
+      expect(jsonRes.Data.CalorieBalance).to.have.property('PatientUserId');
+      expect(jsonRes.Data.CalorieBalance).to.have.property('CaloriesConsumed');
+      expect(jsonRes.Data.CalorieBalance).to.have.property('CaloriesBurned');
+      expect(jsonRes.Data.CalorieBalance).to.have.property('Unit');
+  
+      expect(jsonRes.Data.CalorieBalance.PatientUserId).equals(expectedPatientUserId);
+      expect(Number(jsonRes.Data.CalorieBalance.CaloriesConsumed)).equals(Number(expectedCalorieConsumed));
+      expect(Number(jsonRes.Data.CalorieBalance.CaloriesBurned)).equals(Number(expectedCalorieBurned));
+      expect(jsonRes.Data.CalorieBalance.Unit).equals(expectedCalorieUnit);
+  });
+  
+  
+}
+
+docs {
+  Update the details for an address.
+}

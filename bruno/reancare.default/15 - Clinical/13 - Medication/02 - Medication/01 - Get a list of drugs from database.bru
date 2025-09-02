@@ -1,0 +1,56 @@
+meta {
+  name: Get a list of drugs from database
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{BASE_URL}}/clinical/drugs/search?name=cres
+  body: json
+  auth: none
+}
+
+params:query {
+  name: cres
+}
+
+headers {
+  Authorization: Bearer {{PATIENT_USER_JWT}}
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+  Content-Type: application/json
+}
+
+tests {
+  var jsonRes = res.getBody();
+  
+  try {
+      bru.setEnvVar("DRUG_ID", jsonRes.Data.Drugs.Items[0].id);
+  }
+  catch (error) {
+      console.log(error.message);
+  }
+  
+  test("Request is successfull", function () {
+      expect(res.getStatus()).to.equal(200);
+      var jsonRes = res.getBody();
+      expect(jsonRes.Status).to.eql('success');
+  });
+  
+  test("Drugs are returned", function () {
+     
+      var jsonRes = res.getBody();
+      expect(jsonRes.Data).to.have.property('Drugs');
+      expect(jsonRes.Data.Drugs).to.not.be.empty;
+      expect(jsonRes.Data.Drugs).to.have.property('TotalCount');
+      expect(jsonRes.Data.Drugs).to.have.property('Items');
+      
+      expect(jsonRes.Data.Drugs.TotalCount).greaterThan(0);    
+      expect(jsonRes.Data.Drugs.Items.length).greaterThan(0);    
+  });
+  
+  
+}
+
+docs {
+  Returns the list of drugs/medicines stored in the system.
+}

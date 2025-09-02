@@ -1,0 +1,47 @@
+meta {
+  name: Update knowledge nugget record
+  type: http
+  seq: 3
+}
+
+put {
+  url: {{BASE_URL}}/educational/knowledge-nuggets/{{KNOWLEDGE_NUGGET_ID}}
+  body: json
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{ADMIN_USER_JWT}}
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+  Content-Type: application/json
+}
+
+body:json {
+  {
+      "TopicName": "Hypertension"   
+  }
+}
+
+tests {
+  test("Request is successfull", function () {
+      expect(res.getStatus()).to.equal(200);
+      var jsonRes = res.getBody();
+      expect(jsonRes.Status).to.eql('success');
+  });
+  
+  test("Updated knowledge nugget record is returned", function () {
+  
+      var expectedValue = "Hypertension";
+   
+      var jsonRes = res.getBody();
+      expect(jsonRes.Data).to.have.property('KnowledgeNugget');
+      expect(jsonRes.Data.KnowledgeNugget).to.not.be.empty;
+      expect(jsonRes.Data.KnowledgeNugget).to.have.property('id');
+      expect(jsonRes.Data.KnowledgeNugget).to.have.property('TopicName');
+  
+      expect(jsonRes.Data.KnowledgeNugget.TopicName).equals(expectedValue);
+      
+  });
+  
+  
+}

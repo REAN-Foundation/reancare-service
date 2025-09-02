@@ -1,0 +1,59 @@
+meta {
+  name: Search cohorts
+  type: http
+  seq: 4
+}
+
+get {
+  url: {{BASE_URL}}/cohorts/search?Name=Dharavi
+  body: json
+  auth: none
+}
+
+params:query {
+  Name: Dharavi
+  ~TenantId: {{TENANT_ID}}
+  ~itemsPerPage: 25
+  ~pageIndex: 0
+}
+
+headers {
+  Content-Type: application/json
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+  Authorization: Bearer {{ADMIN_USER_JWT}}
+}
+
+tests {
+  test("Request is successfull", function () {
+      expect(res.getStatus()).to.equal(200);
+      var jsonRes = res.getBody();
+      expect(jsonRes.Status).to.eql('success');
+  });
+  
+  // test("Cohort records is retrieved", function () {
+  //     var jsonRes = res.getBody();
+  //     expect(jsonRes.Data).to.have.property('Cohorts');
+  //     expect(jsonRes.Data.Cohorts).to.not.be.empty;
+  //     expect(jsonRes.Data.Cohorts.Items).length.greaterThan(0);
+  // });
+  
+}
+
+docs {
+  Registers patient. Phone number is the only mandatory field. The rest of the fields are optional. Phone number has to be specified in this format - 'country-code-phone-number'. e.g. "+91-1234567890".
+  
+  The typical request body is as follows - 
+  `
+  {
+      "Phone": "+91-1234567890",
+      "Prefix": "Mr.",
+      "FirstName": "John",
+      "MiddleName": "X",
+      "LastName": "Doe",
+      "Email": "john.doe@gmail.com",
+      "Gender": "Male",
+      "BirthDate": "1979-01-01",
+      "ImageResourceId": ""
+  }
+  `
+}

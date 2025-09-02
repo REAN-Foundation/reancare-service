@@ -1,0 +1,43 @@
+meta {
+  name: Search doctor note
+  type: http
+  seq: 4
+}
+
+get {
+  url: {{BASE_URL}}/clinical/doctor-notes/search/{{PATIENT_USER_ID}}
+  body: none
+  auth: none
+}
+
+params:query {
+  ~recordDateFrom: 2021-09-01
+  ~recordDateTo: 2021-10-14
+  ~orderBy: RecordDate
+  ~order: ascending
+  ~pageIndex: 0
+  ~itemsPerPage: 25
+}
+
+headers {
+  Authorization: Bearer {{PATIENT_USER_JWT}}
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+  Content-Type: application/json
+}
+
+tests {
+  test("Request is successfull", function () {
+      expect(res.getStatus()).to.equal(200);
+      var jsonRes = res.getBody();
+      expect(jsonRes.Status).to.eql('success');
+  });
+  
+  test("List of doctor note is returned", function () {
+  
+      var jsonRes = res.getBody();
+      expect(jsonRes.Data).to.have.property('DoctorNotes');
+      expect(jsonRes.Data.DoctorNotes.Items.length).to.be.greaterThan(0);
+  
+  });
+  
+}

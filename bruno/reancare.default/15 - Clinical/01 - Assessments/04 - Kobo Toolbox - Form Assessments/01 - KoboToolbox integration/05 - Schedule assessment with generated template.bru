@@ -1,0 +1,71 @@
+meta {
+  name: Schedule assessment with generated template
+  type: http
+  seq: 5
+}
+
+post {
+  url: {{BASE_URL}}/clinical/assessments
+  body: json
+  auth: none
+}
+
+headers {
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+  Content-Type: application/json
+  Authorization: Bearer {{PATIENT_USER_JWT}}
+}
+
+body:json {
+  {
+      "PatientUserId": "{{PATIENT_USER_ID}}",
+      "AssessmentTemplateId": "{{ASSESSMENT_TEMPLATE_ID}}",
+      "ScheduledDate": "{{TODAY}}"
+  }
+}
+
+script:pre-request {
+  try {
+      var dt = new Date();
+      var today = dt.toISOString().split('T')[0];
+      bru.setEnvVar("TODAY", today);
+  }
+  catch (error) {
+      console.log(error.message);
+  }
+}
+
+tests {
+  var jsonRes = res.getBody();
+  
+  try {
+      bru.setEnvVar("ASSESSMENT_ID", jsonRes.Data.Assessment.id);
+  }
+  catch (error) {
+      console.log(error.message);
+  }
+  
+  test("Request is successfull", function () {
+      expect(res.getStatus()).to.equal(201);
+      var jsonRes = res.getBody();
+      expect(jsonRes.Status).to.eql('success');
+  });
+  
+  test("New assessment is scheduled", function () {
+  
+      var jsonRes = res.getBody();
+      expect(jsonRes.Data).to.have.property('Assessment');
+      expect(jsonRes.Data.Assessment).to.not.be.empty;
+      expect(jsonRes.Data.Assessment).to.have.property('id');
+      expect(jsonRes.Data.Assessment).to.have.property('Type');
+      expect(jsonRes.Data.Assessment).to.have.property('DisplayCode');
+      expect(jsonRes.Data.Assessment).to.have.property('Title');
+      expect(jsonRes.Data.Assessment).to.have.property('PatientUserId');
+      expect(jsonRes.Data.Assessment).to.have.property('AssessmentTemplateId');
+      expect(jsonRes.Data.Assessment).to.have.property('Provider');
+      expect(jsonRes.Data.Assessment).to.have.property('ProviderAssessmentCode');
+      expect(jsonRes.Data.Assessment).to.have.property('Status');
+      expect(jsonRes.Data.Assessment).to.have.property('ScheduledAt');  
+  });
+  
+}

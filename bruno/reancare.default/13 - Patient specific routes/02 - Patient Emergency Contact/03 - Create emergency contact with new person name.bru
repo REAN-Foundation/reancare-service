@@ -1,0 +1,101 @@
+meta {
+  name: Create emergency contact with new person name
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{BASE_URL}}/patient-emergency-contacts
+  body: json
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{PATIENT_USER_JWT}}
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+  Content-Type: application/json
+}
+
+body:json {
+  {
+      "PatientUserId": "{{PATIENT_USER_ID}}",
+      "ContactPerson": {
+          "Prefix": "Mrs.",
+          "FirstName": "Abc",
+          "LastName": "Xyz",
+          "Phone": "+91-9633699633",
+          "Email": "kiran.kharade@reanfoundation.org"
+      },
+      "ContactRelation": "Patient family member",
+      "Address": {
+          "AddressLine": "GSG Schlesische Straße, Gebäude 3, Schlesische Straße 27",
+          "City": "Berlin",
+          "Country": "Germany",
+          "PostalCode": "10997"
+      },
+      "IsAvailableForEmergency": true,
+      "TimeOfAvailability": "10:00 AM - 5:00 PM",
+      "Description": "Some description here",
+      "AdditionalPhoneNumbers": "+91-3243243334"
+  }
+}
+
+script:pre-request {
+  let patientUserId = bru.getEnvVar('PATIENT_USER_ID');
+  let addressId = bru.getEnvVar('ADDRESS_ID');
+  let orgId = bru.getEnvVar('ORGANIZATION_ID');
+  
+}
+
+tests {
+  var jsonRes = res.getBody();
+  
+  try {
+      if (jsonRes.Data && jsonRes.Data.EmergencyContact && jsonRes.Data.EmergencyContact.id) {
+          bru.setEnvVar("PATIENT_EMERGENCY_CONTACT_ID", jsonRes.Data.EmergencyContact.id);
+      } else {
+          console.log("EmergencyContact ID not found in response.");
+      }
+  } catch (error) {
+      console.log("Failed to set env var:", error.message);
+  }
+  
+  test("Request is successfull", function () {
+      expect(res.getStatus()).to.equal(201);
+      var jsonRes = res.getBody();
+      expect(jsonRes.Status).to.eql('success');
+  });
+  
+  test("Emergency contact is created", function () {
+  
+      let expectedPatientUserId = bru.getEnvVar("PATIENT_USER_ID");
+      let expectedContactRelation = "Patient family member";
+      let expectedIsAvailableForEmergency = true;
+      let expectedTimeOfAvailability = "10:00 AM - 5:00 PM";
+      let expectedDescription = "Some description here";
+      let expectedAdditionalPhoneNumbers = "+91-3243243334";
+  
+      var jsonRes = res.getBody();
+      expect(jsonRes.Data).to.have.property('EmergencyContact');
+      expect(jsonRes.Data.EmergencyContact).to.not.be.empty;
+      expect(jsonRes.Data.EmergencyContact).to.have.property('PatientUserId');
+      expect(jsonRes.Data.EmergencyContact).to.have.property('ContactRelation');
+      expect(jsonRes.Data.EmergencyContact).to.have.property('IsAvailableForEmergency');
+      expect(jsonRes.Data.EmergencyContact).to.have.property('TimeOfAvailability');
+      expect(jsonRes.Data.EmergencyContact).to.have.property('Description');
+      expect(jsonRes.Data.EmergencyContact).to.have.property('AdditionalPhoneNumbers');
+  
+      expect(jsonRes.Data.EmergencyContact.PatientUserId).equals(expectedPatientUserId);
+      expect(jsonRes.Data.EmergencyContact.ContactRelation).equals(expectedContactRelation);
+      expect(jsonRes.Data.EmergencyContact.IsAvailableForEmergency).equals(expectedIsAvailableForEmergency);
+      expect(jsonRes.Data.EmergencyContact.TimeOfAvailability).equals(expectedTimeOfAvailability);
+      expect(jsonRes.Data.EmergencyContact.Description).equals(expectedDescription);
+      expect(jsonRes.Data.EmergencyContact.AdditionalPhoneNumbers).equals(expectedAdditionalPhoneNumbers);
+  });
+  
+  
+}
+
+docs {
+  Add an emergency contact.
+}

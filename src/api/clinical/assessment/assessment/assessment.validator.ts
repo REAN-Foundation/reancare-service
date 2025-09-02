@@ -18,7 +18,7 @@ export class AssessmentValidator extends BaseValidator {
         var dateStr = request.body.ScheduledDate ? new Date(request.body.ScheduledDate).toISOString()
             .split('T')[0] : null;
 
-        const patientAssessmentModel: AssessmentDomainModel = {
+        const model: AssessmentDomainModel = {
             PatientUserId          : request.body.PatientUserId ?? null,
             Title                  : request.body.Title ?? null,
             Type                   : request.body.Type ?? null,
@@ -32,7 +32,7 @@ export class AssessmentValidator extends BaseValidator {
             ScheduledDateString    : dateStr
         };
 
-        return patientAssessmentModel;
+        return model;
     };
 
     create = async (request: express.Request): Promise<AssessmentDomainModel> => {

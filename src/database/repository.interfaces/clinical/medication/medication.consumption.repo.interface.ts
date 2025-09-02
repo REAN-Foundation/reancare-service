@@ -17,13 +17,15 @@ export interface IMedicationConsumptionRepo {
 
     getByMedicationId(id: string): Promise<MedicationConsumptionDetailsDto[]>;
 
+    getScheduledMedicationCountById(medicationId: string): Promise<number>;
+
     markAsTaken(id: string, takenAt: Date): Promise<MedicationConsumptionDetailsDto>;
 
     assignEhrId(id: string, ehrId: string): Promise<MedicationConsumptionDetailsDto>;
 
     markAsMissed(id: string): Promise<MedicationConsumptionDetailsDto>;
 
-    deleteFutureMedicationSchedules(medicationId: string): Promise<number>;
+    deleteFutureMedicationSchedules(medicationId: string, hardDelete: boolean): Promise<number>;
 
     getSchedulesForMedication(medicationId: string): Promise<MedicationConsumptionDto[]>;
 
@@ -47,5 +49,7 @@ export interface IMedicationConsumptionRepo {
     cancelSchedule(id: string): Promise<boolean>;
 
     getStats(patientUserId: string, numMonths: number): Promise<any>;
+
+    deleteByUserId(patientUserId: string, hardDelete: boolean): Promise<boolean>;
 
 }

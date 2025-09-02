@@ -1,0 +1,69 @@
+meta {
+  name: Update an patient emergency event
+  type: http
+  seq: 3
+}
+
+put {
+  url: {{BASE_URL}}/clinical/emergency-events/{{EMERGENCY_EVENT_ID}}
+  body: json
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{PATIENT_USER_JWT}}
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+  Content-Type: application/json
+}
+
+body:json {
+  {
+      "EhrId":"{{EMERGENCY_EHRID}}",
+      "PatientUserId":"{{PATIENT_USER_ID}}",
+      "Details":"{{EMERGENCY_DETAILS}}",
+      "EmergencyDate":"{{EMERGENCY_DATE}}"
+  }
+}
+
+script:pre-request {
+  const emergencyDate = new Date().toISOString();
+  
+  bru.setEnvVar("EMERGENCY_DETAILS", 'Insomnia');
+  bru.setEnvVar("EMERGENCY_DATE", emergencyDate);
+  bru.setEnvVar("EMERGENCY_EHRID", "ehr-123456");;
+}
+
+tests {
+  var jsonRes = res.getBody();
+  
+  test("Request is successfull", function () {
+      expect(res.getStatus()).to.equal(200);
+      var jsonRes = res.getBody();
+      expect(jsonRes.Status).to.eql('success');
+  });
+  
+  test("Correct updates should be reflected", function () {
+  
+      let expectedEhrId = bru.getEnvVar("EMERGENCY_EHRID");
+      let expectedPatientUserId = bru.getEnvVar("EMERGENCY_PATIENTUSERID");
+      let expectedDetails = bru.getEnvVar("EMERGENCY_DETAILS");
+      let expectedEmergencyDate = bru.getEnvVar("EMERGENCY_DATE");
+  
+      var jsonRes = res.getBody();
+      expect(jsonRes.Data).to.have.property('EmergencyEvent');
+      expect(jsonRes.Data.EmergencyEvent).to.not.be.empty;
+      expect(jsonRes.Data.EmergencyEvent).to.have.property('EhrId');
+      expect(jsonRes.Data.EmergencyEvent).to.have.property('PatientUserId');
+      expect(jsonRes.Data.EmergencyEvent).to.have.property('Details');
+      expect(jsonRes.Data.EmergencyEvent).to.have.property('EmergencyDate');
+  
+      expect(jsonRes.Data.EmergencyEvent.Details).equals(expectedDetails);
+      expect(jsonRes.Data.EmergencyEvent.EmergencyDate).equals(expectedEmergencyDate);
+  });
+  
+  
+}
+
+docs {
+  Update the details for an emergency event.
+}

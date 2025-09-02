@@ -1,0 +1,64 @@
+meta {
+  name: Update custom task
+  type: http
+  seq: 4
+}
+
+put {
+  url: {{BASE_URL}}/custom-tasks/{{CUSTOM_TASK_ID}}
+  body: json
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{PATIENT_USER_JWT}}
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+  Content-Type: application/json
+}
+
+body:json {
+  {
+      "UserId": "{{PATIENT_USER_ID}}",
+      "Task": "Take a jog",
+      "Description": "Jog for 30 min. in morning",
+      "Category": "Exercise",
+      "Details": {
+          "ExerciseType": "Jog",
+          "IntensityLevel": "Hard"
+      },
+      "ScheduledStartTime": "2025-07-01",
+      "IsRecurrent": false
+  }
+}
+
+tests {
+  
+  test("Request is successfull", function () {
+      expect(res.getStatus()).to.equal(200);
+      var jsonRes = res.getBody();
+      expect(jsonRes.Status).to.eql('success');
+  });
+  
+  test("Custom task is updated", function () {
+  
+      var userId = bru.getEnvVar("PATIENT_USER_ID");
+  
+      var jsonRes = res.getBody();
+      expect(jsonRes.Data).to.not.be.null;
+      expect(jsonRes.Data).to.have.property('UserTask');
+      expect(jsonRes.Data.UserTask).to.have.property('Action');
+      expect(jsonRes.Data.UserTask.Action).to.have.property('Task');
+      expect(jsonRes.Data.UserTask.Action).to.have.property('Description');
+      expect(jsonRes.Data.UserTask.Action).to.have.property('Category');
+      expect(jsonRes.Data.UserTask.Action).to.have.property('Details');
+      expect(jsonRes.Data.UserTask.Action).to.have.property('ScheduledStartTime');
+  
+      expect(jsonRes.Data.UserTask.Action.UserId).equals(userId);
+      expect(jsonRes.Data.UserTask.Action.Task).equals("Take a jog");
+      expect(jsonRes.Data.UserTask.Action.Description).equals("Jog for 30 min. in morning");
+  });
+}
+
+docs {
+  Update Goal record with id
+}

@@ -366,6 +366,39 @@ export class FoodConsumptionRepo implements IFoodConsumptionRepo {
         }
     };
 
+    public deleteByUserId = async (patientUserId: string, hardDelete: boolean = false): Promise<boolean> => {
+        try {
+            const deletedCount = await FoodConsumption.destroy({
+                where : {
+                    PatientUserId : patientUserId,
+                },
+                force : hardDelete
+            });
+
+            if (deletedCount === 0) {
+                Logger.instance().log(`No Food Consumption records found for user: ${patientUserId}`);
+            }
+            return true;
+        } catch (error) {
+            Logger.instance().log(error.message);
+        }
+    };
+
+    // public deleteQuestionnaireByUserId = async (patientUserId: string, hardDelete: boolean): Promise<boolean> => {
+    //     try {
+    //         await NutritionQuestionnaire.destroy({
+    //             where : {
+    //                 PatientUserId : patientUserId,
+    //             },
+    //             force : hardDelete
+    //         });
+    //         return true;
+    //     } catch (error) {
+    //         Logger.instance().log(error.message);
+    //         throw new ApiError(500, error.message);
+    //     }
+    // };
+
     //#endregion
 
     //#region Privates

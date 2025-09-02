@@ -1,0 +1,66 @@
+meta {
+  name: Get forms list
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{BASE_URL}}/clinical/forms/provider/KoboToolbox/forms
+  body: json
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{PATIENT_USER_JWT}}
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+  Content-Type: application/json
+}
+
+body:json {
+  {
+      "BaseUrl":"{{KOBO_TOOLBOX_BASE_URL}}",
+      "SecondaryUrl":"{{KOBO_TOOLBOX_SECONDARY_URL}}",
+      "Token":"{{KOBO_TOOLBOX_TOKEN}}"
+  }
+}
+
+script:pre-request {
+  bru.setEnvVar("KOBO_TOOLBOX_BASE_URL", "https://kc.kobotoolbox.org/api/");
+  bru.setEnvVar("KOBO_TOOLBOX_SECONDARY_URL", "https://kf.kobotoolbox.org/api/");
+  bru.setEnvVar("KOBO_TOOLBOX_TOKEN", "");
+  
+}
+
+tests {
+  var jsonRes = res.getBody();
+  
+  try {
+      bru.setEnvVar("EMERGENCY_EVENT_ID", jsonRes.Data.EmergencyEvent.id);
+    var firstForm = jsonRes.Data.Forms[0];
+  
+       bru.setEnvVar("PROVIDER_CODE", firstForm.ProviderCode);
+      bru.setEnvVar("FORM_ID", firstForm.ProviderId);
+  }
+  catch (error) {
+      console.log(error.message);
+  }
+  
+  test("Request is successfull", function () {
+      expect(res.getStatus()).to.equal(200);
+      var jsonRes = res.getBody();
+      expect(jsonRes.Status).to.eql('success');
+  });
+  
+  test("Kobo forms list is retrieved", function () {
+      var jsonRes = res.getBody();
+      expect(jsonRes.Data).to.have.property('Forms');
+      expect(jsonRes.Data.Forms).to.not.be.empty;
+      expect(jsonRes.Data.Forms.length).to.be.greaterThan(0);
+  });
+  
+  
+}
+
+docs {
+  Add an emergency event.
+}

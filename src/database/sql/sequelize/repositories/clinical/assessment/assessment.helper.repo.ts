@@ -30,8 +30,8 @@ import {
     CScoringCondition,
     ConditionOperatorType,
     ConditionCompositionType,
+    SkipQueryAnswer,
 } from '../../../../../../domain.types/clinical/assessment/assessment.types';
-import { AssessmentTemplateDomainModel } from '../../../../../../domain.types/clinical/assessment/assessment.template.domain.model';
 import AssessmentTemplate from '../../../models/clinical/assessment/assessment.template.model';
 import AssessmentNode from '../../../models/clinical/assessment/assessment.node.model';
 import { uuid } from '../../../../../../domain.types/miscellaneous/system.types';
@@ -45,7 +45,6 @@ import ScoringCondition from '../../../models/clinical/assessment/scoring.condit
 import { AssessmentNodeSearchResults } from '../../../../../../domain.types/clinical/assessment/assessment.node.search.types';
 import { AssessmentNodeSearchFilters } from '../../../../../../domain.types/clinical/assessment/assessment.node.search.types';
 import { Op } from 'sequelize';
-import { cat } from 'shelljs';
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -55,29 +54,34 @@ export class AssessmentHelperRepo implements IAssessmentHelperRepo {
 
     public addTemplate = async (t: CAssessmentTemplate): Promise<AssessmentTemplateDto> => {
         try {
-            const existing = await AssessmentTemplate.findOne({
+            const search = {
                 where : {
                     Provider               : t.Provider,
                     ProviderAssessmentCode : t.ProviderAssessmentCode,
-                },
-            });
+                }
+            };
+
+            if (t.TenantId) {
+                search.where['TenantId'] = t.TenantId;
+            }
+            
+            const existing = await AssessmentTemplate.findOne(search);
             if (existing) {
                 return AssessmentTemplateMapper.toDto(existing);
             }
 
-            const templateModel: AssessmentTemplateDomainModel = {
-                DisplayCode                 : t.DisplayCode,
-                Title                       : t.Title,
-                Description                 : t.Description,
-                Type                        : t.Type,
-                Provider                    : t.Provider,
-                ProviderAssessmentCode      : t.ProviderAssessmentCode,
-                FileResourceId              : t.FileResourceId,
-                ServeListNodeChildrenAtOnce : t.ServeListNodeChildrenAtOnce,
-                Tags                        : t.Tags,
+            const entity = {
+                DisplayCode                 : t.DisplayCode ?? null,
+                Type                        : t.Type ?? null,
+                Title                       : t.Title ?? t.Title,
+                Description                 : t.Description ?? null,
+                ProviderAssessmentCode      : t.ProviderAssessmentCode ?? null,
+                Provider                    : t.Provider ?? null,
+                ServeListNodeChildrenAtOnce : t.ServeListNodeChildrenAtOnce ?? false,
+                TenantId                    : t.TenantId ?? null,
+                Tags                        : t.Tags && t.Tags.length > 0 ? JSON.stringify(t.Tags) : null,
             };
-
-            var template = await AssessmentTemplate.create(templateModel as any);
+            var template = await AssessmentTemplate.create(entity);
 
             const rootNodeDisplayCode: string = t.RootNodeDisplayCode;
             var sRootNode = CAssessmentTemplate.getNodeByDisplayCode(t.Nodes, rootNodeDisplayCode);
@@ -147,7 +151,7 @@ export class AssessmentHelperRepo implements IAssessmentHelperRepo {
             RootNodeDisplayCode    : rootNode.DisplayCode,
             Nodes                  : nodes,
             Type                   : template.Type as AssessmentType,
-            Tags                   : Array.isArray(template.Tags) ? template.Tags : [template.Tags],
+            Tags                   : template.Tags ? JSON.parse(template.Tags) : [],
 
         };
         return templateObj;
@@ -421,6 +425,7 @@ export class AssessmentHelperRepo implements IAssessmentHelperRepo {
             | BooleanQueryAnswer
             | FileQueryAnswer
             | BiometricQueryAnswer
+            | SkipQueryAnswer
     ): Promise<CAssessmentQueryResponse> => {
         try {
             const model = this.generateQueryAnswerModel(answer);
@@ -489,9 +494,11 @@ export class AssessmentHelperRepo implements IAssessmentHelperRepo {
             }
             else if (nodeObj.NodeType === AssessmentNodeType.Question) {
 
-                const questionNode = nodeObj as CAssessmentQuestionNode;
-                thisNode.QueryResponseType = questionNode.QueryResponseType;
-                thisNode.CorrectAnswer     = questionNode.CorrectAnswer;
+                const questionNode           = nodeObj as CAssessmentQuestionNode;
+                thisNode.QueryResponseType   = questionNode.QueryResponseType;
+                thisNode.CorrectAnswer       = questionNode.CorrectAnswer;
+                thisNode.FieldIdentifier     = questionNode.FieldIdentifier;
+                thisNode.FieldIdentifierUnit = questionNode.FieldIdentifierUnit;
                 await thisNode.save();
 
                 if (questionNode.Options && questionNode.Options.length > 0) {
@@ -563,6 +570,12 @@ export class AssessmentHelperRepo implements IAssessmentHelperRepo {
             }
             if (Helper.hasProperty(updates, 'Tags')) {
                 thisNode.Tags = updates['Tags'] ? JSON.stringify(updates['Tags']) : null;
+            }
+            if (Helper.hasProperty(updates, 'FieldIdentifier')) {
+                thisNode.FieldIdentifier = updates['FieldIdentifier'];
+            }
+            if (Helper.hasProperty(updates, 'FieldIdentifierUnit')) {
+                thisNode.FieldIdentifierUnit = updates['FieldIdentifierUnit'];
             }
             thisNode = await thisNode.save();
 
@@ -909,7 +922,21 @@ export class AssessmentHelperRepo implements IAssessmentHelperRepo {
         FloatQueryAnswer |
         BooleanQueryAnswer |
         FileQueryAnswer |
-        BiometricQueryAnswer) => {
+        BiometricQueryAnswer |
+        SkipQueryAnswer
+    ) => {
+
+        //Check if the answer is a skip query
+        const skipQuery = answer as SkipQueryAnswer;
+        if (skipQuery && skipQuery?.Skipped === true) {
+            return {
+                AssessmentId : skipQuery.AssessmentId,
+                NodeId       : skipQuery.NodeId,
+                Sequence     : skipQuery.QuestionSequence,
+                Type         : skipQuery.ResponseType,
+                Skipped      : true,
+            };
+        }
 
         if (answer.ResponseType === QueryResponseType.SingleChoiceSelection) {
             const a = answer as SingleChoiceQueryAnswer;
@@ -1466,6 +1493,9 @@ export class AssessmentHelperRepo implements IAssessmentHelperRepo {
             }
             if (Helper.hasProperty(updates, 'Sequence')) {
                 option.Sequence = updates['Sequence'];
+            }
+            if (Helper.hasProperty(updates, 'ProviderGivenCode')) {
+                option.ProviderGivenCode = updates['ProviderGivenCode'];
             }
             if (Helper.hasProperty(updates, 'ImageUrl')) {
                 option.ImageUrl = updates['ImageUrl'];

@@ -16,5 +16,6 @@ export interface AssessmentAnswerDomainModel {
     ObjectArray?    : any[];
     Biometrics?     : AssessmentBiometrics[];
     Url?            : string;
+    Skipped?        : boolean;
     ResourceId?     : uuid;
 }

@@ -184,6 +184,18 @@ export default class AssessmentNode extends Model {
     })
     Tags: string;
 
+    @Column({
+        type      : DataType.STRING(512),
+        allowNull : true,
+    })
+    FieldIdentifier: string;
+
+    @Column({
+        type      : DataType.STRING(32),
+        allowNull : true,
+    })
+    FieldIdentifierUnit: string;
+
     @Column
     @CreatedAt
     CreatedAt: Date;

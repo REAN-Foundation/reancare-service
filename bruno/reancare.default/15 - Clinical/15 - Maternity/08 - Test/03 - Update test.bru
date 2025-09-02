@@ -1,0 +1,54 @@
+meta {
+  name: Update
+  type: http
+  seq: 3
+}
+
+put {
+  url: {{BASE_URL}}/clinical/maternity/maternity-pregnancies/{{PREGNANCY_ID}}/tests/{{TEST_ID}}
+  body: json
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{ADMIN_USER_JWT}}
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+  Content-Type: application/json
+}
+
+body:json {
+  {
+          "PregnancyId": "{{PREGNANCY_ID}}",
+          "TestName": "Glucose Tolerance Test (GTT)",
+          "Type": "Blood",
+          "Impression": "Fasting and post-glucose blood sugar levels are within the normal range.",
+          "Parameters": {
+              "Name": "Fasting Blood Sugar",
+              "Value": "85",
+              "Unit": "mg/dL"
+          },
+          "DateOfTest": "2024-08-12T08:00:00Z"
+      }
+}
+
+tests {
+  test("Request is successfull", function () {
+      expect(res.getStatus()).to.equal(200);
+      var jsonRes = res.getBody();
+      expect(jsonRes.Status).to.eql('success');
+  });
+  
+  test("Test record updated successfully", function () {
+  
+      var jsonRes = res.getBody();
+      expect(jsonRes.Data).to.have.property('Test');
+      
+      expect(jsonRes.Data.Test).to.have.property('id');
+      expect(jsonRes.Data.Test).to.have.property('PregnancyId');
+      expect(jsonRes.Data.Test).to.have.property('TestName');
+      expect(jsonRes.Data.Test).to.have.property('Type');
+      expect(jsonRes.Data.Test).to.have.property('Impression');
+      expect(jsonRes.Data.Test).to.have.property('Parameters');
+      expect(jsonRes.Data.Test).to.have.property('DateOfTest');
+  });
+}

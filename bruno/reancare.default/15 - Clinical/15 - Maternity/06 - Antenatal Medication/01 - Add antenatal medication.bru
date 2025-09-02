@@ -1,0 +1,63 @@
+meta {
+  name: Create
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{BASE_URL}}/clinical/maternity/maternity-pregnancies/{{PREGNANCY_ID}}/antenatal-medication
+  body: json
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{ADMIN_USER_JWT}}
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+  Content-Type: application/json
+}
+
+body:json {
+  {
+      "AnteNatalVisitId"   : "{{ANTENATAL_VISIT_ID}}",
+      "PregnancyId"        : "{{PREGNANCY_ID}}",
+      "VisitId"            : "{{VISIT_ID}}", 
+      "Name"               : "Calcium",
+      "Given"              : "Yes",
+      "MedicationId"       : "{{MEDICATION_ID}}"
+  }
+  
+}
+
+tests {
+  try {
+  
+      var jsonData = res.getBody();
+      var id = jsonData.Data.AntenatalMedication.id;
+      bru.setEnvVar("ANTENATAL_MEDICATION_ID", id);
+  
+  }
+  catch (error) {
+      console.log(error.message);
+  }
+  
+  test("Request is successfull", function () {
+      expect(res.getStatus()).to.equal(201);
+      var jsonRes = res.getBody();
+      expect(jsonRes.Status).to.eql('success');
+  });
+  
+  test("New Antenatal Medication record is created", function () {
+  
+      var jsonRes = res.getBody();
+      expect(jsonRes.Data).to.have.property('AntenatalMedication');
+      
+      expect(jsonRes.Data.AntenatalMedication).to.have.property('id');
+      expect(jsonRes.Data.AntenatalMedication).to.have.property('AnteNatalVisitId');
+      expect(jsonRes.Data.AntenatalMedication).to.have.property('PregnancyId');
+      expect(jsonRes.Data.AntenatalMedication).to.have.property('VisitId');
+      expect(jsonRes.Data.AntenatalMedication).to.have.property('Name');
+      expect(jsonRes.Data.AntenatalMedication).to.have.property('Given');
+      expect(jsonRes.Data.AntenatalMedication).to.have.property('MedicationId');
+  });
+  
+}

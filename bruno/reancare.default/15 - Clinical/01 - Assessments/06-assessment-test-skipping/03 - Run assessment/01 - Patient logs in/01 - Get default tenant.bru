@@ -1,0 +1,35 @@
+meta {
+  name: 01 - Get default tenant
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{BASE_URL}}/tenants/search
+  body: none
+  auth: inherit
+}
+
+headers {
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+  content-type: application/json
+  Authorization: Bearer {{ADMIN_USER_JWT}}
+}
+
+script:pre-request {
+  
+  
+}
+
+script:post-response {
+  try {
+      var jsonRes = res.getBody();
+      const items = jsonRes.Data.TenantRecords.Items;
+      const def = items.find(x => x.Code === 'default');
+      const tenantId = def.id;
+      bru.setEnvVar("TENANT_ID", tenantId);
+  }
+  catch (error) {
+      console.log(error.message);
+  }
+}

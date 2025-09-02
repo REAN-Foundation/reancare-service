@@ -69,4 +69,8 @@ export class BloodGlucoseService {
         return await this._bloodGlucoseRepo.getMostRecentBloodGlucoseActivity(patientUserId);
     };
 
+    deleteByUserId = async (patientUserId: string, hardDelete: boolean = true): Promise<boolean> => {
+        return await this._bloodGlucoseRepo.deleteByUserId(patientUserId, hardDelete);
+    };
+
 }

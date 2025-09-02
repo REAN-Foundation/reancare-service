@@ -1,0 +1,42 @@
+meta {
+  name: Rename document with same file ext
+  type: http
+  seq: 7
+}
+
+put {
+  url: {{BASE_URL}}/patient-documents/{{PATIENT_DOCUMENT_ID}}/rename
+  body: json
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+  Authorization: Bearer {{PATIENT_USER_JWT}}
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+}
+
+body:json {
+  {
+      "NewName": "abc.pdf"
+  }
+  
+}
+
+tests {
+  test("Request is successfull", function () {
+      expect(res.getStatus()).to.equal(200);
+      var jsonRes = res.getBody();
+      expect(jsonRes.Status).to.eql('success');
+  });
+  
+  test("Document is renamed with new file name", function () {
+      var jsonRes = res.getBody();
+      expect(jsonRes.Data).to.have.property('PatientDocument');
+      expect(jsonRes.Data.PatientDocument).to.not.be.empty;
+      expect(jsonRes.Data.PatientDocument).to.have.property('id');
+      expect(jsonRes.Data.PatientDocument).to.have.property('FileName');
+      expect(jsonRes.Data.PatientDocument.FileName).equals('abc.pdf');
+  });
+  
+}

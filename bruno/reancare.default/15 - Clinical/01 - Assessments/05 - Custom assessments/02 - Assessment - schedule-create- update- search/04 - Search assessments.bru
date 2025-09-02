@@ -1,0 +1,44 @@
+meta {
+  name: Search assessments
+  type: http
+  seq: 4
+}
+
+get {
+  url: {{BASE_URL}}/clinical/assessments/search?pageIndex=0&itemsPerPage=25&minValue=0&maxValue=100
+  body: none
+  auth: none
+}
+
+params:query {
+  pageIndex: 0
+  itemsPerPage: 25
+  minValue: 0
+  maxValue: 100
+  ~orderBy: CreatedAt
+  ~order: ascending
+  ~patientUserId: {{PATIENT_USER_ID}}
+}
+
+headers {
+  Authorization: Bearer {{PATIENT_USER_JWT}}
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+  Content-Type: application/json
+}
+
+tests {
+  test("Request is successfull", function () {
+      expect(res.getStatus()).to.equal(200);
+      var jsonRes = res.getBody();
+      expect(jsonRes.Status).to.eql('success');
+  });
+  
+  test("List of assessments is returned", function () {
+  
+      var jsonRes = res.getBody();
+      expect(jsonRes.Data).to.have.property('AssessmentRecords');
+      expect(jsonRes.Data.AssessmentRecords.Items.length).greaterThan(0);
+  
+  });
+  
+}

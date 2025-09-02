@@ -36,4 +36,6 @@ export interface IUserTaskRepo {
     getUserTasksOfSelectiveChannel(timePeriod: number): Promise<any>;
 
     getMostRecentUserActivity(userId: string): Promise<MostRecentActivityDto>;
+
+    deleteByUserId(userId: string, hardDelete: boolean): Promise<boolean>;
 }

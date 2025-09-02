@@ -1,0 +1,16 @@
+meta {
+  name: Delete version by version id
+  type: http
+  seq: 18
+}
+
+delete {
+  url: {{BASE_URL}}/file-resources/{{RESOURCE_ID}}/versions/{{RESOURCE_VERSION_ID}}
+  body: none
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{PATIENT_USER_JWT}}
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+}

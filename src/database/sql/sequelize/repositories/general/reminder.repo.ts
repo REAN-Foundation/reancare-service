@@ -35,6 +35,7 @@ export class ReminderRepo implements IReminderRepo {
                 HookUrl               : model.HookUrl ?? null,
                 NotificationType      : model.NotificationType ?? ReminderNotificationType.SMS,
                 RawContent            : model.RawContent ?? null,
+                ParentActionId        : model.ParentActionId ?? null
             };
             const reminder = await Reminder.create(entity);
             const dto = ReminderMapper.toDto(reminder);
@@ -89,6 +90,9 @@ export class ReminderRepo implements IReminderRepo {
             }
             if (filters.WhenTime != null) {
                 search.where['WhenTime'] = filters.WhenTime;
+            }
+            if (filters.ParentActionId != null) {
+                search.where['ParentActionId'] = filters.ParentActionId;
             }
 
             let orderByColum = 'ReminderLine';
@@ -161,6 +165,25 @@ export class ReminderRepo implements IReminderRepo {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
         }
+    };
+
+    deleteByUserId = async (userId: string, hardDelete: boolean = false): Promise<boolean> => {
+        try {
+            const deletedCount = await Reminder.destroy({
+                where : {
+                    UserId : userId,
+                },
+                force : hardDelete
+            });
+
+            if (deletedCount === 0) {
+                Logger.instance().log(`No Reminder records found for user: ${userId}`);
+            }
+            return true;
+        } catch (error) {
+            Logger.instance().log(error.message);
+        }
+
     };
 
 }

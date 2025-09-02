@@ -1,0 +1,28 @@
+meta {
+  name: Add  YES path to node
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{BASE_URL}}/clinical/assessment-templates/{{ASSESSMENT_TEMPLATE_ID}}/nodes/{{COMB_ASSESSMENT_NODE_ID_1_1}}/paths
+  body: json
+  auth: none
+}
+
+headers {
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+  Authorization: Bearer {{ADMIN_USER_JWT}}
+}
+
+tests {
+  var jsonRes = res.getBody();
+  
+  try {
+      bru.setEnvVar("COMB_QUESTION_1_1_YES", jsonRes.Data.NodePath.id);
+  }
+  catch (error) {
+      console.log(error.message);
+  }
+  
+}

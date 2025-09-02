@@ -1,0 +1,73 @@
+meta {
+  name: Search documents for patient
+  type: http
+  seq: 9
+}
+
+get {
+  url: {{BASE_URL}}/patient-documents/search
+  body: none
+  auth: none
+}
+
+params:query {
+  ~documentType: dru
+  ~medicalPractitionerUserId: {{DOCTOR_USER_ID}}
+  ~uploadedDateFrom: {{FROM_DATE}}
+  ~uploadedDateTo: {{TO_DATE}}
+  ~associatedOrderId: {{ORDER_ID}}
+  ~associatedVisitId: {{VISIT_ID}}
+}
+
+headers {
+  Content-Type: application/json
+  Authorization: Bearer {{PATIENT_USER_JWT}}
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+}
+
+script:pre-request {
+  
+  Date.prototype.addDays = function(days) {
+      var date = new Date(this.valueOf());
+      date.setDate(date.getDate() + days);
+      return date;
+  }
+  
+  function formatDate(date) {
+      var d = new Date(date),
+          month = '' + (d.getMonth() + 1),
+          day = '' + d.getDate(),
+          year = d.getFullYear();
+  
+      if (month.length < 2) 
+          month = '0' + month;
+      if (day.length < 2) 
+          day = '0' + day;
+  
+      return [year, month, day].join('-');
+  }
+  
+  var d = new Date();
+  
+  var fromDate = formatDate(d);
+  var toDate = formatDate((new Date()).addDays(10));
+  
+  bru.setEnvVar("FROM_DATE", fromDate);
+  bru.setEnvVar("TO_DATE", toDate);
+}
+
+tests {
+  test("Request is successfull", function () {
+      expect(res.getStatus()).to.equal(200);
+      var jsonRes = res.getBody();
+      expect(jsonRes.Status).to.eql('success');
+  });
+  
+  test("List of patient documents is returned", function () {
+      var jsonRes = res.getBody();
+      expect(jsonRes.Data).to.have.property('PatientDocuments');
+      expect(jsonRes.Data.PatientDocuments.Items.length).greaterThan(0);
+  
+  });
+  
+}

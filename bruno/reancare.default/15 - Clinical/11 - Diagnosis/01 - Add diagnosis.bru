@@ -1,0 +1,67 @@
+meta {
+  name: Add diagnosis
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{BASE_URL}}/clinical/diagnoses
+  body: json
+  auth: none
+}
+
+headers {
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+  Content-Type: application/json
+  Authorization: Bearer {{DOCTOR_USER_JWT}}
+}
+
+body:json {
+  {
+      "PatientUserId": "{{PATIENT_USER_ID}}",
+      "MedicalPractitionerUserId": "{{DOCTOR_USER_ID}}",
+      "MedicalConditionId": null,
+      "Comments": "better than earlier",
+      "IsClinicallyActive": false,
+      "ValidationStatus": "Confirmed",
+      "Interpretation": "Significant change up",
+      "OnsetDate": "2025-09-15",
+      "EndDate": "2025-09-25"
+  }
+}
+
+tests {
+  var jsonRes = res.getBody();
+  
+  try {
+      bru.setEnvVar("DIAGNOSIS_ID", jsonRes.Data.Diagnosis.id);
+  }
+  catch (error) {
+      console.log(error.message);
+  }
+  
+  test("Request is successfull", function () {
+      expect(res.getStatus()).to.equal(201);
+      var jsonRes = res.getBody();
+      expect(jsonRes.Status).to.eql('success');
+  });
+  
+  test("New diagnosis record is created", function () {
+  
+      var expectedValue = false;
+      var expectedDiagnosisId = bru.getEnvVar("DIAGNOSIS_ID");
+      
+      var jsonRes = res.getBody();
+      expect(jsonRes.Data).to.have.property('Diagnosis');
+      expect(jsonRes.Data.Diagnosis).to.not.be.empty;
+      expect(jsonRes.Data.Diagnosis).to.have.property('id');
+      expect(jsonRes.Data.Diagnosis).to.have.property('IsClinicallyActive');
+      expect(jsonRes.Data.Diagnosis).to.have.property('ValidationStatus');
+      expect(jsonRes.Data.Diagnosis).to.have.property('Interpretation');
+      
+      expect(jsonRes.Data.Diagnosis.IsClinicallyActive).equals(expectedValue);
+      expect(jsonRes.Data.Diagnosis.id).equals(expectedDiagnosisId);
+      
+  });
+  
+}

@@ -1,0 +1,75 @@
+meta {
+  name: Upload multi-resolution image
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{BASE_URL}}/file-resources/upload/
+  body: multipartForm
+  auth: none
+}
+
+headers {
+  enc: multipart/form-data
+  Authorization: Bearer {{PATIENT_USER_JWT}}
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+}
+
+body:multipart-form {
+  name: @file(D:\REAN foundation\Rean service authenticated\storage\local\assets\images\stock.medication.images\01_Generic_capsule.png)
+  IsPublicResource: true
+  IsMultiResolutionImage: true
+}
+
+tests {
+  
+  test("Request is successfull", function () {
+      expect(res.getStatus()).to.equal(201);
+      var jsonRes = res.getBody();
+      expect(jsonRes.Status).to.eql('success');
+  });
+  
+  test("File is uploaded as multi-resolution image", function () {
+  
+      var jsonRes = res.getBody();
+      expect(jsonRes.Data).to.have.property('FileResources');
+      expect(jsonRes.Data.FileResources.length).greaterThan(0);
+  
+      var resource = jsonRes.Data.FileResources[0];
+  
+      expect(resource).to.have.property('id');
+      expect(resource).to.have.property('FileName');
+      expect(resource).to.have.property('Url');
+      expect(resource).to.have.property('UploadedByUserId');
+      expect(resource).to.have.property('MimeType');
+      expect(resource).to.have.property('Versions');
+      expect(resource).to.have.property('Tags');
+      expect(resource).to.have.property('References');
+      expect(resource).to.have.property('IsPublicResource');
+      expect(resource).to.have.property('DefaultVersion');
+  
+      expect(resource.Versions.length).equals(3);
+  
+      var firstVersion = resource.Versions[0];
+      var secondVersion = resource.Versions[1];
+      var thirdVersion = resource.Versions[2];
+      
+      expect(firstVersion).to.have.property('VersionId');
+      expect(firstVersion).to.have.property('ResourceId');
+      expect(firstVersion).to.have.property('Version');
+      expect(firstVersion).to.have.property('Url');
+      
+      expect(secondVersion).to.have.property('VersionId');
+      expect(secondVersion).to.have.property('ResourceId');
+      expect(secondVersion).to.have.property('Version');
+      expect(secondVersion).to.have.property('Url');
+      
+      expect(thirdVersion).to.have.property('VersionId');
+      expect(thirdVersion).to.have.property('ResourceId');
+      expect(thirdVersion).to.have.property('Version');
+      expect(thirdVersion).to.have.property('Url');
+  
+  });
+  
+}

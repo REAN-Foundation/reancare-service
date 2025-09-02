@@ -1,11 +1,12 @@
 import { injectable } from 'tsyringe';
 import AWS from 'aws-sdk';
-import { ApiError } from '../../common/api.error';
+import { ApiError } from '../../../common/api.error';
+import { IFunctionService } from '../interfaces/functions.service.interface';
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
 
 @injectable()
-export class AwsLambdaService {
+export class AwsLambdaService implements IFunctionService {
 
     private lambda: AWS.Lambda;
 
@@ -18,7 +19,7 @@ export class AwsLambdaService {
         this.lambda = new AWS.Lambda();
     }
 
-    public async invokeLambdaFunction<T = any>(functionName: string, payload: object): Promise<T> {
+    public async invokeFunction<T = any>(functionName: string, payload: object): Promise<T> {
         const params: AWS.Lambda.InvocationRequest = {
             FunctionName   : functionName,
             InvocationType : 'RequestResponse',

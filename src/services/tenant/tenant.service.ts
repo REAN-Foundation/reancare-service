@@ -7,18 +7,21 @@ import { uuid } from '../../domain.types/miscellaneous/system.types';
 import { ChatBotSettings, CommonSettings, FormsIntegrations, FormsSettings, TenantSettingsDomainModel, FollowupSettings, FollowupSource, BotSecrets } from '../../domain.types/tenant/tenant.settings.types';
 import { ITenantSettingsRepo } from '../../database/repository.interfaces/tenant/tenant.settings.interface';
 import { Injector } from '../../startup/injector';
-import { AwsLambdaService } from '../../modules/cloud.services/aws.service';
+import { IFunctionService } from '../../modules/cloud.services/interfaces/functions.service.interface';
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 @injectable()
 export class TenantService {
 
-     _lambdaService: AwsLambdaService = Injector.Container.resolve(AwsLambdaService);
+    //  _lambdaService: AwsLambdaService = Injector.Container.resolve(AwsLambdaService);
+
+    // _functionService: IFunctionService = Injector.Container.resolve(IFunctionService);
 
      constructor(
         @inject('ITenantRepo') private _tenantRepo: ITenantRepo,
         @inject('ITenantSettingsRepo') private _tenantSettingsRepo: ITenantSettingsRepo,
+        @inject('IFunctionService') private _functionService: IFunctionService,
      ) {}
 
      //#region Publics
@@ -50,19 +53,19 @@ export class TenantService {
 
     public createBotSchema = async (lambdaFunctionName: string, model: TenantSchemaDomainModel):
     Promise<TenantSchemaDto> => {
-        return await this._lambdaService.invokeLambdaFunction<TenantSchemaDto>(lambdaFunctionName, model);
+        return await this._functionService.invokeFunction<TenantSchemaDto>(lambdaFunctionName, model);
     };
 
     public createSecret = async (model: TenantSecretDomainModel): Promise<BotSecrets> => {
-        return this._lambdaService.invokeLambdaFunction<BotSecrets>('create-secrets-lambda-function', model);
+        return this._functionService.invokeFunction<BotSecrets>('create-secrets-lambda-function', model);
     };
 
     public getSecret = async (model: GetSecretDomainModel): Promise<BotSecrets> => {
-        return this._lambdaService.invokeLambdaFunction<BotSecrets>('get-secrets-lambda-function', model );
+        return this._functionService.invokeFunction<BotSecrets>('get-secrets-lambda-function', model );
     };
 
     public updateSecret = async (model: TenantSecretDomainModel): Promise<BotSecrets> => {
-        return this._lambdaService.invokeLambdaFunction<BotSecrets>('update-secrets-lambda-function', model);
+        return this._functionService.invokeFunction<BotSecrets>('update-secrets-lambda-function', model);
     };
 
     public getTenantWithPhone = async (phone: string): Promise<TenantDto> => {

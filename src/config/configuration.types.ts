@@ -12,6 +12,7 @@ export type InAppNotificationServiceProvider = 'Firebase' | 'Mock';
 export type EHRProvider = FHIRProvider | OpenEHRProvider;
 export type AuthorizationType = 'Custom'; //TBD: Other options need to be supported
 export type AuthenticationType = 'Custom'; //TBD: Other options need to be supported
+export type FunctionsProvider = 'AWS-Lambda' | 'Azure-Functions';
 
 ///////////////////////////////////////////////////////////////////////////////////////////
 
@@ -94,4 +95,8 @@ export interface Configurations {
     WebhookControllerProviders: WebhookControllerProvider[];
     Gamification        : boolean;
     EHRAnalytics        : boolean;
+    Functions           : FunctionsConfig;
+}
+export interface FunctionsConfig {
+    Provider: FunctionsProvider;
 }

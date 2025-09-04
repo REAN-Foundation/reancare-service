@@ -23,6 +23,7 @@ export class CareplanValidator extends BaseValidator {
             WeekOffset     : request.body.WeekOffset,
             Channel        : request.body.Channel,
             TenantName     : request.body.TenantName,
+            Language       : request.body.Language,
             IsTest         : request.body.IsTest ?? false,
             ScheduleConfig : request.body.ScheduleConfig ? {
                 NumberOfDays      : request.body.ScheduleConfig.NumberOfDays ?? 1,
@@ -78,6 +79,7 @@ export class CareplanValidator extends BaseValidator {
         await this.validateInt(request, 'WeekOffset', Where.Body, false, false);
         await this.validateString(request, 'TenantName', Where.Body, false, false);
         await this.validateString(request, 'Channel', Where.Body, false, false);
+        await this.validateString(request, 'Language', Where.Body, false, false);
         await this.validateBoolean(request, 'IsTest', Where.Body, false, false);
         if (request.body.ScheduleConfig) {
             await this.validateInt(request, 'ScheduleConfig.NumberOfDays', Where.Body, false, false);

@@ -597,7 +597,7 @@ export class CareplanService implements IUserActionService {
                 Title            : x.Title,
                 Description      : x.Description,
                 Url              : x.Url,
-                Language         : x.Language,
+                Language         : enrollmentDetails.Language,
                 ScheduledAt      : x.ScheduledAt,
                 Sequence         : x.Sequence,
                 Frequency        : x.Frequency,

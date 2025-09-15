@@ -19,7 +19,7 @@ export class AwsLambdaService implements IFunctionService {
         this.lambda = new AWS.Lambda();
     }
 
-    public async invokeFunction<T = any>(functionName: string, payload: object): Promise<T> {
+    public async invokeFunction<T = any>(functionName: string, payload: object, action: string): Promise<T> {
         const params: AWS.Lambda.InvocationRequest = {
             FunctionName   : functionName,
             InvocationType : 'RequestResponse',

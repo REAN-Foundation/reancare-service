@@ -14,5 +14,6 @@ export interface EnrollmentDto {
     IsActive             : boolean;
     Complication        ?: string;
     HasHighRisk?         : boolean;
+    Language?            : string;
     TenantId?            : string;
 }

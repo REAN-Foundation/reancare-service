@@ -124,6 +124,13 @@ export default class CareplanEnrollment extends Model {
     })
     TenantId: string;
 
+    @Column({
+        type      : DataType.STRING(16),
+        allowNull : false,
+        defaultValue: 'en'
+    })
+    Language: string;
+
     @Column
     @CreatedAt
     CreatedAt: Date;

@@ -105,6 +105,21 @@ export class UserService {
         return dto;
     };
 
+    public getExistingUser = async (basicDetails: UserBasicDetails, roleId: number): Promise<UserDetailsDto> => {
+        let user = null;
+        if (basicDetails.Phone) {
+            user = await this._userRepo.getByPhoneAndRole(basicDetails.Phone, roleId);
+        }
+        if (user == null && basicDetails.Email) {
+            user = await this._userRepo.getByEmailAndRole(basicDetails.Email, roleId);
+        }
+        if (user == null && basicDetails.UniqueReferenceId) {
+            user = await this._userRepo.getByUniqueReferenceIdAndRole(basicDetails.UniqueReferenceId, roleId);
+        }
+        user = await this.updateDetailsDto(user);
+        return user;
+    };
+
     public getByUserName = async (userName: string): Promise<UserDetailsDto> => {
         var dto = await this._userRepo.getByUserName(userName);
         dto = await this.updateDetailsDto(dto);
@@ -659,6 +674,13 @@ export class UserService {
                 Logger.instance().log(message);
             } else {
                 person = await this._personRepo.getById(user.Person.id);
+            }
+        }
+        if (model.UniqueReferenceId && !person) {
+            person = await this._personRepo.getPersonWithUniqueReferenceId(model.UniqueReferenceId);
+            if (person == null) {
+                const message = 'User does not exist with unique reference id (' + model.UniqueReferenceId + ')';
+                Logger.instance().log(message);
             }
         }
         if (person == null) {

@@ -35,5 +35,6 @@ export interface EnrollmentDomainModel {
     TenantName?     : string;
     TenantId?       : string;
     IsTest?         : boolean;
+    Language?       : string;
     ScheduleConfig? : ScheduleConfig;
 }

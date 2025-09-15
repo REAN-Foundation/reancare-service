@@ -481,6 +481,7 @@ export class AssessmentHelperRepo implements IAssessmentHelperRepo {
                 QueryResponseType           : QueryResponseType.None,
                 RawData                     : nodeObj.RawData ?? null,
                 Tags                        : nodeObj.Tags && nodeObj.Tags.length > 0 ? JSON.stringify(nodeObj.Tags) : null,
+                Required                    : nodeObj.Required ?? true
             };
 
             var thisNode = await AssessmentNode.create(nodeEntity);
@@ -576,6 +577,10 @@ export class AssessmentHelperRepo implements IAssessmentHelperRepo {
             }
             if (Helper.hasProperty(updates, 'FieldIdentifierUnit')) {
                 thisNode.FieldIdentifierUnit = updates['FieldIdentifierUnit'];
+            }
+
+            if (Helper.hasProperty(updates, 'Required')) {
+                thisNode.Required = updates['Required'];
             }
             thisNode = await thisNode.save();
 
@@ -1493,6 +1498,9 @@ export class AssessmentHelperRepo implements IAssessmentHelperRepo {
             }
             if (Helper.hasProperty(updates, 'Sequence')) {
                 option.Sequence = updates['Sequence'];
+            }
+            if (Helper.hasProperty(updates, 'ProviderGivenCode')) {
+                option.ProviderGivenCode = updates['ProviderGivenCode'];
             }
             if (Helper.hasProperty(updates, 'ImageUrl')) {
                 option.ImageUrl = updates['ImageUrl'];

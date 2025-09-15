@@ -4,6 +4,7 @@ import { PersonDto } from "./person.dto";
 export interface PersonSearchFilters {
     Phone?: string;
     Email?: string;
+    UniqueReferenceId?: string;
     CreatedDateFrom?: Date;
     CreatedDateTo?: Date;
     OrderBy?: string;

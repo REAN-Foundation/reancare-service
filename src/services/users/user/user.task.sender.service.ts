@@ -69,7 +69,10 @@ export class UserTaskSenderService {
             for await (const userTask of userTasks) {
                 const careplanActivity = await this._careplanRepo.getActivity(userTask.ActionId);
                 userTask.Sequence = careplanActivity.Sequence;
+                userTask.Language = careplanActivity.Language;
+                 Logger.instance().log(`User task with language : ${JSON.stringify(userTask)} `);
             }
+           
             userTasks.sort((a, b) => {
                 return a.Sequence - b.Sequence;
             });
@@ -150,7 +153,7 @@ export class UserTaskSenderService {
         const user = await this._userRepo.getById(userId);
         const person = await this._personRepo.getById(user.PersonId);
         if (channel === NotificationChannel.Telegram) {
-            personPhone = person.TelegramChatId;
+            personPhone = person.UniqueReferenceId;
         } else if (channel === NotificationChannel.WhatsApp ||
             channel === NotificationChannel.WhatsappWati ) {
             personPhone = person.Phone;

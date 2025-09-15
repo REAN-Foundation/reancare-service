@@ -14,7 +14,8 @@ import {
     FeatureFlagsProvider,
     FileStorageProvider,
     InAppNotificationServiceProvider,
-    SMSServiceProvider
+    SMSServiceProvider,
+    FunctionsProvider
 } from './configuration.types';
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -60,6 +61,9 @@ export class ConfigurationManager {
                 // eslint-disable-next-line max-len
                 InAppNotificationProvider : configuration.Communication.InAppNotifications.Provider as InAppNotificationServiceProvider,
             },
+            Functions : {
+                Provider : configuration?.Functions?.Provider as FunctionsProvider,
+            },
             Careplans        : configuration.Careplans,
             TemporaryFolders : {
                 Upload                     : configuration.TemporaryFolders.Upload as string,
@@ -71,6 +75,7 @@ export class ConfigurationManager {
             MaxUploadFileSize          : configuration.MaxUploadFileSize,
             EHRAnalytics               : configuration.EHRAnalytics,
             Gamification               : configuration.Gamification,
+
         };
 
         ConfigurationManager.checkConfigSanity();
@@ -181,6 +186,10 @@ export class ConfigurationManager {
 
     public static GamificationEnabled = (): boolean => {
         return ConfigurationManager._config?.Gamification;
+    };
+
+    public static FunctionsProvider = (): FunctionsProvider => {
+        return ConfigurationManager._config.Functions.Provider;
     };
 
     private static checkConfigSanity() {

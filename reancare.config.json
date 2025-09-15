@@ -17,7 +17,7 @@
         "Provider": "GCP-FHIR"
     },
     "FileStorage" : {
-        "Provider": "AWS-S3"
+        "Provider": "Azure-Storage"
     },
     "FeatureFlags" : {
         "Provider": "Firebase-Remote-Config"
@@ -37,6 +37,9 @@
         "Upload": "./tmp/resources/uploads/",
         "Download": "./tmp/resources/downloads/",
         "CleanupFolderBeforeMinutes": 10
+    },
+    "Functions" : {
+        "Provider": "Azure-Functions"
     },
     "Careplans" : [
         {

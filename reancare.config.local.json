@@ -38,6 +38,9 @@
         "Download": "./tmp/resources/downloads/",
         "CleanupFolderBeforeMinutes": 10
     },
+    "Functions" : {
+        "Provider": "Azure-Functions"
+    },
     "Careplans" : [
         {
             "Enabled" : true,

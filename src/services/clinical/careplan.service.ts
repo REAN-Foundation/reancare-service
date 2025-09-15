@@ -96,19 +96,20 @@ export class CareplanService implements IUserActionService {
 
             //Since not registered with provider, register
             var participantDetails: ParticipantDomainModel = {
-                Name           : patient.User.Person.DisplayName,
-                Phone          : patient.User.Person.Phone,
-                Email          : patient.User.Person.Email,
-                PatientUserId  : enrollmentDetails.PatientUserId,
-                Provider       : provider,
-                Gender         : patient.User.Person.Gender,
-                Age            : null, //Helper.getAgeFromBirthDate(patient.User.Person.BirthDate),
-                Dob            : patient.User.Person.BirthDate,
-                HeightInInches : null,
-                WeightInLbs    : null,
-                MaritalStatus  : null,
-                ZipCode        : null,
-                TenantId       : tenantId
+                Name              : patient.User.Person.DisplayName,
+                Phone             : patient.User.Person.Phone,
+                Email             : patient.User.Person.Email,
+                PatientUserId     : enrollmentDetails.PatientUserId,
+                Provider          : provider,
+                Gender            : patient.User.Person.Gender,
+                Age               : null, //Helper.getAgeFromBirthDate(patient.User.Person.BirthDate),
+                Dob               : patient.User.Person.BirthDate,
+                HeightInInches    : null,
+                WeightInLbs       : null,
+                MaritalStatus     : null,
+                ZipCode           : null,
+                TenantId          : tenantId,
+                UniqueReferenceId : patient.User.Person.UniqueReferenceId,
             };
 
             participantId = await this._handler.registerPatientWithProvider(

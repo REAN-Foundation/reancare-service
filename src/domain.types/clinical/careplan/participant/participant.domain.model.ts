@@ -14,4 +14,5 @@ export interface ParticipantDomainModel {
     MaritalStatus? : string;
     ZipCode?       : number;
     TenantId?      : string;
+    UniqueReferenceId? : string;
 }

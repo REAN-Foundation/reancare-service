@@ -134,6 +134,7 @@ export class ReanCareplanService implements ICareplanService {
             EnrollmentDate : new Date(),
             WeekOffset     : model.WeekOffset,
             DayOffset      : model.DayOffset,
+            Language       : model.Language,
             IsTest         : model.IsTest,
             TenantId       : model.TenantId,
             ScheduleConfig : model.ScheduleConfig

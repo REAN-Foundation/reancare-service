@@ -16,6 +16,7 @@ import {
     InAppNotificationServiceProvider,
     SMSServiceProvider
 } from './configuration.types';
+import { MessagingConfig, MessagingProvider } from '../domain.types/events/provider.types';
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -50,6 +51,16 @@ export class ConfigurationManager {
             },
             FileStorage : {
                 Provider : configuration?.FileStorage?.Provider as FileStorageProvider ?? 'Custom',
+            },
+            Messaging : {
+                Provider : configuration?.Messaging?.Provider as MessagingProvider,
+                Events   : {
+                    Enabled                : configuration?.Messaging?.Events?.Enabled,
+                    RetryPolicy            : configuration?.Messaging?.Events?.RetryPolicy,
+                    DeadLetterQueue        : configuration?.Messaging?.Events?.DeadLetterQueue,
+                    MessageRetentionPeriod : configuration?.Messaging?.Events?.MessageRetentionPeriod,
+                    VisibilityTimeout      : configuration?.Messaging?.Events?.VisibilityTimeout,
+                },
             },
             FeatureFlags : {
                 Provider : configuration?.FeatureFlags?.Provider as FeatureFlagsProvider ?? 'Custom',
@@ -181,6 +192,14 @@ export class ConfigurationManager {
 
     public static GamificationEnabled = (): boolean => {
         return ConfigurationManager._config?.Gamification;
+    };
+
+    public static MessagingProvider = (): MessagingProvider => {
+        return ConfigurationManager._config.Messaging.Provider as MessagingProvider;
+    };
+
+    public static MessagingConfig = (): MessagingConfig => {
+        return ConfigurationManager._config.Messaging;
     };
 
     private static checkConfigSanity() {

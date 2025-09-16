@@ -109,7 +109,8 @@ export class ReanCareplanService implements ICareplanService {
             Gender                 : patientDetails.Gender,
             CountryCode            : patientDetails.Phone.split('-')[0],
             Phone                  : patientDetails.Phone.split('-')[1],
-            TenantId               : patientDetails.TenantId
+            TenantId               : patientDetails.TenantId,
+            UniqueReferenceId      : patientDetails.UniqueReferenceId
         };
 
         var url = process.env.CAREPLAN_API_BASE_URL + '/participants';

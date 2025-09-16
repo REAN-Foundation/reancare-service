@@ -23,6 +23,8 @@ import { IPhysicalActivityRepo } from '../../../database/repository.interfaces/w
 import { IEmergencyContactRepo } from '../../../database/repository.interfaces/users/patient/emergency.contact.repo.interface';
 import { IUserDeviceDetailsRepo } from '../../../database/repository.interfaces/users/user/user.device.details.repo.interface ';
 import { CareplanHandler } from '../../../modules/careplan/careplan.handler';
+import { IMessagingProvider } from '../../../modules/events/interfaces/messaging.povider.interface';
+import { EventType, UserDeleteEvent } from '../../../domain.types/events/event.types';
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -54,19 +56,20 @@ export class PatientDeleteService {
         @inject('IPhysicalActivityRepo') private _physicalActivityRepo: IPhysicalActivityRepo,
         @inject('IEmergencyContactRepo') private _emergencyContactRepo: IEmergencyContactRepo,
         @inject('IUserDeviceDetailsRepo') private _userDeviceDetailsRepo: IUserDeviceDetailsRepo,
+        @inject('IMessagingProvider') private _messagingProvider: IMessagingProvider,
 
  ){}
 
-    public _q = asyncLib.queue((userId: string, onCompleted) => {
+    public _q = asyncLib.queue((userDeleteEvent: UserDeleteEvent, onCompleted) => {
         (async () => {
-            await this.deletePatientData(userId);
+            await this.deletePatientData(userDeleteEvent);
             onCompleted();
         })();
     }, ASYNC_TASK_COUNT);
 
-    public enqueueDeletePatientData = async (userId: string) => {
+    public enqueueDeletePatientData = async (userDeleteEvent: UserDeleteEvent) => {
         try {
-            this.enqueue(userId);
+            this.enqueue(userDeleteEvent);
         } catch (error) {
             Logger.instance().log(`${JSON.stringify(error.message, null, 2)}`);
         }
@@ -74,8 +77,8 @@ export class PatientDeleteService {
 
     //#region Privates
 
-    private enqueue = (userId: string) => {
-        this._q.push(userId, (userId, error) => {
+    private enqueue = (userDeleteEvent: UserDeleteEvent) => {
+        this._q.push(userDeleteEvent, (userDeleteEvent, error) => {
             if (error) {
                 Logger.instance().log(`Error deleting patient data: ${JSON.stringify(error)}`);
                 Logger.instance().log(`Error deleting patient data: ${JSON.stringify(error.stack, null, 2)}`);
@@ -85,59 +88,66 @@ export class PatientDeleteService {
         });
     };
 
-    private deletePatientData = async (userId: string) => {
+    private deletePatientData = async (userDeleteEvent: UserDeleteEvent) => {
         try {
 
-            await this._medicationConsumptionRepo.deleteByUserId(userId, true);
+            await this._medicationConsumptionRepo.deleteByUserId(userDeleteEvent.PatientUserId, true);
 
-            await this._bloodCholesterolRepo.deleteByUserId(userId, true);
+            await this._bloodCholesterolRepo.deleteByUserId(userDeleteEvent.PatientUserId, true);
 
-            await this._bloodGlucoseRepo.deleteByUserId(userId, true);
+            await this._bloodGlucoseRepo.deleteByUserId(userDeleteEvent.PatientUserId, true);
 
-            await this._bloodOxygenSaturationRepo.deleteByUserId(userId, true);
+            await this._bloodOxygenSaturationRepo.deleteByUserId(userDeleteEvent.PatientUserId, true);
 
-            await this._bloodPressureRepo.deleteByUserId(userId, true);
+            await this._bloodPressureRepo.deleteByUserId(userDeleteEvent.PatientUserId, true);
 
-            await this._bodyHeightRepo.deleteByUserId(userId, true);
+            await this._bodyHeightRepo.deleteByUserId(userDeleteEvent.PatientUserId, true);
 
-            await this._bodyTemperatureRepo.deleteByUserId(userId, true);
+            await this._bodyTemperatureRepo.deleteByUserId(userDeleteEvent.PatientUserId, true);
 
-            await this._bodyWeightRepo.deleteByUserId(userId, true);
+            await this._bodyWeightRepo.deleteByUserId(userDeleteEvent.PatientUserId, true);
 
-            await this._pulseRepo.deleteByUserId(userId, true);
+            await this._pulseRepo.deleteByUserId(userDeleteEvent.PatientUserId, true);
 
-            await this._foodConsumptionRepo.deleteByUserId(userId, true);
+            await this._foodConsumptionRepo.deleteByUserId(userDeleteEvent.PatientUserId, true);
 
-            await this._waterConsumptionRepo.deleteByUserId(userId, true);
+            await this._waterConsumptionRepo.deleteByUserId(userDeleteEvent.PatientUserId, true);
 
-            await this._meditationRepo.deleteByUserId(userId, true);
+            await this._meditationRepo.deleteByUserId(userDeleteEvent.PatientUserId, true);
 
-            await this._physicalActivityRepo.deleteByUserId(userId, true);
+            await this._physicalActivityRepo.deleteByUserId(userDeleteEvent.PatientUserId, true);
 
-            await this._careplanRepo.deleteEnrollmentByUserId(userId, true);
+            await this._careplanRepo.deleteEnrollmentByUserId(userDeleteEvent.PatientUserId, true);
 
-            await this._careplanRepo.deleteActivitiesByUserId(userId, true);
+            await this._careplanRepo.deleteActivitiesByUserId(userDeleteEvent.PatientUserId, true);
 
-            await this._symptomAssessmentRepo.deleteByUserId(userId, true);
+            await this._symptomAssessmentRepo.deleteByUserId(userDeleteEvent.PatientUserId, true);
 
-            await this._assessmentRepo.deleteByUserId(userId, true);
+            await this._assessmentRepo.deleteByUserId(userDeleteEvent.PatientUserId, true);
 
-            await this._reminderScheduleRepo.deleteByUserId(userId, true);
+            await this._reminderScheduleRepo.deleteByUserId(userDeleteEvent.PatientUserId, true);
 
-            await this._reminderRepo.deleteByUserId(userId, true);
+            await this._reminderRepo.deleteByUserId(userDeleteEvent.PatientUserId, true);
 
-            await this._emergencyContactRepo.deleteByUserId(userId, true);
+            await this._emergencyContactRepo.deleteByUserId(userDeleteEvent.PatientUserId, true);
 
-            await this._userDeviceDetailsRepo.deleteByUserId(userId, true);
+            await this._userDeviceDetailsRepo.deleteByUserId(userDeleteEvent.PatientUserId, true);
 
-            await this._userTaskRepo.deleteByUserId(userId, true);
+            await this._userTaskRepo.deleteByUserId(userDeleteEvent.PatientUserId, true);
 
-            const participant = await this._careplanRepo.getParticipantByUserId(userId);
-            
+            const participant = await this._careplanRepo.getParticipantByUserId(userDeleteEvent.PatientUserId);
+       
             if (participant) {
-                await this._careplanRepo.deleteParticipantByUserId(userId, true);
+                await this._careplanRepo.deleteParticipantByUserId(userDeleteEvent.PatientUserId, true);
                 await this._handler.deleteParticipantData(participant.ParticipantId, participant.Provider);
             }
+
+            const publisher = this._messagingProvider.getPublisher();
+            await publisher?.publishEvent<UserDeleteEvent>(EventType.USER_DELETE, {
+                PatientUserId : userDeleteEvent.PatientUserId,
+                TenantId      : userDeleteEvent.TenantId,
+                TenantName    : userDeleteEvent.TenantName,
+            });
 
         } catch (error) {
             Logger.instance().log(`${JSON.stringify(error.message, null, 2)}`);

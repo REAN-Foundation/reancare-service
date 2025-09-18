@@ -175,10 +175,13 @@ export interface ChatBotSettings {
     Consent             : boolean,
     WelcomeMessage      : boolean,
     Feedback            : boolean,
-    ReminderAppointment : boolean   ,
+    ReminderAppointment : boolean,
     AppointmentFollowup : boolean,
     ConversationHistory : boolean,
-    Emojis              : boolean
+    Emojis              : boolean,
+    BasicAssessment     : boolean,
+    BasicCarePlan       : boolean,
+    Timezone?           : string
 }
 
 export enum FollowupSource {

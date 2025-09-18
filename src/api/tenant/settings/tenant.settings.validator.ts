@@ -531,7 +531,10 @@ export class TenantSettingsValidator extends BaseValidator {
         await this.validateBoolean(request, 'ChatBot.AppointmentFollowup', Where.Body, true, false);
         await this.validateBoolean(request, 'ChatBot.ConversationHistory', Where.Body, true, false);
         await this.validateBoolean(request, 'ChatBot.Emojis', Where.Body, true, false);
-
+        await this.validateBoolean(request, 'ChatBot.BasicAssessment', Where.Body, true, false);
+        await this.validateBoolean(request, 'ChatBot.BasicCarePlan', Where.Body, true, false);
+        await this.validateString(request, 'ChatBot.Timezone', Where.Body, false, false);
+      
         const model: ChatBotSettings = {
             Name                : request.body.ChatBot.Name,
             OrganizationName    : request.body.ChatBot.OrganizationName,
@@ -562,6 +565,9 @@ export class TenantSettingsValidator extends BaseValidator {
             AppointmentFollowup : request.body.ChatBot.AppointmentFollowup,
             ConversationHistory : request.body.ChatBot.ConversationHistory,
             Emojis              : request.body.ChatBot.Emojis,
+            BasicAssessment     : request.body.ChatBot.BasicAssessment,
+            BasicCarePlan       : request.body.ChatBot.BasicCarePlan,
+            Timezone            : request.body.ChatBot.Timezone,
 
         };
 

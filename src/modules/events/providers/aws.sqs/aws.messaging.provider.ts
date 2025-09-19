@@ -45,7 +45,6 @@ export class AwsMessagingProvider implements IMessagingProvider {
 
         } catch (error) {
             Logger.instance().log(`Failed to initialize AWS SQS messaging provider: ${error.message}`);
-            throw error;
         }
     }
 

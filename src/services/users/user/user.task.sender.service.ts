@@ -11,6 +11,10 @@ import { NotificationChannel } from "../../../domain.types/general/notification/
 import { IUserRepo } from "../../../database/repository.interfaces/users/user/user.repo.interface";
 import { ICareplanRepo } from "../../../database/repository.interfaces/clinical/careplan.repo.interface";
 import { Injector } from "../../../startup/injector";
+import { ChatBotTaskDto } from "../../../domain.types/users/user.task/user.task.dto";
+import { CareplanActivityDto } from "../../../domain.types/clinical/careplan/activity/careplan.activity.dto";
+import { WhatsAppFlowTemplateRequest } from "../../../domain.types/webhook/whatsapp.meta.types";
+import { ApiError } from "../../../common/api.error";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -62,7 +66,7 @@ export class UserTaskSenderService {
 
     private sendUserTasks = async (timePeriod: number) => {
         try {
-            const userTasks = await this._userTaskRepo.getUserTasksOfSelectiveChannel(timePeriod);
+            const userTasks: ChatBotTaskDto[] = await this._userTaskRepo.getUserTasksOfSelectiveChannel(timePeriod);
             if (!userTasks || userTasks.length === 0) {
                 return;
             }
@@ -70,7 +74,7 @@ export class UserTaskSenderService {
                 const careplanActivity = await this._careplanRepo.getActivity(userTask.ActionId);
                 userTask.Sequence = careplanActivity.Sequence;
                 userTask.Language = careplanActivity.Language;
-                 Logger.instance().log(`User task with language : ${JSON.stringify(userTask)} `);
+                Logger.instance().log(`User task with language : ${JSON.stringify(userTask)} `);
             }
            
             userTasks.sort((a, b) => {
@@ -92,16 +96,31 @@ export class UserTaskSenderService {
         }
     };
 
-    private sendUserTaskOnBot = async (userId: string, userTask): Promise<boolean> => {
+    private sendUserTaskOnBot = async (userId: string, userTask: ChatBotTaskDto): Promise<boolean> => {
         try {
             const personPhone = await this.getUserDetails(userId, userTask.Channel);
 
             let messageType = '';
             let message = '';
 
-            const careplanActivity = await this._careplanRepo.getActivity(userTask.ActionId);
+            const careplanActivity: CareplanActivityDto = await this._careplanRepo.getActivity(userTask.ActionId);
             const rawContent = JSON.parse(careplanActivity.RawContent);
-            if (userTask.Category === UserTaskCategory.Assessment) {
+            let isAssessmentWithForm = false;
+
+            if (
+                userTask.Category === UserTaskCategory.Assessment &&
+                rawContent?.Metadata &&
+                userTask.Channel === NotificationChannel.WhatsApp || userTask.Channel === NotificationChannel.WhatsappWati
+            ) {
+                const whatsappFormMetadata = this.getWhatsappFormMetadata(careplanActivity.RawContent);
+                this.validateWhatsappFormMetadata(whatsappFormMetadata);
+                messageType = 'reancareAssessmentWithForm';
+                message = JSON.stringify({ message: "Sending assessment with form to Rean bot" });
+                userTask.Metadata = whatsappFormMetadata;
+                isAssessmentWithForm = true;
+                Logger.instance().log(`IsAssessmentWithForm: true for task ${JSON.stringify(userTask)}`);
+            }
+            if (userTask.Category === UserTaskCategory.Assessment && !isAssessmentWithForm) {
                 const entity = {
                     PatientUserId        : userTask.UserId ?? null,
                     AssessmentTemplateId : rawContent.ReferenceTemplateId ?? null,
@@ -110,7 +129,7 @@ export class UserTaskSenderService {
                         .split('T')[0] ?? null,
                 };
                 const assessment = await this._assessmentService.create(entity);
-                userTask["Action"] = { Assessment: assessment };
+                userTask.Action = { Assessment: assessment };
                 messageType = 'reancareAssessment';
                 message  = "{\"message\":\"Sending assessment to Rean bot\"}";
 
@@ -143,7 +162,7 @@ export class UserTaskSenderService {
             }
         }
         catch (error) {
-            Logger.instance().log(`${JSON.stringify(error.message, null, 2)}`);
+            Logger.instance().log(`Error sending user task on bot: ${JSON.stringify(error.message, null, 2)}`);
         }
         return true;
     };
@@ -169,6 +188,38 @@ export class UserTaskSenderService {
         }
     }
 
+    private getWhatsappFormMetadata = (rawContent: string): WhatsAppFlowTemplateRequest => {
+        try {
+            if (!rawContent) {
+                return null;
+            }
+            const content = JSON.parse(rawContent);
+            if (content?.Metadata) {
+                const metadata = JSON.parse(content.Metadata) as WhatsAppFlowTemplateRequest;
+                return metadata;
+            }
+            return null;
+        }
+        catch (error) {
+            Logger.instance().log(`Error getting whatsapp form metadata: ${JSON.stringify(error.message, null, 2)}`);
+            return null;
+        }
+        
+    };
+
+    private validateWhatsappFormMetadata = (whatsappFormMetadata: WhatsAppFlowTemplateRequest): boolean => {
+        if (
+            !whatsappFormMetadata                       ||
+            whatsappFormMetadata.Type !== 'template'    ||
+            !whatsappFormMetadata.TemplateName
+        ) {
+            Logger.instance().log(`Whatsapp form metadata is not valid : ${JSON.stringify(whatsappFormMetadata)}`);
+            throw new ApiError(400, `Whatsapp form metadata is not valid`);
+        }
+        return true;
+        
+    };
+          
     private timer = ms => new Promise(res => setTimeout(res, ms));
 
 }

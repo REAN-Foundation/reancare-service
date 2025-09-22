@@ -195,7 +195,7 @@ export class UserTaskSenderService {
             }
             const content = JSON.parse(rawContent);
             if (content?.Metadata) {
-                const metadata = content.Metadata as WhatsAppFlowTemplateRequest;
+                const metadata = JSON.parse(content.Metadata) as WhatsAppFlowTemplateRequest;
                 return metadata;
             }
             return null;

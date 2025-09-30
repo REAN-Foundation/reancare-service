@@ -80,7 +80,8 @@
                 "Search": true,
                 "StartAssessment": false,
                 "Update": false,
-                "SkipQuestion": false
+                "SkipQuestion": false,
+                "SubmitAtOnce": false
             },
             "AssessmentTemplate": {
                 "AddNode": false,

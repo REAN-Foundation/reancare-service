@@ -25,3 +25,17 @@ export interface AssessmentDomainModel {
     ScheduledDateString?   : uuid;
     TotalNumberOfQuestions?: number;
 }
+
+export interface AssessmentSubmissionDomainModel {
+    PatientUserId? : uuid;
+    AssessmentTemplateId? : uuid;
+    AssessmentTemplateTitle? : string;
+    ClientName? : string;
+    TenantId? : string;
+    ScoringApplicable? : boolean;
+    ProviderEnrollmentId? : string;
+    ProviderAssessmentCode? : string;
+    Provider? : string;
+    FlowToken? : string;
+    Answers? : Record<string, any>;
+}

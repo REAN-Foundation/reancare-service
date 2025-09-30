@@ -25,5 +25,7 @@ export const register = (app: express.Application): void => {
     router.put('/:id', auth(AssessmentAuth.update), controller.update);
     router.delete('/:id', auth(AssessmentAuth.delete), controller.delete);
 
+    router.post('/:templateId/submit-at-once/:submissionType', auth(AssessmentAuth.submitAtOnce), controller.submitAtOnce);
+
     app.use('/api/v1/clinical/assessments/', router);
 };

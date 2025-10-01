@@ -2,7 +2,7 @@ import { inject, injectable } from "tsyringe";
 import { IAssessmentRepo } from "../../../database/repository.interfaces/clinical/assessment/assessment.repo.interface";
 import { IAssessmentHelperRepo } from "../../../database/repository.interfaces/clinical/assessment/assessment.helper.repo.interface";
 import { AssessmentDomainModel, AssessmentSubmissionDomainModel } from "../../../domain.types/clinical/assessment/assessment.domain.model";
-import { AssessmentNodeType, AssessmentType, CAssessmentQuestionNode, QueryResponseType } from "../../../domain.types/clinical/assessment/assessment.types";
+import { AssessmentNodeType, AssessmentType, CAssessmentMessageNode, CAssessmentQuestionNode, QueryResponseType } from "../../../domain.types/clinical/assessment/assessment.types";
 import { ApiError } from "../../../common/api.error";
 import { uuid } from "../../../domain.types/miscellaneous/system.types";
 import { Injector } from "../../../startup/injector";
@@ -42,13 +42,19 @@ export class AssessmentWhatsappFormSubmissionService {
         let questionNodes = nodes.filter(x => x.NodeType !== AssessmentNodeType.NodeList &&
             x.NodeType !== AssessmentNodeType.Message) as CAssessmentQuestionNode[];
         
+        const messageNodes = nodes.filter(x => x.NodeType === AssessmentNodeType.Message) as CAssessmentMessageNode[];
+
+        for await (var messageNode of messageNodes) {
+            await this.submitResponseForMessageNode(assessment.id, messageNode);
+        }
+
         questionNodes = questionNodes.sort((a, b) => {
             return a.Sequence - b.Sequence;
         });
         
         for await (var node  of questionNodes) {
             this.isSubmittedAnswerValid(node, submission.Answers);
-            await this.submitAnswer(assessment.id, node, submission.Answers);
+            await this.submitResponseForQuestionNode(assessment.id, node, submission.Answers);
         }
 
         const completedAssessment = await this._assessmentRepo.completeAssessment(assessment.id);
@@ -60,7 +66,7 @@ export class AssessmentWhatsappFormSubmissionService {
         return completedAssessment;
     };
 
-    private submitAnswer =
+    private submitResponseForQuestionNode =
     async (assessmentId: uuid, node: CAssessmentQuestionNode, answers: Record<string, any>) => {
         const isAnswered = await this._assessmentService.isAnswered(assessmentId, node.id);
         if (isAnswered) {
@@ -73,6 +79,24 @@ export class AssessmentWhatsappFormSubmissionService {
             AssessmentId   : assessmentId
         };
         answerModel = await this.getAnswer(answerModel, node, answers);
+
+        const answerResponse = await this._assessmentService.answerQuestion(answerModel);
+        return answerResponse;
+    };
+
+    private submitResponseForMessageNode =
+    async (assessmentId: uuid, node: CAssessmentMessageNode) => {
+        const isAnswered = await this._assessmentService.isAnswered(assessmentId, node.id);
+        if (isAnswered) {
+            throw new ApiError(400, `The question ${node?.Title} has already been answered!`);
+        }
+
+        const answerModel: AssessmentAnswerDomainModel = {
+            QuestionNodeId : node.id,
+            ResponseType   : QueryResponseType.Ok,
+            AssessmentId   : assessmentId,
+            BooleanValue   : true
+        };
 
         const answerResponse = await this._assessmentService.answerQuestion(answerModel);
         return answerResponse;

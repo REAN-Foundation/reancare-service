@@ -583,6 +583,10 @@
         "Update": false
     },
     "Statistics": {
+        "AhaNumbers": {
+            "Upload": false,
+            "Download": false
+        },
         "AppStats": {
             "GetAllYears": false,
             "GetAppDownlodCount": false,

@@ -464,6 +464,8 @@
     "Statistics.UserEngagement.GetUserEngagementStatsForUser",
     "Statistics.DailyStatistics.GetDailyTenantStats",
     "Statistics.DailyStatistics.GetDailySystemStats",
+    "Statistics.AhaNumbers.Upload",
+    "Statistics.AhaNumbers.Download",
     "Tenant.Tenants.Create",
     "Tenant.Tenants.Delete",
     "Tenant.Tenants.DemoteAdmin",

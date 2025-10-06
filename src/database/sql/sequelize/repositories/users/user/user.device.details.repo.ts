@@ -103,6 +103,9 @@ export class UserDeviceDetailsRepo implements IUserDeviceDetailsRepo {
             if (filters.AppVersion != null) {
                 search.where['AppVersion'] = filters.AppVersion;
             }
+            if (filters.IsNotificationEnabled != null) {
+                search.where['IsNotificationEnabled'] = filters.IsNotificationEnabled;
+            }
             let orderByColum = 'CreatedAt';
             if (filters.OrderBy) {
                 orderByColum = filters.OrderBy;
@@ -180,7 +183,10 @@ export class UserDeviceDetailsRepo implements IUserDeviceDetailsRepo {
             if (userDeviceDetailsDomainModel.ChangeCount != null) {
                 userDeviceDetails.ChangeCount = userDeviceDetailsDomainModel.ChangeCount;
             }
-
+            if (userDeviceDetailsDomainModel.IsNotificationEnabled != null) {
+                userDeviceDetails.IsNotificationEnabled = userDeviceDetailsDomainModel.IsNotificationEnabled;
+            }
+            
             await userDeviceDetails.save();
 
             const dto = UserDeviceDetailsMapper.toDto(userDeviceDetails);

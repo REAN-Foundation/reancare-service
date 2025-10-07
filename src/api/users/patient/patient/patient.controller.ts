@@ -25,6 +25,7 @@ import { MedicationConsumptionService } from '../../../../services/clinical/medi
 import { PatientSearchFilters } from '../../../../domain.types/users/patient/patient/patient.search.types';
 import { UserEvents } from '../../user/user.events';
 import { PatientDeleteService } from '../../../../services/users/patient/patient.delete.service';
+import { UserDeleteEvent } from '../../../../domain.types/events/event.types';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -295,10 +296,10 @@ export class PatientController extends BaseUserController {
             const currentUserId = request.currentUser.UserId;
             const patientUserId = userId;
             const patient = await this._service.getByUserId(userId);
-            const personId = patient.User.PersonId;
             if (!patient) {
                 throw new ApiError(404, 'Patient account does not exist!');
             }
+            const personId = patient.User.PersonId;
             if (currentUserId !== patientUserId) {
                 throw new ApiError(403, 'You do not have permissions to delete this patient account.');
             }
@@ -330,7 +331,12 @@ export class PatientController extends BaseUserController {
                 throw new ApiError(400, 'User cannot be deleted.');
             }
 
-            await this._patientDeleteService.enqueueDeletePatientData(userId);
+            const userDeleteEvent: UserDeleteEvent = {
+                PatientUserId : userId,
+                TenantId      : user.TenantId,
+                TenantName    : user.TenantCode,
+            };
+            await this._patientDeleteService.enqueueDeletePatientData(userDeleteEvent);
 
             //TODO: Please add check here whether the patient-person
             //has other roles in the system

@@ -640,7 +640,7 @@ export class UserTaskRepo implements IUserTaskRepo {
         return { stats, totalFinished, totalUnfinished };
     }
 
-    getUserTasksOfSelectiveChannel = async (timePeriod): Promise<any[]> => {
+    getUserTasksOfSelectiveChannel = async (timePeriod): Promise<UserTaskDto[]> => {
         try {
             const from = new Date();
             const to = TimeHelper.addDuration(from, timePeriod, DurationType.Minute);

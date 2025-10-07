@@ -15,13 +15,17 @@ import { AssessmentDto } from '../../../../domain.types/clinical/assessment/asse
 import { Logger } from '../../../../common/logger';
 import { EHRAssessmentService } from '../../../../modules/ehr.analytics/ehr.services/ehr.assessment.service';
 import { BaseController } from '../../../../api/base.controller';
-import { AssessmentDomainModel } from '../../../../domain.types/clinical/assessment/assessment.domain.model';
+import { AssessmentDomainModel, AssessmentSubmissionDomainModel } from '../../../../domain.types/clinical/assessment/assessment.domain.model';
 import { PermissionHandler } from '../../../../auth/custom/permission.handler';
 import { AssessmentSearchFilters } from '../../../../domain.types/clinical/assessment/assessment.search.types';
 import { EHRPatientService } from '../../../../modules/ehr.analytics/ehr.services/ehr.patient.service';
 import { HealthProfileService } from '../../../../services/users/patient/health.profile.service';
 import { AssessmentEvents } from '../assessment.events';
 import { ActivityTrackerHandler } from '../../../../services/users/patient/activity.tracker/activity.tracker.handler';
+import { PatientService } from '../../../../services/users/patient/patient.service';
+import { AssessmentTemplateService } from '../../../../services/clinical/assessment/assessment.template.service';
+import { TenantService } from '../../../../services/tenant/tenant.service';
+import { AssessmentWhatsappFormSubmissionService } from '../../../../services/clinical/assessment/assessment.whatsapp.form.submission.service';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -42,6 +46,14 @@ export class AssessmentController extends BaseController {
     _ehrPatientService = Injector.Container.resolve(EHRPatientService);
 
     _healthProfileService = Injector.Container.resolve(HealthProfileService);
+
+    _patientService = Injector.Container.resolve(PatientService);
+
+    _assessmentTemplateService = Injector.Container.resolve(AssessmentTemplateService);
+
+    _tenantService = Injector.Container.resolve(TenantService);
+
+    _assessmentWhatsappFormSubmissionService = Injector.Container.resolve(AssessmentWhatsappFormSubmissionService);
 
     _validator: AssessmentValidator = new AssessmentValidator();
 
@@ -457,6 +469,36 @@ export class AssessmentController extends BaseController {
         }
     };
 
+    submitAtOnce = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+            await this._validator.getParamUuid(request, 'templateId');
+            await this._validator.getParamStr(request, 'submissionType');
+            
+            const submissionModel: AssessmentSubmissionDomainModel = await this._validator.submitAtOnce(request);
+            await this.authorizeOne(request, submissionModel.PatientUserId);
+            
+            const patient = await this._patientService.getByUserId(submissionModel.PatientUserId);
+            if (patient == null) {
+                throw new ApiError(404, 'Patient not found.');
+            }
+
+            const template = await this._assessmentTemplateService.getById(submissionModel.AssessmentTemplateId);
+            if (template == null) {
+                throw new ApiError(404, 'Assessment template not found.');
+            }
+
+            const tenant = await this._tenantService.getById(submissionModel.TenantId);
+            if (tenant == null) {
+                throw new ApiError(404, 'Tenant not found.');
+            }
+            
+            const completedAssessment = await this._assessmentWhatsappFormSubmissionService.submitAtOnce(submissionModel);
+            
+            ResponseHandler.success(request, response, 'Assessment submitted successfully!', 200, { Assessment: completedAssessment });
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
     //#endregion
 
     //#region Privates

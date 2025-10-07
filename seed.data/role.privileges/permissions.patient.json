@@ -80,7 +80,8 @@
                 "Search": true,
                 "StartAssessment": true,
                 "Update": true,
-                "SkipQuestion": true
+                "SkipQuestion": true,
+                "SubmitAtOnce": true
             },
             "AssessmentTemplate": {
                 "AddNode": false,
@@ -582,6 +583,10 @@
         "Update": false
     },
     "Statistics": {
+        "AhaNumbers": {
+            "Upload": false,
+            "Download": false
+        },
         "AppStats": {
             "GetAllYears": false,
             "GetAppDownlodCount": false,

@@ -10,6 +10,7 @@ export interface UserDeviceDetailsSearchFilters {
     OSVersion?    : string;
     AppName?      : string;
     AppVersion?   : string;
+    IsNotificationEnabled? : boolean;
     OrderBy?      : string;
     Order?        : string;
     PageIndex?    : number;

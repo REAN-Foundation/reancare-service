@@ -382,4 +382,19 @@ export class TenantRepo implements ITenantRepo {
         }
     };
 
+    getActiveTenants = async (): Promise<TenantDto[]> => {
+        try {
+            const tenants = await Tenant.findAll({
+                where : { DeletedAt: null }
+            });
+            const dtos: TenantDto[] = tenants.map((tenant) => {
+                return TenantMapper.toDto(tenant);
+            });
+            return dtos;
+        }
+        catch (error) {
+            throw new Error(`Failed to fetch active tenants: ${error.message}`);
+        }
+    };
+
 }

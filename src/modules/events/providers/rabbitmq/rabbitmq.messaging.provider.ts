@@ -60,7 +60,6 @@ export class RabbitMqMessagingProvider implements IMessagingProvider {
             
         } catch (error) {
             Logger.instance().log(`Failed to initialize RabbitMQ: ${error.message}`);
-            throw error;
         }
     }
     

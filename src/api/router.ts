@@ -92,7 +92,7 @@ import { register as registerFollowUpCancellationRoutes } from './tenant/followu
 import { register as registerPregnancyRoutes } from './clinical/maternity/pregnancy/pregnancy.route';
 import { register as registerDeliveryRoutes } from './clinical/maternity/delivery/delivery.route';
 import { register as registerVisitRoutes } from './clinical/visit/visit.routes';
-
+import { register as registerAhaNumbersRoutes } from './statistics/aha.numbers/aha.numbers.routes';
 
 ////////////////////////////////////////////////////////////////////////////////////
 
@@ -209,7 +209,8 @@ export class Router {
                 registerPregnancyRoutes(this._app);
                 registerDeliveryRoutes(this._app);
                 registerVisitRoutes(this._app);
-
+                registerAhaNumbersRoutes(this._app);
+                
                 resolve(true);
 
             } catch (error) {

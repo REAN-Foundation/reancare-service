@@ -31,7 +31,7 @@ export class UserDeviceDetailsController extends BaseUserController {
 
     create = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            this.addUserDeviceDetails(request);
+            await this.addUserDeviceDetails(request);
 
             // TODO - whole of this bussiness logic should get executed in queue.
             ResponseHandler.success(request, response, 'User device details record created successfully!', 201, {

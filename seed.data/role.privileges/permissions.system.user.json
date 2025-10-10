@@ -80,7 +80,8 @@
                 "Search": true,
                 "StartAssessment": false,
                 "Update": false,
-                "SkipQuestion": true
+                "SkipQuestion": true,
+                "SubmitAtOnce": true
             },
             "AssessmentTemplate": {
                 "AddNode": true,
@@ -582,6 +583,10 @@
         "Update": true
     },
     "Statistics": {
+        "AhaNumbers": {
+            "Upload": true,
+            "Download": true
+        },
         "AppStats": {
             "GetAllYears": true,
             "GetAppDownlodCount": true,
@@ -637,7 +642,8 @@
             "CreateSecret": false,
             "GetSecret": false,
             "GetSecretByCode": false,
-            "UpdateSecret": false
+            "UpdateSecret": false,
+            "GetActiveTenants": false
         },
         "Settings": {
             "GetTenantSettingsTypes": true,

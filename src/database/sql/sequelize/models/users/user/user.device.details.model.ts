@@ -98,6 +98,12 @@ export default class UserDeviceDetails extends Model {
     })
     ChangeCount: number;
 
+    @Column({
+        type      : DataType.BOOLEAN,
+        allowNull : true,
+    })
+    IsNotificationEnabled: boolean;
+
     @Column
     @CreatedAt
     CreatedAt: Date;

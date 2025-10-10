@@ -33,7 +33,7 @@ export interface IUserTaskRepo {
 
     getUserEngagementStats(patientUserId: string, numMonths: number): Promise<any>;
 
-    getUserTasksOfSelectiveChannel(timePeriod: number): Promise<any>;
+    getUserTasksOfSelectiveChannel(timePeriod: number): Promise<UserTaskDto[]>;
 
     getMostRecentUserActivity(userId: string): Promise<MostRecentActivityDto>;
 

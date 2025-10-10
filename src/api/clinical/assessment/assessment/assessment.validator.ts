@@ -1,6 +1,6 @@
 import express from 'express';
 import { QueryResponseType } from '../../../../domain.types/clinical/assessment/assessment.types';
-import { AssessmentDomainModel } from '../../../../domain.types/clinical/assessment/assessment.domain.model';
+import { AssessmentDomainModel, AssessmentSubmissionDomainModel } from '../../../../domain.types/clinical/assessment/assessment.domain.model';
 import { AssessmentSearchFilters } from '../../../../domain.types/clinical/assessment/assessment.search.types';
 import { BaseValidator, Where } from '../../../base.validator';
 import { AssessmentAnswerDomainModel } from '../../../../domain.types/clinical/assessment/assessment.answer.domain.model';
@@ -164,6 +164,32 @@ export class AssessmentValidator extends BaseValidator {
             answerModelList.push(answerModel);
         }
         return answerModelList;
+    };
+
+    submitAtOnce = async (request: express.Request): Promise<AssessmentSubmissionDomainModel> => {
+        await this.validateString(request, 'PatientUserId', Where.Body, true, false, false, 1);
+        await this.validateString(request, 'AssessmentTemplateId', Where.Body, true, false, false, 1);
+        await this.validateString(request, 'AssessmentTemplateTitle', Where.Body, true, false);
+        await this.validateString(request, 'ClientName', Where.Body, true, false, false, 1);
+        await this.validateString(request, 'TenantId', Where.Body, true, false, false, 1);
+        await this.validateString(request, 'FlowToken', Where.Body, false, false);
+        await this.validateObject(request, 'Answers', Where.Body, true, false);
+        this.validateRequest(request);
+        
+        var submissionModel: AssessmentSubmissionDomainModel = {
+            PatientUserId           : request.body.PatientUserId,
+            AssessmentTemplateId    : request.body.AssessmentTemplateId,
+            AssessmentTemplateTitle : request.body.AssessmentTemplateTitle ?? null,
+            ScoringApplicable       : request.body.ScoringApplicable ?? false,
+            ClientName              : request.body.ClientName,
+            TenantId                : request.body.TenantId,
+            FlowToken               : request.body.FlowToken ?? null,
+            Answers                 : request.body.Answers,
+            ProviderEnrollmentId    : request.body.ProviderEnrollmentId ?? null,
+            ProviderAssessmentCode  : request.body.ProviderAssessmentCode ?? null,
+            Provider                : request.body.Provider ?? null,
+        };
+        return submissionModel;
     };
 
     private getFilter(request): AssessmentSearchFilters {

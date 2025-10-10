@@ -67,7 +67,7 @@ export class TenantController extends BaseController {
             if (searchResults.TotalCount > 0) {
                 throw new ApiError(400, 'Tenant with this code already exists.');
             }
-            
+
             tenant = await this._service.create(model);
             if (tenant == null) {
                 throw new ApiError(400, 'Unable to create tenant.');
@@ -168,6 +168,20 @@ export class TenantController extends BaseController {
             await this.authorizeOne(request, null, tenant.id);
             ResponseHandler.success(request, response, 'Tenant retrieved successfully!', 200, {
                 Tenant : tenant,
+            });
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
+    getActiveTenants = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+            const tenants = await this._service.getActiveTenants();
+            if (tenants == null) {
+                throw new ApiError(404, 'No active tenant found.');
+            }
+            ResponseHandler.success(request, response, 'Active tenants retrieved successfully!', 200, {
+                Tenants : tenants,
             });
         } catch (error) {
             ResponseHandler.handleError(request, response, error);

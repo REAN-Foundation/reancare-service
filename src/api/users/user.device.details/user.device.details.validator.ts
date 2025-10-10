@@ -12,14 +12,15 @@ export class UserDeviceDetailsValidator {
     static getDomainModel = (request: express.Request): UserDeviceDetailsDomainModel => {
 
         const UserDeviceDetailsModel: UserDeviceDetailsDomainModel = {
-            Token       : request.body.Token,
-            UserId      : request.body.UserId,
-            DeviceName  : request.body.DeviceName,
-            OSType      : request.body.OSType,
-            OSVersion   : request.body.OSVersion,
-            AppName     : request.body.AppName,
-            AppVersion  : request.body.AppVersion,
-            ChangeCount : request.body.ChangeCount,
+            Token                 : request.body.Token,
+            UserId                : request.body.UserId,
+            DeviceName            : request.body.DeviceName,
+            OSType                : request.body.OSType,
+            OSVersion             : request.body.OSVersion,
+            AppName               : request.body.AppName,
+            AppVersion            : request.body.AppVersion,
+            ChangeCount           : request.body.ChangeCount,
+            IsNotificationEnabled : request.body.IsNotificationEnabled ?? null,
         };
 
         return UserDeviceDetailsModel;
@@ -98,6 +99,12 @@ export class UserDeviceDetailsValidator {
             .isInt()
             .run(request);
 
+        await query('isNotificationEnabled').optional()
+            .trim()
+            .isIn(['true', 'false', '1', '0'])
+            .withMessage('isNotificationEnabled must be true, false, 1, or 0')
+            .run(request);
+
         const result = validationResult(request);
         if (!result.isEmpty()) {
             Helper.handleValidationError(result);
@@ -160,6 +167,11 @@ export class UserDeviceDetailsValidator {
             .escape()
             .run(request);
 
+        await body('IsNotificationEnabled').optional()
+            .isBoolean()
+            .escape()
+            .run(request);
+
         const result = validationResult(request);
         if (!result.isEmpty()) {
             Helper.handleValidationError(result);
@@ -172,18 +184,25 @@ export class UserDeviceDetailsValidator {
         const itemsPerPage =
             request.query.ItemsPerPage !== 'undefined' ? parseInt(request.query.ItemsPerPage as string, 10) : 25;
 
+        let isNotificationEnabled = null;
+        const notificationEnabledParam = request.query.isNotificationEnabled;
+        if (notificationEnabledParam !== undefined && notificationEnabledParam !== null) {
+            isNotificationEnabled = notificationEnabledParam === 'true' || notificationEnabledParam === '1';
+        }
+            
         const filters: UserDeviceDetailsSearchFilters = {
-            UserId       : request.query.userId ?? null,
-            Token        : request.query.token ?? null,
-            DeviceName   : request.query.deviceName ?? null,
-            OSType       : request.query.oSType ?? null,
-            OSVersion    : request.query.oSVersion ?? null,
-            AppName      : request.query.appName ?? null,
-            AppVersion   : request.query.appVersion ?? null,
-            OrderBy      : request.query.orderBy ?? 'CreatedAt',
-            Order        : request.query.order ?? 'descending',
-            PageIndex    : pageIndex,
-            ItemsPerPage : itemsPerPage,
+            UserId                : request.query.userId ?? null,
+            Token                 : request.query.token ?? null,
+            DeviceName            : request.query.deviceName ?? null,
+            OSType                : request.query.oSType ?? null,
+            OSVersion             : request.query.oSVersion ?? null,
+            AppName               : request.query.appName ?? null,
+            AppVersion            : request.query.appVersion ?? null,
+            IsNotificationEnabled : isNotificationEnabled,
+            OrderBy               : request.query.orderBy ?? 'CreatedAt',
+            Order                 : request.query.order ?? 'descending',
+            PageIndex             : pageIndex,
+            ItemsPerPage          : itemsPerPage,
         };
         return filters;
     }

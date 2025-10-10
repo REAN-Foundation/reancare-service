@@ -19,9 +19,7 @@ export class AhaNumbersService {
     constructor(
         @inject('IAhaNumbersRepo') private readonly _ahaNumbersRepo: AhaNumbersRepoInterface,
         @inject('IFileStorageService') private readonly _storageService: IFileStorageService
-    )
-    {
-    }
+    ) {}
 
     public _q = asyncLib.queue((onCompleted) => {
         (async () => {

@@ -111,6 +111,7 @@ import { BreastfeedingRepo } from './repositories/clinical/maternity/breastfeedi
 import { AntenatalVisitRepo } from './repositories/clinical/maternity/antenatal.visit.repo';
 import { AntenatalMedicationRepo } from './repositories/clinical/maternity/antenatal.medication.repo';
 import { TestRepo } from './repositories/clinical/maternity/test.repo';
+import { AhaNumbersRepo } from './repositories/statistics/aha.numbers.repo';
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -226,11 +227,13 @@ export class SequelizeInjector {
         container.register('IPostnatalMedicationRepo',PostnatalMedicationRepo);
         container.register('IVaccinationRepo',VaccinationRepo);
         container.register('IComplicationRepo',ComplicationRepo);
-        container.register('IBabyRepo',BabyRepo); 
-        container.register('IBreastfeedingRepo',BreastfeedingRepo); 
+        container.register('IBabyRepo',BabyRepo);
+        container.register('IBreastfeedingRepo',BreastfeedingRepo);
         container.register('IAntenatalVisitRepo',AntenatalVisitRepo);
         container.register('IAntenatalMedicationRepo',AntenatalMedicationRepo);
         container.register('ITestRepo',TestRepo);
+        container.register('IAhaNumbersRepo',AhaNumbersRepo);
 
     }
+
 }

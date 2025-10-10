@@ -64,7 +64,7 @@
         "node-cron": "^3.0.0",
         "node-html-to-image": "^5.0.0",
         "node-xlsx": "^0.4.0",
-        "nodemailer": "^6.9.9",
+        "nodemailer": "^7.0.7",
         "pdfkit": "^0.13.0",
         "pg": "^8.11.3",
         "pg-hstore": "^2.3.3",

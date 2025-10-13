@@ -567,7 +567,7 @@ export class TenantSettingsValidator extends BaseValidator {
             Emojis              : request.body.ChatBot.Emojis,
             BasicAssessment     : request.body.ChatBot.BasicAssessment,
             BasicCarePlan       : request.body.ChatBot.BasicCarePlan,
-            Timezone            : request.body.ChatBot.Timezone,
+            Timezone            : request.body.ChatBot.Timezone ?? '+05:30',
 
         };
 

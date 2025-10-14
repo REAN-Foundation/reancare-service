@@ -51,4 +51,22 @@ export class AssessmentHelperService {
         return query;
     }
 
+    public static extractFieldIdentifierData(assessment: AssessmentDto): Record<string, string> | null {
+      
+        const userResponses = assessment.UserResponses || [];
+        const extractedData: Record<string, string> = {};
+      
+        for (const response of userResponses) {
+            const fieldIdentifier = response.Node?.FieldIdentifier;
+            const value = response.ResponseType === QueryResponseType.Text ? response.TextValue : null;
+      
+            if (fieldIdentifier && value) {
+                const key = fieldIdentifier.split(":").pop();
+                extractedData[key] = value;
+            }
+        }
+      
+        return extractedData;
+    }
+
 }

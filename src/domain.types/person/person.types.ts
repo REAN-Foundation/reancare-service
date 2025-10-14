@@ -9,3 +9,8 @@ export interface GenderDetails {
     Count: number,
     Ratio: string
 }
+
+export enum CountryCode {
+    India = '+91',
+    UnitedStates = '+1'
+}

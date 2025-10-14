@@ -5,6 +5,8 @@ export const AssessmentFieldIdentifiers = [
     'General:PersonalProfile:Age',
     'General:PersonalProfile:DateOfBirth',
     'General:PersonalProfile:Gender',
+    'General:PersonalProfile:Phone',
+    'General:PersonalProfile:EMRId',
     'Clinical:HealthProfile:BloodGroup',
     'Clinical:HealthProfile:Ethnicity',
     'Clinical:HealthProfile:Race',

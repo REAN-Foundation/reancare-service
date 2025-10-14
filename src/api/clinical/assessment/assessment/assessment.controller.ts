@@ -8,7 +8,7 @@ import { UserTaskService } from '../../../../services/users/user/user.task.servi
 import { Injector } from '../../../../startup/injector';
 import { AssessmentValidator } from './assessment.validator';
 import { AssessmentQuestionResponseDto } from '../../../../domain.types/clinical/assessment/assessment.question.response.dto';
-import { AssessmentNodeType, CAssessmentListNode } from '../../../../domain.types/clinical/assessment/assessment.types';
+import { AssessmentNodeType, AssessmentType, CAssessmentListNode } from '../../../../domain.types/clinical/assessment/assessment.types';
 import { AssessmentHelperRepo } from '../../../../database/sql/sequelize/repositories/clinical/assessment/assessment.helper.repo';
 import { CustomActionsHandler } from '../../../../custom/custom.actions.handler';
 import { AssessmentDto } from '../../../../domain.types/clinical/assessment/assessment.dto';
@@ -26,6 +26,10 @@ import { PatientService } from '../../../../services/users/patient/patient.servi
 import { AssessmentTemplateService } from '../../../../services/clinical/assessment/assessment.template.service';
 import { TenantService } from '../../../../services/tenant/tenant.service';
 import { AssessmentWhatsappFormSubmissionService } from '../../../../services/clinical/assessment/assessment.whatsapp.form.submission.service';
+import { AssessmentHelperService } from '../../../../services/clinical/assessment/assessment.helper';
+import { PatientDomainModel } from '../../../../domain.types/users/patient/patient/patient.domain.model';
+import { UserHelper } from '../../../../api/users/user.helper';
+import { UserService } from '../../../../services/users/user/user.service';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -53,17 +57,21 @@ export class AssessmentController extends BaseController {
 
     _tenantService = Injector.Container.resolve(TenantService);
 
+    _userHelper: UserHelper = new UserHelper();
+
     _assessmentWhatsappFormSubmissionService = Injector.Container.resolve(AssessmentWhatsappFormSubmissionService);
 
     _validator: AssessmentValidator = new AssessmentValidator();
 
-    constructor() {
-        super();
-    }
+   _userService: UserService = Injector.Container.resolve(UserService);
 
-    //#endregion
+   constructor() {
+       super();
+   }
 
-    //#region Action methods
+   //#endregion
+
+   //#region Action methods
 
     create = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
@@ -494,15 +502,78 @@ export class AssessmentController extends BaseController {
             
             const completedAssessment = await this._assessmentWhatsappFormSubmissionService.submitAtOnce(submissionModel);
             
-            ResponseHandler.success(request, response, 'Assessment submitted successfully!', 200, { Assessment: completedAssessment });
+            let message = 'Assessment submitted successfully.';
+            if (completedAssessment.Type === AssessmentType.UserRegistration) {
+                const status = await this.PostUserRegistration(completedAssessment.id, submissionModel.TenantId);
+                message = message + ' ' + status;
+            }
+
+            if (completedAssessment.Type === AssessmentType.Clinical) {
+                const status = await this.PostUserValidation(completedAssessment.id, submissionModel.TenantId);
+                message = message + ' ' + status;
+            }
+
+            ResponseHandler.success(request, response, message, 200, { Assessment: completedAssessment });
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
         }
     };
+
     //#endregion
 
     //#region Privates
 
+    private PostUserValidation = async (assessmentId: uuid, tenantId: uuid =  null) => {
+        try {
+            const assessment = await this._service.getById(assessmentId);
+            if (assessment == null) {
+                throw new ApiError(404, 'Assessment not found.');
+            }
+            const userData = AssessmentHelperService.extractFieldIdentifierData(assessment);
+            const userName = this._validator.postUserValidation(userData);
+            if (!userName) {
+                return;
+            }
+            const user = await this._userService.getByUserName(userName);
+            if (user == null) {
+                throw new ApiError(404, 'Invalid user name. Please resubmit the assessment with valid user name.');
+            }
+            return 'EMR ID ' + userName + ' validated successfully.';
+        } catch (error) {
+            Logger.instance().log(`Error in post user validation: ${error}`);
+            await this._service.delete(assessmentId);
+            return error.message || 'Unable to validate user.';
+        }
+    };
+
+    private PostUserRegistration = async (assessmentId: uuid, tenantId: uuid =  null) => {
+        try {
+            const assessment = await this._service.getById(assessmentId);
+            if (assessment == null) {
+                throw new ApiError(404, 'Assessment not found.');
+            }
+            const userData = AssessmentHelperService.extractFieldIdentifierData(assessment);
+            const model: PatientDomainModel = this._validator.postUserRegistration(userData);
+
+            if (tenantId) {
+                model.User.TenantId = tenantId;
+            }
+      
+            const [ patient, createdNew ] = await this._userHelper.createPatient(model);
+
+            if (createdNew) {
+                return `Welcome ${patient.User?.Person?.FirstName ?? 'Dear'} ${patient.User?.Person?.LastName ?? ''}!. Please note your username is ${patient.User?.UserName}`;
+            }
+
+            throw new ApiError(400, `User already exists with the Phone ${patient.User?.Person?.Phone} and user name is ${patient.User?.UserName}`);
+        } catch (error) {
+            Logger.instance().log(`Error in post user registration: ${error}`);
+            await this._service.delete(assessmentId);
+            return error.message || 'Unable to register user.';
+        }
+    
+    };
+    
     private async completeAssessmentTask(assessmentId: uuid) {
         var assessment = await this._service.completeAssessment(assessmentId);
         var parentActivityId = assessment.ParentActivityId;
@@ -526,6 +597,12 @@ export class AssessmentController extends BaseController {
                     RecentActivityDate : new Date(),
                 });
             }
+        }
+        if (assessment.Type === AssessmentType.UserRegistration) {
+            await this.PostUserRegistration(assessmentId);
+        }
+        if (assessment.Type === AssessmentType.Clinical) {
+            await this.PostUserValidation(assessmentId);
         }
     }
 

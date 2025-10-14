@@ -13,4 +13,5 @@ export interface AssessmentTemplateDomainModel {
     TotalNumberOfQuestions?     : number;
     TenantId?                   : uuid;
     Tags?                       : string[];
+    RawData?                    : string;
 }

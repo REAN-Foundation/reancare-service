@@ -4,11 +4,10 @@ import { AssessmentDomainModel, AssessmentSubmissionDomainModel } from '../../..
 import { AssessmentSearchFilters } from '../../../../domain.types/clinical/assessment/assessment.search.types';
 import { BaseValidator, Where } from '../../../base.validator';
 import { AssessmentAnswerDomainModel } from '../../../../domain.types/clinical/assessment/assessment.answer.domain.model';
-import { PatientDomainModel } from '../../../../domain.types/users/patient/patient/patient.domain.model';
 import { ApiError } from '../../../../common/api.error';
 import { Gender } from '../../../../domain.types/miscellaneous/system.types';
-import { SupportedLanguage } from '../../../../domain.types/users/user/user.types';
 import { CountryCode } from '../../../../domain.types/person/person.types';
+import { PersonDomainModel } from '../../../../domain.types/person/person.domain.model';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -251,7 +250,7 @@ export class AssessmentValidator extends BaseValidator {
 
     }
 
-    postUserRegistration = (request: Record<string, string>): PatientDomainModel => {
+    userRegistration = (request: Record<string, string>): PersonDomainModel => {
 
         if (!('FirstName' in request)) {
             throw new ApiError(400, 'Please provide a first name.');
@@ -266,49 +265,28 @@ export class AssessmentValidator extends BaseValidator {
         if (!request['Phone'].startsWith('+')) {
             request['Phone'] = CountryCode.India + '-' + request['Phone'];
         }
-        const model: PatientDomainModel = {
-            User : {
-                Person : {
-                    FirstName                 : request['FirstName'],
-                    LastName                  : request['LastName'],
-                    Phone                     : request['Phone'],
-                    Gender                    : request['Gender'] as Gender ?? null,
-                    BirthDate                 : request['BirthDate'] ? new Date(Date.parse(request['BirthDate'])) : null,
-                    Prefix                    : request['Prefix'] ?? null,
-                    Email                     : request['Email'] ?? null,
-                    UniqueReferenceId         : request['UniqueReferenceId'] ?? null,
-                    UniqueReferenceIdType     : request['UniqueReferenceIdType'] ?? null,
-                    SelfIdentifiedGender      : request['SelfIdentifiedGender'] ?? null,
-                    MaritalStatus             : request['MaritalStatus'] ?? null,
-                    Race                      : request['Race'] ?? null,
-                    Ethnicity                 : request['Ethnicity'] ?? null,
-                    StrokeSurvivorOrCaregiver : request['StrokeSurvivorOrCaregiver'] ?? null,
-                    ImageResourceId           : request['ImageResourceId'] ?? null,
-                },
-                id                : request['userId'],
-                UserName          : request['UserName'] ?? null,
-                DefaultTimeZone   : request['DefaultTimeZone'] ?? null,
-                CurrentTimeZone   : request['CurrentTimeZone'] ?? null,
-                PreferredLanguage : request['PreferredLanguage'] as SupportedLanguage ?? null,
-                TenantId          : request['TenantId'] ?? null,
-                TenantCode        : request['TenantCode'] ?? null,
-            },
-            HealthProfile : {
-                BloodGroup           : null,
-                BloodTransfusionDate : null,
-                BloodDonationCycle   : null,
-                OtherInformation     : null,
-            },
-            UserId                        : null,
-            Address                       : null,
-            CohortId                      : null,
-            ExternalMedicalRegistrationId : null,
-            GenerateOtp                   : true
+        const model: PersonDomainModel = {
+            FirstName                 : request['FirstName'],
+            LastName                  : request['LastName'],
+            Phone                     : request['Phone'],
+            Gender                    : request['Gender'] as Gender ?? null,
+            BirthDate                 : request['BirthDate'] ? new Date(Date.parse(request['BirthDate'])) : null,
+            Prefix                    : request['Prefix'] ?? null,
+            Email                     : request['Email'] ?? null,
+            UniqueReferenceId         : request['UniqueReferenceId'] ?? null,
+            UniqueReferenceIdType     : request['UniqueReferenceIdType'] ?? null,
+            SelfIdentifiedGender      : request['SelfIdentifiedGender'] ?? null,
+            MaritalStatus             : request['MaritalStatus'] ?? null,
+            Race                      : request['Race'] ?? null,
+            Ethnicity                 : request['Ethnicity'] ?? null,
+            StrokeSurvivorOrCaregiver : request['StrokeSurvivorOrCaregiver'] ?? null,
+            ImageResourceId           : request['ImageResourceId'] ?? null,
         };
+
         return model;
     };
 
-    postUserValidation = (request: Record<string, string>): string => {
+    validateAssessmentTargetUser = (request: Record<string, string>): string => {
         if (!('EMRId' in request)) {
             return null;
         }

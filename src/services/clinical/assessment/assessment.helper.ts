@@ -1,3 +1,4 @@
+import { Roles } from '../../../domain.types/role/role.types';
 import { AssessmentDto } from '../../../domain.types/clinical/assessment/assessment.dto';
 import { AssessmentQueryDto } from '../../../domain.types/clinical/assessment/assessment.query.dto';
 import {
@@ -67,6 +68,21 @@ export class AssessmentHelperService {
         }
       
         return extractedData;
+    }
+
+    public static extractUserRole(rawData: Record<string, any>): Roles {
+        if (!rawData || !('UserRegistration' in rawData) || !('UserRole' in rawData['UserRegistration'])) {
+            return Roles.Patient;
+        }
+    
+        const role = rawData['UserRegistration']['UserRole'];
+    
+        const validRoles = Object.values(Roles);
+        if (validRoles.includes(role)) {
+            return role;
+        }
+    
+        return Roles.Patient;
     }
 
 }

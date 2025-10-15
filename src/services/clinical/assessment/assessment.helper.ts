@@ -1,3 +1,4 @@
+import { Roles } from '../../../domain.types/role/role.types';
 import { AssessmentDto } from '../../../domain.types/clinical/assessment/assessment.dto';
 import { AssessmentQueryDto } from '../../../domain.types/clinical/assessment/assessment.query.dto';
 import {
@@ -49,6 +50,45 @@ export class AssessmentHelperService {
             ProviderGivenCode    : messageNode.ProviderGivenCode,
         };
         return query;
+    }
+
+    public static extractFieldIdentifierData(assessment: AssessmentDto): Record<string, string> | null {
+      
+        const userResponses = assessment.UserResponses || [];
+        const extractedData: Record<string, string> = {};
+      
+        for (const response of userResponses) {
+            const fieldIdentifier = response.Node?.FieldIdentifier;
+            const value = response.ResponseType === QueryResponseType.Text ? response.TextValue : null;
+      
+            if (fieldIdentifier && value) {
+                const key = fieldIdentifier.split(":").pop();
+                extractedData[key] = value;
+            }
+        }
+      
+        return extractedData;
+    }
+
+    public static extractUserRole(rawData: Record<string, any>): Roles {
+        if (!rawData || !('UserRegistration' in rawData) || !('UserRole' in rawData['UserRegistration'])) {
+            return Roles.Patient;
+        }
+    
+        const role = rawData['UserRegistration']['UserRole'];
+    
+        const validRoles = Object.values(Roles);
+        if (validRoles.includes(role)) {
+            if (role === Roles.SystemAdmin ||
+                role === Roles.SystemUser ||
+                role === Roles.TenantAdmin ||
+                role === Roles.TenantUser) {
+                return Roles.Patient;
+            }
+            return role;
+        }
+        
+        return Roles.Patient;
     }
 
 }

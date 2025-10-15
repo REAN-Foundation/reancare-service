@@ -148,6 +148,12 @@ export default class AssessmentTemplate extends Model {
     })
     Tags: string;
 
+    @Column({
+        type      : DataType.TEXT,
+        allowNull : true,
+    })
+    RawData: string;
+
     @Column
     @CreatedAt
     CreatedAt: Date;

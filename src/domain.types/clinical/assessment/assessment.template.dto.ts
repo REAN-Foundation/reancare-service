@@ -18,4 +18,5 @@ export interface AssessmentTemplateDto {
     QnAs?                         : any[];
     TotalNumberOfQuestions?       : number;
     Tags?                         : string[];
+    RawData?                      : Record<string, any>;
 }

@@ -16,7 +16,8 @@ export class AssessmentMapper {
         const dto: AssessmentDto = {
             id   : assessment.id,
             Type : assessment.AssessmentTemplate ?
-                assessment.AssessmentTemplate.Type as AssessmentType : null,
+                assessment.AssessmentTemplate.Type as AssessmentType : assessment.Type ?
+                assessment.Type as AssessmentType : null,
             DisplayCode            : assessment.DisplayCode,
             Title                  : assessment.Title,
             Description            : assessment.Description,

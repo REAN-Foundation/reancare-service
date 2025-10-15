@@ -32,6 +32,7 @@ export class AssessmentTemplateRepo implements IAssessmentTemplateRepo {
                 TotalNumberOfQuestions      : model.TotalNumberOfQuestions ?? null,
                 TenantId                    : model.TenantId ?? null,
                 Tags                        : model.Tags && model.Tags.length > 0 ? JSON.stringify(model.Tags) : null,
+                RawData                     : model.RawData ? JSON.stringify(model.RawData) : null,
             };
             const assessmentTemplate = await AssessmentTemplate.create(entity);
             return AssessmentTemplateMapper.toDto(assessmentTemplate);
@@ -175,6 +176,9 @@ export class AssessmentTemplateRepo implements IAssessmentTemplateRepo {
                     updateModel.Tags && updateModel.Tags.length > 0
                         ? JSON.stringify(updateModel.Tags)
                         : null;
+            }
+            if (updateModel.RawData != null) {
+                assessmentTemplate.RawData = JSON.stringify(updateModel.RawData);
             }
             await assessmentTemplate.save();
 

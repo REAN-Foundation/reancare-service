@@ -8,7 +8,7 @@ import { UserTaskService } from '../../../../services/users/user/user.task.servi
 import { Injector } from '../../../../startup/injector';
 import { AssessmentValidator } from './assessment.validator';
 import { AssessmentQuestionResponseDto } from '../../../../domain.types/clinical/assessment/assessment.question.response.dto';
-import { AssessmentNodeType, CAssessmentListNode } from '../../../../domain.types/clinical/assessment/assessment.types';
+import { AssessmentNodeType, AssessmentType, CAssessmentListNode } from '../../../../domain.types/clinical/assessment/assessment.types';
 import { AssessmentHelperRepo } from '../../../../database/sql/sequelize/repositories/clinical/assessment/assessment.helper.repo';
 import { CustomActionsHandler } from '../../../../custom/custom.actions.handler';
 import { AssessmentDto } from '../../../../domain.types/clinical/assessment/assessment.dto';
@@ -25,7 +25,19 @@ import { ActivityTrackerHandler } from '../../../../services/users/patient/activ
 import { PatientService } from '../../../../services/users/patient/patient.service';
 import { AssessmentTemplateService } from '../../../../services/clinical/assessment/assessment.template.service';
 import { TenantService } from '../../../../services/tenant/tenant.service';
-import { AssessmentWhatsappFormSubmissionService } from '../../../../services/clinical/assessment/assessment.whatsapp.form.submission.service';
+import { AssessmentSubmissionAtOnceService } from '../../../../services/clinical/assessment/assessment.submission.at.once.service';
+import { AssessmentHelperService } from '../../../../services/clinical/assessment/assessment.helper';
+import { PatientDomainModel } from '../../../../domain.types/users/patient/patient/patient.domain.model';
+import { UserHelper } from '../../../../api/users/user.helper';
+import { UserService } from '../../../../services/users/user/user.service';
+import { PersonDomainModel } from '../../../../domain.types/person/person.domain.model';
+import { Roles } from '../../../../domain.types/role/role.types';
+import { DoctorDomainModel } from '../../../../domain.types/users/doctor/doctor.domain.model';
+import { UserBasicDetails, UserDomainModel } from '../../../../domain.types/users/user/user.domain.model';
+import { PersonDetailsDto } from '../../../../domain.types/person/person.dto';
+import { RoleService } from '../../../../services/role/role.service';
+import { UserDetailsDto } from '../../../../domain.types/users/user/user.dto';
+import { PersonService } from '../../../../services/person/person.service';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -53,9 +65,17 @@ export class AssessmentController extends BaseController {
 
     _tenantService = Injector.Container.resolve(TenantService);
 
-    _assessmentWhatsappFormSubmissionService = Injector.Container.resolve(AssessmentWhatsappFormSubmissionService);
+    _userHelper: UserHelper = new UserHelper();
+
+    _assessmentSubmissionAtOnceService = Injector.Container.resolve(AssessmentSubmissionAtOnceService);
 
     _validator: AssessmentValidator = new AssessmentValidator();
+
+   _userService: UserService = Injector.Container.resolve(UserService);
+   
+     _roleService: RoleService = Injector.Container.resolve(RoleService);
+     
+    _personService: PersonService = Injector.Container.resolve(PersonService);
 
     constructor() {
         super();
@@ -492,16 +512,207 @@ export class AssessmentController extends BaseController {
                 throw new ApiError(404, 'Tenant not found.');
             }
             
-            const completedAssessment = await this._assessmentWhatsappFormSubmissionService.submitAtOnce(submissionModel);
+            const completedAssessment = await this._assessmentSubmissionAtOnceService.submitAtOnce(submissionModel);
             
-            ResponseHandler.success(request, response, 'Assessment submitted successfully!', 200, { Assessment: completedAssessment });
+            let message = 'Assessment submitted successfully.';
+            if (completedAssessment.Type === AssessmentType.UserRegistration) {
+                const status = await this.registerAssessmentTargetUser(completedAssessment.id, submissionModel.TenantId);
+                message = message + ' ' + status;
+            }
+
+            if (completedAssessment.Type === AssessmentType.Clinical) {
+                const status = await this.verifyAssessmentTargetUser(completedAssessment.id, submissionModel.TenantId);
+                message = message + ' ' + status;
+            }
+
+            ResponseHandler.success(request, response, message, 200, { Assessment: completedAssessment });
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
         }
     };
+
     //#endregion
 
     //#region Privates
+
+    private verifyAssessmentTargetUser = async (assessmentId: uuid, tenantId: uuid =  null) => {
+        try {
+            const assessment = await this._service.getById(assessmentId);
+            if (assessment == null) {
+                throw new ApiError(404, 'Assessment not found.');
+            }
+            const userData = AssessmentHelperService.extractFieldIdentifierData(assessment);
+            const userName = this._validator.validateAssessmentTargetUser(userData);
+            if (!userName) {
+                return;
+            }
+            const user = await this._userService.getByUserName(userName);
+            if (user == null) {
+                throw new ApiError(404, 'Invalid user name. Please resubmit the assessment with valid user name.');
+            }
+            return 'EMR Id ' + userName + ' validated successfully.';
+        } catch (error) {
+            Logger.instance().log(`Error in post user validation: ${error}`);
+            await this._service.delete(assessmentId);
+            return error.message || 'Unable to validate user.';
+        }
+    };
+
+    private registerAssessmentTargetUser  = async (assessmentId: uuid, tenantId: uuid =  null) => {
+        try {
+            const assessment = await this._service.getById(assessmentId);
+            if (assessment == null) {
+                throw new ApiError(404, 'Assessment not found.');
+            }
+            const template = await this._assessmentTemplateService.getById(assessment.AssessmentTemplateId);
+            if (template == null) {
+                throw new ApiError(404, 'Assessment template not found.');
+            }
+            const rawData = template.RawData ?? null;
+
+            const userRole: Roles  = AssessmentHelperService.extractUserRole(rawData);
+
+            const userData = AssessmentHelperService.extractFieldIdentifierData(assessment);
+            const model: PersonDomainModel = this._validator.userRegistration(userData);
+
+            const createdUser = await this.createUser(model, userRole, tenantId);
+
+            if (createdUser) {
+                return `Welcome ${createdUser.Person?.FirstName ?? 'Dear'} ${createdUser.Person?.LastName ?? ''}!. Please note your username is ${createdUser.UserName}`;
+            }
+
+            throw new ApiError(400, `User already exists with the Phone ${createdUser?.Person?.Phone} and user name is ${createdUser?.UserName}`);
+        } catch (error) {
+            Logger.instance().log(`Error in post user registration: ${error}`);
+            await this._service.delete(assessmentId);
+            return error.message || 'Unable to register user.';
+        }
+    
+    };
+    
+    private createUser = async (model: PersonDomainModel, userRole: Roles, tenantId: uuid) => {
+        if (userRole === Roles.Patient) {
+            return await this.createPatientUser(model, tenantId);
+        }
+    
+        if (userRole === Roles.Doctor) {
+            return await this.createDoctorUser(model, tenantId);
+        }
+    
+        return await this.createGenericUser(model, userRole, tenantId);
+    };
+
+    private async createPatientUser(model: PersonDomainModel, tenantId: uuid) {
+        const patientDomainModel: PatientDomainModel = {
+            User : {
+                Person : model
+            },
+            HealthProfile : {
+                BloodGroup           : null,
+                BloodTransfusionDate : null,
+                BloodDonationCycle   : null,
+                OtherInformation     : null,
+            },
+            UserId                        : null,
+            Address                       : null,
+            CohortId                      : null,
+            ExternalMedicalRegistrationId : null,
+            GenerateOtp                   : true,
+        };
+    
+        if (tenantId) {
+            patientDomainModel.User.TenantId = tenantId;
+        }
+    
+        const [patient, createdNew] = await this._userHelper.createPatient(patientDomainModel);
+    
+        if (createdNew) {
+            return await this._userService.getById(patient.User.id);
+        }
+    
+        return patient.User;
+    }
+    
+    private async createDoctorUser(model: PersonDomainModel, tenantId: uuid) {
+        const doctorDomainModel: DoctorDomainModel = {
+            User : { Person: model },
+        };
+    
+        if (tenantId) {
+            doctorDomainModel.User.TenantId = tenantId;
+        }
+    
+        const [doctor, createdNew] = await this._userHelper.createDoctor(doctorDomainModel);
+    
+        if (createdNew) {
+            return await this._userService.getById(doctor.User.id);
+        }
+    
+        return doctor.User;
+    }
+    
+    private async createGenericUser(model: PersonDomainModel, userRole: Roles, tenantId: uuid) {
+        const userDomainModel: UserDomainModel = { Person: model };
+    
+        if (tenantId) {
+            userDomainModel.TenantId = tenantId;
+        }
+    
+        const role = await this._roleService.getByName(userRole);
+        userDomainModel.RoleId = role?.id;
+    
+        let person: PersonDetailsDto = null;
+        let user: UserDetailsDto = null;
+
+        const basicDetails: UserBasicDetails = {
+            Phone      : userDomainModel.Person.Phone,
+            Email      : userDomainModel.Person.Email,
+            UserName   : userDomainModel.UserName,
+            TenantId   : userDomainModel.TenantId,
+            TenantCode : userDomainModel.TenantCode,
+        };
+    
+        await this._userHelper.performDuplicatePersonCheck(basicDetails.Phone, basicDetails.Email);
+    
+        const existingPerson = await this._userService.getExistingPerson(basicDetails);
+    
+        if (existingPerson == null) {
+            person = await this._personService.create(userDomainModel.Person);
+            if (person == null) {
+                throw new ApiError(400, 'Cannot create person!');
+            }
+        }
+        else {
+            person = existingPerson;
+            var existingUserWithRole = await this._userService.getUserByPersonIdAndRole(
+                existingPerson.id, userDomainModel.RoleId
+            );
+            if (existingUserWithRole) {
+                throw new ApiError(409, `User already exists with the same role.`);
+            }
+            await this._userHelper.checkMultipleAdministrativeRoles(userDomainModel.RoleId, existingPerson.id);
+        }
+
+        userDomainModel.Person.id = person.id;
+
+        const updatedPerson = await this._userHelper.updatePersonInformation(person, userDomainModel);
+
+        if (!updatedPerson) {
+            throw new ApiError(409, `User already exists with the same email.`);
+        }
+
+        if (!userDomainModel.UserName) {
+            userDomainModel.UserName = await this._userService.generateUserName(
+                userDomainModel.Person.FirstName, userDomainModel.Person.LastName
+            );
+        }
+
+        user = await this._userService.create(userDomainModel);
+        if (user == null) {
+            throw new ApiError(400, 'Cannot create user!');
+        }
+        return await this._userService.getById(user.id);
+    }
 
     private async completeAssessmentTask(assessmentId: uuid) {
         var assessment = await this._service.completeAssessment(assessmentId);
@@ -526,6 +737,12 @@ export class AssessmentController extends BaseController {
                     RecentActivityDate : new Date(),
                 });
             }
+        }
+        if (assessment.Type === AssessmentType.UserRegistration) {
+            await this.registerAssessmentTargetUser(assessmentId);
+        }
+        if (assessment.Type === AssessmentType.Clinical) {
+            await this.verifyAssessmentTargetUser(assessmentId);
         }
     }
 

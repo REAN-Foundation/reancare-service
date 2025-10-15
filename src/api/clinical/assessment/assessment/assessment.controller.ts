@@ -515,12 +515,14 @@ export class AssessmentController extends BaseController {
             const completedAssessment = await this._assessmentSubmissionAtOnceService.submitAtOnce(submissionModel);
             
             let message = 'Assessment submitted successfully.';
-            if (completedAssessment.Type === AssessmentType.UserRegistration) {
+            Logger.instance().log(`Template Type: ${template.Type}`);
+            Logger.instance().log(`Completed Assessment Type: ${completedAssessment.Type}`);
+            if (template.Type === AssessmentType.UserRegistration) {
                 const status = await this.registerAssessmentTargetUser(completedAssessment.id, submissionModel.TenantId);
                 message = message + ' ' + status;
             }
 
-            if (completedAssessment.Type === AssessmentType.Clinical) {
+            if (template.Type === AssessmentType.Clinical) {
                 const status = await this.verifyAssessmentTargetUser(completedAssessment.id, submissionModel.TenantId);
                 message = message + ' ' + status;
             }

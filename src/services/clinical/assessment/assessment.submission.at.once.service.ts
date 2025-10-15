@@ -10,7 +10,7 @@ import { AssessmentService } from "./assessment.service";
 import { AssessmentAnswerDomainModel } from "../../../domain.types/clinical/assessment/assessment.answer.domain.model";
 
 @injectable()
-export class AssessmentWhatsappFormSubmissionService {
+export class AssessmentSubmissionAtOnceService {
 
     _assessmentService = Injector.Container.resolve(AssessmentService);
 

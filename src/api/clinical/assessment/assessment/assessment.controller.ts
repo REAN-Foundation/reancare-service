@@ -25,7 +25,7 @@ import { ActivityTrackerHandler } from '../../../../services/users/patient/activ
 import { PatientService } from '../../../../services/users/patient/patient.service';
 import { AssessmentTemplateService } from '../../../../services/clinical/assessment/assessment.template.service';
 import { TenantService } from '../../../../services/tenant/tenant.service';
-import { AssessmentWhatsappFormSubmissionService } from '../../../../services/clinical/assessment/assessment.whatsapp.form.submission.service';
+import { AssessmentSubmissionAtOnceService } from '../../../../services/clinical/assessment/assessment.submission.at.once.service';
 import { AssessmentHelperService } from '../../../../services/clinical/assessment/assessment.helper';
 import { PatientDomainModel } from '../../../../domain.types/users/patient/patient/patient.domain.model';
 import { UserHelper } from '../../../../api/users/user.helper';
@@ -67,7 +67,7 @@ export class AssessmentController extends BaseController {
 
     _userHelper: UserHelper = new UserHelper();
 
-    _assessmentWhatsappFormSubmissionService = Injector.Container.resolve(AssessmentWhatsappFormSubmissionService);
+    _assessmentSubmissionAtOnceService = Injector.Container.resolve(AssessmentSubmissionAtOnceService);
 
     _validator: AssessmentValidator = new AssessmentValidator();
 
@@ -512,7 +512,7 @@ export class AssessmentController extends BaseController {
                 throw new ApiError(404, 'Tenant not found.');
             }
             
-            const completedAssessment = await this._assessmentWhatsappFormSubmissionService.submitAtOnce(submissionModel);
+            const completedAssessment = await this._assessmentSubmissionAtOnceService.submitAtOnce(submissionModel);
             
             let message = 'Assessment submitted successfully.';
             if (completedAssessment.Type === AssessmentType.UserRegistration) {

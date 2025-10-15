@@ -6,7 +6,7 @@ import { BaseValidator, Where } from '../../../base.validator';
 import { AssessmentAnswerDomainModel } from '../../../../domain.types/clinical/assessment/assessment.answer.domain.model';
 import { ApiError } from '../../../../common/api.error';
 import { Gender } from '../../../../domain.types/miscellaneous/system.types';
-import { CountryCode } from '../../../../domain.types/person/person.types';
+import { COUNTRY_CODE_INDIA } from '../../../../domain.types/person/person.types';
 import { PersonDomainModel } from '../../../../domain.types/person/person.domain.model';
 
 ///////////////////////////////////////////////////////////////////////////////////////
@@ -263,7 +263,7 @@ export class AssessmentValidator extends BaseValidator {
         }
 
         if (!request['Phone'].startsWith('+')) {
-            request['Phone'] = CountryCode.India + '-' + request['Phone'];
+            request['Phone'] = COUNTRY_CODE_INDIA + '-' + request['Phone'];
         }
         const model: PersonDomainModel = {
             FirstName                 : request['FirstName'],

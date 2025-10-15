@@ -79,9 +79,15 @@ export class AssessmentHelperService {
     
         const validRoles = Object.values(Roles);
         if (validRoles.includes(role)) {
+            if (role === Roles.SystemAdmin ||
+                role === Roles.SystemUser ||
+                role === Roles.TenantAdmin ||
+                role === Roles.TenantUser) {
+                return Roles.Patient;
+            }
             return role;
         }
-    
+        
         return Roles.Patient;
     }
 

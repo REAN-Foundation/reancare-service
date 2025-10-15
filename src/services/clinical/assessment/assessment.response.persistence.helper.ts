@@ -127,9 +127,12 @@ export class AssessmentResponsePersistenceHelper {
 
     private resolveTargetPatientUserId = async (assessment: AssessmentDto): Promise<string> => {
         try {
+            //For non-clinical assessments, assessment submission is always recorded against the submitter's user id
             if (assessment.Type !== AssessmentType.Clinical) {
                 return assessment.PatientUserId;
             }
+
+            //For clinical assessments, assessment submission could be recorded against the target user id
             const assessmentData = await this._assessmentRepo.getById(assessment.id);
             const responses = await this._assessmentHelperRepo.getUserResponses(assessment.id);
             assessmentData.UserResponses = responses;

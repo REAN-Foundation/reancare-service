@@ -293,16 +293,11 @@ export class PatientController extends BaseUserController {
         try {
 
             const userId: uuid = await this._validator.getParamUuid(request, 'userId');
-            const currentUserId = request.currentUser.UserId;
-            const patientUserId = userId;
             const patient = await this._service.getByUserId(userId);
             if (!patient) {
                 throw new ApiError(404, 'Patient account does not exist!');
             }
             const personId = patient.User.PersonId;
-            if (currentUserId !== patientUserId) {
-                throw new ApiError(403, 'You do not have permissions to delete this patient account.');
-            }
             const user = await this._userService.getById(userId);
             if (user == null) {
                 throw new ApiError(404, 'User not found.');
@@ -346,7 +341,7 @@ export class PatientController extends BaseUserController {
             }
 
             // invalidate all sessions
-            var invalidatedAllSessions = await this._userService.invalidateAllSessions(request.currentUser.UserId);
+            var invalidatedAllSessions = await this._userService.invalidateAllSessions(userId);
             if (!invalidatedAllSessions) {
                 throw new ApiError(400, 'User sessions cannot be deleted.');
             }

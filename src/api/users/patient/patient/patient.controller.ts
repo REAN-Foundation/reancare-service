@@ -291,69 +291,60 @@ export class PatientController extends BaseUserController {
 
     deleteByUserId = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
             const userId: uuid = await this._validator.getParamUuid(request, 'userId');
-            const currentUserId = request.currentUser.UserId;
             const patientUserId = userId;
+            if (!request.currentClient.IsPrivileged){
+                const currentUserId = request.currentUser.UserId;
+                if (currentUserId !== patientUserId) {
+                    throw new ApiError(403, 'You do not have permissions to delete this patient account.');
+                }
+            }
             const patient = await this._service.getByUserId(userId);
             if (!patient) {
                 throw new ApiError(404, 'Patient account does not exist!');
             }
             const personId = patient.User.PersonId;
-            if (currentUserId !== patientUserId) {
-                throw new ApiError(403, 'You do not have permissions to delete this patient account.');
-            }
             const user = await this._userService.getById(userId);
             if (user == null) {
                 throw new ApiError(404, 'User not found.');
             }
             await this.authorizeOne(request, user.id, user.TenantId);
-
             let deleted = await this._service.deleteByUserId(userId);
             if (!deleted) {
                 throw new ApiError(400, 'User cannot be deleted.');
             }
-
             deleted = await this._patientHealthProfileService.deleteByPatientUserId(userId);
             if (!deleted) {
                 throw new ApiError(400, 'User cannot be deleted.');
             }
-
             deleted = await this._userDeviceDetailsService.deleteByUserId(userId);
             if (!deleted) {
                 throw new ApiError(400, 'User cannot be deleted.');
             }
-
             deleted = await this._cohortService.removeUserFromAllCohorts(userId);
-
             deleted = await this._userService.delete(userId);
             if (!deleted) {
                 throw new ApiError(400, 'User cannot be deleted.');
             }
-
             const userDeleteEvent: UserDeleteEvent = {
                 PatientUserId : userId,
                 TenantId      : user.TenantId,
                 TenantName    : user.TenantCode,
             };
             await this._patientDeleteService.enqueueDeletePatientData(userDeleteEvent);
-
             //TODO: Please add check here whether the patient-person
             //has other roles in the system
             const personDeleted = await this._personService.delete(personId);
             if (personDeleted == null) {
                 Logger.instance().log(`Cannot delete person!`);
             }
-
             // invalidate all sessions
             var invalidatedAllSessions = await this._userService.invalidateAllSessions(request.currentUser.UserId);
             if (!invalidatedAllSessions) {
                 throw new ApiError(400, 'User sessions cannot be deleted.');
             }
-
             // delete static ehr record
             await this._ehrPatientService.deleteStaticEHRRecord(userId);
-
             UserEvents.onUserDeleted(request, user);
             ResponseHandler.success(request, response, 'Patient records deleted successfully!', 200, {
                 Deleted : true,

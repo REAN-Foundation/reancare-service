@@ -53,8 +53,12 @@ export class AssessmentSubmissionAtOnceService {
         });
         
         for await (var node  of questionNodes) {
+            let isQuestionSkippable = false;
             this.isSubmittedAnswerValid(node, submission.Answers);
-            await this.submitResponseForQuestionNode(assessment.id, node, submission.Answers);
+            if (!submission.Answers[this.getSubmissionKey(node.id)] && !node.Required) {
+                isQuestionSkippable = true;
+            }
+            await this.submitResponseForQuestionNode(assessment.id, node, submission.Answers, isQuestionSkippable);
         }
 
         const completedAssessment = await this._assessmentRepo.completeAssessment(assessment.id);
@@ -67,7 +71,15 @@ export class AssessmentSubmissionAtOnceService {
     };
 
     private submitResponseForQuestionNode =
-    async (assessmentId: uuid, node: CAssessmentQuestionNode, answers: Record<string, any>) => {
+    async (
+        assessmentId: uuid, node: CAssessmentQuestionNode,
+        answers: Record<string, any>,
+        isQuestionSkippable: boolean
+    ) => {
+        if (isQuestionSkippable) {
+            await this._assessmentService.skipQuestion(assessmentId, node.id);
+            return;
+        }
         const isAnswered = await this._assessmentService.isAnswered(assessmentId, node.id);
         if (isAnswered) {
             throw new ApiError(400, `The question ${node?.Title} has already been answered!`);
@@ -151,7 +163,7 @@ export class AssessmentSubmissionAtOnceService {
     };
 
     private isSubmittedAnswerValid = (node: CAssessmentQuestionNode, answers: Record<string, any>) => {
-        if (!answers[this.getSubmissionKey(node.id)]) {
+        if (!answers[this.getSubmissionKey(node.id)] && node.Required) {
             throw new ApiError(400, `Answer is required for the question: ${node?.Title}!`);
         }
         return true;

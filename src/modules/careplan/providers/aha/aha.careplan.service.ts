@@ -32,6 +32,7 @@ import { DurationType } from "../../../../domain.types/miscellaneous/time.types"
 import { Injector } from "../../../../startup/injector";
 import { UserTaskSearchFilters } from "../../../../domain.types/users/user.task/user.task.search.types";
 import { ActivityTrackerHandler } from "../../../../services/users/patient/activity.tracker/activity.tracker.handler";
+import { CareplanRepo } from "../../../../database/sql/sequelize/repositories/clinical/careplan/careplan.repo";
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -44,10 +45,13 @@ export class AhaCareplanService implements ICareplanService {
 
     _assessmentTemplateRepo: AssessmentTemplateRepo = null;
 
+    _careplanRepo: CareplanRepo = null;
+
     constructor() {
         this._assessmentService = Injector.Container.resolve(AssessmentService);
         this._userTaskService = Injector.Container.resolve(UserTaskService);
         this._assessmentTemplateRepo = Injector.Container.resolve(AssessmentTemplateRepo);
+        this._careplanRepo = Injector.Container.resolve(CareplanRepo);
     }
 
     private ActivityCode = '9999';
@@ -209,6 +213,8 @@ export class AhaCareplanService implements ICareplanService {
             },
         };
 
+        await this.checkOverlappingEnrollment(model);
+
         var url = process.env.AHA_API_BASE_URL + '/enrollments';
         var headerOptions = await this.getHeaderOptions();
         var response = await needle('post', url, enrollmentData, headerOptions);
@@ -250,6 +256,34 @@ export class AhaCareplanService implements ICareplanService {
         Logger.instance().log(`response body: ${JSON.stringify(response.body)}`);
 
         return response.body.data.enrollment.id;
+    };
+
+    // Overlapping enrollment check - AHA careplan does not allow overlapping enrollments
+    public checkOverlappingEnrollment = async (model: EnrollmentDomainModel): Promise<void> => {
+        const enrollment = await this._careplanRepo.getEnrollmentOverlapping(
+            model.PatientUserId,
+            model.Provider,
+            model.PlanCode
+        );
+
+        if (enrollment) {
+            const daysToAdd = this.getCareplanDuration(model.PlanCode);
+            const endDate = TimeHelper.addDuration(enrollment.StartAt, daysToAdd, DurationType.Day);
+            if (endDate >= new Date()) {
+                throw new ApiError(400, `You can not enroll to the ${model.PlanCode} careplan before the ${model.EndDate}`);
+            }
+        }
+    };
+
+    private getCareplanDuration = (planCode: string): number => {
+        switch (planCode) {
+            case 'Cholesterol':
+                return 91;
+            case 'Stroke':
+                return 91;
+            default:
+                return 84;
+        }
     };
 
     public fetchActivities = async (

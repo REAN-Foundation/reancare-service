@@ -211,6 +211,28 @@ export class CareplanRepo implements ICareplanRepo {
         }
     };
 
+    public getOverlappingEnrollments = async (
+        patientUserId: string,
+        provider: string,
+        planCode: string): Promise<EnrollmentDto[]> => {
+        try {
+            const enrollments = await CareplanEnrollment.findAll({
+                where : {
+                    PatientUserId : patientUserId,
+                    Provider      : provider,
+                    PlanCode      : planCode,
+                },
+                order : [['StartDate', 'DESC']],
+            });
+            return enrollments.map(x => {
+                return EnrollmentMapper.toDto(x);
+            });
+        }
+        catch (error) {
+            Logger.instance().log(error.message);
+        }
+    };
+
     public addActivities = async (
         provider: string,
         planName: string,

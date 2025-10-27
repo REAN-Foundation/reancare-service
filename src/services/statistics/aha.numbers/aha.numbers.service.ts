@@ -20,7 +20,7 @@ export class AhaNumbersService {
         @inject('IFileStorageService') private readonly _storageService: IFileStorageService
     ) {}
 
-    public _q = asyncLib.queue((onCompleted) => {
+    public _q = asyncLib.queue((task, onCompleted) => {
         (async () => {
             try {
                 await this.generateAllCsvFiles();
@@ -40,7 +40,7 @@ export class AhaNumbersService {
     };
 
     private enqueue = (): void => {
-        this._q.push((error) => {
+        this._q.push({}, (error) => {
             if (error) {
                 Logger.instance().log(`Error generating CSV files: ${JSON.stringify(error)}`);
                 Logger.instance().log(`Error stack: ${JSON.stringify(error.stack, null, 2)}`);

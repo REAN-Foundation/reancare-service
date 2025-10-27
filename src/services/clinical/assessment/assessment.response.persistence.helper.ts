@@ -1,4 +1,4 @@
-import { injectable } from 'tsyringe';
+import { inject, injectable } from 'tsyringe';
 import { Logger } from '../../../common/logger';
 import { AssessmentBiometricsHelper } from './assessment.biometrics.helper';
 import { Injector } from '../../../startup/injector';
@@ -15,7 +15,8 @@ import {
     DateQueryAnswer,
     FileQueryAnswer,
     BooleanQueryAnswer,
-    SkipQueryAnswer
+    SkipQueryAnswer,
+    AssessmentType
 } from '../../../domain.types/clinical/assessment/assessment.types';
 import { AssessmentDto } from '../../../domain.types/clinical/assessment/assessment.dto';
 import { AssessmentFieldIdentifiers } from '../../../domain.types/clinical/assessment/assessment.field.identifiers';
@@ -26,10 +27,25 @@ import { AssessmentVitalsHelper } from './assessment.vitals.helper';
 import { AssessmentNutritionHelper } from './assessment.nutrition.helper';
 import { AssessmentExerciseHelper } from './assessment.exercise.helper';
 import { AssessmentSymptomsHelper } from './assessment.symptoms.helper';
+import { IUserRepo } from '../../../database/repository.interfaces/users/user/user.repo.interface';
+import { AssessmentHelperService } from './assessment.helper';
+import { AssessmentValidator } from '../../../api/clinical/assessment/assessment/assessment.validator';
+import { IAssessmentRepo } from '../../../database/repository.interfaces/clinical/assessment/assessment.repo.interface';
+import { IAssessmentHelperRepo } from '../../../database/repository.interfaces/clinical/assessment/assessment.helper.repo.interface';
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 @injectable()
 export class AssessmentResponsePersistenceHelper {
+
+    _assessmentValidator: AssessmentValidator = new AssessmentValidator();
+
+    constructor(
+        @inject('IAssessmentRepo') private _assessmentRepo: IAssessmentRepo,
+        @inject('IAssessmentHelperRepo') private _assessmentHelperRepo: IAssessmentHelperRepo,
+        @inject('IUserRepo') private _userRepo: IUserRepo,
+    ) {
+    }
 
     public persist = async (
         assessment: AssessmentDto,
@@ -47,6 +63,10 @@ export class AssessmentResponsePersistenceHelper {
         | SkipQueryAnswer
     ) => {
         try {
+            
+            const userId = await this.resolveTargetPatientUserId(assessment);
+            assessment.PatientUserId = userId;
+
             if (answerDto.ResponseType === QueryResponseType.Biometrics) {
                 const biometricsHelper = Injector.Container.resolve(AssessmentBiometricsHelper);
                 const biometrics = answerDto as BiometricQueryAnswer;
@@ -102,6 +122,36 @@ export class AssessmentResponsePersistenceHelper {
         }
         catch (error) {
             Logger.instance().log(error);
+        }
+    };
+
+    private resolveTargetPatientUserId = async (assessment: AssessmentDto): Promise<string> => {
+        try {
+            //For non-clinical assessments, assessment submission is always recorded against the submitter's user id
+            if (assessment.Type !== AssessmentType.Clinical) {
+                return assessment.PatientUserId;
+            }
+
+            //For clinical assessments, assessment submission could be recorded against the target user id
+            const assessmentData = await this._assessmentRepo.getById(assessment.id);
+            const responses = await this._assessmentHelperRepo.getUserResponses(assessment.id);
+            assessmentData.UserResponses = responses;
+            const userData = AssessmentHelperService.extractFieldIdentifierData(assessmentData);
+
+            //Expecting user name in the form of EMRId as a field identifier
+            const userName = this._assessmentValidator.validateAssessmentTargetUser(userData);
+            if (!userName) {
+                return assessment.PatientUserId;
+            }
+            const user = await this._userRepo.getByUserName(userName);
+            if (user) {
+                return user.id;
+            }
+            return assessment.PatientUserId;
+        }
+        catch (error) {
+            Logger.instance().log(error);
+            return assessment.PatientUserId;
         }
     };
 

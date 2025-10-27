@@ -26,6 +26,7 @@ export class AssessmentTemplateMapper {
             ServeListNodeChildrenAtOnce : template.ServeListNodeChildrenAtOnce,
             TotalNumberOfQuestions      : template.TotalNumberOfQuestions,
             Tags                        : template.Tags ? JSON.parse(template.Tags) : [],
+            RawData                     : template.RawData ? JSON.parse(template.RawData) : null,
         };
         return dto;
     };

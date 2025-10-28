@@ -28,7 +28,7 @@ import { AssessmentTemplateRepo } from '../../../../database/sql/sequelize/repos
 import { AssessmentDomainModel } from "../../../../domain.types/clinical/assessment/assessment.domain.model";
 import { UserTaskDomainModel } from "../../../../domain.types/users/user.task/user.task.domain.model";
 import { TimeHelper } from "../../../../common/time.helper";
-import { DurationType } from "../../../../domain.types/miscellaneous/time.types";
+import { DateStringFormat, DurationType } from "../../../../domain.types/miscellaneous/time.types";
 import { Injector } from "../../../../startup/injector";
 import { UserTaskSearchFilters } from "../../../../domain.types/users/user.task/user.task.search.types";
 import { ActivityTrackerHandler } from "../../../../services/users/patient/activity.tracker/activity.tracker.handler";
@@ -270,7 +270,8 @@ export class AhaCareplanService implements ICareplanService {
             const daysToAdd = this.getCareplanDuration(model.PlanCode);
             const endDate = TimeHelper.addDuration(enrollment.StartAt, daysToAdd, DurationType.Day);
             if (endDate >= new Date()) {
-                throw new ApiError(400, `You can not enroll to the ${model.PlanCode} careplan before the ${model.EndDate}`);
+                const endDateString = TimeHelper.getDateString(endDate, DateStringFormat.YYYY_MM_DD);
+                throw new ApiError(400, `You can not enroll to the ${model.PlanCode} careplan before ${endDateString}`);
             }
         });
     };

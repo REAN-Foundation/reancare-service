@@ -9,6 +9,7 @@ import {
     FollowupSettings,
     FollowupSource,
     ConsentSettings,
+    CustomSettings
 } from '../../../domain.types/tenant/tenant.settings.types';
 import { BaseValidator, Where } from '../../base.validator';
 import { Logger } from '../../../common/logger';
@@ -628,8 +629,90 @@ export class TenantSettingsValidator extends BaseValidator {
         return model;
     };
 
+    updateCustomSettings = async (request: express.Request): Promise<CustomSettings> => {
+        if (!request.body?.CustomSettings) {
+            return null;
+        }
+
+        await this.validateObject(request, 'CustomSettings', Where.Body, true, false);
+
+        const customSettings = request.body.CustomSettings;
+        const validatedSettings: CustomSettings = {};
+
+        for (const [key, setting] of Object.entries(customSettings)) {
+            if (typeof setting !== 'object' || setting === null) {
+                throw new Error(`Custom setting '${key}' must be an object`);
+            }
+
+            const settingItem = setting as any;
+            await this.validateString(request, `CustomSettings.${key}.Name`, Where.Body, true, false, false);
+            await this.validateString(request, `CustomSettings.${key}.Description`, Where.Body, true, false, false);
+            await this.validateEnum(request, `CustomSettings.${key}.DataType`, Where.Body, true, false, {
+                string  : 'string',
+                number  : 'number',
+                boolean : 'boolean',
+                object  : 'object',
+                array   : 'array'
+            });
+
+            if (settingItem.Value === undefined || settingItem.Value === null) {
+                throw new Error(`Custom setting '${key}' must have a Value field`);
+            }
+
+            this.validateCustomSettingValue(key, settingItem.DataType, settingItem.Value);
+
+            validatedSettings[key] = {
+                Name        : settingItem.Name,
+                Description : settingItem.Description,
+                DataType    : settingItem.DataType,
+                Value       : settingItem.Value
+            };
+        }
+
+        this.validateRequest(request);
+        return validatedSettings;
+    };
+
+    private validateCustomSettingValue(key: string, dataType: string, value: any): void {
+        switch (dataType) {
+            case 'string':
+                if (typeof value !== 'string') {
+                    throw new Error(`Custom setting '${key}' Value must be a string when DataType is 'string'`);
+                }
+
+                break;
+                
+            case 'number':
+                if (typeof value !== 'number' || isNaN(value)) {
+                    throw new Error(`Custom setting '${key}' Value must be a valid number when DataType is 'number'`);
+                }
+                break;
+                
+            case 'boolean':
+                if (typeof value !== 'boolean') {
+                    throw new Error(`Custom setting '${key}' Value must be a boolean when DataType is 'boolean'`);
+                }
+                break;
+                
+            case 'object':
+                if (typeof value !== 'object' || value === null || Array.isArray(value)) {
+                    throw new Error(`Custom setting '${key}' Value must be an object when DataType is 'object'`);
+                }
+                break;
+                
+            case 'array':
+                if (!Array.isArray(value)) {
+                    throw new Error(`Custom setting '${key}' Value must be an array when DataType is 'array'`);
+                }
+                break;
+                
+            default:
+                throw new Error(`Custom setting '${key}' has invalid DataType: ${dataType}`);
+        }
+    }
+
     updateTenantSettingsByType = async (request: express.Request, settingsType: TenantSettingsTypes)
-    : Promise<CommonSettings | FollowupSettings | ChatBotSettings | FormsSettings | ConsentSettings> => {
+    : Promise<CommonSettings | FollowupSettings | ChatBotSettings | FormsSettings | ConsentSettings | CustomSettings> => {
         if (settingsType === TenantSettingsTypes.Common) {
             return await this.updateCommonSettings(request);
         }
@@ -645,6 +728,9 @@ export class TenantSettingsValidator extends BaseValidator {
         if (settingsType === TenantSettingsTypes.Consent) {
             return await this.updateConsentSettings(request);
         }
+        if (settingsType === TenantSettingsTypes.CustomSettings) {
+            return await this.updateCustomSettings(request);
+        }
         return null;
     };
 
@@ -655,15 +741,17 @@ export class TenantSettingsValidator extends BaseValidator {
         const chatBotSettings = await this.updateChatBotSettings(request);
         const formsSettings = await this.updateFormsSettings(request);
         const consentSettings = await this.updateConsentSettings(request);
+        const customSettings = await this.updateCustomSettings(request);
 
         this.validateRequest(request);
 
         const model: TenantSettingsDomainModel = {
-            Common   : commonSettings,
-            Followup : followup,
-            ChatBot  : chatBotSettings,
-            Forms    : formsSettings,
-            Consent  : consentSettings
+            Common         : commonSettings,
+            Followup       : followup,
+            ChatBot        : chatBotSettings,
+            Forms          : formsSettings,
+            Consent        : consentSettings,
+            CustomSettings : customSettings
         };
 
         return model;

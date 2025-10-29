@@ -78,6 +78,12 @@ export default class TenantSettings extends Model {
         allowNull : true,
     })
     Consent: string;
+
+    @Column({
+        type      : DataType.TEXT,
+        allowNull : true,
+    })
+    CustomSettings: string;
     
     @Column
     @CreatedAt

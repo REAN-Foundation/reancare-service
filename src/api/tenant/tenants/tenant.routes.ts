@@ -12,6 +12,7 @@ export const register = (app: express.Application): void => {
 
     router.post('/', auth(TenantAuth.create), controller.create);
     router.get('/search', auth(TenantAuth.search), controller.search);
+    router.get('/active', auth(TenantAuth.getActiveTenants), controller.getActiveTenants);
     router.put('/:id', auth(TenantAuth.update), controller.update);
     router.delete('/:id', auth(TenantAuth.delete), controller.delete);
 

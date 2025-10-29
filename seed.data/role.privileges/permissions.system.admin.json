@@ -642,7 +642,8 @@
             "CreateSecret": true,
             "GetSecret": true,
             "GetSecretByCode": true,
-            "UpdateSecret": true
+            "UpdateSecret": true,
+            "GetActiveTenants": true
         },
         "Settings": {
             "GetTenantSettingsTypes": true,

@@ -27,6 +27,7 @@ export class AssessmentTemplateValidator extends BaseValidator {
             TotalNumberOfQuestions      : request.body.TotalNumberOfQuestions ?? null,
             TenantId                    : request.body.TenantId ?? request.currentUser.TenantId,
             Tags                        : request.body.Tags ?? [],
+            RawData                     : request.body.RawData ?? null,
         };
 
         return model;
@@ -79,6 +80,7 @@ export class AssessmentTemplateValidator extends BaseValidator {
         await this.validateInt(request, 'TotalNumberOfQuestions', Where.Body, false, false);
         await this.validateUuid(request, 'TenantId', Where.Body, false, true);
         await this.validateArray(request, 'Tags', Where.Body, false, true);
+        await this.validateObject(request, 'RawData', Where.Body, false, true);
         this.validateRequest(request);
     }
 
@@ -92,6 +94,7 @@ export class AssessmentTemplateValidator extends BaseValidator {
         await this.validateBoolean(request, 'ServeListNodeChildrenAtOnce', Where.Body, false, true);
         await this.validateInt(request, 'TotalNumberOfQuestions', Where.Body, false, false);
         await this.validateArray(request, 'Tags', Where.Body, false, false);
+        await this.validateObject(request, 'RawData', Where.Body, false, true);
         this.validateRequest(request);
     }
 

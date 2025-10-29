@@ -40,4 +40,6 @@ export interface ITenantRepo {
 
     getTenantRegularUsers(id: uuid): Promise<any[]>;
 
+    getActiveTenants(): Promise<TenantDto[]>;
+
 }

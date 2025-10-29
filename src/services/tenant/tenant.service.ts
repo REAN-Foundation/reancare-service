@@ -97,6 +97,10 @@ export class TenantService {
         return await this._tenantRepo.getTenantRegularUsers(id);
     };
 
+    public getActiveTenants = async (): Promise<TenantDto[]> => {
+        return await this._tenantRepo.getActiveTenants();
+    };
+
     public seedDefaultTenant = async (): Promise<TenantDto> => {
         var defaultTenant = await this._tenantRepo.getTenantWithCode('default');
         if (defaultTenant == null) {

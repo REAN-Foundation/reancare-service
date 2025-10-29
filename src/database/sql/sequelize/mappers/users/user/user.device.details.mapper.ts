@@ -11,15 +11,16 @@ export class UserDeviceDetailsMapper {
             return null;
         }
         const dto: UserDeviceDetailsDto = {
-            id          : userDeviceDetails.id,
-            UserId      : userDeviceDetails.UserId,
-            Token       : userDeviceDetails.Token,
-            DeviceName  : userDeviceDetails.DeviceName,
-            OSType      : userDeviceDetails.OSType,
-            OSVersion   : userDeviceDetails.OSVersion,
-            AppName     : userDeviceDetails.AppName,
-            AppVersion  : userDeviceDetails.AppVersion,
-            ChangeCount : userDeviceDetails.ChangeCount
+            id                    : userDeviceDetails.id,
+            UserId                : userDeviceDetails.UserId,
+            Token                 : userDeviceDetails.Token,
+            DeviceName            : userDeviceDetails.DeviceName,
+            OSType                : userDeviceDetails.OSType,
+            OSVersion             : userDeviceDetails.OSVersion,
+            AppName               : userDeviceDetails.AppName,
+            AppVersion            : userDeviceDetails.AppVersion,
+            ChangeCount           : userDeviceDetails.ChangeCount,
+            IsNotificationEnabled : userDeviceDetails.IsNotificationEnabled
         };
         return dto;
     };

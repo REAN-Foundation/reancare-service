@@ -36,6 +36,14 @@ export class TenantAuth {
         RequestType : RequestType.GetMany,
     };
 
+    static readonly getActiveTenants: AuthOptions = {
+        ...DefaultAuthOptions,
+        Context     : `${this._baseContext}.GetActiveTenants`,
+        Ownership   : ResourceOwnership.System,
+        ActionScope : ActionScope.System,
+        RequestType : RequestType.GetMany,
+    };
+
     static readonly update: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.Update`,

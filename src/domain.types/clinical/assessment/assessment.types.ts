@@ -78,6 +78,8 @@ export enum AssessmentType {
     Careplan    = 'Careplan',
     Symptom     = 'Symptoms',
     Survey      = 'Survey',
+    UserRegistration = 'User Registration',
+    Clinical = 'Clinical',
     Protocol    = 'Protocol',
     Custom      = 'Custom',
 }
@@ -87,6 +89,8 @@ export const AssessmentTypeList: AssessmentType[] = [
     AssessmentType.Careplan,
     AssessmentType.Symptom,
     AssessmentType.Survey,
+    AssessmentType.UserRegistration,
+    AssessmentType.Clinical,
     AssessmentType.Protocol,
     AssessmentType.Custom
 ];
@@ -502,6 +506,5 @@ export class CScoringCondition {
     }
 
 }
-
 
 //#endregion

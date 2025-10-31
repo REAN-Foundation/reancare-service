@@ -948,7 +948,7 @@ export class AhaCareplanService implements ICareplanService {
 
     private getUserTaskCategory(activityType: string, title?: string, contentTypeCode?: string): UserTaskCategory {
 
-        if (activityType === 'Questionnaire' || activityType === 'Assessment') {
+        if (activityType === 'Questionnaire' || activityType === 'Assessment' || activityType === 'Question') {
             return UserTaskCategory.Assessment;
         }
         var type = activityType ?? contentTypeCode;

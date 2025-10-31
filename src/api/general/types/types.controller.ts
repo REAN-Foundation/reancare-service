@@ -141,10 +141,6 @@ export class TypesController extends BaseController {
 
             const tags : string = request.query.tags as string ?? null;
             const priorityTypes = await this._service.getPriorityTypes(tags);
-            if (priorityTypes.length === 0) {
-                throw new ApiError(400, 'Cannot fetch priorities types!');
-            }
-
             ResponseHandler.success(request, response, 'Fetched priority types successfully!', 200, {
                 PriorityTypes : priorityTypes,
             });

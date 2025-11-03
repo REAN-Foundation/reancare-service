@@ -393,7 +393,10 @@ export class TenantService {
             ReminderAppointment : false,
             AppointmentFollowup : false,
             ConversationHistory : false,
-            Emojis              : false
+            Emojis              : false,
+            BasicAssessment     : false,
+            BasicCarePlan       : false,
+            Timezone            : '+05:30',
         };
 
         const forms: FormsIntegrations = {

@@ -9,7 +9,8 @@ import {
     FollowupSettings,
     FollowupSource,
     ConsentSettings,
-    CustomSettings
+    CustomSettings,
+    CustomSettingItem
 } from '../../../domain.types/tenant/tenant.settings.types';
 import { BaseValidator, Where } from '../../base.validator';
 import { Logger } from '../../../common/logger';
@@ -630,86 +631,37 @@ export class TenantSettingsValidator extends BaseValidator {
     };
 
     updateCustomSettings = async (request: express.Request): Promise<CustomSettings> => {
-        if (!request.body?.CustomSettings) {
+        const customSettings = request.body?.CustomSettings;
+        if (!customSettings) {
             return null;
         }
 
-        await this.validateObject(request, 'CustomSettings', Where.Body, true, false);
-
-        const customSettings = request.body.CustomSettings;
         const validatedSettings: CustomSettings = {};
 
         for (const [key, setting] of Object.entries(customSettings)) {
-            if (typeof setting !== 'object' || setting === null) {
-                throw new Error(`Custom setting '${key}' must be an object`);
-            }
-
-            const settingItem = setting as any;
-            await this.validateString(request, `CustomSettings.${key}.Name`, Where.Body, true, false, false);
-            await this.validateString(request, `CustomSettings.${key}.Description`, Where.Body, true, false, false);
-            await this.validateEnum(request, `CustomSettings.${key}.DataType`, Where.Body, true, false, {
+            const customSettingItem = setting as CustomSettingItem;
+            const path = `CustomSettings.${key}`;
+            await this.validateString(request, `${path}.Name`, Where.Body, true, false, false);
+            await this.validateString(request, `${path}.Description`, Where.Body, true, false, false);
+            await this.validateEnum(request, `${path}.DataType`, Where.Body, true, false, {
                 string  : 'string',
                 number  : 'number',
                 boolean : 'boolean',
                 object  : 'object',
                 array   : 'array'
             });
-
-            if (settingItem.Value === undefined || settingItem.Value === null) {
-                throw new Error(`Custom setting '${key}' must have a Value field`);
-            }
-
-            this.validateCustomSettingValue(key, settingItem.DataType, settingItem.Value);
-
+            
             validatedSettings[key] = {
-                Name        : settingItem.Name,
-                Description : settingItem.Description,
-                DataType    : settingItem.DataType,
-                Value       : settingItem.Value
+                Name        : customSettingItem.Name,
+                Description : customSettingItem.Description,
+                DataType    : customSettingItem.DataType,
+                Value       : customSettingItem.Value
             };
         }
 
         this.validateRequest(request);
         return validatedSettings;
     };
-
-    private validateCustomSettingValue(key: string, dataType: string, value: any): void {
-        switch (dataType) {
-            case 'string':
-                if (typeof value !== 'string') {
-                    throw new Error(`Custom setting '${key}' Value must be a string when DataType is 'string'`);
-                }
-
-                break;
-                
-            case 'number':
-                if (typeof value !== 'number' || isNaN(value)) {
-                    throw new Error(`Custom setting '${key}' Value must be a valid number when DataType is 'number'`);
-                }
-                break;
-                
-            case 'boolean':
-                if (typeof value !== 'boolean') {
-                    throw new Error(`Custom setting '${key}' Value must be a boolean when DataType is 'boolean'`);
-                }
-                break;
-                
-            case 'object':
-                if (typeof value !== 'object' || value === null || Array.isArray(value)) {
-                    throw new Error(`Custom setting '${key}' Value must be an object when DataType is 'object'`);
-                }
-                break;
-                
-            case 'array':
-                if (!Array.isArray(value)) {
-                    throw new Error(`Custom setting '${key}' Value must be an array when DataType is 'array'`);
-                }
-                break;
-                
-            default:
-                throw new Error(`Custom setting '${key}' has invalid DataType: ${dataType}`);
-        }
-    }
 
     updateTenantSettingsByType = async (request: express.Request, settingsType: TenantSettingsTypes)
     : Promise<CommonSettings | FollowupSettings | ChatBotSettings | FormsSettings | ConsentSettings | CustomSettings> => {

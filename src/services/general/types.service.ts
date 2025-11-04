@@ -64,11 +64,6 @@ export class TypesService {
 
     getPriorityTypes = async (tags?: string): Promise<HealthPriorityTypeDto[]> => {
         var priorityTypes = await this._healthPriorityRepo.getPriorityTypes(tags);
-
-        if (!priorityTypes || priorityTypes.length === 0) {
-            throw new ApiError(500, 'Error while fetching priority types.');
-        }
-
         return priorityTypes;
     };
 

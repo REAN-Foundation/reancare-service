@@ -10,7 +10,8 @@ import {
     FollowupSource,
     ConsentSettings,
     CustomSettings,
-    CustomSettingItem
+    CustomSettingItem,
+    CustomSettingDataType
 } from '../../../domain.types/tenant/tenant.settings.types';
 import { BaseValidator, Where } from '../../base.validator';
 import { Logger } from '../../../common/logger';
@@ -642,14 +643,8 @@ export class TenantSettingsValidator extends BaseValidator {
             const customSettingItem = setting as CustomSettingItem;
             const path = `CustomSettings.${key}`;
             await this.validateString(request, `${path}.Name`, Where.Body, true, false, false);
-            await this.validateString(request, `${path}.Description`, Where.Body, true, false, false);
-            await this.validateEnum(request, `${path}.DataType`, Where.Body, true, false, {
-                string  : 'string',
-                number  : 'number',
-                boolean : 'boolean',
-                object  : 'object',
-                array   : 'array'
-            });
+            await this.validateString(request, `${path}.Description`, Where.Body, false, false, false);
+            await this.validateEnum(request, `${path}.DataType`, Where.Body, true, false, CustomSettingDataType);
             
             validatedSettings[key] = {
                 Name        : customSettingItem.Name,

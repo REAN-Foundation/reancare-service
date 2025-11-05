@@ -322,10 +322,18 @@ export interface ConsentMessage {
     WebsiteURL?  : string;
 }
 
+export enum CustomSettingDataType {
+    String  = 'string',
+    Number  = 'number',
+    Boolean = 'boolean',
+    Object  = 'object',
+    Array   = 'array'
+}
+
 export interface CustomSettingItem {
     Name        : string;
     Description : string;
-    DataType    : 'string' | 'number' | 'boolean' | 'object' | 'array';
+    DataType    : CustomSettingDataType;
     Value       : string | number | boolean | object | any[];
 }
 

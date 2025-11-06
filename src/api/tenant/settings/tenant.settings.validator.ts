@@ -9,6 +9,9 @@ import {
     FollowupSettings,
     FollowupSource,
     ConsentSettings,
+    CustomSettings,
+    CustomSettingItem,
+    CustomSettingDataType
 } from '../../../domain.types/tenant/tenant.settings.types';
 import { BaseValidator, Where } from '../../base.validator';
 import { Logger } from '../../../common/logger';
@@ -628,8 +631,35 @@ export class TenantSettingsValidator extends BaseValidator {
         return model;
     };
 
+    updateCustomSettings = async (request: express.Request): Promise<CustomSettings> => {
+        const customSettings = request.body?.CustomSettings;
+        if (!customSettings) {
+            return null;
+        }
+
+        const validatedSettings: CustomSettings = {};
+
+        for (const [key, setting] of Object.entries(customSettings)) {
+            const customSettingItem = setting as CustomSettingItem;
+            const path = `CustomSettings.${key}`;
+            await this.validateString(request, `${path}.Name`, Where.Body, true, false, false);
+            await this.validateString(request, `${path}.Description`, Where.Body, false, false, false);
+            await this.validateEnum(request, `${path}.DataType`, Where.Body, true, false, CustomSettingDataType);
+            
+            validatedSettings[key] = {
+                Name        : customSettingItem.Name,
+                Description : customSettingItem.Description,
+                DataType    : customSettingItem.DataType,
+                Value       : customSettingItem.Value
+            };
+        }
+
+        this.validateRequest(request);
+        return validatedSettings;
+    };
+
     updateTenantSettingsByType = async (request: express.Request, settingsType: TenantSettingsTypes)
-    : Promise<CommonSettings | FollowupSettings | ChatBotSettings | FormsSettings | ConsentSettings> => {
+    : Promise<CommonSettings | FollowupSettings | ChatBotSettings | FormsSettings | ConsentSettings | CustomSettings> => {
         if (settingsType === TenantSettingsTypes.Common) {
             return await this.updateCommonSettings(request);
         }
@@ -645,6 +675,9 @@ export class TenantSettingsValidator extends BaseValidator {
         if (settingsType === TenantSettingsTypes.Consent) {
             return await this.updateConsentSettings(request);
         }
+        if (settingsType === TenantSettingsTypes.CustomSettings) {
+            return await this.updateCustomSettings(request);
+        }
         return null;
     };
 
@@ -655,15 +688,17 @@ export class TenantSettingsValidator extends BaseValidator {
         const chatBotSettings = await this.updateChatBotSettings(request);
         const formsSettings = await this.updateFormsSettings(request);
         const consentSettings = await this.updateConsentSettings(request);
+        const customSettings = await this.updateCustomSettings(request);
 
         this.validateRequest(request);
 
         const model: TenantSettingsDomainModel = {
-            Common   : commonSettings,
-            Followup : followup,
-            ChatBot  : chatBotSettings,
-            Forms    : formsSettings,
-            Consent  : consentSettings
+            Common         : commonSettings,
+            Followup       : followup,
+            ChatBot        : chatBotSettings,
+            Forms          : formsSettings,
+            Consent        : consentSettings,
+            CustomSettings : customSettings
         };
 
         return model;

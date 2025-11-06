@@ -8,7 +8,9 @@ import {
     TenantSettingsTypes,
     CommonSettings,
     FollowupSettings,
-    FollowupSource } from '../../domain.types/tenant/tenant.settings.types';
+    FollowupSource,
+    CustomSettings,
+} from '../../domain.types/tenant/tenant.settings.types';
 import { TenantSettingsDto } from '../../domain.types/tenant/tenant.settings.types';
 import { uuid } from '../../domain.types/miscellaneous/system.types';
 
@@ -47,13 +49,16 @@ export class TenantSettingsService {
         if (settingsType === TenantSettingsTypes.Forms) {
             return settings.Forms;
         }
+        if (settingsType === TenantSettingsTypes.CustomSettings) {
+            return settings.CustomSettings;
+        }
         return settings;
     };
 
     public updateTenantSettingsByType = async (
         tenantId: uuid,
         settingsType: TenantSettingsTypes,
-        settings: CommonSettings | FollowupSettings | ChatBotSettings | FormsSettings | TenantSettingsDto
+        settings: CommonSettings | FollowupSettings | ChatBotSettings | FormsSettings | TenantSettingsDto | CustomSettings
     ): Promise<TenantSettingsDto> => {
         if (settingsType === TenantSettingsTypes.Common) {
             return await this._tenantSettingsRepo.updateCommonSettings(tenantId, settings as CommonSettings);
@@ -70,6 +75,9 @@ export class TenantSettingsService {
         if (settingsType === TenantSettingsTypes.Consent) {
             return await this._tenantSettingsRepo.updateConsentSettings(tenantId, settings as TenantSettingsDto);
         }
+        if (settingsType === TenantSettingsTypes.CustomSettings) {
+            return await this._tenantSettingsRepo.updateCustomSettings(tenantId, settings as CustomSettings);
+        }
         
         return await this._tenantSettingsRepo.getTenantSettings(tenantId);
     };
@@ -80,6 +88,7 @@ export class TenantSettingsService {
         await this._tenantSettingsRepo.updateChatBotSettings(tenantId, model.ChatBot);
         await this._tenantSettingsRepo.updateFormsSettings(tenantId, model.Forms);
         await this._tenantSettingsRepo.updateConsentSettings(tenantId, model.Consent);
+        await this._tenantSettingsRepo.updateCustomSettings(tenantId, model.CustomSettings);
         return await this._tenantSettingsRepo.getTenantSettings(tenantId);
     };
 

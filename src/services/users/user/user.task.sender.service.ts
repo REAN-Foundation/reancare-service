@@ -127,6 +127,7 @@ export class UserTaskSenderService {
                     UserTaskId           : userTask.id,
                     ScheduledDateString  : new Date().toISOString()
                         .split('T')[0] ?? null,
+                    ParentActivityId: careplanActivity.id
                 };
                 const assessment = await this._assessmentService.create(entity);
                 userTask.Action = { Assessment: assessment };
@@ -157,7 +158,10 @@ export class UserTaskSenderService {
                 return false;
             } else {
                 Logger.instance().log(`Successfully message send to ${personPhone}`);
-                await this.finishTask(true, userTask.id);
+                if (userTask.Category !== UserTaskCategory.Assessment && !isAssessmentWithForm){
+                    await this._userTaskRepo.finishTask(userTask.id)
+                    await this._careplanRepo.completeActivity(careplanActivity.id)
+                }            
                 return true;
             }
         }
@@ -178,14 +182,6 @@ export class UserTaskSenderService {
             personPhone = person.Phone;
         }
         return personPhone;
-    }
-
-    private async finishTask(sent: boolean, userTaskId: uuid) {
-        if (sent) {
-            const userTaskRepo = Injector.Container.resolve<IUserTaskRepo>('IUserTaskRepo');
-            const delivered = await userTaskRepo.finishTask(userTaskId);
-            Logger.instance().log(delivered ? `Schedule marked as delivered` : `Schedule could not be marked as delivered`);
-        }
     }
 
     private getWhatsappFormMetadata = (rawContent: string): WhatsAppFlowTemplateRequest => {

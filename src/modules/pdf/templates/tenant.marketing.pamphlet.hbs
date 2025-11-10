@@ -1,0 +1,318 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>{{content.header.mainTitle}} — Pamphlet</title>
+  <style>
+    :root {
+      --primary: {{{styling.primary}}};
+      --secondary: {{{styling.secondary}}};
+      --accent: {{{styling.accent}}};
+      --light-bg: {{{styling.lightBg}}};
+      --panel: {{{styling.panel}}};
+      --muted: {{{styling.muted}}};
+      --text: {{{styling.text}}};
+      --heading-font: {{{styling.headingFont}}};
+      --body-font: {{{styling.bodyFont}}};
+      --page-width: {{{styling.pageWidth}}};
+      --page-height: {{{styling.pageHeight}}};
+      --user-interface-width: {{{styling.userInterfaceWidth}}};
+      --user-interaction-width: {{{styling.userInteractionWidth}}};
+      --qr-size: {{{styling.qrSize}}};
+    }
+
+    * { box-sizing: border-box; }
+    body { margin: 0; font-family: var(--body-font); background: #faf9f7; color: var(--text); }
+    .page { 
+      width: var(--page-width); 
+      height: var(--page-height); 
+      margin: 0 auto; 
+      background: var(--panel); 
+      display: flex; 
+      flex-direction: column; 
+      page-break-after: always;
+      position: relative;
+      border: 12px solid var(--primary);
+      box-shadow: inset 0 0 0 4px var(--light-bg), inset 0 0 0 8px white;
+    }
+    
+    /* Decorative header border */
+    .page::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 8px;
+      background: linear-gradient(90deg, var(--primary) 0%, var(--accent) 50%, var(--primary) 100%);
+      z-index: 10;
+    }
+    
+    /* Decorative footer border */
+    .page::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 8px;
+      background: linear-gradient(90deg, var(--primary) 0%, var(--accent) 50%, var(--primary) 100%);
+      z-index: 10;
+    }
+    
+    /* Corner decorations */
+    .corner-decor {
+      position: absolute;
+      width: 40px;
+      height: 40px;
+      border-style: solid;
+      z-index: 5;
+    }
+    .corner-top-left {
+      top: 20px;
+      left: 20px;
+      border-width: 3px 0 0 3px;
+      border-color: var(--accent);
+    }
+    .corner-top-right {
+      top: 20px;
+      right: 20px;
+      border-width: 3px 3px 0 0;
+      border-color: var(--accent);
+    }
+    .corner-bottom-left {
+      bottom: 20px;
+      left: 20px;
+      border-width: 0 0 3px 3px;
+      border-color: var(--accent);
+    }
+    .corner-bottom-right {
+      bottom: 20px;
+      right: 20px;
+      border-width: 0 3px 3px 0;
+      border-color: var(--accent);
+    }
+    
+    .partner-logos { 
+      display: flex; 
+      justify-content: center; 
+      align-items: center; 
+      gap: 40px; 
+      padding: 20px 20px 15px 20px; 
+      border-bottom: 3px solid var(--primary); 
+      background: linear-gradient(to bottom, var(--light-bg) 0%, #fff 100%);
+      margin-top: 8px;
+    }
+    .partner-logos img { height: 45px; object-fit: contain; }
+
+    .title-section { 
+      display: flex; 
+      justify-content: space-between; 
+      align-items: center; 
+      padding: 25px 60px 15px 60px;
+      position: relative;
+    }
+    .title-section::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 60px;
+      right: 60px;
+      height: 2px;
+      background: linear-gradient(90deg, transparent 0%, var(--secondary) 20%, var(--secondary) 80%, transparent 100%);
+    }
+    .main-title { 
+      font-size: 28px; 
+      font-family: var(--heading-font); 
+      color: var(--primary); 
+      margin: 0;
+      text-shadow: 0 1px 2px rgba(0,0,0,0.05);
+    }
+    .subtitle { 
+      font-size: 15px; 
+      color: var(--secondary); 
+      font-style: italic; 
+      margin: 8px 0 0 0; 
+    }
+    .title-image { 
+      width: var(--user-interface-width); 
+      border-radius: 10px; 
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      border: 3px solid var(--light-bg);
+    }
+
+    .intro { padding: 0 60px 20px 60px; color: var(--text); font-size: 13px; line-height: 1.55; text-align: justify; }
+
+    .benefits-section { 
+      padding: 25px 60px;
+      background: linear-gradient(to bottom, transparent 0%, var(--light-bg) 20%, var(--light-bg) 80%, transparent 100%);
+      border-top: 2px solid var(--light-bg);
+      border-bottom: 2px solid var(--light-bg);
+    }
+    .benefits-title { 
+      font-size: 22px; 
+      text-align: center; 
+      color: var(--primary); 
+      margin-bottom: 20px; 
+      font-family: var(--heading-font);
+      position: relative;
+      padding-bottom: 12px;
+    }
+    .benefits-title::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 80px;
+      height: 3px;
+      background: var(--accent);
+      border-radius: 2px;
+    }
+    .benefits-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+    .benefit-item { 
+      display: flex; 
+      align-items: flex-start; 
+      background: white; 
+      border-left: 5px solid var(--secondary); 
+      border-radius: 8px; 
+      padding: 10px 12px; 
+      font-size: 12px; 
+      line-height: 1.4;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+    .benefit-icon { font-size: 18px; margin-right: 8px; color: var(--accent); }
+
+    .user-interface-section { 
+      padding: 25px 60px; 
+      display: flex; 
+      gap: 25px; 
+      align-items: flex-start;
+      background: white;
+      border-radius: 12px;
+      margin: 15px 20px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    }
+    .user-interface-text { flex: 1; }
+    .user-interface-image img { 
+      width: var(--user-interaction-width); 
+      border-radius: 10px; 
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      border: 3px solid var(--light-bg);
+    }
+
+    .footer { 
+      margin-top: auto; 
+      background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%); 
+      color: white; 
+      padding: 20px 60px 28px 60px; 
+      display: flex; 
+      justify-content: space-between; 
+      align-items: center;
+      position: relative;
+      margin-bottom: 8px;
+    }
+    .footer::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: var(--accent);
+    }
+    .footer-text { max-width: 62%; }
+    .footer-qr { text-align: center; }
+    .footer-qr img { 
+      width: var(--qr-size); 
+      height: var(--qr-size); 
+      background: #fff; 
+      padding: 10px; 
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+      border: 3px solid var(--accent);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="page">
+    <div class="corner-decor corner-top-left"></div>
+    <div class="corner-decor corner-top-right"></div>
+    
+    <div class="partner-logos">
+      {{#if images.partnerLogos}}
+        {{#each images.partnerLogos}}
+          <img src="{{{this}}}" alt="Partner Logo">
+        {{/each}}
+      {{/if}}
+    </div>
+
+    <div class="title-section">
+      <div>
+        <h1 class="main-title">{{content.header.mainTitle}}</h1>
+        <p class="subtitle">{{content.header.subtitle}}</p>
+      </div>
+      {{#if images.titleImage}}
+        <img src="{{{images.titleImage}}}" alt="Program Highlight" class="title-image">
+      {{/if}}
+    </div>
+
+    <div class="intro">
+      {{content.introduction.introParagraph}}
+      {{#if content.introduction.problemStatement}}
+        <br><br>
+        <strong>Why this matters:</strong><br>
+        {{content.introduction.problemStatement}}
+      {{/if}}
+    </div>
+  </div>
+
+  <div class="page">
+    <div class="corner-decor corner-top-left"></div>
+    <div class="corner-decor corner-top-right"></div>
+    <div class="corner-decor corner-bottom-left"></div>
+    <div class="corner-decor corner-bottom-right"></div>
+    
+    <div class="benefits-section">
+      <h2 class="benefits-title">{{content.benefits.title}}</h2>
+      <div class="benefits-grid">
+        {{#each content.benefits.items}}
+          <div class="benefit-item">
+            <span class="benefit-icon">✔</span> {{this}}
+          </div>
+        {{/each}}
+      </div>
+    </div>
+
+    <div class="user-interface-section">
+      <div class="user-interface-text">
+        <h2 style="color:var(--primary);font-family:var(--heading-font);font-size:20px;margin:0 0 12px 0;">{{content.userInterface.heading}}</h2>
+        <p style="font-size:13px;color:var(--muted);line-height:1.5;margin:0;">{{content.userInterface.paragraph}}</p>
+      </div>
+      <div class="user-interface-image">
+        {{#if images.userInterfaceImage}}
+          <img src="{{{images.userInterfaceImage}}}" alt="User Interaction Preview">
+        {{/if}}
+      </div>
+    </div>
+
+    <div class="footer">
+      <div class="footer-text">
+        <h3 style="margin:0 0 8px 0; color:white; font-family:var(--heading-font); font-size:18px;">{{content.footer.ctaHeading}}</h3>
+        <p style="margin:0; font-size:12px; line-height:1.5;">{{content.footer.ctaDescription}}</p>
+      </div>
+      <div class="footer-qr">
+        {{#if images.qrCode}}
+          <img src="{{{images.qrCode}}}" alt="QR Code">
+        {{/if}}
+        <p style="font-size:11px; opacity:0.9; margin:4px 0 0 0;">{{content.footer.qrInstruction}}</p>
+      </div>
+    </div>
+  </div>
+
+</body>
+</html>
+
+

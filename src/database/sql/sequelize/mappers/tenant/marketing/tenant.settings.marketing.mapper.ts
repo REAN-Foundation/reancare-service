@@ -15,7 +15,7 @@ export class TenantSettingsMarketingMapper {
             try {
                 return JSON.parse(value);
             } catch (error) {
-                // console.error('Failed to parse JSON:', error.message);
+                console.error('Failed to parse JSON:', error.message);
                 return null;
             }
         };

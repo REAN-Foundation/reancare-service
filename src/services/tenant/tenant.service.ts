@@ -7,6 +7,7 @@ import { uuid } from '../../domain.types/miscellaneous/system.types';
 import { ChatBotSettings, CommonSettings, FormsIntegrations, FormsSettings, TenantSettingsDomainModel, FollowupSettings, FollowupSource, BotSecrets } from '../../domain.types/tenant/tenant.settings.types';
 import { ITenantSettingsRepo } from '../../database/repository.interfaces/tenant/tenant.settings.interface';
 import { Injector } from '../../startup/injector';
+import { TenantSettingsMarketingService } from './marketing/tenant.settings.marketing.service';
 import { AwsLambdaService } from '../../modules/cloud.services/aws.service';
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -114,6 +115,11 @@ export class TenantService {
             var defaultTenant = await this._tenantRepo.create(tenant);
             const model: TenantSettingsDomainModel = this.getDefaultSettings();
             await this._tenantSettingsRepo.createDefaultSettings(defaultTenant.id, model);
+            
+            // Create default marketing settings with service (applies defaults)
+            const marketingService = Injector.Container.resolve(TenantSettingsMarketingService);
+            await marketingService.createDefaultSettings(defaultTenant.id, {});
+            
             return defaultTenant;
         }
         else {

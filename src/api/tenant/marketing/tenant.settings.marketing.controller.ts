@@ -10,7 +10,6 @@ import { FileResourceService } from '../../../services/general/file.resource.ser
 import { uuid } from '../../../domain.types/miscellaneous/system.types';
 import { TenantSettingsMarketingTypes } from '../../../domain.types/tenant/marketing/tenant.settings.marketing.types';
 import { TenantSettingsMarketingValidator } from './tenant.settings.marketing.validator';
-import { ApiError } from '../../../common/api.error';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -29,7 +28,7 @@ export class TenantSettingsMarketingController extends BaseController {
     getByTenant = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             const tenantId: uuid = await this._validator.getParamUuid(request, 'tenantId');
-            // await this.authorizeOne(request, null, tenantId);
+            await this.authorizeOne(request, null, tenantId);
             const settings = await this._service.getSettings(tenantId);
             ResponseHandler.success(request, response, 'Tenant marketing settings retrieved successfully!', 200, {
                 TenantMarketingSettings : settings,
@@ -60,12 +59,8 @@ export class TenantSettingsMarketingController extends BaseController {
     create = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             const tenantId: uuid = await this._validator.getParamUuid(request, 'tenantId');
-            // await this.authorizeOne(request, null, tenantId);
+            await this.authorizeOne(request, null, tenantId);
             const payload = await this._validator.updateAll(request);
-            const marketingSettings = await this._service.getSettings(tenantId);
-            if (marketingSettings) {
-                throw new ApiError(400, 'Tenant marketing settings already created!');
-            }
             const created = await this._service.createDefaultSettings(tenantId, payload);
             ResponseHandler.success(request, response, 'Tenant marketing settings created successfully!', 201, {
                 TenantMarketingSettings : created,
@@ -78,7 +73,7 @@ export class TenantSettingsMarketingController extends BaseController {
     updateAll = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             const tenantId: uuid = await this._validator.getParamUuid(request, 'tenantId');
-            // await this.authorizeOne(request, null, tenantId);
+            await this.authorizeOne(request, null, tenantId);
             const payload = await this._validator.updateAll(request);
 
             // Update each field if provided
@@ -111,7 +106,7 @@ export class TenantSettingsMarketingController extends BaseController {
     updateImages = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             const tenantId: uuid = await this._validator.getParamUuid(request, 'tenantId');
-            // await this.authorizeOne(request, null, tenantId);
+            await this.authorizeOne(request, null, tenantId);
             const payload = await this._validator.updateImages(request);
             const updated = await this._service.updateSettingsByType(tenantId, TenantSettingsMarketingTypes.Images, payload);
             
@@ -128,7 +123,7 @@ export class TenantSettingsMarketingController extends BaseController {
     updateQRcode = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             const tenantId: uuid = await this._validator.getParamUuid(request, 'tenantId');
-            // await this.authorizeOne(request, null, tenantId);
+            await this.authorizeOne(request, null, tenantId);
             const payload = await this._validator.updateQRcode(request);
             const updated = await this._service.updateSettingsByType(tenantId, TenantSettingsMarketingTypes.QRcode, payload);
             
@@ -145,7 +140,7 @@ export class TenantSettingsMarketingController extends BaseController {
     updateContent = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             const tenantId: uuid = await this._validator.getParamUuid(request, 'tenantId');
-            // await this.authorizeOne(request, null, tenantId);
+            await this.authorizeOne(request, null, tenantId);
             const payload = await this._validator.updateContent(request);
             const updated = await this._service.updateSettingsByType(tenantId, TenantSettingsMarketingTypes.Content, payload);
             
@@ -162,7 +157,7 @@ export class TenantSettingsMarketingController extends BaseController {
     updateLogos = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             const tenantId: uuid = await this._validator.getParamUuid(request, 'tenantId');
-            // await this.authorizeOne(request, null, tenantId);
+            await this.authorizeOne(request, null, tenantId);
             const payload = await this._validator.updateLogos(request);
             const updated = await this._service.updateSettingsByType(tenantId, TenantSettingsMarketingTypes.Logos, payload);
             
@@ -179,7 +174,7 @@ export class TenantSettingsMarketingController extends BaseController {
     downloadPdf = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             const tenantId: uuid = await this._validator.getParamUuid(request, 'tenantId');
-            // await this.authorizeOne(request, null, tenantId);
+            await this.authorizeOne(request, null, tenantId);
 
             // Fetch marketing settings
             const settings = await this._service.getSettings(tenantId);
@@ -239,7 +234,7 @@ export class TenantSettingsMarketingController extends BaseController {
     delete = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             const tenantId: uuid = await this._validator.getParamUuid(request, 'tenantId');
-            // await this.authorizeOne(request, null, tenantId);
+            await this.authorizeOne(request, null, tenantId);
             const ok = await this._service.deleteSettings(tenantId);
             ResponseHandler.success(request, response, 'Tenant marketing settings deleted successfully!', 200, {
                 Deleted : ok,
@@ -248,6 +243,6 @@ export class TenantSettingsMarketingController extends BaseController {
             ResponseHandler.handleError(request, response, error);
         }
     };
-
 }
+
 

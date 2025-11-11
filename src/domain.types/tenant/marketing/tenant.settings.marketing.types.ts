@@ -1,10 +1,10 @@
 export interface TenantSettingsMarketingDomainModel {
-    Styling? : any;
-    Content? : any;
-    QRcode?  : any;
-    Images?  : any;
-    Logos?   : any;
-    PDFResourceId?: string;
+    Styling? : any;  // JSON string stored in DB
+    Content? : any;  // JSON string stored in DB
+    QRcode?  : any;  // JSON string stored in DB
+    Images?  : any;  // JSON string stored in DB
+    Logos?   : any;  // JSON string stored in DB
+    PDFResourceId?: string; // File resource id for generated PDF
 }
 
 export interface TenantSettingsMarketingDto extends TenantSettingsMarketingDomainModel {
@@ -26,4 +26,5 @@ export const TenantSettingsMarketingTypesList = [
     TenantSettingsMarketingTypes.Images,
     TenantSettingsMarketingTypes.Logos,
 ];
+
 

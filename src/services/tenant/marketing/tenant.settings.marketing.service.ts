@@ -12,8 +12,7 @@ export class TenantSettingsMarketingService {
         @inject('ITenantSettingsMarketingRepo') private _repo: ITenantSettingsMarketingRepo,
     ) {}
 
-    createDefaultSettings = async (tenantId: uuid, model: TenantSettingsMarketingDomainModel):
-    Promise<TenantSettingsMarketingDto> => {
+    createDefaultSettings = async (tenantId: uuid, model: TenantSettingsMarketingDomainModel): Promise<TenantSettingsMarketingDto> => {
         const defaults = this.getDefaultSettings();
         const mergedModel: TenantSettingsMarketingDomainModel = {
             Styling       : model.Styling ?? defaults.Styling,
@@ -32,41 +31,21 @@ export class TenantSettingsMarketingService {
 
     getSettingsByType = async (tenantId: uuid, type: TenantSettingsMarketingTypes): Promise<any> => {
         const settings = await this._repo.getSettings(tenantId);
-        if (!settings) {
-            return null;
-        }
-        if (type === TenantSettingsMarketingTypes.Styling) {
-            return settings.Styling;
-        }
-        if (type === TenantSettingsMarketingTypes.Content) {
-            return settings.Content;
-        }
-        if (type === TenantSettingsMarketingTypes.QRcode) {
-            return settings.QRcode;
-        }
-        if (type === TenantSettingsMarketingTypes.Images) {
-            return settings.Images;
-        }
-        return settings.Logos;
+        if (!settings) { return null; }
+        if (type === TenantSettingsMarketingTypes.Styling) { return settings.Styling; }
+        if (type === TenantSettingsMarketingTypes.Content) { return settings.Content; }
+        if (type === TenantSettingsMarketingTypes.QRcode) { return settings.QRcode; }
+        if (type === TenantSettingsMarketingTypes.Images) { return settings.Images; }
+        if (type === TenantSettingsMarketingTypes.Logos) { return settings.Logos; }
+        return settings;
     };
 
-    updateSettingsByType = async (tenantId: uuid, type: TenantSettingsMarketingTypes, payload: any):
-    Promise<TenantSettingsMarketingDto> => {
-        if (type === TenantSettingsMarketingTypes.Styling) {
-            return await this._repo.updateStyling(tenantId, payload);
-        }
-        if (type === TenantSettingsMarketingTypes.Content) {
-            return await this._repo.updateContent(tenantId, payload);
-        }
-        if (type === TenantSettingsMarketingTypes.QRcode) {
-            return await this._repo.updateQRcode(tenantId, payload);
-        }
-        if (type === TenantSettingsMarketingTypes.Images) {
-            return await this._repo.updateImages(tenantId, payload);
-        }
-        if (type === TenantSettingsMarketingTypes.Logos) {
-            return await this._repo.updateLogos(tenantId, payload);
-        }
+    updateSettingsByType = async (tenantId: uuid, type: TenantSettingsMarketingTypes, payload: any): Promise<TenantSettingsMarketingDto> => {
+        if (type === TenantSettingsMarketingTypes.Styling) { return await this._repo.updateStyling(tenantId, payload); }
+        if (type === TenantSettingsMarketingTypes.Content) { return await this._repo.updateContent(tenantId, payload); }
+        if (type === TenantSettingsMarketingTypes.QRcode) { return await this._repo.updateQRcode(tenantId, payload); }
+        if (type === TenantSettingsMarketingTypes.Images) { return await this._repo.updateImages(tenantId, payload); }
+        if (type === TenantSettingsMarketingTypes.Logos) { return await this._repo.updateLogos(tenantId, payload); }
         return await this._repo.getSettings(tenantId);
     };
 
@@ -130,6 +109,6 @@ export class TenantSettingsMarketingService {
             Logos   : null,
         };
     };
-
 }
+
 

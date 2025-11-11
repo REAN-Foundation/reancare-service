@@ -151,6 +151,6 @@ export class TenantSettingsMarketingRepo implements ITenantSettingsMarketingRepo
             throw new ApiError(500, `Failed to delete tenant marketing settings: ${error.message}`);
         }
     };
-
 }
+
 

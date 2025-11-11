@@ -81,7 +81,8 @@ export default class TenantSettingsMarketing extends Model {
 
     @Column({
         type      : DataType.STRING(64),
-        allowNull : true
+        allowNull : true,
+        field     : 'PDF_resourceid',
     })
     PDFResourceId: string;
 
@@ -96,4 +97,5 @@ export default class TenantSettingsMarketing extends Model {
     DeletedAt: Date;
 
 }
+
 

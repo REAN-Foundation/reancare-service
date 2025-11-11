@@ -20,7 +20,9 @@ export class TenantSettingsMarketingValidator extends BaseValidator {
         return;
     };
 
+    // Detailed validation for Styling
     updateStyling = async (request: express.Request): Promise<any> => {
+        // Validate each styling field
         await this.validateString(request, 'Styling.primary', Where.Body, false, false);
         await this.validateString(request, 'Styling.secondary', Where.Body, false, false);
         await this.validateString(request, 'Styling.accent', Where.Body, false, false);
@@ -40,6 +42,7 @@ export class TenantSettingsMarketingValidator extends BaseValidator {
         
         const styling = request.body.Styling;
         if (styling) {
+            // Validate size format for dimension fields
             const sizeFields = ['pageWidth', 'pageHeight', 'userInterfaceWidth', 'userInteractionWidth', 'qrSize'];
             for (const field of sizeFields) {
                 if (styling[field] && !this.isValidCSSSize(styling[field])) {
@@ -51,6 +54,7 @@ export class TenantSettingsMarketingValidator extends BaseValidator {
         return request.body.Styling;
     };
 
+    // Detailed validation for Content
     updateContent = async (request: express.Request): Promise<any> => {
         const content = request.body.Content;
 
@@ -66,12 +70,15 @@ export class TenantSettingsMarketingValidator extends BaseValidator {
             throw new ApiError(400, 'Content must be an object');
         }
 
+        // Header section (optional)
         if (content.header?.mainTitle !== undefined) {
             await this.validateString(request, 'Content.header.mainTitle', Where.Body, false, false, false, 1);
         }
         if (content.header?.subtitle !== undefined) {
             await this.validateString(request, 'Content.header.subtitle', Where.Body, false, false, false, 1);
         }
+
+        // Introduction section (optional)
         if (content.introduction?.introParagraph !== undefined) {
             await this.validateString(request, 'Content.introduction.introParagraph', Where.Body, false, false);
         }
@@ -79,6 +86,7 @@ export class TenantSettingsMarketingValidator extends BaseValidator {
             await this.validateString(request, 'Content.introduction.problemStatement', Where.Body, false, false);
         }
 
+        // Benefits section (optional)
         if (content.benefits?.title !== undefined) {
             await this.validateString(request, 'Content.benefits.title', Where.Body, false, false, false, 1);
         }
@@ -97,6 +105,7 @@ export class TenantSettingsMarketingValidator extends BaseValidator {
             }
         }
 
+        // User interface section (optional)
         if (content.userInterface?.heading !== undefined) {
             await this.validateString(request, 'Content.userInterface.heading', Where.Body, false, false, false, 1);
         }
@@ -104,6 +113,7 @@ export class TenantSettingsMarketingValidator extends BaseValidator {
             await this.validateString(request, 'Content.userInterface.paragraph', Where.Body, false, false);
         }
 
+        // Footer section (optional)
         if (content.footer?.ctaHeading !== undefined) {
             await this.validateString(request, 'Content.footer.ctaHeading', Where.Body, false, false, false, 1);
         }
@@ -122,14 +132,17 @@ export class TenantSettingsMarketingValidator extends BaseValidator {
     updateQRcode = async (request: express.Request): Promise<any> => {
         const qrcode = request.body.QRcode;
         
+        // Allow null or undefined
         if (qrcode === null || qrcode === undefined) {
             return null;
         }
         
+        // Must be a resource ID string or object with resourceId
         if (typeof qrcode === 'string') {
             if (qrcode.trim().length === 0) {
                 throw new ApiError(400, 'QRcode resource ID cannot be empty');
             }
+            // Validate UUID format
             if (!this.isValidUUID(qrcode)) {
                 throw new ApiError(400, 'QRcode must be a valid resource ID (UUID)');
             }
@@ -156,6 +169,7 @@ export class TenantSettingsMarketingValidator extends BaseValidator {
     updateImages = async (request: express.Request): Promise<any> => {
         const images = request.body.Images;
         
+        // Allow null or undefined
         if (images === null || images === undefined) {
             return null;
         }
@@ -164,6 +178,7 @@ export class TenantSettingsMarketingValidator extends BaseValidator {
             throw new ApiError(400, 'Images must be an object');
         }
 
+        // Validate known image fields (partnerLogos NOT included - it belongs in Logos column)
         const validFields = ['titleImage', 'userInterfaceImage'];
         const normalized: any = {};
         const existenceChecks: Promise<void>[] = [];
@@ -171,6 +186,7 @@ export class TenantSettingsMarketingValidator extends BaseValidator {
         for (const key of Object.keys(images)) {
             const value = images[key];
 
+            // All image fields should be resource ID strings
             if (validFields.includes(key)) {
                 if (typeof value !== 'string' || value.trim().length === 0) {
                     throw new ApiError(400, `Images.${key} must be a non-empty resource ID string`);
@@ -194,10 +210,12 @@ export class TenantSettingsMarketingValidator extends BaseValidator {
     updateLogos = async (request: express.Request): Promise<any> => {
         const logos = request.body.Logos;
         
+        // Allow null or undefined
         if (logos === null || logos === undefined) {
             return null;
         }
         
+        // Logos should be an array of resource IDs
         if (Array.isArray(logos)) {
             const existenceChecks: Promise<void>[] = [];
             for (let i = 0; i < logos.length; i++) {
@@ -213,6 +231,7 @@ export class TenantSettingsMarketingValidator extends BaseValidator {
             return logos;
         }
         
+        // Or an object with resource ID values
         if (typeof logos === 'object') {
             const normalized: any = {};
             const existenceChecks: Promise<void>[] = [];
@@ -235,27 +254,18 @@ export class TenantSettingsMarketingValidator extends BaseValidator {
     };
 
     updateByType = async (request: express.Request, type: TenantSettingsMarketingTypes): Promise<any> => {
-        if (type === TenantSettingsMarketingTypes.Styling) {
-            return await this.updateStyling(request);
-        }
-        if (type === TenantSettingsMarketingTypes.Content) {
-            return await this.updateContent(request);
-        }
-        if (type === TenantSettingsMarketingTypes.QRcode) {
-            return await this.updateQRcode(request);
-        }
-        if (type === TenantSettingsMarketingTypes.Images) {
-            return await this.updateImages(request);
-        }
-        if (type === TenantSettingsMarketingTypes.Logos) {
-            return await this.updateLogos(request);
-        }
+        if (type === TenantSettingsMarketingTypes.Styling) { return await this.updateStyling(request); }
+        if (type === TenantSettingsMarketingTypes.Content) { return await this.updateContent(request); }
+        if (type === TenantSettingsMarketingTypes.QRcode) { return await this.updateQRcode(request); }
+        if (type === TenantSettingsMarketingTypes.Images) { return await this.updateImages(request); }
+        if (type === TenantSettingsMarketingTypes.Logos) { return await this.updateLogos(request); }
         return null;
     };
 
     updateAll = async (request: express.Request): Promise<any> => {
         const model: any = {};
         
+        // Validate and add each field if present
         if (request.body.Styling !== undefined) {
             model.Styling = await this.updateStyling(request);
         }
@@ -275,11 +285,13 @@ export class TenantSettingsMarketingValidator extends BaseValidator {
         return model;
     };
 
+    // Helper: Validate CSS size (px, mm, cm, %, etc.)
     private isValidCSSSize(size: string): boolean {
         const cssPattern = /^\d+(\.\d+)?(px|mm|cm|in|pt|pc|em|rem|%|vh|vw)$/;
         return cssPattern.test(size);
     }
 
+    // Helper: Validate UUID format
     private isValidUUID(uuid: string): boolean {
         const uuidPattern = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
         return uuidPattern.test(uuid);
@@ -297,6 +309,7 @@ export class TenantSettingsMarketingValidator extends BaseValidator {
             );
         }
     }
-
 }
+
+
 

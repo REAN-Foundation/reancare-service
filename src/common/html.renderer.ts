@@ -53,11 +53,52 @@ export const htmlTextToPNG = async (htmlText: string, width: number, height: num
 
 export const htmlTextToPDFBuffer = async (htmlText: string): Promise<Buffer> => {
 
-    const browser = await puppeteer.launch({ args: ['--no-sandbox'], executablePath: '/usr/bin/chromium-browser' });
+    const launchOptions: any = {
+        args : [
+            '--no-sandbox',
+            '--disable-dev-shm-usage'
+        ]
+    };
+
+    const osType = Helper.getOSType();
+    if (osType === OSType.Linux) {
+        launchOptions.executablePath = '/usr/bin/chromium-browser';
+    } else if (osType === OSType.MacOS) {
+        launchOptions.executablePath = '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome';
+    }
+    // On Windows, puppeteer auto-detects Chrome, so no executablePath needed
+
+    const browser = await puppeteer.launch(launchOptions);
     const page = await browser.newPage();
 
-    await page.setContent(htmlText);
-    const pdfBuffer = await page.pdf();
+    await page.setContent(htmlText, { waitUntil: 'load' });
+    
+    // Wait for all images to load
+    await page.evaluate(() => {
+        const images = Array.from(document.images);
+        
+        return Promise.all(
+            images.map((img) => {
+                return new Promise<boolean>((resolve) => {
+                    if (img.complete && img.naturalHeight !== 0) {
+                        resolve(true);
+                        return;
+                    }
+                    
+                    img.addEventListener('load', () => resolve(true));
+                    img.addEventListener('error', () => resolve(false));
+                    
+                    // Timeout after 5 seconds per image
+                    setTimeout(() => resolve(false), 5000);
+                });
+            })
+        );
+    });
+
+    const pdfBuffer = await page.pdf({
+        format          : 'A4',
+        printBackground : true,
+    });
 
     await page.close();
     await browser.close();

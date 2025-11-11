@@ -10,6 +10,7 @@ import { FileResourceService } from '../../../services/general/file.resource.ser
 import { uuid } from '../../../domain.types/miscellaneous/system.types';
 import { TenantSettingsMarketingTypes } from '../../../domain.types/tenant/marketing/tenant.settings.marketing.types';
 import { TenantSettingsMarketingValidator } from './tenant.settings.marketing.validator';
+import { Logger } from '../../../common/logger';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -93,7 +94,6 @@ export class TenantSettingsMarketingController extends BaseController {
                 await this._service.updateSettingsByType(tenantId, TenantSettingsMarketingTypes.Logos, payload.Logos);
             }
 
-            // Fetch and return updated settings
             const updated = await this._service.getSettings(tenantId);
             ResponseHandler.success(request, response, 'Tenant marketing settings updated successfully!', 200, {
                 TenantMarketingSettings : updated,
@@ -110,7 +110,6 @@ export class TenantSettingsMarketingController extends BaseController {
             const payload = await this._validator.updateImages(request);
             const updated = await this._service.updateSettingsByType(tenantId, TenantSettingsMarketingTypes.Images, payload);
             
-            // Return only the updated field
             const responseData = {
                 Images : updated.Images,
             };
@@ -127,7 +126,6 @@ export class TenantSettingsMarketingController extends BaseController {
             const payload = await this._validator.updateQRcode(request);
             const updated = await this._service.updateSettingsByType(tenantId, TenantSettingsMarketingTypes.QRcode, payload);
             
-            // Return only the updated field
             const responseData = {
                 QRcode : updated.QRcode,
             };
@@ -144,7 +142,6 @@ export class TenantSettingsMarketingController extends BaseController {
             const payload = await this._validator.updateContent(request);
             const updated = await this._service.updateSettingsByType(tenantId, TenantSettingsMarketingTypes.Content, payload);
             
-            // Return only the updated field
             const responseData = {
                 Content : updated.Content,
             };
@@ -161,7 +158,6 @@ export class TenantSettingsMarketingController extends BaseController {
             const payload = await this._validator.updateLogos(request);
             const updated = await this._service.updateSettingsByType(tenantId, TenantSettingsMarketingTypes.Logos, payload);
             
-            // Return only the updated field
             const responseData = {
                 Logos : updated.Logos,
             };
@@ -176,22 +172,18 @@ export class TenantSettingsMarketingController extends BaseController {
             const tenantId: uuid = await this._validator.getParamUuid(request, 'tenantId');
             await this.authorizeOne(request, null, tenantId);
 
-            // Fetch marketing settings
             const settings = await this._service.getSettings(tenantId);
             if (!settings) {
                 throw new Error('Marketing settings not found for this tenant. Please create settings first.');
             }
 
-            // Generate PDF file
             const { absFilepath, filename } = await this._pdfService.generatePamphletFile(settings, 'marketing-pamphlet');
 
-            // Upload or replace PDF in storage
             const storageKey = `tenant/${tenantId}/marketing/pamphlets/${filename}`;
             const existingResourceId = settings.PDFResourceId;
             
             let fileResource: any;
             if (existingResourceId) {
-                // Replace existing PDF (prevents accumulation)
                 fileResource = await this._fileResourceService.replaceLocal(
                     existingResourceId,
                     absFilepath,
@@ -199,10 +191,8 @@ export class TenantSettingsMarketingController extends BaseController {
                     false
                 );
             } else {
-                // Create new PDF (first time generation)
                 fileResource = await this._fileResourceService.uploadLocal(absFilepath, storageKey, false);
-                
-                // Save resource ID for future replacements
+
                 const marketingRepo = Injector.Container.resolve('ITenantSettingsMarketingRepo');
                 await (marketingRepo as any).updatePDFResourceId(tenantId, fileResource.id);
             }
@@ -212,7 +202,7 @@ export class TenantSettingsMarketingController extends BaseController {
             try {
                 await fs.promises.unlink(absFilepath);
             } catch (cleanupError) {
-                // Ignore cleanup errors
+                Logger.instance().error('Failed to delete temporary PDF file.', null, cleanupError);
             }
 
             response.setHeader('Content-Type', 'application/pdf');

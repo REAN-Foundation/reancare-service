@@ -148,7 +148,6 @@ export class TenantMarketingPdfService {
         const imagesInput = settings?.Images ?? {};
         const logosInput = settings?.Logos ?? {};
 
-        // Download partner logos from Logos column
         const partnerLogosIds = Array.isArray(logosInput)
             ? logosInput
             : (typeof logosInput === 'object' && logosInput?.partnerLogos)
@@ -156,7 +155,6 @@ export class TenantMarketingPdfService {
                 : [];
         const partnerLogos = await Promise.all(partnerLogosIds.map(id => this.downloadResourceToDataUrl(id)));
 
-        // Download images from Images column
         const titleImage = typeof imagesInput?.titleImage === 'string' 
             ? await this.downloadResourceToDataUrl(imagesInput.titleImage) 
             : undefined;
@@ -164,7 +162,6 @@ export class TenantMarketingPdfService {
             ? await this.downloadResourceToDataUrl(imagesInput.userInterfaceImage)
             : undefined;
 
-        // QR code is sourced from the dedicated QRcode column
         const qrCodeId = typeof settings?.QRcode === 'string'
             ? settings.QRcode
             : settings?.QRcode?.resourceId;
@@ -197,18 +194,14 @@ export class TenantMarketingPdfService {
                 return null;
             }
 
-            // Read file and convert to base64 data URL
             const fileBuffer = await fs.promises.readFile(localPath);
             const base64 = fileBuffer.toString('base64');
             const mimeType = this.getMimeType(localPath);
             const dataUrl = `data:${mimeType};base64,${base64}`;
 
-            // Clean up temp file
             try {
                 await fs.promises.unlink(localPath);
-            } catch (err) {
-                // Ignore cleanup errors
-            }
+            } catch (err) { /* empty */ }
 
             return dataUrl;
         }

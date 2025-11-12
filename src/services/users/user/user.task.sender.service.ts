@@ -4,7 +4,6 @@ import { Logger } from "../../../common/logger";
 import { Loader } from "../../../startup/loader";
 import { IPersonRepo } from "../../../database/repository.interfaces/person/person.repo.interface";
 import { IUserTaskRepo } from "../../../database/repository.interfaces/users/user/user.task.repo.interface";
-import { uuid } from "../../../domain.types/miscellaneous/system.types";
 import { UserTaskCategory } from "../../../domain.types/users/user.task/user.task.types";
 import { AssessmentService } from "../../../services/clinical/assessment/assessment.service";
 import { NotificationChannel } from "../../../domain.types/general/notification/notification.types";
@@ -127,7 +126,7 @@ export class UserTaskSenderService {
                     UserTaskId           : userTask.id,
                     ScheduledDateString  : new Date().toISOString()
                         .split('T')[0] ?? null,
-                    ParentActivityId: careplanActivity.id
+                    ParentActivityId : careplanActivity.id
                 };
                 const assessment = await this._assessmentService.create(entity);
                 userTask.Action = { Assessment: assessment };
@@ -159,9 +158,9 @@ export class UserTaskSenderService {
             } else {
                 Logger.instance().log(`Successfully message send to ${personPhone}`);
                 if (userTask.Category !== UserTaskCategory.Assessment && !isAssessmentWithForm){
-                    await this._userTaskRepo.finishTask(userTask.id)
-                    await this._careplanRepo.completeActivity(careplanActivity.id)
-                }            
+                    await this._userTaskRepo.finishTask(userTask.id);
+                    await this._careplanRepo.completeActivity(careplanActivity.id);
+                }
                 return true;
             }
         }

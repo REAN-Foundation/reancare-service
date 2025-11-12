@@ -16,8 +16,8 @@ export class TenantSettingsMarketingValidator extends BaseValidator {
         super();
     }
 
-    getTypes = async (_request: express.Request): Promise<void> => {
-        return;
+    getTypes = async (): Promise<void> => {
+        // Method required by interface; no validation needed here currently.
     };
 
     // Detailed validation for Styling
@@ -254,12 +254,20 @@ export class TenantSettingsMarketingValidator extends BaseValidator {
     };
 
     updateByType = async (request: express.Request, type: TenantSettingsMarketingTypes): Promise<any> => {
-        if (type === TenantSettingsMarketingTypes.Styling) { return await this.updateStyling(request); }
-        if (type === TenantSettingsMarketingTypes.Content) { return await this.updateContent(request); }
-        if (type === TenantSettingsMarketingTypes.QRcode) { return await this.updateQRcode(request); }
-        if (type === TenantSettingsMarketingTypes.Images) { return await this.updateImages(request); }
-        if (type === TenantSettingsMarketingTypes.Logos) { return await this.updateLogos(request); }
-        return null;
+        switch (type) {
+            case TenantSettingsMarketingTypes.Styling:
+                return await this.updateStyling(request);
+            case TenantSettingsMarketingTypes.Content:
+                return await this.updateContent(request);
+            case TenantSettingsMarketingTypes.QRcode:
+                return await this.updateQRcode(request);
+            case TenantSettingsMarketingTypes.Images:
+                return await this.updateImages(request);
+            case TenantSettingsMarketingTypes.Logos:
+                return await this.updateLogos(request);
+            default:
+                return null;
+        }
     };
 
     updateAll = async (request: express.Request): Promise<any> => {
@@ -309,7 +317,5 @@ export class TenantSettingsMarketingValidator extends BaseValidator {
             );
         }
     }
+
 }
-
-
-

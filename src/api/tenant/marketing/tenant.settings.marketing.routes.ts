@@ -24,4 +24,3 @@ export const register = (app: express.Application): void => {
     app.use('/api/v1/tenant-settings-marketing', router);
 };
 
-

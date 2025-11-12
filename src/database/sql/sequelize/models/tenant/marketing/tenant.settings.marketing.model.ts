@@ -98,4 +98,3 @@ export default class TenantSettingsMarketing extends Model {
 
 }
 
-

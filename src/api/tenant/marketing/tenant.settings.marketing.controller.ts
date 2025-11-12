@@ -233,6 +233,6 @@ export class TenantSettingsMarketingController extends BaseController {
             ResponseHandler.handleError(request, response, error);
         }
     };
-}
 
+}
 

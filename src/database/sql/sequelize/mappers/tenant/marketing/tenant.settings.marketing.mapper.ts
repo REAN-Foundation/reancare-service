@@ -1,5 +1,6 @@
 import TenantSettingsMarketing from '../../../models/tenant/marketing/tenant.settings.marketing.model';
 import { TenantSettingsMarketingDto } from '../../../../../../domain.types/tenant/marketing/tenant.settings.marketing.types';
+import { Logger } from '../../../../../../common/logger';
 
 ///////////////////////////////////////////////////////////////////////////////////
 
@@ -11,11 +12,13 @@ export class TenantSettingsMarketingMapper {
         }
         
         const safeJSONParse = (value: string): any => {
-            if (!value) return null;
+            if (!value) {
+                return null;
+            }
             try {
                 return JSON.parse(value);
             } catch (error) {
-                console.error('Failed to parse JSON:', error.message);
+                Logger.instance().error('Failed to parse marketing settings JSON.', 0, error.message);
                 return null;
             }
         };
@@ -33,5 +36,3 @@ export class TenantSettingsMarketingMapper {
     };
 
 }
-
-

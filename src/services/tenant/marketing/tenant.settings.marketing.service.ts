@@ -31,22 +31,45 @@ export class TenantSettingsMarketingService {
 
     getSettingsByType = async (tenantId: uuid, type: TenantSettingsMarketingTypes): Promise<any> => {
         const settings = await this._repo.getSettings(tenantId);
-        if (!settings) { return null; }
-        if (type === TenantSettingsMarketingTypes.Styling) { return settings.Styling; }
-        if (type === TenantSettingsMarketingTypes.Content) { return settings.Content; }
-        if (type === TenantSettingsMarketingTypes.QRcode) { return settings.QRcode; }
-        if (type === TenantSettingsMarketingTypes.Images) { return settings.Images; }
-        if (type === TenantSettingsMarketingTypes.Logos) { return settings.Logos; }
-        return settings;
+        if (!settings) {
+            return null;
+        }
+
+        switch (type) {
+            case TenantSettingsMarketingTypes.Styling:
+                return settings.Styling;
+            case TenantSettingsMarketingTypes.Content:
+                return settings.Content;
+            case TenantSettingsMarketingTypes.QRcode:
+                return settings.QRcode;
+            case TenantSettingsMarketingTypes.Images:
+                return settings.Images;
+            case TenantSettingsMarketingTypes.Logos:
+                return settings.Logos;
+            default:
+                return settings;
+        }
     };
 
-    updateSettingsByType = async (tenantId: uuid, type: TenantSettingsMarketingTypes, payload: any): Promise<TenantSettingsMarketingDto> => {
-        if (type === TenantSettingsMarketingTypes.Styling) { return await this._repo.updateStyling(tenantId, payload); }
-        if (type === TenantSettingsMarketingTypes.Content) { return await this._repo.updateContent(tenantId, payload); }
-        if (type === TenantSettingsMarketingTypes.QRcode) { return await this._repo.updateQRcode(tenantId, payload); }
-        if (type === TenantSettingsMarketingTypes.Images) { return await this._repo.updateImages(tenantId, payload); }
-        if (type === TenantSettingsMarketingTypes.Logos) { return await this._repo.updateLogos(tenantId, payload); }
-        return await this._repo.getSettings(tenantId);
+    updateSettingsByType = async (
+        tenantId: uuid,
+        type: TenantSettingsMarketingTypes,
+        payload: any
+    ): Promise<TenantSettingsMarketingDto> => {
+        switch (type) {
+            case TenantSettingsMarketingTypes.Styling:
+                return await this._repo.updateStyling(tenantId, payload);
+            case TenantSettingsMarketingTypes.Content:
+                return await this._repo.updateContent(tenantId, payload);
+            case TenantSettingsMarketingTypes.QRcode:
+                return await this._repo.updateQRcode(tenantId, payload);
+            case TenantSettingsMarketingTypes.Images:
+                return await this._repo.updateImages(tenantId, payload);
+            case TenantSettingsMarketingTypes.Logos:
+                return await this._repo.updateLogos(tenantId, payload);
+            default:
+                return await this._repo.getSettings(tenantId);
+        }
     };
 
     deleteSettings = async (tenantId: uuid): Promise<boolean> => {
@@ -77,8 +100,17 @@ export class TenantSettingsMarketingService {
                 subtitle  : 'Your Personalized Companion for Health and Wellness',
             },
             introduction : {
-                introParagraph   : 'Welcome to our health program. This comprehensive platform provides you with personalized support, guidance, and resources to help you achieve your health goals.',
-                problemStatement : 'Many individuals struggle with managing their health effectively due to lack of personalized guidance, difficulty tracking progress, and limited access to timely support. Our program addresses these challenges by providing a structured, easy-to-use platform that puts your health journey at your fingertips.',
+                introParagraph : [
+                    'Welcome to our health program.',
+                    'This comprehensive platform provides you with personalized support, guidance, and resources',
+                    'to help you achieve your health goals.',
+                ].join(' '),
+                problemStatement : [
+                    'Many individuals struggle with managing their health effectively due to lack of personalized guidance,',
+                    'difficulty tracking progress, and limited access to timely support.',
+                    'Our program addresses these challenges by providing a structured, easy-to-use platform',
+                    'that puts your health journey at your fingertips.',
+                ].join(' '),
             },
             benefits : {
                 title : 'Key Benefits',
@@ -92,12 +124,20 @@ export class TenantSettingsMarketingService {
             },
             userInterface : {
                 heading   : 'Who Can Benefit from This Program',
-                paragraph : 'This program is designed for individuals seeking to take control of their health journey. Whether you are managing a chronic condition, working on preventive care, or simply looking to improve your overall wellness, our platform provides personalized support to meet your unique needs.',
+                paragraph : [
+                    'This program is designed for individuals seeking to take control of their health journey.',
+                    'Whether you are managing a chronic condition, working on preventive care,',
+                    'or simply looking to improve your overall wellness, our platform provides personalized support',
+                    'to meet your unique needs.',
+                ].join(' '),
             },
             footer : {
                 ctaHeading     : 'Get Started Today',
-                ctaDescription : 'Register by scanning the QR code or contacting us through your preferred channel. Join our community and take the first step towards better health.',
-                qrInstruction  : 'Scan to get started',
+                ctaDescription : [
+                    'Register by scanning the QR code or contacting us through your preferred channel.',
+                    'Join our community and take the first step towards better health.',
+                ].join(' '),
+                qrInstruction : 'Scan to get started',
             },
         };
 
@@ -109,6 +149,6 @@ export class TenantSettingsMarketingService {
             Logos   : null,
         };
     };
-}
 
+}
 

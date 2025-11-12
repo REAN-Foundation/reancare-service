@@ -1,12 +1,11 @@
 import 'reflect-metadata';
-import { injectable, inject } from 'tsyringe';
+import { injectable } from 'tsyringe';
 import fs from 'fs';
 import path from 'path';
 import Handlebars from 'handlebars';
 import { htmlTextToPDFBuffer } from '../../common/html.renderer';
 import { PDFGenerator } from '../reports/pdf.generator';
 import { TenantSettingsMarketingDto } from '../../domain.types/tenant/marketing/tenant.settings.marketing.types';
-import { ConfigurationManager } from '../../config/configuration.manager';
 import { FileResourceService } from '../../services/general/file.resource.service';
 import { Injector } from '../../startup/injector';
 import { Logger } from '../../common/logger';
@@ -73,8 +72,6 @@ interface PamphletTemplateModel {
 export class TenantMarketingPdfService {
 
     private _template: HandlebarsTemplateDelegate = null;
-
-    constructor() {}
 
     public async generatePamphletBuffer(settings: TenantSettingsMarketingDto): Promise<Buffer> {
         const html = await this.renderPamphletHtml(settings);
@@ -155,8 +152,8 @@ export class TenantMarketingPdfService {
                 : [];
         const partnerLogos = await Promise.all(partnerLogosIds.map(id => this.downloadResourceToDataUrl(id)));
 
-        const titleImage = typeof imagesInput?.titleImage === 'string' 
-            ? await this.downloadResourceToDataUrl(imagesInput.titleImage) 
+        const titleImage = typeof imagesInput?.titleImage === 'string'
+            ? await this.downloadResourceToDataUrl(imagesInput.titleImage)
             : undefined;
         const userInterfaceImage = typeof imagesInput?.userInterfaceImage === 'string'
             ? await this.downloadResourceToDataUrl(imagesInput.userInterfaceImage)
@@ -212,7 +209,8 @@ export class TenantMarketingPdfService {
     }
 
     private getMimeType(filePath: string): string {
-        const ext = filePath.split('.').pop()?.toLowerCase();
+        const ext = filePath.split('.').pop()
+            ?.toLowerCase();
         const mimeTypes: { [key: string]: string } = {
             'jpg'  : 'image/jpeg',
             'jpeg' : 'image/jpeg',
@@ -224,6 +222,5 @@ export class TenantMarketingPdfService {
         };
         return mimeTypes[ext] || 'image/jpeg';
     }
+
 }
-
-

@@ -84,4 +84,5 @@ export class TenantSettingsMarketingAuth {
         ActionScope : ActionScope.Tenant,
         RequestType : RequestType.GetOne,
     };
+
 }

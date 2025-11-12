@@ -13,5 +13,3 @@ export interface ITenantSettingsMarketingRepo {
     updatePDFResourceId(tenantId: string, resourceId: string): Promise<TenantSettingsMarketingDto>;
     delete(tenantId: string): Promise<boolean>;
 }
-
-

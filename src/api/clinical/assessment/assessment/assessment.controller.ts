@@ -720,15 +720,14 @@ export class AssessmentController extends BaseController {
         var assessment = await this._service.completeAssessment(assessmentId);
         var parentActivityId = assessment.ParentActivityId;
         if (parentActivityId !== null) {
-            var activity = await this._careplanService.getAction(parentActivityId);
-            if (activity !== null) {
-                var userTaskId = activity.UserTaskId;
-                await this._userTaskService.finishTask(userTaskId);
-                ActivityTrackerHandler.addOrUpdateActivity({
-                    PatientUserId      : assessment.PatientUserId,
-                    RecentActivityDate : new Date(),
-                });
+            if (assessment.Provider === 'AHA') {
+                await this._careplanService.getAction(parentActivityId);
             }
+            await this._userTaskService.finishTask(assessment.UserTaskId);
+            ActivityTrackerHandler.addOrUpdateActivity({
+                PatientUserId      : assessment.PatientUserId,
+                RecentActivityDate : new Date(),
+            });
             await this._careplanService.completeAction(parentActivityId, new Date(), true, assessment);
         } else {
             var task = await this._userTaskService.getByActionId(assessmentId);

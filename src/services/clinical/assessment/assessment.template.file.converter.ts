@@ -128,6 +128,7 @@ export class AssessmentTemplateFileConverter {
             Title             : nodeObj.Title,
             Description       : nodeObj.Description,
             Sequence          : nodeObj.Sequence,
+            Required          : nodeObj.Required,
             Score             : nodeObj.Score,
         };
 
@@ -143,9 +144,15 @@ export class AssessmentTemplateFileConverter {
             //thisNode.NodeType === AssessmentNodeType.Question
             const questionNode = nodeObj as CAssessmentQuestionNode;
             node['QueryResponseType'] = questionNode.QueryResponseType;
-
+            node['RawData'] = (
+                questionNode.RawData && Object.keys(questionNode.RawData).length > 0
+            ) ? questionNode.RawData : null;
+            node['FieldIdentifier'] = questionNode.FieldIdentifier;
+            node['FieldIdentifierUnit'] = questionNode.FieldIdentifierUnit;
+            node['CorrectAnswer'] = questionNode.CorrectAnswer;
             //Add options
             if (questionNode.Options && questionNode.Options.length > 0) {
+
                 const optionObjects: CAssessmentQueryOption[] = questionNode.Options;
                 var options = [];
                 for (var optionObj of optionObjects) {
@@ -338,6 +345,16 @@ export class AssessmentTemplateFileConverter {
             }
         }
         return condition;
+    }
+
+    private static isEmptyObject(value: any): boolean {
+        if (value == null) {
+            return false;
+        }
+        if (typeof value === 'object' && !Array.isArray(value)) {
+            return Object.keys(value).length === 0;
+        }
+        return false;
     }
 
     //#endregion

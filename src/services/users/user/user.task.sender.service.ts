@@ -4,7 +4,7 @@ import { Logger } from "../../../common/logger";
 import { Loader } from "../../../startup/loader";
 import { IPersonRepo } from "../../../database/repository.interfaces/person/person.repo.interface";
 import { IUserTaskRepo } from "../../../database/repository.interfaces/users/user/user.task.repo.interface";
-import { UserTaskCategory } from "../../../domain.types/users/user.task/user.task.types";
+import { UserActionType, UserTaskCategory } from "../../../domain.types/users/user.task/user.task.types";
 import { AssessmentService } from "../../../services/clinical/assessment/assessment.service";
 import { NotificationChannel } from "../../../domain.types/general/notification/notification.types";
 import { IUserRepo } from "../../../database/repository.interfaces/users/user/user.repo.interface";
@@ -141,28 +141,29 @@ export class UserTaskSenderService {
                 messageType = rawContent.TemplateName;
             }
 
-            let booleanResponse = false;
+            let isMessageSent = false;
             const payload = JSON.stringify(userTask);
             if (userTask.Channel === NotificationChannel.Telegram) {
-                booleanResponse = await Loader.messagingService.sendMessage(userTask.TenantName, "telegram", personPhone,
+                isMessageSent = await Loader.messagingService.sendMessage(userTask.TenantName, "telegram", personPhone,
                     messageType, null,  message, payload);
             } else if (userTask.Channel === NotificationChannel.WhatsApp ||
                 userTask.Channel === NotificationChannel.WhatsappWati ) {
-                booleanResponse = await Loader.messagingService.sendWhatsappWithReanBot(personPhone, message,
+                isMessageSent = await Loader.messagingService.sendWhatsappWithReanBot(personPhone, message,
                     userTask.TenantName, messageType, null, payload, userTask.Channel);
             }
 
-            if (booleanResponse === false) {
+            if (isMessageSent === false) {
                 Logger.instance().log(`Something went wrong with rean bot wrapper`);
                 return false;
-            } else {
-                Logger.instance().log(`Successfully message send to ${personPhone}`);
-                if (userTask.Category !== UserTaskCategory.Assessment && !isAssessmentWithForm){
-                    await this._userTaskRepo.finishTask(userTask.id);
+            }
+            Logger.instance().log(`Successfully message send to ${personPhone}`);
+            if (userTask.Category !== UserTaskCategory.Assessment){
+                await this._userTaskRepo.finishTask(userTask.id);
+                if (userTask.Action === UserActionType.Careplan){
                     await this._careplanRepo.completeActivity(careplanActivity.id);
                 }
-                return true;
             }
+            return true;       
         }
         catch (error) {
             Logger.instance().log(`Error sending user task on bot: ${JSON.stringify(error.message, null, 2)}`);

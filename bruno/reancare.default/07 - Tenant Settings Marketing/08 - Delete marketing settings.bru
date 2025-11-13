@@ -1,0 +1,53 @@
+meta {
+  name: Delete marketing settings
+  type: http
+  seq: 8
+}
+
+delete {
+  url: {{BASE_URL}}/tenant-settings-marketing/{{TENANT_ID}}
+  body: none
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+  Authorization: Bearer {{TENANT_ADMIN_USER_JWT}}
+}
+
+tests {
+  try {
+      var jsonRes = res.getBody();
+  }
+  catch (error) {
+      console.log("Error parsing response:", error.message);
+  }
+  
+  test("Request is successful", function () {
+      expect(res.getStatus()).to.equal(200);
+      var jsonRes = res.getBody();
+      expect(jsonRes.Status).to.eql("success");
+  });
+  
+  test("Marketing settings are deleted", function () {
+      var jsonRes = res.getBody();
+      expect(jsonRes).to.have.property("Data");
+      expect(jsonRes.Data).to.have.property("Deleted");
+      expect(jsonRes.Data.Deleted).to.be.true;
+  });
+  
+}
+
+docs {
+  Deletes the entire marketing settings row for a tenant.
+  
+  This is a soft delete (paranoid mode enabled), so the row is marked as deleted but not physically removed from the database.
+  
+  Use this when:
+  - Resetting marketing settings to recreate with defaults
+  - Removing marketing configuration for a tenant
+  
+  After deletion, you can recreate marketing settings by calling the POST endpoint.
+}
+

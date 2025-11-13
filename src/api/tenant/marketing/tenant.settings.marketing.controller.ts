@@ -44,8 +44,7 @@ export class TenantSettingsMarketingController extends BaseController {
             const tenantCode: string = await this._validator.getParamStr(request, 'tenantCode');
             const tenant = await this._tenantService.getTenantWithCode(tenantCode);
             if (!tenant) {
-                ResponseHandler.failure(request, response, 'Tenant not found', 404);
-                return;
+                throw new Error('Tenant not found');
             }
             await this.authorizeOne(request, null, tenant.id);
             const settings = await this._service.getSettings(tenant.id);
@@ -61,6 +60,11 @@ export class TenantSettingsMarketingController extends BaseController {
         try {
             const tenantId: uuid = await this._validator.getParamUuid(request, 'tenantId');
             await this.authorizeOne(request, null, tenantId);
+            const existing = await this._service.getSettings(tenantId);
+            if (existing) {
+                throw new Error('Marketing settings already exist for this tenant.');
+            }
+
             const payload = await this._validator.updateAll(request);
             const created = await this._service.createDefaultSettings(tenantId, payload);
             ResponseHandler.success(request, response, 'Tenant marketing settings created successfully!', 201, {
@@ -84,8 +88,8 @@ export class TenantSettingsMarketingController extends BaseController {
             if (payload.Content !== undefined) {
                 await this._service.updateSettingsByType(tenantId, TenantSettingsMarketingTypes.Content, payload.Content);
             }
-            if (payload.QRcode !== undefined) {
-                await this._service.updateSettingsByType(tenantId, TenantSettingsMarketingTypes.QRcode, payload.QRcode);
+            if (payload.QRCode !== undefined) {
+                await this._service.updateSettingsByType(tenantId, TenantSettingsMarketingTypes.QRCode, payload.QRCode);
             }
             if (payload.Images !== undefined) {
                 await this._service.updateSettingsByType(tenantId, TenantSettingsMarketingTypes.Images, payload.Images);
@@ -119,15 +123,15 @@ export class TenantSettingsMarketingController extends BaseController {
         }
     };
 
-    updateQRcode = async (request: express.Request, response: express.Response): Promise<void> => {
+    updateQRCode = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             const tenantId: uuid = await this._validator.getParamUuid(request, 'tenantId');
             await this.authorizeOne(request, null, tenantId);
-            const payload = await this._validator.updateQRcode(request);
-            const updated = await this._service.updateSettingsByType(tenantId, TenantSettingsMarketingTypes.QRcode, payload);
+            const payload = await this._validator.updateQRCode(request);
+            const updated = await this._service.updateSettingsByType(tenantId, TenantSettingsMarketingTypes.QRCode, payload);
             
             const responseData = {
-                QRcode : updated.QRcode,
+                QRCode : updated.QRCode,
             };
             ResponseHandler.success(request, response, 'QR code updated successfully!', 200, responseData);
         } catch (error) {
@@ -140,7 +144,11 @@ export class TenantSettingsMarketingController extends BaseController {
             const tenantId: uuid = await this._validator.getParamUuid(request, 'tenantId');
             await this.authorizeOne(request, null, tenantId);
             const payload = await this._validator.updateContent(request);
-            const updated = await this._service.updateSettingsByType(tenantId, TenantSettingsMarketingTypes.Content, payload);
+            const updated = await this._service.updateSettingsByType(
+                tenantId,
+                TenantSettingsMarketingTypes.Content,
+                payload
+            );
             
             const responseData = {
                 Content : updated.Content,
@@ -182,7 +190,7 @@ export class TenantSettingsMarketingController extends BaseController {
             const storageKey = `tenant/${tenantId}/marketing/pamphlets/${filename}`;
             const existingResourceId = settings.PDFResourceId;
             
-            let fileResource: any;
+            let fileResource: any = null;
             if (existingResourceId) {
                 fileResource = await this._fileResourceService.replaceLocal(
                     existingResourceId,
@@ -192,9 +200,7 @@ export class TenantSettingsMarketingController extends BaseController {
                 );
             } else {
                 fileResource = await this._fileResourceService.uploadLocal(absFilepath, storageKey, false);
-
-                const marketingRepo = Injector.Container.resolve('ITenantSettingsMarketingRepo');
-                await (marketingRepo as any).updatePDFResourceId(tenantId, fileResource.id);
+                await this._service.updatePdfResourceId(tenantId, fileResource.id);
             }
 
             const pdfBuffer = await fs.promises.readFile(absFilepath);

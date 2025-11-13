@@ -11,34 +11,34 @@ import { Injector } from '../../startup/injector';
 import { Logger } from '../../common/logger';
 
 const DEFAULT_STYLING = {
-    primary              : '#1a472a',
-    secondary            : '#2d5f3f',
-    accent               : '#25D366',
-    lightBg              : '#f1f8f4',
-    panel                : '#ffffff',
-    muted                : '#555',
-    text                 : '#222',
-    headingFont          : "'Poppins', sans-serif",
-    bodyFont             : "'Inter', sans-serif",
-    pageWidth            : '210mm',
-    pageHeight           : '297mm',
-    userInterfaceWidth   : '260px',
-    userInteractionWidth : '250px',
-    qrSize               : '120px',
+    Primary              : '#1a472a',
+    Secondary            : '#2d5f3f',
+    Accent               : '#25D366',
+    LightBg              : '#f1f8f4',
+    Panel                : '#ffffff',
+    Muted                : '#555',
+    Text                 : '#222',
+    HeadingFont          : "'Poppins', sans-serif",
+    BodyFont             : "'Inter', sans-serif",
+    PageWidth            : '210mm',
+    PageHeight           : '297mm',
+    UserInterfaceWidth   : '260px',
+    UserInteractionWidth : '250px',
+    QrSize               : '120px',
 };
 
 const DEFAULT_CONTENT = {
-    header : {
-        mainTitle : 'Your Health Program Name',
-        subtitle  : 'Your Personalized Companion for Health and Wellness',
+    Header : {
+        MainTitle : 'Your Health Program Name',
+        Subtitle  : 'Your Personalized Companion for Health and Wellness',
     },
-    introduction : {
-        introParagraph   : 'Welcome to our health program. This comprehensive platform provides you with personalized support, guidance, and resources to help you achieve your health goals.',
-        problemStatement : 'Many individuals struggle with managing their health effectively due to lack of personalized guidance, difficulty tracking progress, and limited access to timely support. Our program addresses these challenges by providing a structured, easy-to-use platform that puts your health journey at your fingertips.',
+    Introduction : {
+        IntroParagraph   : 'Welcome to our health program. This comprehensive platform provides you with personalized support, guidance, and resources to help you achieve your health goals.',
+        ProblemStatement : 'Many individuals struggle with managing their health effectively due to lack of personalized guidance, difficulty tracking progress, and limited access to timely support. Our program addresses these challenges by providing a structured, easy-to-use platform that puts your health journey at your fingertips.',
     },
-    benefits : {
-        title : 'Key Benefits',
-        items : [
+    Benefits : {
+        Title : 'Key Benefits',
+        Items : [
             'Access personalized health recommendations and care plans',
             'Track your health metrics and progress over time',
             'Receive timely reminders and health tips',
@@ -46,25 +46,25 @@ const DEFAULT_CONTENT = {
             'Access educational resources tailored to your needs',
         ],
     },
-    userInterface : {
-        heading   : 'Who Can Benefit from This Program',
-        paragraph : 'This program is designed for individuals seeking to take control of their health journey. Whether you are managing a chronic condition, working on preventive care, or simply looking to improve your overall wellness, our platform provides personalized support to meet your unique needs.',
+    UserInterface : {
+        Heading   : 'Who Can Benefit from This Program',
+        Paragraph : 'This program is designed for individuals seeking to take control of their health journey. Whether you are managing a chronic condition, working on preventive care, or simply looking to improve your overall wellness, our platform provides personalized support to meet your unique needs.',
     },
-    footer : {
-        ctaHeading     : 'Get Started Today',
-        ctaDescription : 'Register by scanning the QR code or contacting us through your preferred channel. Join our community and take the first step towards better health.',
-        qrInstruction  : 'Scan to get started',
+    Footer : {
+        CtaHeading     : 'Get Started Today',
+        CtaDescription : 'Register by scanning the QR code or contacting us through your preferred channel. Join our community and take the first step towards better health.',
+        QrInstruction  : 'Scan to get started',
     },
 };
 
 interface PamphletTemplateModel {
-    styling: Record<string, any>;
+    styling: typeof DEFAULT_STYLING;
     content: typeof DEFAULT_CONTENT;
     images: {
-        partnerLogos: string[];
-        titleImage?: string;
-        userInterfaceImage?: string;
-        qrCode?: string;
+        PartnerLogos: string[];
+        TitleImage?: string;
+        UserInterfaceImage?: string;
+        QRCode?: string;
     };
 }
 
@@ -117,28 +117,28 @@ export class TenantMarketingPdfService {
         };
 
         const content = {
-            header : {
-                ...DEFAULT_CONTENT.header,
-                ...(settings?.Content?.header ?? {}),
+            Header : {
+                ...DEFAULT_CONTENT.Header,
+                ...(settings?.Content?.Header ?? {}),
             },
-            introduction : {
-                ...DEFAULT_CONTENT.introduction,
-                ...(settings?.Content?.introduction ?? {}),
+            Introduction : {
+                ...DEFAULT_CONTENT.Introduction,
+                ...(settings?.Content?.Introduction ?? {}),
             },
-            benefits : {
-                ...DEFAULT_CONTENT.benefits,
-                ...(settings?.Content?.benefits ?? {}),
-                items : settings?.Content?.benefits?.items?.length > 0
-                    ? settings.Content.benefits.items
-                    : DEFAULT_CONTENT.benefits.items,
+            Benefits : {
+                ...DEFAULT_CONTENT.Benefits,
+                ...(settings?.Content?.Benefits ?? {}),
+                Items : settings?.Content?.Benefits?.Items?.length > 0
+                    ? settings.Content.Benefits.Items
+                    : DEFAULT_CONTENT.Benefits.Items,
             },
-            userInterface : {
-                ...DEFAULT_CONTENT.userInterface,
-                ...(settings?.Content?.userInterface ?? {}),
+            UserInterface : {
+                ...DEFAULT_CONTENT.UserInterface,
+                ...(settings?.Content?.UserInterface ?? {}),
             },
-            footer : {
-                ...DEFAULT_CONTENT.footer,
-                ...(settings?.Content?.footer ?? {}),
+            Footer : {
+                ...DEFAULT_CONTENT.Footer,
+                ...(settings?.Content?.Footer ?? {}),
             },
         };
 
@@ -147,28 +147,29 @@ export class TenantMarketingPdfService {
 
         const partnerLogosIds = Array.isArray(logosInput)
             ? logosInput
-            : (typeof logosInput === 'object' && logosInput?.partnerLogos)
-                ? (Array.isArray(logosInput.partnerLogos) ? logosInput.partnerLogos : [logosInput.partnerLogos])
+            : (typeof logosInput === 'object' && logosInput?.PartnerLogos)
+                ? (Array.isArray(logosInput.PartnerLogos) ? logosInput.PartnerLogos : [logosInput.PartnerLogos])
                 : [];
         const partnerLogos = await Promise.all(partnerLogosIds.map(id => this.downloadResourceToDataUrl(id)));
 
-        const titleImage = typeof imagesInput?.titleImage === 'string'
-            ? await this.downloadResourceToDataUrl(imagesInput.titleImage)
+        const titleImage = typeof imagesInput?.TitleImage === 'string'
+            ? await this.downloadResourceToDataUrl(imagesInput.TitleImage)
             : undefined;
-        const userInterfaceImage = typeof imagesInput?.userInterfaceImage === 'string'
-            ? await this.downloadResourceToDataUrl(imagesInput.userInterfaceImage)
+        const userInterfaceImage = typeof imagesInput?.UserInterfaceImage === 'string'
+            ? await this.downloadResourceToDataUrl(imagesInput.UserInterfaceImage)
             : undefined;
 
-        const qrCodeId = typeof settings?.QRcode === 'string'
-            ? settings.QRcode
-            : settings?.QRcode?.resourceId;
+        const qrSource = settings?.QRCode;
+        const qrCodeId = typeof qrSource === 'string'
+            ? qrSource
+            : qrSource?.ResourceId;
         const qrCode = qrCodeId ? await this.downloadResourceToDataUrl(qrCodeId) : undefined;
 
         const images = {
-            partnerLogos : partnerLogos.filter(url => url !== null),
-            titleImage,
-            userInterfaceImage,
-            qrCode,
+            'PartnerLogos'       : partnerLogos.filter(url => url !== null),
+            'TitleImage'         : titleImage,
+            'UserInterfaceImage' : userInterfaceImage,
+            'QRCode'             : qrCode,
         };
 
         return {

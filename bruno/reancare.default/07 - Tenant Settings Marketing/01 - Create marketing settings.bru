@@ -1,0 +1,108 @@
+meta {
+  name: Create marketing settings
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{BASE_URL}}/tenant-settings-marketing/{{TENANT_ID}}
+  body: json
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+  Authorization: Bearer {{TENANT_ADMIN_USER_JWT}}
+}
+
+body:json {
+  {
+    "Styling": {
+      "Primary": "#1a472a",
+      "Secondary": "#2d5f3f",
+      "Accent": "#25D366",
+      "LightBg": "#f1f8f4",
+      "Panel": "#ffffff",
+      "Muted": "#555",
+      "Text": "#222",
+      "HeadingFont": "'Poppins', sans-serif",
+      "BodyFont": "'Inter', sans-serif",
+      "PageWidth": "210mm",
+      "PageHeight": "297mm",
+      "UserInterfaceWidth": "260px",
+      "UserInteractionWidth": "250px",
+      "QrSize": "120px"
+    },
+    "Content": {
+      "Header": {
+        "MainTitle": "Your Health Program Name",
+        "Subtitle": "Your Personalized Companion for Health and Wellness"
+      },
+      "Introduction": {
+        "IntroParagraph": "Welcome to our health program. This comprehensive platform provides you with personalized support, guidance, and resources to help you achieve your health goals.",
+        "ProblemStatement": "Many individuals struggle with managing their health effectively due to lack of personalized guidance, difficulty tracking progress, and limited access to timely support. Our program addresses these challenges by providing a structured, easy-to-use platform that puts your health journey at your fingertips."
+      },
+      "Benefits": {
+        "Title": "Key Benefits",
+        "Items": [
+          "Access personalized health recommendations and care plans",
+          "Track your health metrics and progress over time",
+          "Receive timely reminders and health tips",
+          "Connect with healthcare professionals when needed",
+          "Access educational resources tailored to your needs"
+        ]
+      },
+      "UserInterface": {
+        "Heading": "Who Can Benefit from This Program",
+        "Paragraph": "This program is designed for individuals seeking to take control of their health journey. Whether you are managing a chronic condition, working on preventive care, or simply looking to improve your overall wellness, our platform provides personalized support to meet your unique needs."
+      },
+      "Footer": {
+        "CtaHeading": "Get Started Today",
+        "CtaDescription": "Register by scanning the QR code or contacting us through your preferred channel. Join our community and take the first step towards better health.",
+        "QrInstruction": "Scan to get started"
+      }
+    }
+  }
+}
+
+tests {
+  try {
+      var jsonRes = res.getBody();
+  }
+  catch (error) {
+      console.log("Error parsing response:", error.message);
+  }
+  
+  test("Request is successful", function () {
+      expect(res.getStatus()).to.equal(201);
+      var jsonRes = res.getBody();
+      expect(jsonRes.Status).to.eql("success");
+  });
+  
+  test("Marketing settings are created", function () {
+      var jsonRes = res.getBody();
+      expect(jsonRes).to.have.property("Data");
+      expect(jsonRes.Data).to.have.property("Created");
+      expect(jsonRes.Data.Created).to.have.property("Styling");
+      expect(jsonRes.Data.Created).to.have.property("Content");
+  });
+  
+}
+
+docs {
+  Creates marketing settings for a tenant with default Styling and Content values.
+  
+  If body is empty {}, default values will be applied automatically.
+  
+  Styling contains 14 CSS variables for pamphlet design.
+  Content contains Header, Introduction, Benefits, UserInterface, and Footer sections for the pamphlet text.
+  
+  Optional fields (can be added later via PATCH endpoints):
+  - Images: { TitleImage, UserInterfaceImage, QRCode } - resource IDs for pamphlet images
+  - Logos: [array of resource IDs] - partner/sponsor logos
+  - QRCode: resource ID for QR code image
+  
+  Note: Images and Logos are SEPARATE columns. Partner logos go in Logos, not Images!
+}
+

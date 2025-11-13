@@ -3,23 +3,23 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>{{content.header.mainTitle}} — Pamphlet</title>
+  <title>{{content.Header.MainTitle}} — Pamphlet</title>
   <style>
     :root {
-      --primary: {{{styling.primary}}};
-      --secondary: {{{styling.secondary}}};
-      --accent: {{{styling.accent}}};
-      --light-bg: {{{styling.lightBg}}};
-      --panel: {{{styling.panel}}};
-      --muted: {{{styling.muted}}};
-      --text: {{{styling.text}}};
-      --heading-font: {{{styling.headingFont}}};
-      --body-font: {{{styling.bodyFont}}};
-      --page-width: {{{styling.pageWidth}}};
-      --page-height: {{{styling.pageHeight}}};
-      --user-interface-width: {{{styling.userInterfaceWidth}}};
-      --user-interaction-width: {{{styling.userInteractionWidth}}};
-      --qr-size: {{{styling.qrSize}}};
+      --primary: {{{styling.Primary}}};
+      --secondary: {{{styling.Secondary}}};
+      --accent: {{{styling.Accent}}};
+      --light-bg: {{{styling.LightBg}}};
+      --panel: {{{styling.Panel}}};
+      --muted: {{{styling.Muted}}};
+      --text: {{{styling.Text}}};
+      --heading-font: {{{styling.HeadingFont}}};
+      --body-font: {{{styling.BodyFont}}};
+      --page-width: {{{styling.PageWidth}}};
+      --page-height: {{{styling.PageHeight}}};
+      --user-interface-width: {{{styling.UserInterfaceWidth}}};
+      --user-interaction-width: {{{styling.UserInteractionWidth}}};
+      --qr-size: {{{styling.QrSize}}};
     }
 
     * { box-sizing: border-box; }
@@ -242,8 +242,8 @@
     <div class="corner-decor corner-top-right"></div>
     
     <div class="partner-logos">
-      {{#if images.partnerLogos}}
-        {{#each images.partnerLogos}}
+      {{#if images.PartnerLogos}}
+        {{#each images.PartnerLogos}}
           <img src="{{{this}}}" alt="Partner Logo">
         {{/each}}
       {{/if}}
@@ -251,20 +251,20 @@
 
     <div class="title-section">
       <div>
-        <h1 class="main-title">{{content.header.mainTitle}}</h1>
-        <p class="subtitle">{{content.header.subtitle}}</p>
+        <h1 class="main-title">{{content.Header.MainTitle}}</h1>
+        <p class="subtitle">{{content.Header.Subtitle}}</p>
       </div>
-      {{#if images.titleImage}}
-        <img src="{{{images.titleImage}}}" alt="Program Highlight" class="title-image">
+      {{#if images.TitleImage}}
+        <img src="{{{images.TitleImage}}}" alt="Program Highlight" class="title-image">
       {{/if}}
     </div>
 
     <div class="intro">
-      {{content.introduction.introParagraph}}
-      {{#if content.introduction.problemStatement}}
+      {{content.Introduction.IntroParagraph}}
+      {{#if content.Introduction.ProblemStatement}}
         <br><br>
         <strong>Why this matters:</strong><br>
-        {{content.introduction.problemStatement}}
+        {{content.Introduction.ProblemStatement}}
       {{/if}}
     </div>
   </div>
@@ -276,9 +276,9 @@
     <div class="corner-decor corner-bottom-right"></div>
     
     <div class="benefits-section">
-      <h2 class="benefits-title">{{content.benefits.title}}</h2>
+      <h2 class="benefits-title">{{content.Benefits.Title}}</h2>
       <div class="benefits-grid">
-        {{#each content.benefits.items}}
+        {{#each content.Benefits.Items}}
           <div class="benefit-item">
             <span class="benefit-icon">✔</span> {{this}}
           </div>
@@ -288,26 +288,26 @@
 
     <div class="user-interface-section">
       <div class="user-interface-text">
-        <h2 style="color:var(--primary);font-family:var(--heading-font);font-size:20px;margin:0 0 12px 0;">{{content.userInterface.heading}}</h2>
-        <p style="font-size:13px;color:var(--muted);line-height:1.5;margin:0;">{{content.userInterface.paragraph}}</p>
+        <h2 style="color:var(--primary);font-family:var(--heading-font);font-size:20px;margin:0 0 12px 0;">{{content.UserInterface.Heading}}</h2>
+        <p style="font-size:13px;color:var(--muted);line-height:1.5;margin:0;">{{content.UserInterface.Paragraph}}</p>
       </div>
       <div class="user-interface-image">
-        {{#if images.userInterfaceImage}}
-          <img src="{{{images.userInterfaceImage}}}" alt="User Interaction Preview">
+        {{#if images.UserInterfaceImage}}
+          <img src="{{{images.UserInterfaceImage}}}" alt="User Interaction Preview">
         {{/if}}
       </div>
     </div>
 
     <div class="footer">
       <div class="footer-text">
-        <h3 style="margin:0 0 8px 0; color:white; font-family:var(--heading-font); font-size:18px;">{{content.footer.ctaHeading}}</h3>
-        <p style="margin:0; font-size:12px; line-height:1.5;">{{content.footer.ctaDescription}}</p>
+        <h3 style="margin:0 0 8px 0; color:white; font-family:var(--heading-font); font-size:18px;">{{content.Footer.CtaHeading}}</h3>
+        <p style="margin:0; font-size:12px; line-height:1.5;">{{content.Footer.CtaDescription}}</p>
       </div>
       <div class="footer-qr">
-        {{#if images.qrCode}}
-          <img src="{{{images.qrCode}}}" alt="QR Code">
+        {{#if images.QRCode}}
+          <img src="{{{images.QRCode}}}" alt="QR Code">
         {{/if}}
-        <p style="font-size:11px; opacity:0.9; margin:4px 0 0 0;">{{content.footer.qrInstruction}}</p>
+        <p style="font-size:11px; opacity:0.9; margin:4px 0 0 0;">{{content.Footer.QrInstruction}}</p>
       </div>
     </div>
   </div>

@@ -20,42 +20,40 @@ export class TenantSettingsMarketingValidator extends BaseValidator {
         // Method required by interface; no validation needed here currently.
     };
 
-    // Detailed validation for Styling
     updateStyling = async (request: express.Request): Promise<any> => {
-        // Validate each styling field
-        await this.validateString(request, 'Styling.primary', Where.Body, false, false);
-        await this.validateString(request, 'Styling.secondary', Where.Body, false, false);
-        await this.validateString(request, 'Styling.accent', Where.Body, false, false);
-        await this.validateString(request, 'Styling.lightBg', Where.Body, false, false);
-        await this.validateString(request, 'Styling.panel', Where.Body, false, false);
-        await this.validateString(request, 'Styling.muted', Where.Body, false, false);
-        await this.validateString(request, 'Styling.text', Where.Body, false, false);
-        await this.validateString(request, 'Styling.headingFont', Where.Body, false, false);
-        await this.validateString(request, 'Styling.bodyFont', Where.Body, false, false);
-        await this.validateString(request, 'Styling.pageWidth', Where.Body, false, false);
-        await this.validateString(request, 'Styling.pageHeight', Where.Body, false, false);
-        await this.validateString(request, 'Styling.userInterfaceWidth', Where.Body, false, false);
-        await this.validateString(request, 'Styling.userInteractionWidth', Where.Body, false, false);
-        await this.validateString(request, 'Styling.qrSize', Where.Body, false, false);
+
+        await this.validateString(request, 'Styling.Primary', Where.Body, false, false);
+        await this.validateString(request, 'Styling.Secondary', Where.Body, false, false);
+        await this.validateString(request, 'Styling.Accent', Where.Body, false, false);
+        await this.validateString(request, 'Styling.LightBg', Where.Body, false, false);
+        await this.validateString(request, 'Styling.Panel', Where.Body, false, false);
+        await this.validateString(request, 'Styling.Muted', Where.Body, false, false);
+        await this.validateString(request, 'Styling.Text', Where.Body, false, false);
+        await this.validateString(request, 'Styling.HeadingFont', Where.Body, false, false);
+        await this.validateString(request, 'Styling.BodyFont', Where.Body, false, false);
+        await this.validateString(request, 'Styling.PageWidth', Where.Body, false, false);
+        await this.validateString(request, 'Styling.PageHeight', Where.Body, false, false);
+        await this.validateString(request, 'Styling.UserInterfaceWidth', Where.Body, false, false);
+        await this.validateString(request, 'Styling.UserInteractionWidth', Where.Body, false, false);
+        await this.validateString(request, 'Styling.QrSize', Where.Body, false, false);
 
         this.validateRequest(request);
-        
+
         const styling = request.body.Styling;
         if (styling) {
-            // Validate size format for dimension fields
-            const sizeFields = ['pageWidth', 'pageHeight', 'userInterfaceWidth', 'userInteractionWidth', 'qrSize'];
+            const sizeFields = ['PageWidth', 'PageHeight', 'UserInterfaceWidth', 'UserInteractionWidth', 'QrSize'];
             for (const field of sizeFields) {
                 if (styling[field] && !this.isValidCSSSize(styling[field])) {
                     throw new ApiError(400, `Styling.${field} must be a valid CSS size (e.g., 210mm, 280px)`);
                 }
             }
         }
-        
+
         return request.body.Styling;
     };
 
-    // Detailed validation for Content
     updateContent = async (request: express.Request): Promise<any> => {
+
         const content = request.body.Content;
 
         if (content === undefined) {
@@ -70,58 +68,53 @@ export class TenantSettingsMarketingValidator extends BaseValidator {
             throw new ApiError(400, 'Content must be an object');
         }
 
-        // Header section (optional)
-        if (content.header?.mainTitle !== undefined) {
-            await this.validateString(request, 'Content.header.mainTitle', Where.Body, false, false, false, 1);
+        if (content.Header?.MainTitle !== undefined) {
+            await this.validateString(request, 'Content.Header.MainTitle', Where.Body, false, false, false, 1);
         }
-        if (content.header?.subtitle !== undefined) {
-            await this.validateString(request, 'Content.header.subtitle', Where.Body, false, false, false, 1);
-        }
-
-        // Introduction section (optional)
-        if (content.introduction?.introParagraph !== undefined) {
-            await this.validateString(request, 'Content.introduction.introParagraph', Where.Body, false, false);
-        }
-        if (content.introduction?.problemStatement !== undefined) {
-            await this.validateString(request, 'Content.introduction.problemStatement', Where.Body, false, false);
+        if (content.Header?.Subtitle !== undefined) {
+            await this.validateString(request, 'Content.Header.Subtitle', Where.Body, false, false, false, 1);
         }
 
-        // Benefits section (optional)
-        if (content.benefits?.title !== undefined) {
-            await this.validateString(request, 'Content.benefits.title', Where.Body, false, false, false, 1);
+        if (content.Introduction?.IntroParagraph !== undefined) {
+            await this.validateString(request, 'Content.Introduction.IntroParagraph', Where.Body, false, false);
         }
-        if (content.benefits?.items !== undefined) {
-            if (content.benefits.items !== null) {
-                await this.validateArray(request, 'Content.benefits.items', Where.Body, false, false);
-                if (Array.isArray(content.benefits.items)) {
-                    for (let i = 0; i < content.benefits.items.length; i++) {
-                        if (typeof content.benefits.items[i] !== 'string') {
-                            throw new ApiError(400, `Content.benefits.items[${i}] must be a string`);
+        if (content.Introduction?.ProblemStatement !== undefined) {
+            await this.validateString(request, 'Content.Introduction.ProblemStatement', Where.Body, false, false);
+        }
+
+        if (content.Benefits?.Title !== undefined) {
+            await this.validateString(request, 'Content.Benefits.Title', Where.Body, false, false, false, 1);
+        }
+        if (content.Benefits?.Items !== undefined) {
+            if (content.Benefits.Items !== null) {
+                await this.validateArray(request, 'Content.Benefits.Items', Where.Body, false, false);
+                if (Array.isArray(content.Benefits.Items)) {
+                    for (let i = 0; i < content.Benefits.Items.length; i++) {
+                        if (typeof content.Benefits.Items[i] !== 'string') {
+                            throw new ApiError(400, `Content.Benefits.Items[${i}] must be a string`);
                         }
                     }
                 } else {
-                    throw new ApiError(400, 'Content.benefits.items must be an array');
+                    throw new ApiError(400, 'Content.Benefits.Items must be an array');
                 }
             }
         }
 
-        // User interface section (optional)
-        if (content.userInterface?.heading !== undefined) {
-            await this.validateString(request, 'Content.userInterface.heading', Where.Body, false, false, false, 1);
+        if (content.UserInterface?.Heading !== undefined) {
+            await this.validateString(request, 'Content.UserInterface.Heading', Where.Body, false, false, false, 1);
         }
-        if (content.userInterface?.paragraph !== undefined) {
-            await this.validateString(request, 'Content.userInterface.paragraph', Where.Body, false, false);
+        if (content.UserInterface?.Paragraph !== undefined) {
+            await this.validateString(request, 'Content.UserInterface.Paragraph', Where.Body, false, false);
         }
 
-        // Footer section (optional)
-        if (content.footer?.ctaHeading !== undefined) {
-            await this.validateString(request, 'Content.footer.ctaHeading', Where.Body, false, false, false, 1);
+        if (content.Footer?.CtaHeading !== undefined) {
+            await this.validateString(request, 'Content.Footer.CtaHeading', Where.Body, false, false, false, 1);
         }
-        if (content.footer?.ctaDescription !== undefined) {
-            await this.validateString(request, 'Content.footer.ctaDescription', Where.Body, false, false);
+        if (content.Footer?.CtaDescription !== undefined) {
+            await this.validateString(request, 'Content.Footer.CtaDescription', Where.Body, false, false);
         }
-        if (content.footer?.qrInstruction !== undefined) {
-            await this.validateString(request, 'Content.footer.qrInstruction', Where.Body, false, false);
+        if (content.Footer?.QrInstruction !== undefined) {
+            await this.validateString(request, 'Content.Footer.QrInstruction', Where.Body, false, false);
         }
 
         this.validateRequest(request);
@@ -129,47 +122,45 @@ export class TenantSettingsMarketingValidator extends BaseValidator {
         return content;
     };
 
-    updateQRcode = async (request: express.Request): Promise<any> => {
-        const qrcode = request.body.QRcode;
-        
-        // Allow null or undefined
+    updateQRCode = async (request: express.Request): Promise<any> => {
+
+        const qrcode = request.body.QRCode;
+
         if (qrcode === null || qrcode === undefined) {
             return null;
         }
-        
-        // Must be a resource ID string or object with resourceId
+
         if (typeof qrcode === 'string') {
             if (qrcode.trim().length === 0) {
-                throw new ApiError(400, 'QRcode resource ID cannot be empty');
+                throw new ApiError(400, 'QRCode resource ID cannot be empty');
             }
-            // Validate UUID format
             if (!this.isValidUUID(qrcode)) {
-                throw new ApiError(400, 'QRcode must be a valid resource ID (UUID)');
+                throw new ApiError(400, 'QRCode must be a valid resource ID (UUID)');
             }
-            await this.ensureResourceExists(qrcode, 'QRcode');
+            await this.ensureResourceExists(qrcode, 'QRCode');
             return qrcode;
         }
-        
+
         if (typeof qrcode === 'object' && !Array.isArray(qrcode)) {
-            if (qrcode.resourceId) {
-                if (typeof qrcode.resourceId !== 'string' || qrcode.resourceId.trim().length === 0) {
-                    throw new ApiError(400, 'QRcode.resourceId must be a non-empty string');
+            if (qrcode.ResourceId) {
+                if (typeof qrcode.ResourceId !== 'string' || qrcode.ResourceId.trim().length === 0) {
+                    throw new ApiError(400, 'QRCode.ResourceId must be a non-empty string');
                 }
-                if (!this.isValidUUID(qrcode.resourceId)) {
-                    throw new ApiError(400, 'QRcode.resourceId must be a valid UUID');
+                if (!this.isValidUUID(qrcode.ResourceId)) {
+                    throw new ApiError(400, 'QRCode.ResourceId must be a valid UUID');
                 }
-                await this.ensureResourceExists(qrcode.resourceId, 'QRcode.resourceId');
+                await this.ensureResourceExists(qrcode.ResourceId, 'QRCode.ResourceId');
             }
             return qrcode;
         }
-        
-        throw new ApiError(400, 'QRcode must be a resource ID string or an object with resourceId property');
+
+        throw new ApiError(400, 'QRCode must be a resource ID string or an object with ResourceId property');
     };
 
     updateImages = async (request: express.Request): Promise<any> => {
+
         const images = request.body.Images;
-        
-        // Allow null or undefined
+
         if (images === null || images === undefined) {
             return null;
         }
@@ -178,15 +169,13 @@ export class TenantSettingsMarketingValidator extends BaseValidator {
             throw new ApiError(400, 'Images must be an object');
         }
 
-        // Validate known image fields (partnerLogos NOT included - it belongs in Logos column)
-        const validFields = ['titleImage', 'userInterfaceImage'];
+        const validFields = ['TitleImage', 'UserInterfaceImage'];
         const normalized: any = {};
         const existenceChecks: Promise<void>[] = [];
 
         for (const key of Object.keys(images)) {
             const value = images[key];
 
-            // All image fields should be resource ID strings
             if (validFields.includes(key)) {
                 if (typeof value !== 'string' || value.trim().length === 0) {
                     throw new ApiError(400, `Images.${key} must be a non-empty resource ID string`);
@@ -208,14 +197,13 @@ export class TenantSettingsMarketingValidator extends BaseValidator {
     };
 
     updateLogos = async (request: express.Request): Promise<any> => {
+
         const logos = request.body.Logos;
         
-        // Allow null or undefined
         if (logos === null || logos === undefined) {
             return null;
         }
         
-        // Logos should be an array of resource IDs
         if (Array.isArray(logos)) {
             const existenceChecks: Promise<void>[] = [];
             for (let i = 0; i < logos.length; i++) {
@@ -231,7 +219,6 @@ export class TenantSettingsMarketingValidator extends BaseValidator {
             return logos;
         }
         
-        // Or an object with resource ID values
         if (typeof logos === 'object') {
             const normalized: any = {};
             const existenceChecks: Promise<void>[] = [];
@@ -259,8 +246,8 @@ export class TenantSettingsMarketingValidator extends BaseValidator {
                 return await this.updateStyling(request);
             case TenantSettingsMarketingTypes.Content:
                 return await this.updateContent(request);
-            case TenantSettingsMarketingTypes.QRcode:
-                return await this.updateQRcode(request);
+            case TenantSettingsMarketingTypes.QRCode:
+                return await this.updateQRCode(request);
             case TenantSettingsMarketingTypes.Images:
                 return await this.updateImages(request);
             case TenantSettingsMarketingTypes.Logos:
@@ -273,15 +260,14 @@ export class TenantSettingsMarketingValidator extends BaseValidator {
     updateAll = async (request: express.Request): Promise<any> => {
         const model: any = {};
         
-        // Validate and add each field if present
         if (request.body.Styling !== undefined) {
             model.Styling = await this.updateStyling(request);
         }
         if (request.body.Content !== undefined) {
             model.Content = await this.updateContent(request);
         }
-        if (request.body.QRcode !== undefined) {
-            model.QRcode = await this.updateQRcode(request);
+        if (request.body.QRCode !== undefined) {
+            model.QRCode = await this.updateQRCode(request);
         }
         if (request.body.Images !== undefined) {
             model.Images = await this.updateImages(request);
@@ -293,13 +279,11 @@ export class TenantSettingsMarketingValidator extends BaseValidator {
         return model;
     };
 
-    // Helper: Validate CSS size (px, mm, cm, %, etc.)
     private isValidCSSSize(size: string): boolean {
         const cssPattern = /^\d+(\.\d+)?(px|mm|cm|in|pt|pc|em|rem|%|vh|vw)$/;
         return cssPattern.test(size);
     }
 
-    // Helper: Validate UUID format
     private isValidUUID(uuid: string): boolean {
         const uuidPattern = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
         return uuidPattern.test(uuid);

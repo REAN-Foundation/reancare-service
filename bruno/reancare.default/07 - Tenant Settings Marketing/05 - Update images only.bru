@@ -1,0 +1,71 @@
+meta {
+  name: Update images only
+  type: http
+  seq: 5
+}
+
+put {
+  url: {{BASE_URL}}/tenant-settings-marketing/{{TENANT_ID}}/images
+  body: json
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+  Authorization: Bearer {{TENANT_ADMIN_USER_JWT}}
+}
+
+body:json {
+  {
+    "Images": {
+      "TitleImage": "ad30dbd6-9231-4f44-9d11-c1ffe9644b6b",
+      "UserInterfaceImage": "ad30dbd6-9231-4f44-9d11-c1ffe9644b6b"
+    }
+  }
+}
+
+tests {
+  try {
+      var jsonRes = res.getBody();
+  }
+  catch (error) {
+      console.log("Error parsing response:", error.message);
+  }
+  
+  test("Request is successful", function () {
+      expect(res.getStatus()).to.equal(200);
+      var jsonRes = res.getBody();
+      expect(jsonRes.Status).to.eql("success");
+  });
+  
+  test("Images are updated", function () {
+      var jsonRes = res.getBody();
+      expect(jsonRes).to.have.property("Data");
+      expect(jsonRes.Data).to.have.property("Updated");
+      expect(jsonRes.Data.Updated).to.have.property("Images");
+  });
+  
+}
+
+docs {
+  Updates only the Images column for a tenant's marketing settings.
+  
+  Valid image fields:
+  - TitleImage: Resource ID for the pamphlet title/header image
+  - UserInterfaceImage: Resource ID for the app UI screenshot
+  
+  NOTE: Partner logos should be updated using the separate "Update logos only" endpoint.
+  NOTE: QR codes must be updated using the dedicated QR code endpoint.
+  
+  Example object format:
+  {
+    "Images": {
+      "TitleImage": "resource-id-123",
+      "UserInterfaceImage": "resource-id-abc",
+      "QRCode": "resource-id-def"
+    }
+  }
+  
+  All resource IDs should reference uploaded file resources (UUIDs).
+}

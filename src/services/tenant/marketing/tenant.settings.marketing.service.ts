@@ -12,12 +12,15 @@ export class TenantSettingsMarketingService {
         @inject('ITenantSettingsMarketingRepo') private _repo: ITenantSettingsMarketingRepo,
     ) {}
 
-    createDefaultSettings = async (tenantId: uuid, model: TenantSettingsMarketingDomainModel): Promise<TenantSettingsMarketingDto> => {
+    createDefaultSettings = async (
+        tenantId: uuid,
+        model: TenantSettingsMarketingDomainModel
+    ): Promise<TenantSettingsMarketingDto> => {
         const defaults = this.getDefaultSettings();
         const mergedModel: TenantSettingsMarketingDomainModel = {
             Styling       : model.Styling ?? defaults.Styling,
             Content       : model.Content ?? defaults.Content,
-            QRcode        : model.QRcode ?? null,
+            QRCode        : model.QRCode ?? null,
             Images        : model.Images ?? null,
             Logos         : model.Logos ?? null,
             PDFResourceId : model.PDFResourceId ?? null,
@@ -40,8 +43,8 @@ export class TenantSettingsMarketingService {
                 return settings.Styling;
             case TenantSettingsMarketingTypes.Content:
                 return settings.Content;
-            case TenantSettingsMarketingTypes.QRcode:
-                return settings.QRcode;
+            case TenantSettingsMarketingTypes.QRCode:
+                return settings.QRCode;
             case TenantSettingsMarketingTypes.Images:
                 return settings.Images;
             case TenantSettingsMarketingTypes.Logos:
@@ -61,8 +64,8 @@ export class TenantSettingsMarketingService {
                 return await this._repo.updateStyling(tenantId, payload);
             case TenantSettingsMarketingTypes.Content:
                 return await this._repo.updateContent(tenantId, payload);
-            case TenantSettingsMarketingTypes.QRcode:
-                return await this._repo.updateQRcode(tenantId, payload);
+            case TenantSettingsMarketingTypes.QRCode:
+                return await this._repo.updateQRCode(tenantId, payload);
             case TenantSettingsMarketingTypes.Images:
                 return await this._repo.updateImages(tenantId, payload);
             case TenantSettingsMarketingTypes.Logos:
@@ -76,45 +79,49 @@ export class TenantSettingsMarketingService {
         return await this._repo.delete(tenantId);
     };
 
+    updatePdfResourceId = async (tenantId: uuid, resourceId: string): Promise<TenantSettingsMarketingDto> => {
+        return await this._repo.updatePDFResourceId(tenantId, resourceId);
+    };
+
     private getDefaultSettings = (): TenantSettingsMarketingDomainModel => {
         const styling = {
-            primary              : '#1a472a',
-            secondary            : '#2d5f3f',
-            accent               : '#25D366',
-            lightBg              : '#f1f8f4',
-            panel                : '#ffffff',
-            muted                : '#555',
-            text                 : '#222',
-            headingFont          : "'Poppins', sans-serif",
-            bodyFont             : "'Inter', sans-serif",
-            pageWidth            : '210mm',
-            pageHeight           : '297mm',
-            userInterfaceWidth   : '260px',
-            userInteractionWidth : '250px',
-            qrSize               : '120px',
+            Primary              : '#1a472a',
+            Secondary            : '#2d5f3f',
+            Accent               : '#25D366',
+            LightBg              : '#f1f8f4',
+            Panel                : '#ffffff',
+            Muted                : '#555',
+            Text                 : '#222',
+            HeadingFont          : "'Poppins', sans-serif",
+            BodyFont             : "'Inter', sans-serif",
+            PageWidth            : '210mm',
+            PageHeight           : '297mm',
+            UserInterfaceWidth   : '260px',
+            UserInteractionWidth : '250px',
+            QrSize               : '120px',
         };
 
         const content = {
-            header : {
-                mainTitle : 'Your Health Program Name',
-                subtitle  : 'Your Personalized Companion for Health and Wellness',
+            Header : {
+                MainTitle : 'Your Health Program Name',
+                Subtitle  : 'Your Personalized Companion for Health and Wellness',
             },
-            introduction : {
-                introParagraph : [
+            Introduction : {
+                IntroParagraph : [
                     'Welcome to our health program.',
                     'This comprehensive platform provides you with personalized support, guidance, and resources',
                     'to help you achieve your health goals.',
                 ].join(' '),
-                problemStatement : [
+                ProblemStatement : [
                     'Many individuals struggle with managing their health effectively due to lack of personalized guidance,',
                     'difficulty tracking progress, and limited access to timely support.',
                     'Our program addresses these challenges by providing a structured, easy-to-use platform',
                     'that puts your health journey at your fingertips.',
                 ].join(' '),
             },
-            benefits : {
-                title : 'Key Benefits',
-                items : [
+            Benefits : {
+                Title : 'Key Benefits',
+                Items : [
                     'Access personalized health recommendations and care plans',
                     'Track your health metrics and progress over time',
                     'Receive timely reminders and health tips',
@@ -122,29 +129,29 @@ export class TenantSettingsMarketingService {
                     'Access educational resources tailored to your needs',
                 ],
             },
-            userInterface : {
-                heading   : 'Who Can Benefit from This Program',
-                paragraph : [
+            UserInterface : {
+                Heading   : 'Who Can Benefit from This Program',
+                Paragraph : [
                     'This program is designed for individuals seeking to take control of their health journey.',
                     'Whether you are managing a chronic condition, working on preventive care,',
                     'or simply looking to improve your overall wellness, our platform provides personalized support',
                     'to meet your unique needs.',
                 ].join(' '),
             },
-            footer : {
-                ctaHeading     : 'Get Started Today',
-                ctaDescription : [
+            Footer : {
+                CtaHeading     : 'Get Started Today',
+                CtaDescription : [
                     'Register by scanning the QR code or contacting us through your preferred channel.',
                     'Join our community and take the first step towards better health.',
                 ].join(' '),
-                qrInstruction : 'Scan to get started',
+                QrInstruction : 'Scan to get started',
             },
         };
 
         return {
             Styling : styling,
             Content : content,
-            QRcode  : null,
+            QRCode  : null,
             Images  : null,
             Logos   : null,
         };

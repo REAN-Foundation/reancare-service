@@ -27,7 +27,7 @@ export class TenantSettingsMarketingMapper {
             TenantId      : record.TenantId,
             Styling       : safeJSONParse(record.Styling),
             Content       : safeJSONParse(record.Content),
-            QRcode        : safeJSONParse(record.QRcode),
+            QRCode        : safeJSONParse(record.QRcode),
             Images        : safeJSONParse(record.Images),
             Logos         : safeJSONParse(record.Logos),
             PDFResourceId : record.PDFResourceId ?? null,

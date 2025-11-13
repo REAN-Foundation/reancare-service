@@ -1,0 +1,82 @@
+meta {
+  name: Update logos only
+  type: http
+  seq: 5.5
+}
+
+put {
+  url: {{BASE_URL}}/tenant-settings-marketing/{{TENANT_ID}}/logos
+  body: json
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+  Authorization: Bearer {{TENANT_ADMIN_USER_JWT}}
+}
+
+body:json {
+  {
+    "Logos": [
+      "75838331-7a48-44c2-92df-378eb80483ea",
+      "d89c5633-0872-45ec-926a-57f93e172e30",
+      "6d27e1ae-1d7c-4a10-8a8f-fdd2c801d335"
+    ]
+  }
+}
+
+tests {
+  try {
+      var jsonRes = res.getBody();
+  }
+  catch (error) {
+      console.log("Error parsing response:", error.message);
+  }
+  
+  test("Request is successful", function () {
+      expect(res.getStatus()).to.equal(200);
+      var jsonRes = res.getBody();
+      expect(jsonRes.Status).to.eql("success");
+  });
+  
+  test("Logos are updated", function () {
+      var jsonRes = res.getBody();
+      expect(jsonRes).to.have.property("Data");
+      expect(jsonRes.Data).to.have.property("Logos");
+  });
+  
+}
+
+docs {
+  Updates only the Logos column for a tenant's marketing settings.
+  
+  Partner logos should be provided as:
+  - An array of resource ID strings (UUIDs)
+  - OR an object with PartnerLogos property containing an array
+  - OR null to clear logos
+  
+  Example array format (recommended):
+  {
+    "Logos": [
+      "resource-id-1",
+      "resource-id-2",
+      "resource-id-3"
+    ]
+  }
+  
+  Alternative object format:
+  {
+    "Logos": {
+      "PartnerLogos": [
+        "resource-id-1",
+        "resource-id-2"
+      ]
+    }
+  }
+  
+  All resource IDs should reference uploaded file resources (UUIDs).
+  
+  NOTE: Partner logos were moved from the Images column to the dedicated Logos column.
+  Use this endpoint (not the Images endpoint) to update partner branding.
+}

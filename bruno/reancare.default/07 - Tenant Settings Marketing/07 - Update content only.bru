@@ -1,0 +1,93 @@
+meta {
+  name: Update content only
+  type: http
+  seq: 7
+}
+
+put {
+  url: {{BASE_URL}}/tenant-settings-marketing/{{TENANT_ID}}/content
+  body: json
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+  Authorization: Bearer {{TENANT_ADMIN_USER_JWT}}
+}
+
+body:json {
+  {
+    "Content": {
+      "Header": {
+        "MainTitle": "REAN--Community Care Program",
+        "Subtitle": "Your Digital Health Companion for Better Care & Wellness"
+      },
+      "Introduction": {
+        "IntroParagraph": "The REAN Community Care Program (CCPR) is a comprehensive digital health platform designed to empower patients, caregivers, and healthcare providers with tools for better health management. Our platform bridges the gap between clinical care and daily health activities, ensuring continuous support for your wellness journey.",
+        "ProblemStatement": "Managing chronic conditions and maintaining wellness can be challenging without proper guidance, tracking tools, and timely support. Many individuals struggle with medication adherence, monitoring vital signs, and accessing reliable health information. REAN CCPR addresses these challenges by providing an integrated, easy-to-use digital solution that puts your health at your fingertips."
+      },
+      "Benefits": {
+        "Title": "Key Features & Benefits",
+        "Items": [
+          "Personalized health plans tailored to your specific conditions and goals",
+          "Daily medication reminders and tracking to improve adherence",
+          "Easy recording and monitoring of vital signs (blood pressure, glucose, weight, etc.)",
+          "Symptom tracking and assessment tools for better health awareness",
+          "Direct messaging with healthcare providers for timely support",
+          "Educational resources and health tips specific to your conditions",
+          "Progress reports and insights to visualize your health journey",
+          "Secure, HIPAA-compliant platform protecting your health information"
+        ]
+      },
+      "UserInterface": {
+        "Heading": "Who Can Benefit from REAN CCPR",
+        "Paragraph": "The REAN Community Care Program is designed for patients managing chronic conditions such as diabetes, hypertension, heart disease, and COPD. It's also valuable for individuals focused on preventive care and wellness. Caregivers supporting family members can use the platform to stay connected with their loved ones' health status. Healthcare providers benefit from better patient engagement and real-time health data to inform treatment decisions."
+      },
+      "Footer": {
+        "CtaHeading": "Get Started with REAN CCPR Today",
+        "CtaDescription": "Join thousands of individuals who are taking control of their health with REAN Community Care Program. Scan the QR code below to download the app, or contact your healthcare provider to learn more about enrollment. Your journey to better health starts here.",
+        "QrInstruction": "Scan to download the REAN CCPR app"
+      }
+    }
+  }
+}
+
+tests {
+  try {
+      var jsonRes = res.getBody();
+  }
+  catch (error) {
+      console.log("Error parsing response:", error.message);
+  }
+  
+  test("Request is successful", function () {
+      expect(res.getStatus()).to.equal(200);
+      var jsonRes = res.getBody();
+      expect(jsonRes.Status).to.eql("success");
+  });
+  
+  test("Content is updated", function () {
+      var jsonRes = res.getBody();
+      expect(jsonRes).to.have.property("Data");
+      expect(jsonRes.Data).to.have.property("Updated");
+      expect(jsonRes.Data.Updated).to.have.property("Content");
+  });
+  
+}
+
+docs {
+  Updates only the Content column for a tenant's marketing settings.
+  
+  Content structure contains 5 main sections:
+  
+  1. Header: { MainTitle, Subtitle }
+  2. Introduction: { IntroParagraph, ProblemStatement }
+  3. Benefits: { Title, Items[] }
+  4. UserInterface: { Heading, Paragraph }
+  5. Footer: { CtaHeading, CtaDescription, QrInstruction }
+  
+  You can update all sections or just specific ones. Partial updates are supported.
+  
+  This content will be used to generate the marketing pamphlet PDF.
+}

@@ -17,7 +17,7 @@ export const register = (app: express.Application): void => {
     router.put('/:tenantId', auth(TenantSettingsMarketingAuth.updateAll), controller.updateAll);
     router.put('/:tenantId/images', auth(TenantSettingsMarketingAuth.updateImages), controller.updateImages);
     router.put('/:tenantId/logos', auth(TenantSettingsMarketingAuth.updateLogos), controller.updateLogos);
-    router.put('/:tenantId/qrcode', auth(TenantSettingsMarketingAuth.updateQRcode), controller.updateQRcode);
+    router.put('/:tenantId/qrcode', auth(TenantSettingsMarketingAuth.updateQRCode), controller.updateQRCode);
     router.put('/:tenantId/content', auth(TenantSettingsMarketingAuth.updateContent), controller.updateContent);
     router.delete('/:tenantId', auth(TenantSettingsMarketingAuth.delete), controller.delete);
 

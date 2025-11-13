@@ -1,0 +1,57 @@
+meta {
+  name: Download PDF pamphlet
+  type: http
+  seq: 9
+}
+
+get {
+  url: {{BASE_URL}}/tenant-settings-marketing/{{TENANT_ID}}/download
+  body: none
+  auth: none
+}
+
+headers {
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+  Authorization: Bearer {{TENANT_ADMIN_USER_JWT}}
+}
+
+tests {
+  test("Request is successful", function () {
+      expect(res.getStatus()).to.equal(200);
+      expect(res.getHeader("Content-Type")).to.contain("application/pdf");
+      expect(res.getBodyBytes().length).to.be.greaterThan(0);
+  });
+  
+  test("File metadata headers are returned", function () {
+      var headers = res.getHeaders();
+      expect(headers).to.have.property("x-file-resource-id");
+      expect(headers["content-disposition"]).to.contain("attachment");
+  });
+  
+}
+
+docs {
+  Downloads the latest marketing pamphlet PDF for the tenant.
+  
+  **Process:**
+  1. Fetches marketing settings (Styling, Content, Images, QRcode, Logos)
+  2. Renders HTML using Handlebars template with merged defaults
+  3. Converts HTML to PDF using Puppeteer (headless Chromium)
+  4. Uploads PDF to file storage
+  5. Updates PDFResourceId in marketing settings
+  6. Returns the PDF payload directly with file metadata headers
+  
+  **Prerequisites:**
+  - Marketing settings must exist (call POST /:tenantId first if needed)
+  - At minimum, Styling and Content should be populated
+  - Images/Logos/QRcode are optional (will use placeholders if missing)
+  
+  **Response:**
+  - Binary PDF stream (Content-Type: application/pdf)
+  - Headers expose file resource id and latest storage URL
+  
+  **Use Case:**
+  Allow admins to save and download the latest marketing pamphlet directly
+  from the UI "Save & Download" action.
+}
+

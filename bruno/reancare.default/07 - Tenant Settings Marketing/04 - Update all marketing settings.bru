@@ -1,0 +1,84 @@
+meta {
+  name: Update all marketing settings
+  type: http
+  seq: 4
+}
+
+put {
+  url: {{BASE_URL}}/tenant-settings-marketing/{{TENANT_ID}}
+  body: json
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+  Authorization: Bearer {{TENANT_ADMIN_USER_JWT}}
+}
+
+body:json {
+  {
+    "Styling": {
+      "Primary": "#FF5733",
+      "Secondary": "#C70039",
+      "Accent": "#900C3F"
+    },
+    "Content": {
+      "Header": {
+        "MainTitle": "Updated Program Title",
+        "Subtitle": "Updated subtitle text"
+      }
+    },
+    "Images": {
+      "TitleImage": "ad30dbd6-9231-4f44-9d11-c1ffe9644b6b",
+      "UserInterfaceImage": "bd30dbd6-9231-4f44-9d11-c1ffe9644b6c",
+      "QRCode": "cd30dbd6-9231-4f44-9d11-c1ffe9644b6d"
+    },
+    "Logos": [
+      "dd30dbd6-9231-4f44-9d11-c1ffe9644b6e",
+      "ed30dbd6-9231-4f44-9d11-c1ffe9644b6f"
+    ]
+  }
+}
+
+tests {
+  try {
+      var jsonRes = res.getBody();
+  }
+  catch (error) {
+      console.log("Error parsing response:", error.message);
+  }
+  
+  test("Request is successful", function () {
+      expect(res.getStatus()).to.equal(200);
+      var jsonRes = res.getBody();
+      expect(jsonRes.Status).to.eql("success");
+  });
+  
+  test("Marketing settings are updated", function () {
+      var jsonRes = res.getBody();
+      expect(jsonRes).to.have.property("Data");
+      expect(jsonRes.Data).to.have.property("Updated");
+  });
+  
+}
+
+docs {
+  Updates marketing settings for a tenant. Supports partial updates - only provide fields you want to change.
+  
+  You can update any combination of:
+  - Styling: CSS variables for colors, fonts, sizes
+  - Content: Header, intro, features, user interface, footer sections
+  - QRCode: Resource ID for QR code
+  - Images: TitleImage, UserInterfaceImage, QRCode (content images)
+  - Logos: Array of partner logo resource IDs (separate from Images!)
+  
+  IMPORTANT: 
+  - Images column is for pamphlet content images (title, UI screenshot, QR)
+  - Logos column is SEPARATE and contains partner branding logos
+  - Do NOT put partner logos in the Images column!
+  
+  Fields not provided will remain unchanged.
+  All resource IDs must be valid UUIDs referencing uploaded files.
+}
+

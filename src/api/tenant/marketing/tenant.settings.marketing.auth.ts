@@ -53,9 +53,9 @@ export class TenantSettingsMarketingAuth {
         RequestType : RequestType.UpdateOne,
     };
 
-    static readonly updateQRcode: AuthOptions = {
+    static readonly updateQRCode: AuthOptions = {
         ...DefaultAuthOptions,
-        Context     : `${this._baseContext}.UpdateQRcode`,
+        Context     : `${this._baseContext}.UpdateQRCode`,
         Ownership   : ResourceOwnership.Tenant,
         ActionScope : ActionScope.Tenant,
         RequestType : RequestType.UpdateOne,

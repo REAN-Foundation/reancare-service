@@ -16,7 +16,7 @@ export class TenantSettingsMarketingRepo implements ITenantSettingsMarketingRepo
         try {
             const styling = model.Styling ? this.validateJSONStringify(JSON.stringify(model.Styling)) : null;
             const content = model.Content ? this.validateJSONStringify(JSON.stringify(model.Content)) : null;
-            const qrcode  = model.QRcode ? this.validateJSONStringify(JSON.stringify(model.QRcode)) : null;
+            const qrCode  = model.QRCode ? this.validateJSONStringify(JSON.stringify(model.QRCode)) : null;
             const images  = model.Images ? this.validateJSONStringify(JSON.stringify(model.Images)) : null;
             const logos   = model.Logos ? this.validateJSONStringify(JSON.stringify(model.Logos)) : null;
 
@@ -24,7 +24,7 @@ export class TenantSettingsMarketingRepo implements ITenantSettingsMarketingRepo
                 TenantId : tenantId,
                 Styling  : styling,
                 Content  : content,
-                QRcode   : qrcode,
+                QRcode   : qrCode,
                 Images   : images,
                 Logos    : logos,
             } as any;
@@ -76,11 +76,11 @@ export class TenantSettingsMarketingRepo implements ITenantSettingsMarketingRepo
         }
     };
 
-    updateQRcode = async (tenantId: string, settings: any): Promise<TenantSettingsMarketingDto> => {
+    updateQRCode = async (tenantId: string, settings: any): Promise<TenantSettingsMarketingDto> => {
         try {
-            const qrcode = this.validateJSONStringify(JSON.stringify(settings));
+            const qrCode = this.validateJSONStringify(JSON.stringify(settings));
             const record = await TenantSettingsMarketing.findOne({ where: { TenantId: tenantId } });
-            record.QRcode = qrcode;
+            record.QRcode = qrCode;
             await record.save();
             return TenantSettingsMarketingMapper.toDto(record);
         }

@@ -1,62 +1,62 @@
 export interface TenantMarketingStyling {
-    primary?: string;
-    secondary?: string;
-    accent?: string;
-    lightBg?: string;
-    panel?: string;
-    muted?: string;
-    text?: string;
-    headingFont?: string;
-    bodyFont?: string;
-    pageWidth?: string;
-    pageHeight?: string;
-    userInterfaceWidth?: string;
-    userInteractionWidth?: string;
-    qrSize?: string;
+    Primary?: string;
+    Secondary?: string;
+    Accent?: string;
+    LightBg?: string;
+    Panel?: string;
+    Muted?: string;
+    Text?: string;
+    HeadingFont?: string;
+    BodyFont?: string;
+    PageWidth?: string;
+    PageHeight?: string;
+    UserInterfaceWidth?: string;
+    UserInteractionWidth?: string;
+    QrSize?: string;
 }
 
 export interface TenantMarketingContentSection {
-    heading?: string;
-    paragraph?: string;
+    Heading?: string;
+    Paragraph?: string;
 }
 
 export interface TenantMarketingContentIntroduction {
-    introParagraph?: string;
-    problemStatement?: string;
+    IntroParagraph?: string;
+    ProblemStatement?: string;
 }
 
 export interface TenantMarketingContentBenefits {
-    title?: string;
-    items?: string[];
+    Title?: string;
+    Items?: string[];
 }
 
 export interface TenantMarketingContentFooter {
-    ctaHeading?: string;
-    ctaDescription?: string;
-    qrInstruction?: string;
+    CtaHeading?: string;
+    CtaDescription?: string;
+    QrInstruction?: string;
 }
 
 export interface TenantMarketingContentHeader {
-    mainTitle?: string;
-    subtitle?: string;
+    MainTitle?: string;
+    Subtitle?: string;
 }
 
 export interface TenantMarketingContent {
-    header?: TenantMarketingContentHeader | null;
-    introduction?: TenantMarketingContentIntroduction | null;
-    benefits?: TenantMarketingContentBenefits | null;
-    userInterface?: TenantMarketingContentSection | null;
-    footer?: TenantMarketingContentFooter | null;
+    Header?: TenantMarketingContentHeader | null;
+    Introduction?: TenantMarketingContentIntroduction | null;
+    Benefits?: TenantMarketingContentBenefits | null;
+    UserInterface?: TenantMarketingContentSection | null;
+    Footer?: TenantMarketingContentFooter | null;
 }
 
-export type TenantMarketingQrCode = string | {
-    resourceId?: string;
+export type TenantMarketingQRCode = string | {
+    ResourceId?: string;
     [key: string]: unknown;
 } | null;
 
 export interface TenantMarketingImages {
-    titleImage?: string;
-    userInterfaceImage?: string;
+    TitleImage?: string;
+    UserInterfaceImage?: string;
     [key: string]: string | undefined;
 }
 
@@ -67,7 +67,7 @@ export type TenantMarketingLogos = string[] | {
 export interface TenantSettingsMarketingDomainModel {
     Styling?: TenantMarketingStyling | null;
     Content?: TenantMarketingContent | null;
-    QRcode?: TenantMarketingQrCode;
+    QRCode?: TenantMarketingQRCode;
     Images?: TenantMarketingImages | null;
     Logos?: TenantMarketingLogos;
     PDFResourceId?: string | null;
@@ -80,7 +80,7 @@ export interface TenantSettingsMarketingDto extends TenantSettingsMarketingDomai
 export enum TenantSettingsMarketingTypes {
     Styling = 'Styling',
     Content = 'Content',
-    QRcode  = 'QRcode',
+    QRCode  = 'QRCode',
     Images  = 'Images',
     Logos   = 'Logos',
 }
@@ -88,7 +88,7 @@ export enum TenantSettingsMarketingTypes {
 export const TenantSettingsMarketingTypesList = [
     TenantSettingsMarketingTypes.Styling,
     TenantSettingsMarketingTypes.Content,
-    TenantSettingsMarketingTypes.QRcode,
+    TenantSettingsMarketingTypes.QRCode,
     TenantSettingsMarketingTypes.Images,
     TenantSettingsMarketingTypes.Logos,
 ];

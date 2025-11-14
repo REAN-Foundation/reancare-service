@@ -5,7 +5,7 @@ import { BaseController } from '../../base.controller';
 import { Injector } from '../../../startup/injector';
 import { TenantService } from '../../../services/tenant/tenant.service';
 import { TenantSettingsMarketingService } from '../../../services/tenant/marketing/tenant.settings.marketing.service';
-import { TenantMarketingPdfService } from '../../../modules/pdf/tenant.marketing.pdf.service';
+import { TenantMarketingPdfService } from '../../../services/tenant/marketing/tenant.marketing.pdf.service';
 import { FileResourceService } from '../../../services/general/file.resource.service';
 import { uuid } from '../../../domain.types/miscellaneous/system.types';
 import { TenantSettingsMarketingTypes } from '../../../domain.types/tenant/marketing/tenant.settings.marketing.types';

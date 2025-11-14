@@ -3,12 +3,12 @@ import { injectable } from 'tsyringe';
 import fs from 'fs';
 import path from 'path';
 import Handlebars from 'handlebars';
-import { htmlTextToPDFBuffer } from '../../common/html.renderer';
-import { PDFGenerator } from '../reports/pdf.generator';
-import { TenantSettingsMarketingDto } from '../../domain.types/tenant/marketing/tenant.settings.marketing.types';
-import { FileResourceService } from '../../services/general/file.resource.service';
-import { Injector } from '../../startup/injector';
-import { Logger } from '../../common/logger';
+import { htmlTextToPDFBuffer } from '../../../common/html.renderer';
+import { PDFGenerator } from '../../../modules/reports/pdf.generator';
+import { TenantSettingsMarketingDto } from '../../../domain.types/tenant/marketing/tenant.settings.marketing.types';
+import { FileResourceService } from '../../general/file.resource.service';
+import { Injector } from '../../../startup/injector';
+import { Logger } from '../../../common/logger';
 
 const DEFAULT_STYLING = {
     Primary              : '#1a472a',
@@ -104,7 +104,11 @@ export class TenantMarketingPdfService {
             return this._template;
         }
 
-        const templatePath = path.join(__dirname, 'templates', 'tenant.marketing.pamphlet.hbs');
+        const templatePath = path.join(process.cwd(), 'assets', 'pdf.templates', 'tenant.marketing.pamphlet.hbs');
+        if (!fs.existsSync(templatePath)) {
+            throw new Error(`PDF template tenant.marketing.pamphlet.hbs not found at ${templatePath}`);
+        }
+
         const templateSource = await fs.promises.readFile(templatePath, { encoding: 'utf8' });
         this._template = Handlebars.compile(templateSource);
         return this._template;

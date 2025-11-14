@@ -274,6 +274,12 @@ export class TenantController extends BaseController {
                 throw new ApiError(404, 'Tenant not found.');
             }
 
+            const tenantCode = tenant.Code;
+            const SchemaName = await this.getSchemaName(tenantCode);
+            const environment = await this.getEnvironment();
+            request.body.SecretName = SchemaName;
+            request.body.Environment = environment;
+
             const model = await this._validator.createBotSchema(request);
 
             await this.authorizeOne(request, null, tenant.id);
@@ -539,6 +545,12 @@ export class TenantController extends BaseController {
         const environment = await this.getEnvironment();
         const code = tenantCode.toLowerCase().replace(/_/g, "-");
         return `${environment}-${code}-v1`;
+    };
+
+    private getSchemaName = async (tenantCode: string) => {
+        const environment = await this.getEnvironment();
+        const code = tenantCode.toLowerCase();
+        return `${code}_${environment}`;
     };
 
 }

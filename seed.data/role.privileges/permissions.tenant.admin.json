@@ -652,6 +652,17 @@
             "GetTenantSettingsByCode": true,
             "UpdateTenantSettingsByType": true,
             "UpdateTenantSettings": true
+        },
+        "SettingsMarketing": {
+            "Create": true,
+            "GetByTenant": true,
+            "UpdateAll": true,
+            "UpdateImages": true,
+            "UpdateLogos": true,
+            "UpdateQRcode": true,
+            "UpdateContent": true,
+            "DownloadPdf": true,
+            "Delete": true
         }
     },
     "User": {

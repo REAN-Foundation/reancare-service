@@ -659,7 +659,7 @@
             "UpdateAll": true,
             "UpdateImages": true,
             "UpdateLogos": true,
-            "UpdateQRcode": true,
+            "UpdateQRCode": true,
             "UpdateContent": true,
             "DownloadPdf": true,
             "Delete": true

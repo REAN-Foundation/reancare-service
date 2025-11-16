@@ -11,6 +11,7 @@ import { uuid } from '../../../domain.types/miscellaneous/system.types';
 import { TenantSettingsMarketingTypes } from '../../../domain.types/tenant/marketing/tenant.settings.marketing.types';
 import { TenantSettingsMarketingValidator } from './tenant.settings.marketing.validator';
 import { Logger } from '../../../common/logger';
+import { ApiError } from '../../../common/api.error';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -89,12 +90,34 @@ export class TenantSettingsMarketingController extends BaseController {
                 await this._service.updateSettingsByType(tenantId, TenantSettingsMarketingTypes.Content, payload.Content);
             }
             if (payload.QRCode !== undefined) {
+                if (payload.QRCode) {
+                    if (typeof payload.QRCode === 'string') {
+                        await this.ensureResourceExists(payload.QRCode, 'QRCode');
+                    } else if (payload.QRCode.ResourceId) {
+                        await this.ensureResourceExists(payload.QRCode.ResourceId, 'QRCode.ResourceId');
+                    }
+                }
                 await this._service.updateSettingsByType(tenantId, TenantSettingsMarketingTypes.QRCode, payload.QRCode);
             }
             if (payload.Images !== undefined) {
+                if (payload.Images) {
+                    const existenceChecks: Promise<void>[] = [];
+                    for (const key of Object.keys(payload.Images)) {
+                        const resourceId = payload.Images[key];
+                        if (resourceId) {
+                            existenceChecks.push(this.ensureResourceExists(resourceId, `Images.${key}`));
+                        }
+                    }
+                    await Promise.all(existenceChecks);
+                }
                 await this._service.updateSettingsByType(tenantId, TenantSettingsMarketingTypes.Images, payload.Images);
             }
             if (payload.Logos !== undefined) {
+                if (payload.Logos && Array.isArray(payload.Logos)) {
+                    await Promise.all(payload.Logos.map((id, index) =>
+                        this.ensureResourceExists(id, `Logos[${index}]`)
+                    ));
+                }
                 await this._service.updateSettingsByType(tenantId, TenantSettingsMarketingTypes.Logos, payload.Logos);
             }
 
@@ -112,6 +135,18 @@ export class TenantSettingsMarketingController extends BaseController {
             const tenantId: uuid = await this._validator.getParamUuid(request, 'tenantId');
             await this.authorizeOne(request, null, tenantId);
             const payload = await this._validator.updateImages(request);
+            
+            if (payload) {
+                const existenceChecks: Promise<void>[] = [];
+                for (const key of Object.keys(payload)) {
+                    const resourceId = payload[key];
+                    if (resourceId) {
+                        existenceChecks.push(this.ensureResourceExists(resourceId, `Images.${key}`));
+                    }
+                }
+                await Promise.all(existenceChecks);
+            }
+            
             const updated = await this._service.updateSettingsByType(tenantId, TenantSettingsMarketingTypes.Images, payload);
             
             const responseData = {
@@ -128,6 +163,15 @@ export class TenantSettingsMarketingController extends BaseController {
             const tenantId: uuid = await this._validator.getParamUuid(request, 'tenantId');
             await this.authorizeOne(request, null, tenantId);
             const payload = await this._validator.updateQRCode(request);
+            
+            if (payload) {
+                if (typeof payload === 'string') {
+                    await this.ensureResourceExists(payload, 'QRCode');
+                } else if (payload.ResourceId) {
+                    await this.ensureResourceExists(payload.ResourceId, 'QRCode.ResourceId');
+                }
+            }
+            
             const updated = await this._service.updateSettingsByType(tenantId, TenantSettingsMarketingTypes.QRCode, payload);
             
             const responseData = {
@@ -164,6 +208,13 @@ export class TenantSettingsMarketingController extends BaseController {
             const tenantId: uuid = await this._validator.getParamUuid(request, 'tenantId');
             await this.authorizeOne(request, null, tenantId);
             const payload = await this._validator.updateLogos(request);
+            
+            if (payload && Array.isArray(payload)) {
+                await Promise.all(payload.map((id, index) =>
+                    this.ensureResourceExists(id, `Logos[${index}]`)
+                ));
+            }
+            
             const updated = await this._service.updateSettingsByType(tenantId, TenantSettingsMarketingTypes.Logos, payload);
             
             const responseData = {
@@ -239,6 +290,19 @@ export class TenantSettingsMarketingController extends BaseController {
             ResponseHandler.handleError(request, response, error);
         }
     };
+
+    private async ensureResourceExists(resourceId: string, field: string): Promise<void> {
+        if (!resourceId) {
+            return;
+        }
+        const resource = await this._fileResourceService.getById(resourceId);
+        if (!resource) {
+            throw new ApiError(
+                404,
+                `${field} references a file resource that does not exist (id: ${resourceId})`
+            );
+        }
+    }
 
 }
 

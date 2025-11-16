@@ -2,15 +2,10 @@ import express from 'express';
 import { BaseValidator, Where } from '../../base.validator';
 import { TenantSettingsMarketingTypes } from '../../../domain.types/tenant/marketing/tenant.settings.marketing.types';
 import { ApiError } from '../../../common/api.error';
-import { Injector } from '../../../startup/injector';
-import { FileResourceService } from '../../../services/general/file.resource.service';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
 export class TenantSettingsMarketingValidator extends BaseValidator {
-
-    private readonly _fileResourceService: FileResourceService =
-        Injector.Container.resolve(FileResourceService);
 
     constructor() {
         super();
@@ -39,28 +34,14 @@ export class TenantSettingsMarketingValidator extends BaseValidator {
 
         this.validateRequest(request);
 
-        const styling = request.body.Styling;
-        if (styling) {
-            const sizeFields = ['PageWidth', 'PageHeight', 'UserInterfaceWidth', 'UserInteractionWidth', 'QrSize'];
-            for (const field of sizeFields) {
-                if (styling[field] && !this.isValidCSSSize(styling[field])) {
-                    throw new ApiError(400, `Styling.${field} must be a valid CSS size (e.g., 210mm, 280px)`);
-                }
-            }
-        }
-
         return request.body.Styling;
     };
 
     updateContent = async (request: express.Request): Promise<any> => {
 
-        const content = request.body.Content;
+        const content = request.body?.Content;
 
-        if (content === undefined) {
-            return undefined;
-        }
-
-        if (content === null) {
+        if (!content) {
             return null;
         }
 
@@ -85,17 +66,13 @@ export class TenantSettingsMarketingValidator extends BaseValidator {
         if (content.Benefits?.Title !== undefined) {
             await this.validateString(request, 'Content.Benefits.Title', Where.Body, false, false, false, 1);
         }
-        if (content.Benefits?.Items !== undefined) {
-            if (content.Benefits.Items !== null) {
-                await this.validateArray(request, 'Content.Benefits.Items', Where.Body, false, false);
-                if (Array.isArray(content.Benefits.Items)) {
-                    for (let i = 0; i < content.Benefits.Items.length; i++) {
-                        if (typeof content.Benefits.Items[i] !== 'string') {
-                            throw new ApiError(400, `Content.Benefits.Items[${i}] must be a string`);
-                        }
-                    }
-                } else {
-                    throw new ApiError(400, 'Content.Benefits.Items must be an array');
+        const benefitItems = content.Benefits?.Items;
+        if (benefitItems != null) {
+            await this.validateArray(request, 'Content.Benefits.Items', Where.Body, false, false);
+            const items = benefitItems as unknown as string[];
+            for (let i = 0; i < items.length; i++) {
+                if (typeof items[i] !== 'string') {
+                    throw new ApiError(400, `Content.Benefits.Items[${i}] must be a string`);
                 }
             }
         }
@@ -124,32 +101,19 @@ export class TenantSettingsMarketingValidator extends BaseValidator {
 
     updateQRCode = async (request: express.Request): Promise<any> => {
 
-        const qrcode = request.body.QRCode;
+        const qrcode = request.body?.QRCode;
 
-        if (qrcode === null || qrcode === undefined) {
+        if (qrcode == null) {
             return null;
         }
 
         if (typeof qrcode === 'string') {
-            if (qrcode.trim().length === 0) {
-                throw new ApiError(400, 'QRCode resource ID cannot be empty');
-            }
-            if (!this.isValidUUID(qrcode)) {
-                throw new ApiError(400, 'QRCode must be a valid resource ID (UUID)');
-            }
-            await this.ensureResourceExists(qrcode, 'QRCode');
             return qrcode;
         }
 
         if (typeof qrcode === 'object' && !Array.isArray(qrcode)) {
-            if (qrcode.ResourceId) {
-                if (typeof qrcode.ResourceId !== 'string' || qrcode.ResourceId.trim().length === 0) {
-                    throw new ApiError(400, 'QRCode.ResourceId must be a non-empty string');
-                }
-                if (!this.isValidUUID(qrcode.ResourceId)) {
-                    throw new ApiError(400, 'QRCode.ResourceId must be a valid UUID');
-                }
-                await this.ensureResourceExists(qrcode.ResourceId, 'QRCode.ResourceId');
+            if (qrcode.ResourceId && typeof qrcode.ResourceId !== 'string') {
+                throw new ApiError(400, 'QRCode.ResourceId must be a string');
             }
             return qrcode;
         }
@@ -159,9 +123,9 @@ export class TenantSettingsMarketingValidator extends BaseValidator {
 
     updateImages = async (request: express.Request): Promise<any> => {
 
-        const images = request.body.Images;
+        const images = request.body?.Images;
 
-        if (images === null || images === undefined) {
+        if (!images) {
             return null;
         }
 
@@ -171,7 +135,6 @@ export class TenantSettingsMarketingValidator extends BaseValidator {
 
         const validFields = ['TitleImage', 'UserInterfaceImage'];
         const normalized: any = {};
-        const existenceChecks: Promise<void>[] = [];
 
         for (const key of Object.keys(images)) {
             const value = images[key];
@@ -180,64 +143,26 @@ export class TenantSettingsMarketingValidator extends BaseValidator {
                 if (typeof value !== 'string' || value.trim().length === 0) {
                     throw new ApiError(400, `Images.${key} must be a non-empty resource ID string`);
                 }
-                if (!this.isValidUUID(value)) {
-                    throw new ApiError(400, `Images.${key} must be a valid resource ID (UUID)`);
-                }
                 normalized[key] = value;
-                existenceChecks.push(this.ensureResourceExists(value, `Images.${key}`));
             }
             else {
                 throw new ApiError(400, `Unknown image field: ${key}. Valid fields: ${validFields.join(', ')}. Note: partnerLogos should be in Logos column.`);
             }
         }
 
-        await Promise.all(existenceChecks);
-
         return normalized;
     };
 
     updateLogos = async (request: express.Request): Promise<any> => {
-
-        const logos = request.body.Logos;
-        
-        if (logos === null || logos === undefined) {
+        const logos = request.body?.Logos;
+        if (!logos) {
             return null;
         }
-        
-        if (Array.isArray(logos)) {
-            const existenceChecks: Promise<void>[] = [];
-            for (let i = 0; i < logos.length; i++) {
-                if (typeof logos[i] !== 'string' || logos[i].trim().length === 0) {
-                    throw new ApiError(400, `Logos[${i}] must be a non-empty resource ID string`);
-                }
-                if (!this.isValidUUID(logos[i])) {
-                    throw new ApiError(400, `Logos[${i}] must be a valid resource ID (UUID)`);
-                }
-                existenceChecks.push(this.ensureResourceExists(logos[i], `Logos[${i}]`));
-            }
-            await Promise.all(existenceChecks);
-            return logos;
-        }
-        
-        if (typeof logos === 'object') {
-            const normalized: any = {};
-            const existenceChecks: Promise<void>[] = [];
-            for (const key of Object.keys(logos)) {
-                const value = logos[key];
-                if (typeof value !== 'string' || value.trim().length === 0) {
-                    throw new ApiError(400, `Logos.${key} must be a non-empty resource ID string`);
-                }
-                if (!this.isValidUUID(value)) {
-                    throw new ApiError(400, `Logos.${key} must be a valid resource ID (UUID)`);
-                }
-                normalized[key] = value;
-                existenceChecks.push(this.ensureResourceExists(value, `Logos.${key}`));
-            }
-            await Promise.all(existenceChecks);
-            return normalized;
-        }
-        
-        throw new ApiError(400, 'Logos must be an array of resource IDs or an object with resource ID values');
+
+        await this.validateArray(request, 'Logos', Where.Body, false, false);
+        this.validateRequest(request);
+
+        return logos;
     };
 
     updateByType = async (request: express.Request, type: TenantSettingsMarketingTypes): Promise<any> => {
@@ -278,28 +203,5 @@ export class TenantSettingsMarketingValidator extends BaseValidator {
         
         return model;
     };
-
-    private isValidCSSSize(size: string): boolean {
-        const cssPattern = /^\d+(\.\d+)?(px|mm|cm|in|pt|pc|em|rem|%|vh|vw)$/;
-        return cssPattern.test(size);
-    }
-
-    private isValidUUID(uuid: string): boolean {
-        const uuidPattern = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
-        return uuidPattern.test(uuid);
-    }
-
-    private async ensureResourceExists(resourceId: string, field: string): Promise<void> {
-        if (!resourceId) {
-            return;
-        }
-        const resource = await this._fileResourceService.getById(resourceId);
-        if (!resource) {
-            throw new ApiError(
-                404,
-                `${field} references a file resource that does not exist (id: ${resourceId})`
-            );
-        }
-    }
 
 }

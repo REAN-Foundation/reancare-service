@@ -659,7 +659,7 @@
             "UpdateAll": false,
             "UpdateImages": false,
             "UpdateLogos": false,
-            "UpdateQRcode": false,
+            "UpdateQRCode": false,
             "UpdateContent": false,
             "DownloadPdf": false,
             "Delete": false

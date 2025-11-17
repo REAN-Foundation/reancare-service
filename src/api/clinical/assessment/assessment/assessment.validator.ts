@@ -296,26 +296,26 @@ export class AssessmentValidator extends BaseValidator {
         return request['EMRId'];
     };
 
-    validateBiometricAlertSettings = (request: Record<string, string>): BiometricAlertSettings => {
-        if (!request && !('Channel' in request)) {
+    validateBiometricAlertSettings = (biometricAlertSettings: Record<string, string>): BiometricAlertSettings => {
+        if (!biometricAlertSettings && !('Channel' in biometricAlertSettings)) {
             throw new ApiError(400, 'Channel is not found in Biometric Alert Settings.');
         }
-        if (!request && !('ClientName' in request)) {
+        if (!biometricAlertSettings && !('ClientName' in biometricAlertSettings)) {
             throw new ApiError(400, 'Client Name is not found in Biometric Alert Settings.');
         }
-        if (!request && !('BiometricAlertCategories' in request)) {
+        if (!biometricAlertSettings && !('BiometricAlertCategories' in biometricAlertSettings)) {
             throw new ApiError(400, 'Biometric Alert Categories is not found in Biometric Alert Settings.');
         }
-        if (!request && !('Type' in request)) {
+        if (!biometricAlertSettings && !('Type' in biometricAlertSettings)) {
             throw new ApiError(400, 'Type is not found in Biometric Alert Settings.');
         }
       
         return {
-            Channel                  : request['Channel'] as NotificationChannel,
-            ClientName               : request['ClientName'],
-            BiometricAlertCategories : request['BiometricAlertCategories'] as unknown as string[],
-            Type                     : request['Type'] as BotMessagingType,
-            TemplateName             : request['TemplateName'] ?? null
+            Channel                  : biometricAlertSettings['Channel'] as NotificationChannel,
+            ClientName               : biometricAlertSettings['ClientName'],
+            BiometricAlertCategories : biometricAlertSettings['BiometricAlertCategories'] as unknown as string[],
+            Type                     : biometricAlertSettings['Type'] as BotMessagingType,
+            TemplateName             : biometricAlertSettings['TemplateName'] ?? null
         };
     };
 

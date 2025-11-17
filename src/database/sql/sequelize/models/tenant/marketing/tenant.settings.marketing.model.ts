@@ -82,7 +82,6 @@ export default class TenantSettingsMarketing extends Model {
     @Column({
         type      : DataType.STRING(64),
         allowNull : true,
-        field     : 'PDF_resourceid',
     })
     PDFResourceId: string;
 

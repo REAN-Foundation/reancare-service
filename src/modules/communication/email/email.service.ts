@@ -3,7 +3,11 @@ import fs from "fs";
 import { IEmailService } from "./email.service.interface";
 import { SMTPEmailService } from "./providers/smtp.email.service";
 import { EmailDetails } from "./email.details";
+import { injectable } from "tsyringe";
 
+///////////////////////////////////////////////////////////////////////////////
+
+@injectable()
 export class EmailService {
 
     private _emailService: IEmailService;

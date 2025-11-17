@@ -1,3 +1,5 @@
+import { BotMessagingType } from "../../miscellaneous/bot.request.types";
+import { NotificationChannel } from "../../../domain.types/general/notification/notification.types";
 import { BloodCholesterolSearchFilters } from "./blood.cholesterol/blood.cholesterol.search.types";
 import { BloodGlucoseSearchFilters } from "./blood.glucose/blood.glucose.search.types";
 import { BloodOxygenSaturationSearchFilters } from "./blood.oxygen.saturation/blood.oxygen.saturation.search.types";
@@ -68,4 +70,20 @@ export interface AlertNotification {
         range: string;
         title: {[key: string]: string};
         message: {[key: string]: string};
+    }
+
+export interface BiometricAlertSettings {
+        Channel: NotificationChannel;
+        ClientName: string;
+        BiometricAlertCategories: string[];
+        Type: BotMessagingType;
+        TemplateName?: string;
+    }
+export interface AlertMessage {
+        Title: string;
+        Message: string;
+        Phone: string;
+        UniqueReferenceId: string;
+        TenantCode: string;
+        Email?: string;
     }

@@ -20,7 +20,7 @@ import { HealthPriorityDto } from "../../../../domain.types/users/patient/health
 import { CareplanRepo } from "../../../../database/sql/sequelize/repositories/clinical/careplan/careplan.repo";
 import { CareplanService } from "../../../../services/clinical/careplan.service";
 import { Injector } from "../../../../startup/injector";
-import { Tenant } from "firebase-admin/lib/auth/tenant";
+import { UserTaskCategory } from "../../../../domain.types/users/user.task/user.task.types";
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -251,6 +251,111 @@ export class ReanCareplanService implements ICareplanService {
 
     };
 
+    public getActivity = async (
+        patientUserId: string,
+        careplanCode: string,
+        enrollmentId: string | number,
+        activityId: string,
+        scheduledAt?: string
+    ): Promise<CareplanActivity> => {
+
+        const careplanApiBaseUrl = process.env.CAREPLAN_API_BASE_URL;
+        var url = `${careplanApiBaseUrl}/enrollment-tasks/${activityId}`;
+
+        const headerOptions = await this.getHeaderOptions();
+        var response = await needle("get", url, headerOptions);
+
+        if (response.statusCode !== 200) {
+            Logger.instance().log(`Body: ${JSON.stringify(response.body.error)}`);
+            throw new ApiError(500, 'Careplan service get activity service error: ' + (response.body.error?.message));
+        }
+
+        var activity = response.body.Data;
+        if (!activity) {
+            throw new ApiError(404, 'Activity not found');
+        }
+
+        const category = this.getUserTaskCategory(activity.AssetType);
+        const status = this.getActivityStatus(activity.Status);
+
+        var entity: CareplanActivity = {
+            ParticipantId          : activity.ParticipantId,
+            EnrollmentId           : activity.EnrollmentId,
+            Provider               : this.providerName(),
+            ProviderActionId       : activity.id,
+            Title                  : activity.Asset?.Name || activity.Title,
+            Type                   : activity.AssetType,
+            Category               : category,
+            Description            : activity.Asset?.Description || activity.Description,
+            Language               : activity.Language,
+            ScheduledAt            : activity.ScheduledDate ? new Date(activity.ScheduledDate) : null,
+            TimeSlot               : activity.TimeSlot,
+            IsRegistrationActivity : activity.IsRegistrationActivity,
+            Status                 : status,
+            CompletedAt            : activity.CompletedDate,
+            RawContent             : activity.Asset ? JSON.stringify(activity.Asset) : activity
+        };
+
+        Logger.instance().log(`Successfully retrieved activity ${activityId} from careplan service.`);
+
+        return entity;
+    };
+
+    public completeActivity = async (
+        patientUserId: string,
+        careplanCode: string,
+        enrollmentId: string | number,
+        activityId: string,
+        updates: any
+    ): Promise<CareplanActivity> => {
+
+        const careplanApiBaseUrl = process.env.CAREPLAN_API_BASE_URL;
+        const url = `${careplanApiBaseUrl}/enrollment-tasks/${activityId}`;
+
+        const updateData = {
+            Status      : ProgressStatus.Completed,
+            CompletedAt : new Date()
+        };
+
+        const headerOptions = await this.getHeaderOptions();
+        var response = await needle("put", url, updateData, headerOptions);
+
+        if (response.statusCode !== 200) {
+            Logger.instance().log(`ResponseCode: ${response.statusCode}, Body: ${JSON.stringify(response.body.error)}`);
+            throw new ApiError(500, 'Careplan service update enrollment task error: ' + (response.body.error?.message));
+        }
+
+        var updatedActivity = response.body.Data;
+        if (!updatedActivity) {
+            return await this.getActivity(patientUserId, careplanCode, enrollmentId, activityId);
+        }
+
+        const category = this.getUserTaskCategory(updatedActivity.AssetType);
+        const status = this.getActivityStatus(updatedActivity.Status);
+
+        var entity: CareplanActivity = {
+            ParticipantId          : updatedActivity.ParticipantId,
+            EnrollmentId           : updatedActivity.EnrollmentId,
+            Provider               : this.providerName(),
+            ProviderActionId       : updatedActivity.id,
+            Title                  : updatedActivity.Asset?.Name,
+            Type                   : updatedActivity.AssetType,
+            Category               : category,
+            Description            : updatedActivity.Asset?.Description,
+            Language               : 'English',
+            ScheduledAt            : updatedActivity.ScheduledDate,
+            TimeSlot               : updatedActivity.TimeSlot,
+            IsRegistrationActivity : updatedActivity.IsRegistrationActivity,
+            Status                 : status,
+            CompletedAt            : updatedActivity.CompletedDate ? new Date(updatedActivity.CompletedDate) : null,
+            RawContent             : updatedActivity.Asset ? JSON.stringify(updatedActivity.Asset) : updatedActivity
+        };
+
+        Logger.instance().log(`Successfully completed activity ${activityId} from careplan service.`);
+
+        return entity;
+    };
+
     public deleteParticipantData = async (participantId: string): Promise<boolean> => {
         try {
             var url = process.env.CAREPLAN_API_BASE_URL + `/participants/${participantId}`;
@@ -298,14 +403,72 @@ export class ReanCareplanService implements ICareplanService {
         }
     }
 
-    getActivity(patientUserId: string, careplanCode: string,
-        enrollmentId: string | number, activityId: string, scheduledAt?: string): Promise<CareplanActivity> {
-        throw new Error("Method not implemented.");
-    }
+    private getUserTaskCategory(assetType: string): UserTaskCategory {
+        if (!assetType) {
+            return UserTaskCategory.Custom;
+        }
 
-    completeActivity(patientUserId: string, careplanCode: string,
-        enrollmentId: string | number, activityId: string, updates: any): Promise<CareplanActivity> {
-        throw new Error("Method not implemented.");
+        const type = assetType.toUpperCase();
+
+        if (type === 'VIDEO') {
+            return UserTaskCategory.EducationalVideo;
+        }
+        if (type === 'AUDIO') {
+            return UserTaskCategory.EducationalAudio;
+        }
+        if (type === 'ANIMATION') {
+            return UserTaskCategory.EducationalAnimation;
+        }
+        if (type === 'ARTICLE' || type === 'WEB LINK' || type === 'WEBLINK') {
+            return UserTaskCategory.EducationalLink;
+        }
+        if (type === 'INFOGRAPHICS' || type === 'INFOGRAPHIC') {
+            return UserTaskCategory.EducationalInfographics;
+        }
+        if (type === 'WEB NEWSFEED' || type === 'WEBNEWSFEED') {
+            return UserTaskCategory.EducationalNewsFeed;
+        }
+        if (type === 'ASSESSMENT' || type === 'QUESTIONNAIRE' || type === 'QUESTION') {
+            return UserTaskCategory.Assessment;
+        }
+        if (type === 'MESSAGE' || type === 'REMINDER') {
+            return UserTaskCategory.Message;
+        }
+        if (type === 'GOAL') {
+            return UserTaskCategory.Goal;
+        }
+        if (type === 'CHALLENGE') {
+            return UserTaskCategory.Challenge;
+        }
+        if (type === 'EXERCISE' || type === 'PHYSIOTHERAPY') {
+            return UserTaskCategory.Exercise;
+        }
+        if (type === 'NUTRITION') {
+            return UserTaskCategory.Nutrition;
+        }
+        if (type === 'BIOMETRICS') {
+            return UserTaskCategory.Biometrics;
+        }
+        if (type === 'MEDICATION') {
+            return UserTaskCategory.Medication;
+        }
+        if (type === 'APPOINTMENT') {
+            return UserTaskCategory.Appointment;
+        }
+        if (type === 'CONSULTATION' || type === 'CHECKUP') {
+            return UserTaskCategory.Consultation;
+        }
+        if (type === 'MEDITATION') {
+            return UserTaskCategory.StressManagement;
+        }
+        if (type === 'REFLECTION') {
+            return UserTaskCategory.PersonalReflection;
+        }
+        if (type === 'ACTION PLAN' || type === 'ACTIONPLAN' || type === 'PRIORITY' || type === 'WORD POWER' || type === 'WORDPOWER') {
+            return UserTaskCategory.Custom;
+        }
+
+        return UserTaskCategory.Custom;
     }
 
     convertToAssessmentTemplate(assessmentActivity: CareplanActivity): Promise<CAssessmentTemplate> {

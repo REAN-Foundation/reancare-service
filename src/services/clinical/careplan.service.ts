@@ -301,8 +301,8 @@ export class CareplanService implements IUserActionService {
             details.Transcription = activity.Transcription;
 
             //Handle assessment activities in special manner...
-            if (activity.Category === UserTaskCategory.Assessment ||
-            activity.Type === 'Assessment') {
+            if ((activity.Category === UserTaskCategory.Assessment ||
+            activity.Type === 'Assessment') && activity.Provider === 'AHA') {
                 var template = await this.getAssessmentTemplate(details);
                 const assessment = await this.getAssessment(activity, template, scheduledAt);
                 activity['Assessment'] = assessment;

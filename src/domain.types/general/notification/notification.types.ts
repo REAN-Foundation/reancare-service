@@ -26,6 +26,7 @@ export enum NotificationChannel {
     Telegram     = 'Telegram',
     Slack        = 'Slack',
     WhatsappWati = 'WhatsappWati',
+    WhatsappMeta = 'whatsappMeta'
 }
 
 export const NotificationTypeList: NotificationType [] = [

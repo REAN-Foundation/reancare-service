@@ -551,12 +551,14 @@ export class AssessmentController extends BaseController {
 
     private handleBiometricAlerts = async (assessmentId: uuid, patientUserId: string) => {
         try {
+            Logger.instance().log(`Handling biometric alerts for assessment id: ${assessmentId}`);
             const assessment = await this._service.getById(assessmentId);
             if (assessment == null) {
                 throw new ApiError(404, 'Assessment not found.');
             }
 
             const fieldIdentifier = AssessmentHelperService.extractFieldIdentifierData(assessment);
+            Logger.instance().log(`Field identifier: ${JSON.stringify(fieldIdentifier)}`);
 
             const template = await this._assessmentTemplateService.getById(assessment.AssessmentTemplateId);
             if (template == null) {
@@ -564,6 +566,8 @@ export class AssessmentController extends BaseController {
             }
             const rawData = template.RawData ?? null;
             const alertSettings = AssessmentHelperService.extractBiometricData(rawData);
+            Logger.instance().log(`Biometric Alert settings: ${JSON.stringify(alertSettings)}`);
+
             if (!alertSettings) {
                 Logger.instance().log('No biometric alert settings found.');
                 return;
@@ -589,6 +593,7 @@ export class AssessmentController extends BaseController {
                 biometricAlertSettings.BiometricAlertCategories.includes("Diastolic") &&
                 fieldIdentifier.Systolic && fieldIdentifier.Diastolic
             ) {
+                Logger.instance().log(`Processing blood pressure alert`);
                 const model: BloodPressureDto = {
                     PatientUserId : patientUserId,
                     Systolic      : isNaN(Number(fieldIdentifier.Systolic)) ? 0 : Number(fieldIdentifier.Systolic),
@@ -608,6 +613,7 @@ export class AssessmentController extends BaseController {
                 biometricAlertSettings.BiometricAlertCategories.includes("Pulse") &&
                 fieldIdentifier.Pulse
             ) {
+                Logger.instance().log(`Processing pulse alert`);
                 const model: PulseDto = {
                     PatientUserId : patientUserId,
                     Pulse         : isNaN(Number(fieldIdentifier.Pulse)) ? 0 : Number(fieldIdentifier.Pulse),
@@ -625,6 +631,7 @@ export class AssessmentController extends BaseController {
                 biometricAlertSettings.BiometricAlertCategories.includes("OxygenSaturation") &&
                 fieldIdentifier.OxygenSaturation
             ) {
+                Logger.instance().log(`Processing blood oxygen saturation alert`);
                 const model: BloodOxygenSaturationDto = {
                     PatientUserId         : patientUserId,
                     BloodOxygenSaturation : isNaN(Number(fieldIdentifier.OxygenSaturation)) ?
@@ -643,6 +650,7 @@ export class AssessmentController extends BaseController {
                 biometricAlertSettings.BiometricAlertCategories.includes("BloodGlucose") &&
                 fieldIdentifier.BloodGlucose
             ) {
+                Logger.instance().log(`Processing blood glucose alert`);
                 const model: BloodGlucoseDto = {
                     PatientUserId : patientUserId,
                     BloodGlucose  : isNaN(Number(fieldIdentifier.BloodGlucose)) ?
@@ -661,6 +669,7 @@ export class AssessmentController extends BaseController {
                 biometricAlertSettings.BiometricAlertCategories.includes("Temperature") &&
                 fieldIdentifier.Temperature
             ) {
+                Logger.instance().log(`Processing body temperature alert`);
                 const model: BodyTemperatureDto = {
                     PatientUserId   : patientUserId,
                     BodyTemperature : isNaN(Number(fieldIdentifier.Temperature)) ? 0 : Number(fieldIdentifier.Temperature),
@@ -679,6 +688,7 @@ export class AssessmentController extends BaseController {
                 fieldIdentifier.BodyWeight &&
                 fieldIdentifier.BodyHeight
             ) {
+                Logger.instance().log(`Processing body BMI alert`);
                 const model: BodyWeightDto = {
                     PatientUserId : patientUserId,
                     BodyWeight    : isNaN(Number(fieldIdentifier.BodyWeight)) ? 0 : Number(fieldIdentifier.BodyWeight),

@@ -119,6 +119,7 @@ export class BiometricAlerts {
         notificationChannel: NotificationChannel = NotificationChannel.MobilePush,
         metaData: BiometricAlertSettings | null = null) {
         try {
+            Logger.instance().log(`Processing pulse alert for model: ${JSON.stringify(model)} and notification channel: ${notificationChannel}`);
             const notification = BiometricAlerts.getPulseNotification(model.Pulse!);
             if (!notification || notification?.severity === Severity.NORMAL) {
                 return;
@@ -142,6 +143,7 @@ export class BiometricAlerts {
                 notification.message[BiometricAlerts.DEFAULT_USER_LANGUAGE_PREFERENCE]
             };
 
+            Logger.instance().log(`Sending pulse alert notification to biometric alert handler: ${JSON.stringify(pulseAlertModel)}`);
             await biometricAlertHandler.pulseAlert(pulseAlertModel);
         } catch (error) {
             Logger.instance().log(`Error in sending pulse alert notification : ${error}`);

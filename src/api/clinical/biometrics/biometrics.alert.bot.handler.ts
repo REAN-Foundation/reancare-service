@@ -114,6 +114,7 @@ export class BiometricAlertBotHandler implements IBiometricAlertHandler {
 
     private sendPulseAlert = async (model: PulseAlertModel) => {
         try {
+            Logger.instance().log(`Sending pulse alert notification to bot handler: ${JSON.stringify(model)}`);
             const alertMessage = await AlertHelper.getPulseAlertMessage(model);
             const phoneNumber = this.getRecipientPhoneNumber(
                 alertMessage.Phone,
@@ -137,6 +138,7 @@ export class BiometricAlertBotHandler implements IBiometricAlertHandler {
                 Payload     : {}
             };
 
+            Logger.instance().log(`Sending pulse alert notification to bot handler: ${JSON.stringify(botRequestModel)}`);
             await this.sendMessage(botRequestModel.Channel, botRequestModel);
         } catch (error) {
             Logger.instance().log(`Error sending pulse alert notification: ${error}`);

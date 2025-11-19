@@ -828,4 +828,11 @@ export class Helper {
         }
     }
 
+    public static normalizePhoneNumber = (phone: string): string => {
+        if (!phone) {
+            return null;
+        }
+        return phone.replace(/[^\d]/g, '');
+    };
+
 }

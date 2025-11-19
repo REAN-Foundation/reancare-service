@@ -26,7 +26,7 @@ export class BotService implements IBotService {
                 Connection        : 'keep-alive',
             };
 
-            var url = process.env.REANBOT_BACKEND_BASE_URL + '/' + model.ClientName + '/' + model.Channel + '/' + process.env.REANBOT_WEBHOOK_CLIENT_URL_TOKEN + '/send';
+            var url = process.env.REANBOT_BACKEND_BASE_URL + model.ClientName + '/' + model.Channel + '/' + process.env.REANBOT_WEBHOOK_CLIENT_URL_TOKEN + '/send';
             Logger.instance().log(`URL: ${url}`);
             var body = {
                 type         : model.Type,

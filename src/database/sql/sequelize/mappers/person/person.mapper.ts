@@ -55,7 +55,7 @@ export class PersonMapper {
 
         const prefix = person.Prefix ? (person.Prefix + ' ') : '';
         const firstName = person.FirstName ? (person.FirstName + ' ') : '';
-        const displayName:string = prefix + firstName + person.LastName ?? '';
+        const displayName:string = prefix + firstName + (person.LastName ?? '');
 
         //const age = Helper.getAgeFromBirthDate(person.BirthDate);
 

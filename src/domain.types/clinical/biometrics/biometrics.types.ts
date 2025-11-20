@@ -1,3 +1,5 @@
+import { BotMessagingType } from "../../../domain.types/miscellaneous/bot,request.types";
+import { NotificationChannel } from "../../../domain.types/general/notification/notification.types";
 import { BloodCholesterolSearchFilters } from "./blood.cholesterol/blood.cholesterol.search.types";
 import { BloodGlucoseSearchFilters } from "./blood.glucose/blood.glucose.search.types";
 import { BloodOxygenSaturationSearchFilters } from "./blood.oxygen.saturation/blood.oxygen.saturation.search.types";
@@ -6,6 +8,12 @@ import { BodyHeightSearchFilters } from "./body.height/body.height.search.types"
 import { BodyTemperatureSearchFilters } from "./body.temperature/body.temperature.search.types";
 import { BodyWeightSearchFilters } from "./body.weight/body.weight.search.types";
 import { PulseSearchFilters } from "./pulse/pulse.search.types";
+import { BloodGlucoseAlertModel } from "./alert.notificattion/blood.glucose";
+import { BloodPressureAlertModel } from "./alert.notificattion/blood.pressure";
+import { PulseAlertModel } from "./alert.notificattion/pulse";
+import { BodyTemperatureAlertModel } from "./alert.notificattion/body.temperature";
+import { BloodOxygenAlertModel } from "./alert.notificattion/blood.oxygen.saturation";
+import { BodyBmiAlertModel } from "./alert.notificattion/body.bmi";
 
 export enum BiometricsType {
     BloodGlucose          = 'Blood Glucose',
@@ -69,3 +77,31 @@ export interface AlertNotification {
         title: {[key: string]: string};
         message: {[key: string]: string};
     }
+
+export interface BiometricAlertSettings {
+    Channel: NotificationChannel;
+    ClientName: string;
+    BiometricAlertCategories: string[];
+    Type: BotMessagingType;
+    TemplateName?: string;
+}
+export interface AlertMessage {
+    Title: string;
+    Message: string;
+    Phone: string;
+    UniqueReferenceId: string;
+    TenantCode: string;
+    Email?: string;
+}
+
+export interface AlertModel {
+    PatientUserId?: string;
+    BiometricAlertSettings?: BiometricAlertSettings;
+}
+
+export type BiometricAlertModel =  BloodGlucoseAlertModel |
+                                BloodPressureAlertModel |
+                                PulseAlertModel |
+                                BodyTemperatureAlertModel |
+                                BloodOxygenAlertModel |
+                                BodyBmiAlertModel;

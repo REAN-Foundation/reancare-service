@@ -182,7 +182,7 @@ export class CustomUserAuthenticator implements IUserAuthenticator {
             try {
                 const expiresInSeconds: number = ConfigurationManager.AccessTokenExpiresInSeconds();
                 // var seconds = expiresIn.toString() + 's';
-                const secret = process.env.USER_REFRESH_TOKEN_SECRET as Secret;
+                const secret = process.env.USER_ACCESS_TOKEN_SECRET as Secret;
                 const options: SignOptions = {
                     expiresIn : `${expiresInSeconds}s`
                 };

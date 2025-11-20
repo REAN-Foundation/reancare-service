@@ -101,7 +101,7 @@ export class StatisticsRepo implements IStatisticsRepo {
     createConnection = async (schemaType: DatabaseSchemaType) => {
         await this.dbConnector._client.connect(schemaType);
     };
-   
+
     getUsersCount = async (filters: StatisticSearchFilters): Promise<any> => {
         try {
             const totalUsers = await this.getOnboardedUsers(filters);
@@ -116,7 +116,7 @@ export class StatisticsRepo implements IStatisticsRepo {
                 usersWithActiveSession,
                 deletedUsers,
                 enrolledUsers);
-            
+
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
@@ -265,7 +265,7 @@ export class StatisticsRepo implements IStatisticsRepo {
         } else {
             query = queryUsersByDeviceDetail;
         }
-        
+
         const [rows] = await this.dbConnector._client.executeQuery(query);
         const userByDeviceDetails: any = rows;
         return userByDeviceDetails;
@@ -560,7 +560,7 @@ export class StatisticsRepo implements IStatisticsRepo {
         if (tobaccoSmokers_.length === 1) {
             tobaccoSmokers = tobaccoSmokers_[0].tobaccoUserCount;
         }
-        
+
         let heavyDrinkers = null;
         let heavyDrinkersQuery = null;
         if (filter.TenantId) {
@@ -653,7 +653,7 @@ export class StatisticsRepo implements IStatisticsRepo {
 
             const vitalUsers = await this.getVitalUsers(totalUsers);
 
-            let healthPillarDistribution = {} || [];
+            let healthPillarDistribution: object | any[] = {};
 
             if (filters.Year === null) {
                 healthPillarDistribution =
@@ -731,7 +731,7 @@ export class StatisticsRepo implements IStatisticsRepo {
     getUsersByBiometrics = async (filters): Promise<any> => {
         try {
             const totalUsers = await this.getTotalUsers(filters);
-            let biometricUsers = {} || [] ;
+            let biometricUsers : object | any[] = {};
 
             const cholesterolUsers = await this.getCholestrolUsers(totalUsers,filters);
 
@@ -799,7 +799,7 @@ export class StatisticsRepo implements IStatisticsRepo {
         } else {
             query = queryYearWiseUserCount;
         }
-       
+
         const [rows] = await this.dbConnector._client.executeQuery(query);
         const yearWiseUserCount: any = rows;
         return yearWiseUserCount;
@@ -813,7 +813,7 @@ export class StatisticsRepo implements IStatisticsRepo {
         } else {
             query = queryYearWiseDeviceDetail;
         }
-        
+
         const [rows] = await this.dbConnector._client.executeQuery(query);
         const yearWiseDeviceDetails: any = rows;
         return this.aggregateYearWiseDeviceDetails(yearWiseDeviceDetails, yearWiseUserCount);
@@ -870,7 +870,7 @@ export class StatisticsRepo implements IStatisticsRepo {
         }
         const [tobaccoSmokersRows] = await this.dbConnector._client.executeQuery(tobaccoSmokersQuery);
         const yearWiseTobaccoSmokers: any = tobaccoSmokersRows;
-         
+
         let heavyDrinkersQuery = null;
         if (filter.TenantId) {
             heavyDrinkersQuery =  Helper.replaceAll(queryYearWiseHeavyDrinkersTenantUser, "{{tenantId}}", filter.TenantId);
@@ -879,7 +879,7 @@ export class StatisticsRepo implements IStatisticsRepo {
         }
         const [heavyDrinkersRows] = await this.dbConnector._client.executeQuery(heavyDrinkersQuery);
         const yearWiseHeavyDrinkers: any = heavyDrinkersRows;
-        
+
         let substanceAbuseQuery = null;
         if (filter.TenantId) {
             substanceAbuseQuery =  Helper.replaceAll(queryYearWiseSubstanceAbuseTenantUser, "{{tenantId}}", filter.TenantId);
@@ -888,7 +888,7 @@ export class StatisticsRepo implements IStatisticsRepo {
         }
         const [substanceAbuseRows] = await this.dbConnector._client.executeQuery(substanceAbuseQuery);
         const yearWiseSubstanceAbuse: any = substanceAbuseRows;
-        
+
         let notAddictedQuery = null;
         if (filter.TenantId) {
             notAddictedQuery =  Helper.replaceAll(queryYearWiseNotAddictedTenantUser, "{{tenantId}}", filter.TenantId);
@@ -918,7 +918,7 @@ export class StatisticsRepo implements IStatisticsRepo {
         } else {
             query = queryTotalOnboardedUsers;
         }
-        
+
         const [rows] = await this.dbConnector._client.executeQuery(query);
         const users: any = rows;
         if (users.length === 1) {
@@ -929,7 +929,7 @@ export class StatisticsRepo implements IStatisticsRepo {
 
    private  getNotDeletedUsers = async (filters: StatisticSearchFilters): Promise<any> => {
        let query = null;
-        
+
        if (filters.TenantId) {
            query =  Helper.replaceAll(queryNotDeletedTenantUsers, "{{tenantId}}", filters.TenantId);
        } else {
@@ -947,13 +947,13 @@ export class StatisticsRepo implements IStatisticsRepo {
 
    private  getDeletedUsers = async (filters: StatisticSearchFilters): Promise<any> => {
        let query = null;
-        
+
        if (filters.TenantId) {
            query =  Helper.replaceAll(queryDeletedTenantUsers, "{{tenantId}}", filters.TenantId);
        } else {
            query = queryDeletedUsers;
        }
-       
+
        let totalDeletedUsers = null;
        const [rows] = await this.dbConnector._client.executeQuery(query);
        const deletedUsers_: any = rows;
@@ -966,13 +966,13 @@ export class StatisticsRepo implements IStatisticsRepo {
     private getUsersWithActiveSession = async (filters: StatisticSearchFilters): Promise<any> => {
         let usersWithActiveSession = null;
         let query = null;
-            
+
         if (filters.TenantId) {
             query =  Helper.replaceAll(queryTenantUsersWithActiveSession, "{{tenantId}}", filters.TenantId);
         } else {
             query = queryUsersWithActiveSession;
         }
-        
+
         const [rows] = await this.dbConnector._client.executeQuery(query);
         const usersWithActiveSession_: any = rows;
         if (usersWithActiveSession_.length === 1) {
@@ -984,7 +984,7 @@ export class StatisticsRepo implements IStatisticsRepo {
     private getEnrolledUsers = async (filters: StatisticSearchFilters): Promise<any> => {
         let totalEnrolledUsers = null;
         let query = null;
-            
+
         if (filters.TenantId) {
             query =  Helper.replaceAll(queryTenantUsersCareplanEnrollments, "{{tenantId}}", filters.TenantId);
         } else {
@@ -2025,7 +2025,7 @@ export class StatisticsRepo implements IStatisticsRepo {
     private aggregateYearWiseDeviceDetails = (yearWiseDeviceDetails, yearWiseUserCount) => {
         const year = [];
         const result = [];
-         
+
         for (let i = 0; i < yearWiseUserCount.length; i++) {
             if (!year.includes(yearWiseUserCount[i].year)) {
                 year.push(yearWiseUserCount[i].year);
@@ -2048,7 +2048,7 @@ export class StatisticsRepo implements IStatisticsRepo {
 
         for (let i = 0; i < year.length; i++) {
             const y = year[i];
-       
+
             for (let j = 0; j < yearWiseDeviceDetails.length; j++) {
                 if (yearWiseDeviceDetails[j].year === y) {
                     if (yearWiseDeviceDetails[j].OSType === "Android") {
@@ -2072,7 +2072,7 @@ export class StatisticsRepo implements IStatisticsRepo {
     ) => {
         const year = [];
         const result = [];
-         
+
         for (let i = 0; i < yearWiseUserCount.length; i++) {
             if (!year.includes(yearWiseUserCount[i].year)) {
                 year.push(yearWiseUserCount[i].year);
@@ -2084,17 +2084,17 @@ export class StatisticsRepo implements IStatisticsRepo {
                             Status : "Tobacco Smokers",
                             Count  : 0,
                         },
-                
+
                         {
                             Status : "Heavy Drinker",
                             Count  : 0,
                         },
-                
+
                         {
                             Status : "Substance Abuse",
                             Count  : 0,
                         },
-                
+
                         {
                             Status : "Non Addicted",
                             Count  : 0,
@@ -2106,7 +2106,7 @@ export class StatisticsRepo implements IStatisticsRepo {
 
         for (let i = 0; i < year.length; i++) {
             const y = year[i];
-       
+
             for (let j = 0; j < yearWiseTobaccoSmokers.length; j++) {
                 if (yearWiseTobaccoSmokers[j].year === y) {
                     result[i].AdditionDetails[0].Count = yearWiseTobaccoSmokers[j].tobaccoUserCount;
@@ -2201,7 +2201,7 @@ export class StatisticsRepo implements IStatisticsRepo {
     private aggregateYearWiseGenderDetails = (yearWiseGenderDetails) => {
         const year = [];
         const result = [];
-         
+
         for (let i = 0; i < yearWiseGenderDetails.length; i++) {
             if (!year.includes(yearWiseGenderDetails[i].year)) {
                 year.push(yearWiseGenderDetails[i].year);
@@ -2259,7 +2259,7 @@ export class StatisticsRepo implements IStatisticsRepo {
         let notSpecified = 0;
 
         for (let i = 0; i < userByAge.length; i++) {
-            
+
             if (!userByAge[i].age) {
                 notSpecified += 1;
             } else if (userByAge[i].age <= 35 ) {
@@ -2294,11 +2294,11 @@ export class StatisticsRepo implements IStatisticsRepo {
             }
         ];
     };
-    
+
     private aggregateYearWiseMaritalDetails = (yearWiseMaritalDetails) => {
         const year = [];
         const result = [];
-         
+
         for (let i = 0; i < yearWiseMaritalDetails.length; i++) {
             if (!year.includes(yearWiseMaritalDetails[i].year)) {
                 year.push(yearWiseMaritalDetails[i].year);
@@ -2328,7 +2328,7 @@ export class StatisticsRepo implements IStatisticsRepo {
     private aggregateYearWiseMajorAilmentDetails = (yearWiseMajorAilment) => {
         const year = [];
         const result = [];
-         
+
         for (let i = 0; i < yearWiseMajorAilment.length; i++) {
             if (!year.includes(yearWiseMajorAilment[i].year)) {
                 year.push(yearWiseMajorAilment[i].year);

@@ -149,11 +149,20 @@ export class TenantMarketingPdfService {
         const imagesInput = settings?.Images ?? {};
         const logosInput = settings?.Logos ?? {};
 
-        const partnerLogosIds = Array.isArray(logosInput)
-            ? logosInput
-            : (typeof logosInput === 'object' && logosInput?.PartnerLogos)
-                ? (Array.isArray(logosInput.PartnerLogos) ? logosInput.PartnerLogos : [logosInput.PartnerLogos])
-                : [];
+        let partnerLogosIds: string[] = [];
+        
+        if (Array.isArray(logosInput)) {
+            partnerLogosIds = logosInput;
+        } else if (typeof logosInput === 'object' && logosInput !== null) {
+            if (logosInput?.PartnerLogos) {
+                partnerLogosIds = Array.isArray(logosInput.PartnerLogos) 
+                    ? logosInput.PartnerLogos 
+                    : [logosInput.PartnerLogos];
+            } else {
+                partnerLogosIds = Object.values(logosInput).filter(val => typeof val === 'string');
+            }
+        }
+        
         const partnerLogos = await Promise.all(partnerLogosIds.map(id => this.downloadResourceToDataUrl(id)));
 
         const titleImage = typeof imagesInput?.TitleImage === 'string'

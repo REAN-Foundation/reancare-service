@@ -14,7 +14,6 @@ import {
     TenantMarketingLogos,
     TenantSettingsMarketingDomainModel,
 } from '../../../domain.types/tenant/marketing/tenant.settings.marketing.types';
-import { ApiError } from '../../../common/api.error';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -24,21 +23,21 @@ export class TenantSettingsMarketingValidator extends BaseValidator {
         super();
     }
 
-    updateStyling = async (request: express.Request): Promise<TenantMarketingStyling | null> => {
-        await this.validateString(request, 'Styling.Primary', Where.Body, false, false);
-        await this.validateString(request, 'Styling.Secondary', Where.Body, false, false);
-        await this.validateString(request, 'Styling.Accent', Where.Body, false, false);
-        await this.validateString(request, 'Styling.LightBg', Where.Body, false, false);
-        await this.validateString(request, 'Styling.Panel', Where.Body, false, false);
-        await this.validateString(request, 'Styling.Muted', Where.Body, false, false);
-        await this.validateString(request, 'Styling.Text', Where.Body, false, false);
-        await this.validateString(request, 'Styling.HeadingFont', Where.Body, false, false);
-        await this.validateString(request, 'Styling.BodyFont', Where.Body, false, false);
-        await this.validateString(request, 'Styling.PageWidth', Where.Body, false, false);
-        await this.validateString(request, 'Styling.PageHeight', Where.Body, false, false);
-        await this.validateString(request, 'Styling.UserInterfaceWidth', Where.Body, false, false);
-        await this.validateString(request, 'Styling.UserInteractionWidth', Where.Body, false, false);
-        await this.validateString(request, 'Styling.QrSize', Where.Body, false, false);
+    updateStyling = async (request: express.Request): Promise<TenantMarketingStyling> => {
+        await this.validateString(request, 'Styling.Primary', Where.Body, false, true);
+        await this.validateString(request, 'Styling.Secondary', Where.Body, false, true);
+        await this.validateString(request, 'Styling.Accent', Where.Body, false, true);
+        await this.validateString(request, 'Styling.LightBg', Where.Body, false, true);
+        await this.validateString(request, 'Styling.Panel', Where.Body, false, true);
+        await this.validateString(request, 'Styling.Muted', Where.Body, false, true);
+        await this.validateString(request, 'Styling.Text', Where.Body, false, true);
+        await this.validateString(request, 'Styling.HeadingFont', Where.Body, false, true);
+        await this.validateString(request, 'Styling.BodyFont', Where.Body, false, true);
+        await this.validateString(request, 'Styling.PageWidth', Where.Body, false, true);
+        await this.validateString(request, 'Styling.PageHeight', Where.Body, false, true);
+        await this.validateString(request, 'Styling.UserInterfaceWidth', Where.Body, false, true);
+        await this.validateString(request, 'Styling.UserInteractionWidth', Where.Body, false, true);
+        await this.validateString(request, 'Styling.QrSize', Where.Body, false, true);
 
         this.validateRequest(request);
 
@@ -62,25 +61,25 @@ export class TenantSettingsMarketingValidator extends BaseValidator {
         return model;
     };
 
-    updateContent = async (request: express.Request): Promise<TenantMarketingContent | null> => {
-        await this.validateString(request, 'Content.Header.MainTitle', Where.Body, false, false, false, 1);
-        await this.validateString(request, 'Content.Header.Subtitle', Where.Body, false, false, false, 1);
-        await this.validateString(request, 'Content.Introduction.IntroParagraph', Where.Body, false, false);
-        await this.validateString(request, 'Content.Introduction.ProblemStatement', Where.Body, false, false);
-        await this.validateString(request, 'Content.Benefits.Title', Where.Body, false, false, false, 1);
-        await this.validateArray(request, 'Content.Benefits.Items', Where.Body, false, false);
-        await this.validateString(request, 'Content.UserInterface.Heading', Where.Body, false, false, false, 1);
-        await this.validateString(request, 'Content.UserInterface.Paragraph', Where.Body, false, false);
-        await this.validateString(request, 'Content.Footer.CtaHeading', Where.Body, false, false, false, 1);
-        await this.validateString(request, 'Content.Footer.CtaDescription', Where.Body, false, false);
-        await this.validateString(request, 'Content.Footer.QrInstruction', Where.Body, false, false);
+    updateContent = async (request: express.Request): Promise<TenantMarketingContent> => {
+        await this.validateString(request, 'Content.Header.MainTitle', Where.Body, false, true, false, 1);
+        await this.validateString(request, 'Content.Header.Subtitle', Where.Body, false, true, false, 1);
+        await this.validateString(request, 'Content.Introduction.IntroParagraph', Where.Body, false, true);
+        await this.validateString(request, 'Content.Introduction.ProblemStatement', Where.Body, false, true);
+        await this.validateString(request, 'Content.Benefits.Title', Where.Body, false, true, false, 1);
+        await this.validateArray(request, 'Content.Benefits.Items', Where.Body, false, true);
+        await this.validateString(request, 'Content.UserInterface.Heading', Where.Body, false, true, false, 1);
+        await this.validateString(request, 'Content.UserInterface.Paragraph', Where.Body, false, true);
+        await this.validateString(request, 'Content.Footer.CtaHeading', Where.Body, false, true, false, 1);
+        await this.validateString(request, 'Content.Footer.CtaDescription', Where.Body, false, true);
+        await this.validateString(request, 'Content.Footer.QrInstruction', Where.Body, false, true);
 
         this.validateRequest(request);
 
         const benefitItems = request.body?.Content?.Benefits?.Items;
         if (benefitItems != null && Array.isArray(benefitItems)) {
             for (let i = 0; i < benefitItems.length; i++) {
-                await this.validateString(request, `Content.Benefits.Items[${i}]`, Where.Body, false, false);
+                await this.validateString(request, `Content.Benefits.Items[${i}]`, Where.Body, false, true);
             }
             this.validateRequest(request);
         }
@@ -113,43 +112,45 @@ export class TenantSettingsMarketingValidator extends BaseValidator {
     };
 
     updateQRCode = async (request: express.Request): Promise<TenantMarketingQRCode> => {
-        await this.validateAny(request, 'QRCode', Where.Body, false, false);
-        await this.validateString(request, 'QRCode.ResourceId', Where.Body, false, false);
-        this.validateRequest(request);
+        const qrCode = request.body?.QRCode;
+        
+        if (qrCode && typeof qrCode === 'object' && !Array.isArray(qrCode) && qrCode !== null) {
+            await this.validateString(request, 'QRCode.ResourceId', Where.Body, false, true);
+            this.validateRequest(request);
+        }
 
-        return request.body?.QRCode ?? null;
+        const model: TenantMarketingQRCode = qrCode ?? null;
+
+        return model;
     };
 
-    updateImages = async (request: express.Request): Promise<TenantMarketingImages | null> => {
-        await this.validateObject(request, 'Images', Where.Body, false, false);
+    updateImages = async (request: express.Request): Promise<TenantMarketingImages> => {
+        await this.validateObject(request, 'Images', Where.Body, false, true);
 
         const images = request.body?.Images;
         if (!images) {
-            return null;
+            const model: TenantMarketingImages = {};
+            return model;
         }
 
-        const validFields = ['TitleImage', 'UserInterfaceImage'];
-        const normalized: TenantMarketingImages = {};
+        const model: TenantMarketingImages = {};
 
         for (const key of Object.keys(images)) {
-            if (!validFields.includes(key)) {
-                throw new ApiError(400, `Unknown image field: ${key}. Valid fields: ${validFields.join(', ')}. Note: partnerLogos should be in Logos column.`);
-            }
-
-            await this.validateString(request, `Images.${key}`, Where.Body, false, false, false, 1);
-            normalized[key] = images[key];
+            await this.validateString(request, `Images.${key}`, Where.Body, false, true, false, 1);
+            model[key] = images[key];
         }
 
         this.validateRequest(request);
 
-        return normalized;
+        return model;
     };
 
     updateLogos = async (request: express.Request): Promise<TenantMarketingLogos> => {
-        await this.validateAny(request, 'Logos', Where.Body, false, false);
-        this.validateRequest(request);
+        const logos = request.body?.Logos;
 
-        return request.body?.Logos ?? null;
+        const model: TenantMarketingLogos = logos ?? null;
+
+        return model;
     };
 
     updateByType = async (request: express.Request, type: TenantSettingsMarketingTypes)
@@ -158,8 +159,7 @@ export class TenantSettingsMarketingValidator extends BaseValidator {
         TenantMarketingContent |
         TenantMarketingQRCode |
         TenantMarketingImages |
-        TenantMarketingLogos |
-        null
+        TenantMarketingLogos
     > => {
         if (type === TenantSettingsMarketingTypes.Styling) {
             return await this.updateStyling(request);

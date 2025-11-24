@@ -5,7 +5,7 @@ import {
     TenantSettingsDomainModel,
     TenantSettingsDto,
     FollowupSettings,
-
+    CustomSettings,
 } from "../../../domain.types/tenant/tenant.settings.types";
 
 ///////////////////////////////////////////////////////////////////////////////////////////
@@ -18,4 +18,5 @@ export interface ITenantSettingsRepo {
     updateChatBotSettings(tenantId: string, settings: ChatBotSettings): Promise<TenantSettingsDto>;
     updateFormsSettings(tenantId: string, settings: FormsSettings): Promise<TenantSettingsDto>;
     updateConsentSettings(tenantId: string, settings: any): Promise<TenantSettingsDto>;
+    updateCustomSettings(tenantId: string, settings: CustomSettings): Promise<TenantSettingsDto>;
 }

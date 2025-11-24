@@ -5,7 +5,8 @@ import {
     FollowupSettings,
     FormsSettings,
     TenantSettingsDomainModel,
-    TenantSettingsDto
+    TenantSettingsDto,
+    CustomSettings
 } from "../../../../../domain.types/tenant/tenant.settings.types";
 import { uuid } from "../../../../../domain.types/miscellaneous/system.types";
 import { ITenantSettingsRepo } from '../../../../repository.interfaces/tenant/tenant.settings.interface';
@@ -26,12 +27,16 @@ export class TenantSettingsRepo implements ITenantSettingsRepo {
             const followup = this.validateJSONStringify(JSON.stringify(model.Followup));
             const forms = this.validateJSONStringify(JSON.stringify(model.Forms));
  
+            const customSettings =
+                model.CustomSettings ? this.validateJSONStringify(JSON.stringify(model.CustomSettings)) : null;
+
             const entity = {
-                TenantId : tenantId,
-                Common   : common,
-                Followup : followup,
-                ChatBot  : chatBot,
-                Forms    : forms,
+                TenantId       : tenantId,
+                Common         : common,
+                Followup       : followup,
+                ChatBot        : chatBot,
+                Forms          : forms,
+                CustomSettings : customSettings,
             };
             const settings = await TenantSettings.create(entity);
             return TenantSettingsMapper.toDto(settings);
@@ -126,6 +131,23 @@ export class TenantSettingsRepo implements ITenantSettingsRepo {
         catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, `Failed to update tenant consent settings: ${error.message}`);
+        }
+    };
+
+    updateCustomSettings = async (tenantId: string, settings: CustomSettings): Promise<TenantSettingsDto> => {
+        try {
+            const customSettings = this.validateJSONStringify(JSON.stringify(settings));
+            const record = await TenantSettings.findOne({ where: { TenantId: tenantId } });
+            if (!record) {
+                throw new ApiError(404, `Tenant settings not found for tenant: ${tenantId}`);
+            }
+            record.CustomSettings = customSettings;
+            await record.save();
+            return TenantSettingsMapper.toDto(record);
+        }
+        catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, `Failed to update tenant custom settings: ${error.message}`);
         }
     };
     

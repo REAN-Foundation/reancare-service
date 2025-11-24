@@ -59,7 +59,10 @@ export class AssessmentHelperService {
       
         for (const response of userResponses) {
             const fieldIdentifier = response.Node?.FieldIdentifier;
-            const value = response.ResponseType === QueryResponseType.Text ? response.TextValue : null;
+            const value = response.ResponseType === QueryResponseType.Text ||
+            response.ResponseType === QueryResponseType.Integer ||
+            response.ResponseType === QueryResponseType.Float ?
+                response.TextValue || response.IntegerValue || response.FloatValue : null;
       
             if (fieldIdentifier && value) {
                 const key = fieldIdentifier.split(":").pop();
@@ -89,6 +92,13 @@ export class AssessmentHelperService {
         }
         
         return Roles.Patient;
+    }
+
+    public static extractBiometricData(rawData: Record<string, any>): Record<string, any> {
+        if (!rawData || !('BiometricAlert' in rawData)) {
+            return null;
+        }
+        return rawData['BiometricAlert'];
     }
 
 }

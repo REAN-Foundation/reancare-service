@@ -1,5 +1,5 @@
 import express from 'express';
-import jwt, { JwtPayload } from 'jsonwebtoken';
+import jwt, { JwtPayload, Secret, SignOptions } from 'jsonwebtoken';
 import { Logger } from '../../common/logger';
 import { IUserAuthenticator } from '../interfaces/user.authenticator.interface';
 import { ActionScope, AuthResult } from '../auth.types';
@@ -158,14 +158,18 @@ export class CustomUserAuthenticator implements IUserAuthenticator {
     public generateRefreshToken = async (userId: string, sessionId: string, tenantId: string): Promise<string> => {
         return new Promise((resolve, reject) => {
             try {
-                const expiresIn: number = ConfigurationManager.RefreshTokenExpiresInSeconds();
-                var seconds = expiresIn.toString() + 's';
+                const expiresInSeconds: number = ConfigurationManager.RefreshTokenExpiresInSeconds();
+                // var seconds = expiresInSeconds.toString() + 's';
                 const payload = {
                     userId,
                     sessionId,
                     tenantId
                 };
-                const token = jwt.sign(payload, process.env.USER_REFRESH_TOKEN_SECRET, { expiresIn: seconds });
+                const secret = process.env.USER_REFRESH_TOKEN_SECRET as Secret;
+                const options: SignOptions = {
+                    expiresIn : `${expiresInSeconds}s`
+                };
+                const token = jwt.sign(payload, secret, options);
                 resolve(token);
             } catch (error) {
                 reject(error);
@@ -176,9 +180,13 @@ export class CustomUserAuthenticator implements IUserAuthenticator {
     public generateUserSessionToken = async (user: CurrentUser): Promise<string> => {
         return new Promise((resolve, reject) => {
             try {
-                const expiresIn: number = ConfigurationManager.AccessTokenExpiresInSeconds();
-                var seconds = expiresIn.toString() + 's';
-                const token = jwt.sign(user, process.env.USER_ACCESS_TOKEN_SECRET, { expiresIn: seconds });
+                const expiresInSeconds: number = ConfigurationManager.AccessTokenExpiresInSeconds();
+                // var seconds = expiresIn.toString() + 's';
+                const secret = process.env.USER_ACCESS_TOKEN_SECRET as Secret;
+                const options: SignOptions = {
+                    expiresIn : `${expiresInSeconds}s`
+                };
+                const token = jwt.sign(user, secret, options);
                 resolve(token);
             } catch (error) {
                 reject(error);

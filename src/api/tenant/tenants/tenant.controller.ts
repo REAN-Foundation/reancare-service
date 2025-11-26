@@ -277,7 +277,7 @@ export class TenantController extends BaseController {
             const tenantCode = tenant.Code;
             const SchemaName = await this.getSchemaName(tenantCode);
             const environment = await this.getEnvironment();
-            request.body.SecretName = SchemaName;
+            request.body.SchemaName = SchemaName;
             request.body.Environment = environment;
 
             const model = await this._validator.createBotSchema(request);

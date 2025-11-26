@@ -38,6 +38,16 @@ import { PersonDetailsDto } from '../../../../domain.types/person/person.dto';
 import { RoleService } from '../../../../services/role/role.service';
 import { UserDetailsDto } from '../../../../domain.types/users/user/user.dto';
 import { PersonService } from '../../../../services/person/person.service';
+import { BiometricAlertSettings } from '../../../../domain.types/clinical/biometrics/biometrics.types';
+import { BiometricAlerts } from '../../biometrics/biometrics.alert';
+import { BloodPressureDto } from '../../../../domain.types/clinical/biometrics/blood.pressure/blood.pressure.dto';
+import { NotificationChannel } from '../../../../domain.types/general/notification/notification.types';
+import { PulseDto } from '../../../../domain.types/clinical/biometrics/pulse/pulse.dto';
+import { BloodOxygenSaturationDto } from '../../../../domain.types/clinical/biometrics/blood.oxygen.saturation/blood.oxygen.saturation.dto';
+import { BodyWeightDto } from '../../../../domain.types/clinical/biometrics/body.weight/body.weight.dto';
+import { BodyHeightDto } from '../../../../domain.types/clinical/biometrics/body.height/body.height.dto';
+import { BloodGlucoseDto } from '../../../../domain.types/clinical/biometrics/blood.glucose/blood.glucose.dto';
+import { BodyTemperatureDto } from '../../../../domain.types/clinical/biometrics/body.temperature/body.temperature.dto';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -519,13 +529,15 @@ export class AssessmentController extends BaseController {
             Logger.instance().log(`Completed Assessment Type: ${completedAssessment.Type}`);
             if (template.Type === AssessmentType.UserRegistration) {
                 const status = await this.registerAssessmentTargetUser(completedAssessment.id, submissionModel.TenantId);
-                message = message + ' ' + status;
+                message = message + status ? ' ' + status : '';
             }
 
             if (template.Type === AssessmentType.Clinical) {
                 const status = await this.verifyAssessmentTargetUser(completedAssessment.id, submissionModel.TenantId);
-                message = message + ' ' + status;
+                message = message + status ? ' ' + status : '';
             }
+
+            this.handleBiometricAlerts(completedAssessment.id, patient.UserId);
 
             ResponseHandler.success(request, response, message, 200, { Assessment: completedAssessment });
         } catch (error) {
@@ -537,6 +549,167 @@ export class AssessmentController extends BaseController {
 
     //#region Privates
 
+    private handleBiometricAlerts = async (assessmentId: uuid, patientUserId: string) => {
+        try {
+            Logger.instance().log(`Handling biometric alerts for assessment id: ${assessmentId}`);
+            const assessment = await this._service.getById(assessmentId);
+            if (assessment == null) {
+                throw new ApiError(404, 'Assessment not found.');
+            }
+
+            const fieldIdentifier = AssessmentHelperService.extractFieldIdentifierData(assessment);
+            Logger.instance().log(`Field identifier: ${JSON.stringify(fieldIdentifier)}`);
+
+            const template = await this._assessmentTemplateService.getById(assessment.AssessmentTemplateId);
+            if (template == null) {
+                throw new ApiError(404, 'Assessment template not found.');
+            }
+            const rawData = template.RawData ?? null;
+            const alertSettings = AssessmentHelperService.extractBiometricData(rawData);
+            Logger.instance().log(`Biometric Alert settings: ${JSON.stringify(alertSettings)}`);
+
+            if (!alertSettings) {
+                Logger.instance().log('No biometric alert settings found.');
+                return;
+            }
+            const biometricAlertSettings: BiometricAlertSettings =
+            this._validator.validateBiometricAlertSettings(alertSettings);
+            this.processBiometricAlertsByCategory(biometricAlertSettings, fieldIdentifier, patientUserId);
+            
+        } catch (error) {
+            Logger.instance().log(`Error in handling biometric alerts: ${error}`);
+        }
+    };
+    
+    private processBiometricAlertsByCategory = (
+        biometricAlertSettings: BiometricAlertSettings,
+        fieldIdentifier: Record<string, string>,
+        patientUserId: string
+    ) => {
+        try {
+            if (
+                biometricAlertSettings.BiometricAlertCategories.length > 0 &&
+                biometricAlertSettings.BiometricAlertCategories.includes("Systolic") &&
+                biometricAlertSettings.BiometricAlertCategories.includes("Diastolic") &&
+                fieldIdentifier.Systolic && fieldIdentifier.Diastolic
+            ) {
+                Logger.instance().log(`Processing blood pressure alert`);
+                const model: BloodPressureDto = {
+                    PatientUserId : patientUserId,
+                    Systolic      : isNaN(Number(fieldIdentifier.Systolic)) ? 0 : Number(fieldIdentifier.Systolic),
+                    Diastolic     : isNaN(Number(fieldIdentifier.Diastolic)) ? 0 : Number(fieldIdentifier.Diastolic),
+                    Unit          : 'mmHg',
+                };
+        
+                BiometricAlerts.forBloodPressure(
+                    model,
+                    biometricAlertSettings.Channel ?? NotificationChannel.WhatsappMeta,
+                    biometricAlertSettings
+                );
+            }
+    
+            if (
+                biometricAlertSettings.BiometricAlertCategories.length > 0 &&
+                biometricAlertSettings.BiometricAlertCategories.includes("Pulse") &&
+                fieldIdentifier.Pulse
+            ) {
+                Logger.instance().log(`Processing pulse alert`);
+                const model: PulseDto = {
+                    PatientUserId : patientUserId,
+                    Pulse         : isNaN(Number(fieldIdentifier.Pulse)) ? 0 : Number(fieldIdentifier.Pulse),
+                    Unit          : 'bpm',
+                };
+                BiometricAlerts.forPulse(
+                    model,
+                    biometricAlertSettings.Channel ?? NotificationChannel.WhatsappMeta,
+                    biometricAlertSettings
+                );
+            }
+    
+            if (
+                biometricAlertSettings.BiometricAlertCategories.length > 0 &&
+                biometricAlertSettings.BiometricAlertCategories.includes("OxygenSaturation") &&
+                fieldIdentifier.OxygenSaturation
+            ) {
+                Logger.instance().log(`Processing blood oxygen saturation alert`);
+                const model: BloodOxygenSaturationDto = {
+                    PatientUserId         : patientUserId,
+                    BloodOxygenSaturation : isNaN(Number(fieldIdentifier.OxygenSaturation)) ?
+                        0 : Number(fieldIdentifier.OxygenSaturation),
+                    Unit : 'percentage',
+                };
+                BiometricAlerts.forBloodOxygenSaturation(
+                    model,
+                    biometricAlertSettings.Channel ?? NotificationChannel.WhatsappMeta,
+                    biometricAlertSettings
+                );
+            }
+    
+            if (
+                biometricAlertSettings.BiometricAlertCategories.length > 0 &&
+                biometricAlertSettings.BiometricAlertCategories.includes("BloodGlucose") &&
+                fieldIdentifier.BloodGlucose
+            ) {
+                Logger.instance().log(`Processing blood glucose alert`);
+                const model: BloodGlucoseDto = {
+                    PatientUserId : patientUserId,
+                    BloodGlucose  : isNaN(Number(fieldIdentifier.BloodGlucose)) ?
+                        0 : Number(fieldIdentifier.BloodGlucose),
+                    Unit : 'mg/dL',
+                };
+                BiometricAlerts.forBloodGlucose(
+                    model,
+                    biometricAlertSettings.Channel ?? NotificationChannel.WhatsappMeta,
+                    biometricAlertSettings
+                );
+            }
+    
+            if (
+                biometricAlertSettings.BiometricAlertCategories.length > 0 &&
+                biometricAlertSettings.BiometricAlertCategories.includes("Temperature") &&
+                fieldIdentifier.Temperature
+            ) {
+                Logger.instance().log(`Processing body temperature alert`);
+                const model: BodyTemperatureDto = {
+                    PatientUserId   : patientUserId,
+                    BodyTemperature : isNaN(Number(fieldIdentifier.Temperature)) ? 0 : Number(fieldIdentifier.Temperature),
+                    Unit            : '°C',
+                };
+                BiometricAlerts.forBodyTemperature(
+                    model,
+                    biometricAlertSettings.Channel ?? NotificationChannel.WhatsappMeta,
+                    biometricAlertSettings
+                );
+            }
+    
+            if (
+                biometricAlertSettings.BiometricAlertCategories.length > 0 &&
+                biometricAlertSettings.BiometricAlertCategories.includes("BodyBMI") &&
+                fieldIdentifier.BodyWeight &&
+                fieldIdentifier.BodyHeight
+            ) {
+                Logger.instance().log(`Processing body BMI alert`);
+                const model: BodyWeightDto = {
+                    PatientUserId : patientUserId,
+                    BodyWeight    : isNaN(Number(fieldIdentifier.BodyWeight)) ? 0 : Number(fieldIdentifier.BodyWeight),
+                    Unit          : 'kg',
+                };
+                const bodyHeightModel: BodyHeightDto = {
+                    PatientUserId : patientUserId,
+                    BodyHeight    : isNaN(Number(fieldIdentifier.BodyHeight)) ? 0 : Number(fieldIdentifier.BodyHeight),
+                    Unit          : 'cm',
+                };
+                BiometricAlerts.forBodyBMI(
+                    model, bodyHeightModel,
+                    biometricAlertSettings.Channel ?? NotificationChannel.WhatsappMeta,
+                    biometricAlertSettings
+                );
+            }
+        } catch (error) {
+            Logger.instance().log(`Error in processing biometric alerts by category: ${error}`);
+        }
+    };
+ 
     private verifyAssessmentTargetUser = async (assessmentId: uuid, tenantId: uuid =  null) => {
         try {
             const assessment = await this._service.getById(assessmentId);
@@ -746,6 +919,8 @@ export class AssessmentController extends BaseController {
         if (assessment.Type === AssessmentType.Clinical) {
             await this.verifyAssessmentTargetUser(assessmentId);
         }
+
+        this.handleBiometricAlerts(assessmentId, assessment.PatientUserId);
     }
 
     private async generateScoreReport(assessment: AssessmentDto) {

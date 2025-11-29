@@ -81,8 +81,7 @@ export class TenantSettingsMarketingController extends BaseController {
             const tenantId: uuid = await this._validator.getParamUuid(request, 'tenantId');
             await this.authorizeOne(request, null, tenantId);
             const payload = await this._validator.updateAll(request);
-
-            // Update each field if provided
+            
             if (payload.Styling !== undefined) {
                 await this._service.updateSettingsByType(tenantId, TenantSettingsMarketingTypes.Styling, payload.Styling);
             }
@@ -90,12 +89,8 @@ export class TenantSettingsMarketingController extends BaseController {
                 await this._service.updateSettingsByType(tenantId, TenantSettingsMarketingTypes.Content, payload.Content);
             }
             if (payload.QRCode !== undefined) {
-                if (payload.QRCode) {
-                    if (typeof payload.QRCode === 'string') {
-                        await this.ensureResourceExists(payload.QRCode, 'QRCode');
-                    } else if (payload.QRCode.ResourceId) {
-                        await this.ensureResourceExists(payload.QRCode.ResourceId, 'QRCode.ResourceId');
-                    }
+                if (payload.QRCode && typeof payload.QRCode === 'object' && 'ResourceId' in payload.QRCode && payload.QRCode.ResourceId) {
+                    await this.ensureResourceExists(payload.QRCode.ResourceId, 'QRCode.ResourceId');
                 }
                 await this._service.updateSettingsByType(tenantId, TenantSettingsMarketingTypes.QRCode, payload.QRCode);
             }
@@ -164,12 +159,8 @@ export class TenantSettingsMarketingController extends BaseController {
             await this.authorizeOne(request, null, tenantId);
             const payload = await this._validator.updateQRCode(request);
             
-            if (payload) {
-                if (typeof payload === 'string') {
-                    await this.ensureResourceExists(payload, 'QRCode');
-                } else if (payload.ResourceId) {
-                    await this.ensureResourceExists(payload.ResourceId, 'QRCode.ResourceId');
-                }
+            if (payload && typeof payload === 'object' && 'ResourceId' in payload && payload.ResourceId) {
+                await this.ensureResourceExists(payload.ResourceId, 'QRCode.ResourceId');
             }
             
             const updated = await this._service.updateSettingsByType(tenantId, TenantSettingsMarketingTypes.QRCode, payload);

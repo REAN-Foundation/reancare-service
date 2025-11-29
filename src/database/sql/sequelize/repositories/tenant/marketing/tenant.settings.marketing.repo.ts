@@ -131,7 +131,7 @@ export class TenantSettingsMarketingRepo implements ITenantSettingsMarketingRepo
         }
     };
 
-    private validateJSONStringify = (str: string) => {
+    private readonly validateJSONStringify = (str: string) => {
         const validateTrue = Helper.replaceAll(str,`"true"`, 'true');
         const validatedString = Helper.replaceAll(validateTrue, `"false"`, 'false');
         return validatedString;

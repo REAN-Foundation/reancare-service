@@ -115,35 +115,31 @@ export class TenantMarketingPdfService {
     }
 
     private async mapSettingsToTemplateModel(settings: TenantSettingsMarketingDto): Promise<PamphletTemplateModel> {
+        const mergeSection = <T extends Record<string, unknown>>(defaults: T, override?: Partial<T>): T => {
+            return override ? { ...defaults, ...override } : { ...defaults };
+        };
+
         const styling = {
             ...DEFAULT_STYLING,
             ...(settings?.Styling ?? {}),
         };
 
+        const headerSection = mergeSection(DEFAULT_CONTENT.Header, settings?.Content?.Header);
+        const introductionSection = mergeSection(DEFAULT_CONTENT.Introduction, settings?.Content?.Introduction);
+        const benefitsOverride = settings?.Content?.Benefits;
+        const benefitsSection = {
+            ...mergeSection(DEFAULT_CONTENT.Benefits, benefitsOverride),
+            Items : benefitsOverride?.Items?.length ? benefitsOverride.Items : DEFAULT_CONTENT.Benefits.Items,
+        };
+        const userInterfaceSection = mergeSection(DEFAULT_CONTENT.UserInterface, settings?.Content?.UserInterface);
+        const footerSection = mergeSection(DEFAULT_CONTENT.Footer, settings?.Content?.Footer);
+
         const content = {
-            Header : {
-                ...DEFAULT_CONTENT.Header,
-                ...(settings?.Content?.Header ?? {}),
-            },
-            Introduction : {
-                ...DEFAULT_CONTENT.Introduction,
-                ...(settings?.Content?.Introduction ?? {}),
-            },
-            Benefits : {
-                ...DEFAULT_CONTENT.Benefits,
-                ...(settings?.Content?.Benefits ?? {}),
-                Items : settings?.Content?.Benefits?.Items?.length > 0
-                    ? settings.Content.Benefits.Items
-                    : DEFAULT_CONTENT.Benefits.Items,
-            },
-            UserInterface : {
-                ...DEFAULT_CONTENT.UserInterface,
-                ...(settings?.Content?.UserInterface ?? {}),
-            },
-            Footer : {
-                ...DEFAULT_CONTENT.Footer,
-                ...(settings?.Content?.Footer ?? {}),
-            },
+            Header        : headerSection,
+            Introduction  : introductionSection,
+            Benefits      : benefitsSection,
+            UserInterface : userInterfaceSection,
+            Footer        : footerSection,
         };
 
         const imagesInput = settings?.Images ?? {};
@@ -155,8 +151,8 @@ export class TenantMarketingPdfService {
             partnerLogosIds = logosInput;
         } else if (typeof logosInput === 'object' && logosInput !== null) {
             if (logosInput?.PartnerLogos) {
-                partnerLogosIds = Array.isArray(logosInput.PartnerLogos) 
-                    ? logosInput.PartnerLogos 
+                partnerLogosIds = Array.isArray(logosInput.PartnerLogos)
+                    ? logosInput.PartnerLogos
                     : [logosInput.PartnerLogos];
             } else {
                 partnerLogosIds = Object.values(logosInput).filter(val => typeof val === 'string');

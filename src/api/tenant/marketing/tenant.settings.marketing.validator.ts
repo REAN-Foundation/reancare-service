@@ -112,14 +112,16 @@ export class TenantSettingsMarketingValidator extends BaseValidator {
     };
 
     updateQRCode = async (request: express.Request): Promise<TenantMarketingQRCode> => {
-        const qrCode = request.body?.QRCode;
-        
-        if (qrCode && typeof qrCode === 'object' && !Array.isArray(qrCode) && qrCode !== null) {
+        const qrCode = request.body?.QRCode ?? null;
+
+        if (qrCode !== null) {
+            await this.validateObject(request, 'QRCode', Where.Body, false, true);
             await this.validateString(request, 'QRCode.ResourceId', Where.Body, false, true);
-            this.validateRequest(request);
         }
 
-        const model: TenantMarketingQRCode = qrCode ?? null;
+        this.validateRequest(request);
+
+        const model: TenantMarketingQRCode = qrCode ? { ...qrCode } : null;
 
         return model;
     };
@@ -146,9 +148,18 @@ export class TenantSettingsMarketingValidator extends BaseValidator {
     };
 
     updateLogos = async (request: express.Request): Promise<TenantMarketingLogos> => {
-        const logos = request.body?.Logos;
+        const logos = request.body?.Logos ?? null;
 
-        const model: TenantMarketingLogos = logos ?? null;
+        if (logos !== null) {
+            await this.validateArray(request, 'Logos', Where.Body, false, true);
+            for (let i = 0; i < logos.length; i++) {
+                await this.validateString(request, `Logos[${i}]`, Where.Body, false, true, false, 1);
+            }
+        }
+
+        this.validateRequest(request);
+
+        const model: TenantMarketingLogos = logos ? [ ...logos ] : null;
 
         return model;
     };

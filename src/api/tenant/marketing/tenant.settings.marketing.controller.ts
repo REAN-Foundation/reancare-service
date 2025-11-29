@@ -12,6 +12,7 @@ import { TenantSettingsMarketingTypes } from '../../../domain.types/tenant/marke
 import { TenantSettingsMarketingValidator } from './tenant.settings.marketing.validator';
 import { Logger } from '../../../common/logger';
 import { ApiError } from '../../../common/api.error';
+import { FileResourceDto } from '../../../domain.types/general/file.resource/file.resource.dto';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -232,7 +233,7 @@ export class TenantSettingsMarketingController extends BaseController {
             const storageKey = `tenant/${tenantId}/marketing/pamphlets/${filename}`;
             const existingResourceId = settings.PDFResourceId;
             
-            let fileResource: any = null;
+            let fileResource: FileResourceDto | null = null;
             if (existingResourceId) {
                 fileResource = await this._fileResourceService.replaceLocal(
                     existingResourceId,

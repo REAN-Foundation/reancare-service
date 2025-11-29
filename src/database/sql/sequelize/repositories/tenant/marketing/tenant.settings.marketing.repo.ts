@@ -1,5 +1,13 @@
 import TenantSettingsMarketing from '../../../models/tenant/marketing/tenant.settings.marketing.model';
-import { TenantSettingsMarketingDomainModel, TenantSettingsMarketingDto } from "../../../../../../domain.types/tenant/marketing/tenant.settings.marketing.types";
+import {
+    TenantSettingsMarketingDomainModel,
+    TenantSettingsMarketingDto,
+    TenantMarketingStyling,
+    TenantMarketingContent,
+    TenantMarketingQRCode,
+    TenantMarketingImages,
+    TenantMarketingLogos,
+} from "../../../../../../domain.types/tenant/marketing/tenant.settings.marketing.types";
 import { uuid } from "../../../../../../domain.types/miscellaneous/system.types";
 import { ITenantSettingsMarketingRepo } from '../../../../../repository.interfaces/tenant/marketing/tenant.settings.marketing.interface';
 import { TenantSettingsMarketingMapper } from '../../../mappers/tenant/marketing/tenant.settings.marketing.mapper';
@@ -20,14 +28,21 @@ export class TenantSettingsMarketingRepo implements ITenantSettingsMarketingRepo
             const images  = model.Images ? this.validateJSONStringify(JSON.stringify(model.Images)) : null;
             const logos   = model.Logos ? this.validateJSONStringify(JSON.stringify(model.Logos)) : null;
 
-            const entity = {
+            const entity: {
+                TenantId: string;
+                Styling: string | null;
+                Content: string | null;
+                QRcode: string | null;
+                Images: string | null;
+                Logos: string | null;
+            } = {
                 TenantId : tenantId,
                 Styling  : styling,
                 Content  : content,
                 QRcode   : qrCode,
                 Images   : images,
                 Logos    : logos,
-            } as any;
+            };
             const settings = await TenantSettingsMarketing.create(entity);
             return TenantSettingsMarketingMapper.toDto(settings);
         }
@@ -48,7 +63,7 @@ export class TenantSettingsMarketingRepo implements ITenantSettingsMarketingRepo
         }
     };
 
-    updateStyling = async (tenantId: string, settings: any): Promise<TenantSettingsMarketingDto> => {
+    updateStyling = async (tenantId: string, settings: TenantMarketingStyling): Promise<TenantSettingsMarketingDto> => {
         try {
             const styling = this.validateJSONStringify(JSON.stringify(settings));
             const record = await TenantSettingsMarketing.findOne({ where: { TenantId: tenantId } });
@@ -62,7 +77,7 @@ export class TenantSettingsMarketingRepo implements ITenantSettingsMarketingRepo
         }
     };
 
-    updateContent = async (tenantId: string, settings: any): Promise<TenantSettingsMarketingDto> => {
+    updateContent = async (tenantId: string, settings: TenantMarketingContent): Promise<TenantSettingsMarketingDto> => {
         try {
             const content = this.validateJSONStringify(JSON.stringify(settings));
             const record = await TenantSettingsMarketing.findOne({ where: { TenantId: tenantId } });
@@ -76,7 +91,7 @@ export class TenantSettingsMarketingRepo implements ITenantSettingsMarketingRepo
         }
     };
 
-    updateQRCode = async (tenantId: string, settings: any): Promise<TenantSettingsMarketingDto> => {
+    updateQRCode = async (tenantId: string, settings: TenantMarketingQRCode): Promise<TenantSettingsMarketingDto> => {
         try {
             const qrCode = this.validateJSONStringify(JSON.stringify(settings));
             const record = await TenantSettingsMarketing.findOne({ where: { TenantId: tenantId } });
@@ -90,7 +105,7 @@ export class TenantSettingsMarketingRepo implements ITenantSettingsMarketingRepo
         }
     };
 
-    updateImages = async (tenantId: string, settings: any): Promise<TenantSettingsMarketingDto> => {
+    updateImages = async (tenantId: string, settings: TenantMarketingImages): Promise<TenantSettingsMarketingDto> => {
         try {
             const images = this.validateJSONStringify(JSON.stringify(settings));
             const record = await TenantSettingsMarketing.findOne({ where: { TenantId: tenantId } });
@@ -104,7 +119,7 @@ export class TenantSettingsMarketingRepo implements ITenantSettingsMarketingRepo
         }
     };
 
-    updateLogos = async (tenantId: string, settings: any): Promise<TenantSettingsMarketingDto> => {
+    updateLogos = async (tenantId: string, settings: TenantMarketingLogos): Promise<TenantSettingsMarketingDto> => {
         try {
             const logos = this.validateJSONStringify(JSON.stringify(settings));
             const record = await TenantSettingsMarketing.findOne({ where: { TenantId: tenantId } });

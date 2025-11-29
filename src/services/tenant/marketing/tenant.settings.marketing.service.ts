@@ -1,7 +1,16 @@
 import { injectable, inject } from 'tsyringe';
 import { uuid } from '../../../domain.types/miscellaneous/system.types';
 import { ITenantSettingsMarketingRepo } from '../../../database/repository.interfaces/tenant/marketing/tenant.settings.marketing.interface';
-import { TenantSettingsMarketingDto, TenantSettingsMarketingDomainModel, TenantSettingsMarketingTypes } from '../../../domain.types/tenant/marketing/tenant.settings.marketing.types';
+import {
+    TenantSettingsMarketingDto,
+    TenantSettingsMarketingDomainModel,
+    TenantSettingsMarketingTypes,
+    TenantMarketingStyling,
+    TenantMarketingContent,
+    TenantMarketingQRCode,
+    TenantMarketingImages,
+    TenantMarketingLogos,
+} from '../../../domain.types/tenant/marketing/tenant.settings.marketing.types';
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -32,7 +41,18 @@ export class TenantSettingsMarketingService {
         return await this._repo.getSettings(tenantId);
     };
 
-    getSettingsByType = async (tenantId: uuid, type: TenantSettingsMarketingTypes): Promise<any> => {
+    getSettingsByType = async (
+        tenantId: uuid,
+        type: TenantSettingsMarketingTypes
+    ): Promise<
+        TenantMarketingStyling |
+        TenantMarketingContent |
+        TenantMarketingQRCode |
+        TenantMarketingImages |
+        TenantMarketingLogos |
+        TenantSettingsMarketingDto |
+        null
+    > => {
         const settings = await this._repo.getSettings(tenantId);
         if (!settings) {
             return null;
@@ -57,19 +77,23 @@ export class TenantSettingsMarketingService {
     updateSettingsByType = async (
         tenantId: uuid,
         type: TenantSettingsMarketingTypes,
-        payload: any
+        payload: TenantMarketingStyling |
+            TenantMarketingContent |
+            TenantMarketingQRCode |
+            TenantMarketingImages |
+            TenantMarketingLogos
     ): Promise<TenantSettingsMarketingDto> => {
         switch (type) {
             case TenantSettingsMarketingTypes.Styling:
-                return await this._repo.updateStyling(tenantId, payload);
+                return await this._repo.updateStyling(tenantId, payload as TenantMarketingStyling);
             case TenantSettingsMarketingTypes.Content:
-                return await this._repo.updateContent(tenantId, payload);
+                return await this._repo.updateContent(tenantId, payload as TenantMarketingContent);
             case TenantSettingsMarketingTypes.QRCode:
-                return await this._repo.updateQRCode(tenantId, payload);
+                return await this._repo.updateQRCode(tenantId, payload as TenantMarketingQRCode);
             case TenantSettingsMarketingTypes.Images:
-                return await this._repo.updateImages(tenantId, payload);
+                return await this._repo.updateImages(tenantId, payload as TenantMarketingImages);
             case TenantSettingsMarketingTypes.Logos:
-                return await this._repo.updateLogos(tenantId, payload);
+                return await this._repo.updateLogos(tenantId, payload as TenantMarketingLogos);
             default:
                 return await this._repo.getSettings(tenantId);
         }

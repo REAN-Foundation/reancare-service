@@ -1,19 +1,17 @@
 import { inject, injectable } from "tsyringe";
 import * as asyncLib from 'async';
 import { Logger } from "../../../common/logger";
-import { Loader } from "../../../startup/loader";
-import { IPersonRepo } from "../../../database/repository.interfaces/person/person.repo.interface";
 import { IUserTaskRepo } from "../../../database/repository.interfaces/users/user/user.task.repo.interface";
 import { UserActionType, UserTaskCategory } from "../../../domain.types/users/user.task/user.task.types";
-import { AssessmentService } from "../../../services/clinical/assessment/assessment.service";
-import { NotificationChannel } from "../../../domain.types/general/notification/notification.types";
-import { IUserRepo } from "../../../database/repository.interfaces/users/user/user.repo.interface";
 import { ICareplanRepo } from "../../../database/repository.interfaces/clinical/careplan.repo.interface";
 import { Injector } from "../../../startup/injector";
-import { ChatBotTaskDto } from "../../../domain.types/users/user.task/user.task.dto";
-import { CareplanActivityDto } from "../../../domain.types/clinical/careplan/activity/careplan.activity.dto";
-import { WhatsAppFlowTemplateRequest } from "../../../domain.types/webhook/whatsapp.meta.types";
-import { ApiError } from "../../../common/api.error";
+import { UserTaskMessageDto, ProcessedTaskResultDto } from "../../../domain.types/users/user.task/user.task.dto";
+import { UserTaskActionHandler } from "../../../api/users/user.task/user.task.action.handler";
+import { UserTaskHandler } from "../../../api/users/user.task/user.task.category.handler";
+import { UserTaskChannelHandler } from "../../../api/users/user.task/user.task.channel.handler";
+import { IUserTaskHandler } from "../../../database/repository.interfaces/users/user/task/user.task.handler.interface";
+import { IUserTaskChannelHandler } from "../../../database/repository.interfaces/users/user/task/user.task.channel.handler.interface";
+import { UserTaskActionData } from "../../../domain.types/users/user.task/resolved.action.data.types";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -22,15 +20,17 @@ const ASYNC_TASK_COUNT = 4;
 @injectable()
 export class UserTaskSenderService {
 
-    _assessmentService: AssessmentService = null;
+    private _actionResolver: UserTaskActionHandler = null;
+    private _taskHandlerResolver: UserTaskHandler = null;
+    private _channelHandlerResolver: UserTaskChannelHandler = null;
 
     constructor(
         @inject('IUserTaskRepo') private _userTaskRepo: IUserTaskRepo,
-        @inject('IPersonRepo') private _personRepo: IPersonRepo,
-        @inject('IUserRepo') private _userRepo: IUserRepo,
         @inject('ICareplanRepo') private _careplanRepo: ICareplanRepo,
     ) {
-        this._assessmentService = Injector.Container.resolve(AssessmentService);
+        this._actionResolver = new UserTaskActionHandler();
+        this._taskHandlerResolver = new UserTaskHandler();
+        this._channelHandlerResolver = new UserTaskChannelHandler();
     }
 
     public _q = asyncLib.queue((timePeriod: number, onCompleted) => {
@@ -65,157 +65,164 @@ export class UserTaskSenderService {
 
     private sendUserTasks = async (timePeriod: number) => {
         try {
-            const userTasks: ChatBotTaskDto[] = await this._userTaskRepo.getUserTasksOfSelectiveChannel(timePeriod);
-            if (!userTasks || userTasks.length === 0) {
+            const userTasks = await this._userTaskRepo.getUserTasks(timePeriod);
+            if (!userTasks?.length) {
+                Logger.instance().log(`No user tasks found for time period: ${timePeriod} minutes`);
                 return;
             }
-            for await (const userTask of userTasks) {
-                const careplanActivity = await this._careplanRepo.getActivity(userTask.ActionId);
-                userTask.Sequence = careplanActivity.Sequence;
-                userTask.Language = careplanActivity.Language;
-                Logger.instance().log(`User task with language : ${JSON.stringify(userTask)} `);
-            }
-           
-            userTasks.sort((a, b) => {
-                return a.Sequence - b.Sequence;
-            });
-            for await (const userTask of userTasks) {
-                if (userTask.ActionId != null && userTask.ActionType === 'Careplan') {
-                    await this.sendUserTaskOnBot(userTask.UserId, userTask);
+
+            await this.populateTaskSequenceAndLanguage(userTasks);
+            this.sortTasksBySequence(userTasks);
+
+            for (const userTask of userTasks) {
+                try {
+                    await this.processUserTask(userTask);
                     await this.timer(300);
-                } else {
-                    continue;
+                } catch (error) {
+                    Logger.instance().log(`Error processing user task ${userTask.id}: ${error}`);
                 }
             }
-
-        }
-
-        catch (error) {
-            Logger.instance().log(`${JSON.stringify(error.message, null, 2)}`);
+        } catch (error) {
+            Logger.instance().log(`Error in sendUserTasks: ${JSON.stringify(error.message, null, 2)}`);
         }
     };
 
-    private sendUserTaskOnBot = async (userId: string, userTask: ChatBotTaskDto): Promise<boolean> => {
-        try {
-            const personPhone = await this.getUserDetails(userId, userTask.Channel);
-
-            let messageType = '';
-            let message = '';
-
-            const careplanActivity: CareplanActivityDto = await this._careplanRepo.getActivity(userTask.ActionId);
-            const rawContent = JSON.parse(careplanActivity.RawContent);
-            let isAssessmentWithForm = false;
-
-            if (
-                userTask.Category === UserTaskCategory.Assessment &&
-                rawContent?.Metadata &&
-                userTask.Channel === NotificationChannel.WhatsApp || userTask.Channel === NotificationChannel.WhatsappWati
-            ) {
-                const whatsappFormMetadata = this.getWhatsappFormMetadata(careplanActivity.RawContent);
-                this.validateWhatsappFormMetadata(whatsappFormMetadata);
-                messageType = 'reancareAssessmentWithForm';
-                message = JSON.stringify({ message: "Sending assessment with form to Rean bot" });
-                userTask.Metadata = whatsappFormMetadata;
-                isAssessmentWithForm = true;
-                Logger.instance().log(`IsAssessmentWithForm: true for task ${JSON.stringify(userTask)}`);
-            }
-            if (userTask.Category === UserTaskCategory.Assessment && !isAssessmentWithForm) {
-                const entity = {
-                    PatientUserId        : userTask.UserId ?? null,
-                    AssessmentTemplateId : rawContent.ReferenceTemplateId ?? null,
-                    UserTaskId           : userTask.id,
-                    ScheduledDateString  : new Date().toISOString()
-                        .split('T')[0] ?? null,
-                    ParentActivityId : careplanActivity.id
-                };
-                const assessment = await this._assessmentService.create(entity);
-                userTask.Action = { Assessment: assessment };
-                messageType = 'reancareAssessment';
-                message  = "{\"message\":\"Sending assessment to Rean bot\"}";
-
-            } else if (userTask.Category === 'Message' && userTask.Channel === NotificationChannel.Telegram) {
-                message = rawContent.Description;
-                messageType = 'text';
-            } else if (userTask.Category === 'Message' && (userTask.Channel === NotificationChannel.WhatsApp || userTask.Channel === NotificationChannel.WhatsappWati)) {
-                message = careplanActivity.RawContent;
-                messageType = rawContent.TemplateName;
+    private async populateTaskSequenceAndLanguage(userTasks: UserTaskMessageDto[]): Promise<void> {
+        for (const userTask of userTasks) {
+            if (!userTask.ActionId) {
+                userTask.Sequence = 0;
+                continue;
             }
 
-            let isMessageSent = false;
-            const payload = JSON.stringify(userTask);
-            if (userTask.Channel === NotificationChannel.Telegram) {
-                isMessageSent = await Loader.messagingService.sendMessage(userTask.TenantName, "telegram", personPhone,
-                    messageType, null,  message, payload);
-            } else if (userTask.Channel === NotificationChannel.WhatsApp ||
-                userTask.Channel === NotificationChannel.WhatsappWati ) {
-                isMessageSent = await Loader.messagingService.sendWhatsappWithReanBot(personPhone, message,
-                    userTask.TenantName, messageType, null, payload, userTask.Channel);
+            try {
+                const activity = await this._careplanRepo.getActivity(userTask.ActionId);
+                userTask.Sequence = activity?.Sequence ?? 0;
+                userTask.Language = activity?.Language ?? 'en';
+            } catch (error) {
+                Logger.instance().log(`Error getting careplan activity for task ${userTask.id}: ${error}`);
+                userTask.Sequence = 0;
             }
-
-            if (isMessageSent === false) {
-                Logger.instance().log(`Something went wrong with rean bot wrapper`);
-                return false;
-            }
-            Logger.instance().log(`Successfully message send to ${personPhone}`);
-            if (userTask.Category !== UserTaskCategory.Assessment){
-                await this._userTaskRepo.finishTask(userTask.id);
-                if (userTask.Action === UserActionType.Careplan){
-                    await this._careplanRepo.completeActivity(careplanActivity.id);
-                }
-            }
-            return true;       
         }
-        catch (error) {
-            Logger.instance().log(`Error sending user task on bot: ${JSON.stringify(error.message, null, 2)}`);
-        }
-        return true;
-    };
-
-    private async getUserDetails(userId: string, channel: string) {
-        let personPhone = '';
-        const user = await this._userRepo.getById(userId);
-        const person = await this._personRepo.getById(user.PersonId);
-        if (channel === NotificationChannel.Telegram) {
-            personPhone = person.UniqueReferenceId;
-        } else if (channel === NotificationChannel.WhatsApp ||
-            channel === NotificationChannel.WhatsappWati ) {
-            personPhone = person.Phone;
-        }
-        return personPhone;
     }
 
-    private getWhatsappFormMetadata = (rawContent: string): WhatsAppFlowTemplateRequest => {
+    private sortTasksBySequence(userTasks: UserTaskMessageDto[]): void {
+        userTasks.sort((a, b) => (a.Sequence ?? 0) - (b.Sequence ?? 0));
+    }
+
+
+    private processUserTask = async (userTask: UserTaskMessageDto): Promise<boolean> => {
         try {
-            if (!rawContent) {
-                return null;
+            Logger.instance().log(`Processing user task: ${userTask.id}`);
+
+            const actionData = await this.resolveActionData(userTask);
+            const processedResult = await this.processTaskWithHandler(userTask, actionData);
+            
+            if (!processedResult) {
+                return false;
             }
-            const content = JSON.parse(rawContent);
-            if (content?.Metadata) {
-                const metadata = JSON.parse(content.Metadata) as WhatsAppFlowTemplateRequest;
-                return metadata;
+
+            const isMessageSent = await this.sendMessageViaChannel(userTask, processedResult);
+            
+            if (isMessageSent) {
+                if (this.shouldFinishTaskAfterMessageSent(userTask.Category)) {
+                    await this.finishTask(userTask);
+                }
+                return true;
             }
-            return null;
+
+            return false;
+        } catch (error) {
+            Logger.instance().log(`Error processing user task ${userTask.id}: ${error}`);
+            return false;
         }
-        catch (error) {
-            Logger.instance().log(`Error getting whatsapp form metadata: ${JSON.stringify(error.message, null, 2)}`);
-            return null;
-        }
-        
     };
 
-    private validateWhatsappFormMetadata = (whatsappFormMetadata: WhatsAppFlowTemplateRequest): boolean => {
-        if (
-            !whatsappFormMetadata                       ||
-            whatsappFormMetadata.Type !== 'template'    ||
-            !whatsappFormMetadata.TemplateName
-        ) {
-            Logger.instance().log(`Whatsapp form metadata is not valid : ${JSON.stringify(whatsappFormMetadata)}`);
-            throw new ApiError(400, `Whatsapp form metadata is not valid`);
+    private async resolveActionData(userTask: UserTaskMessageDto): Promise<UserTaskActionData> {
+        try {
+            if (!userTask.ActionId || !userTask.ActionType) {
+            return null;
+            }
+
+            const actionData = await this._actionResolver.resolveAction(
+                userTask.ActionType as UserActionType,
+                userTask.ActionId
+            );
+            Logger.instance().log(`Action resolved for task ${userTask.id}`);
+            return actionData;
+        } catch (error) {
+            Logger.instance().log(`Error resolving action for task ${userTask.id}: ${error}`);
+            return null;
         }
-        return true;
+    }
+
+    private async processTaskWithHandler(userTask: UserTaskMessageDto, actionData: UserTaskActionData): Promise<ProcessedTaskResultDto | null> {
+        if (!userTask.Category) {
+            Logger.instance().log(`Task category is missing for task ${userTask.id}`);
+            return null;
+        }
+
+        const taskHandler = this._taskHandlerResolver.getTaskHandler(userTask.Category);
+        if (!taskHandler) {
+            Logger.instance().log(`No task handler found for category: ${userTask.Category}`);
+            return null;
+        }
+
+        const processedResult = await taskHandler.processTask(userTask, actionData);
+
+        // if (processedResult.Metadata) {
+        //     userTask.Metadata = processedResult.Metadata;
+        // }
+
+        return processedResult;
+    }
+
+    private async sendMessageViaChannel(userTask: UserTaskMessageDto, processedResult: any): Promise<boolean> {
+        if (!userTask.Channel) {
+            Logger.instance().log(`Task channel is missing for task ${userTask.id}`);
+            return false;
+        }
+
+        const channelHandler = this._channelHandlerResolver.getChannelHandler(userTask.Channel as any);
+        if (!channelHandler) {
+            Logger.instance().log(`No channel handler found for channel: ${userTask.Channel}`);
+            return false;
+        }
+
+        const isMessageSent = await channelHandler.sendMessage(userTask, processedResult);
         
-    };
-          
+        if (isMessageSent) {
+            Logger.instance().log(`Message sent successfully for task ${userTask.id}`);
+        } else {
+            Logger.instance().log(`Failed to send message for task ${userTask.id}`);
+        }
+
+        return isMessageSent;
+    }
+
+    private shouldFinishTaskAfterMessageSent(category: UserTaskCategory | string): boolean {
+        if (!category) {
+            return true;
+        }
+        if (category === UserTaskCategory.Assessment) {
+            return false;
+        }
+
+        return true;
+    }
+
+    private async finishTask(userTask: UserTaskMessageDto): Promise<void> {
+        await this._userTaskRepo.finishTask(userTask.id);
+
+        if (userTask.ActionType === UserActionType.Careplan && userTask.ActionId) {
+            try {
+                await this._careplanRepo.completeActivity(userTask.ActionId);
+                Logger.instance().log(`Careplan activity completed for task ${userTask.id}`);
+            } catch (error) {
+                Logger.instance().log(`Error completing careplan activity for task ${userTask.id}: ${error}`);
+            }
+        }
+    }
+
     private timer = ms => new Promise(res => setTimeout(res, ms));
 
 }

@@ -40,8 +40,19 @@ export interface TaskSummaryDto {
     PendingTasks   : UserTaskDto[];
 }
 
-export interface ChatBotTaskDto extends UserTaskDto {
+export interface UserTaskMessageDto extends UserTaskDto {
     Language?: string;
     Sequence?: number;
-    Metadata?: any;
+    Metadata?: Record<string, any>;
+}
+
+export interface ProcessedTaskResultDto {
+    MessageType: string;
+    Message: string;
+    Metadata?: Record<string, any>;
+}
+
+export interface AssessmentProcessedTaskResultDto extends ProcessedTaskResultDto {
+    ShouldCreateAssessment: boolean;
+    AssessmentData?: Record<string, any>;
 }

@@ -1,0 +1,100 @@
+import { injectable } from "tsyringe";
+import { Logger } from "../../../../common/logger";
+import { IUserTaskChannelHandler } from "../../../../database/repository.interfaces/users/user/task/user.task.channel.handler.interface";
+import { UserTaskMessageDto } from "../../../../domain.types/users/user.task/user.task.dto";
+import { ProcessedTaskResultDto } from "../../../../domain.types/users/user.task/user.task.dto";
+import { NotificationChannel } from "../../../../domain.types/general/notification/notification.types";
+import { IPersonRepo } from "../../../../database/repository.interfaces/person/person.repo.interface";
+import { IUserRepo } from "../../../../database/repository.interfaces/users/user/user.repo.interface";
+import { Injector } from "../../../../startup/injector";
+import { IBotService } from "../../../../modules/communication/bot.service/bot.service.interface";
+import { BotService } from "../../../../modules/communication/bot.service/bot.service";
+import { BotRequestDomainModel, BotMessagingType } from "../../../../domain.types/miscellaneous/bot,request.types";
+import { Helper } from "../../../../common/helper";
+
+///////////////////////////////////////////////////////////////////////////////
+
+@injectable()
+export class WhatsAppChannelHandler implements IUserTaskChannelHandler {
+    
+    private _personRepo: IPersonRepo = Injector.Container.resolve('IPersonRepo');
+    private _userRepo: IUserRepo = Injector.Container.resolve('IUserRepo');
+    private _botService: IBotService = Injector.Container.resolve(BotService);
+    
+    async sendMessage(userTask: UserTaskMessageDto, processedResult: ProcessedTaskResultDto): Promise<boolean> {
+        try {
+            Logger.instance().log(`Sending WhatsApp message for task: ${userTask.id}`);
+
+            if (userTask.Channel !== NotificationChannel.WhatsApp && 
+                userTask.Channel !== NotificationChannel.WhatsappWati) {
+                throw new Error(`Channel handler mismatch. Expected WhatsApp channel, got ${userTask.Channel}`);
+            }
+
+            const personPhone = await this.getUserPhoneNumber(userTask.UserId);
+            if (!personPhone) {
+                Logger.instance().log(`User phone number not found for user: ${userTask.UserId}`);
+                return false;
+            }
+
+            const normalizedPhoneNumber = Helper.normalizePhoneNumber(personPhone);
+            const channel = this.mapChannelToBotChannel(userTask.Channel);
+            const messagingType = this.getMessagingType(processedResult.MessageType);
+            
+            const botRequestModel: BotRequestDomainModel = {
+                PhoneNumber : normalizedPhoneNumber,
+                ClientName  : userTask.TenantName,
+                Channel     : channel,
+                AgentName   : "Reancare",
+                Type        : messagingType,
+                TemplateName: messagingType === BotMessagingType.Template ? processedResult.MessageType : undefined,
+                Message     : processedResult.Message,
+                Payload     : userTask
+            };
+
+            await this._botService.sendWhatsappMessage(botRequestModel);
+            
+            Logger.instance().log(`Successfully sent WhatsApp message to ${normalizedPhoneNumber} for task: ${userTask.id}`);
+            return true;
+
+        } catch (error) {
+            Logger.instance().log(`Error sending WhatsApp message: ${error}`);
+            return false;
+        }
+    }
+
+    private mapChannelToBotChannel(channel: string): NotificationChannel {
+        switch (channel) {
+            case NotificationChannel.WhatsApp:
+            case NotificationChannel.WhatsappWati:
+                return NotificationChannel.WhatsappMeta;
+            default:
+                return NotificationChannel.WhatsappMeta;
+        }
+    }
+
+    private getMessagingType(messageType: string): BotMessagingType {
+        if (messageType && 
+            messageType !== 'text' && 
+            messageType !== 'reancareAssessment' && 
+            messageType !== 'reancareAssessmentWithForm' &&
+            !messageType.startsWith('reancare')) {
+            return BotMessagingType.Template;
+        }
+        return BotMessagingType.Text;
+    }
+
+    private async getUserPhoneNumber(userId: string): Promise<string> {
+        try {
+            const user = await this._userRepo.getById(userId);
+            if (!user) {
+                return null;
+            }
+            const person = await this._personRepo.getById(user.PersonId);
+            return person?.Phone ?? null;
+        } catch (error) {
+            Logger.instance().log(`Error getting user phone number: ${error}`);
+            return null;
+        }
+    }
+}
+

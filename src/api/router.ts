@@ -88,6 +88,7 @@ import { register as registerHealthSystemRoutes } from './hospitals/health.syste
 import { register as registerHospitalRoutes } from './hospitals/hospital/hospital.routes';
 import { register as registerDailyStatisticsRoutes } from './statistics/daily.statistics/daily.statistics.routes';
 import { register as registerTenantFeatureSettingRoutes } from './tenant/settings/tenant.settings.routes';
+import { register as registerTenantSettingsMarketingRoutes } from './tenant/marketing/tenant.settings.marketing.routes';
 import { register as registerFollowUpCancellationRoutes } from './tenant/followups/cancellations/followup.cancellation.routes';
 import { register as registerPregnancyRoutes } from './clinical/maternity/pregnancy/pregnancy.route';
 import { register as registerDeliveryRoutes } from './clinical/maternity/delivery/delivery.route';
@@ -205,6 +206,7 @@ export class Router {
                 registerHospitalRoutes(this._app);
                 registerDailyStatisticsRoutes(this._app);
                 registerTenantFeatureSettingRoutes(this._app);
+                registerTenantSettingsMarketingRoutes(this._app);
                 registerFollowUpCancellationRoutes(this._app);
                 registerPregnancyRoutes(this._app);
                 registerDeliveryRoutes(this._app);

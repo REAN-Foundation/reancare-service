@@ -17,6 +17,7 @@ import { EmailDetails } from "../../../modules/communication/email/email.details
 import { TenantDto } from '../../../domain.types/tenant/tenant.dto';
 import { Helper } from '../../../common/helper';
 import { TenantSettingsService } from '../../../services/tenant/tenant.settings.service';
+import { TenantSettingsMarketingService } from '../../../services/tenant/marketing/tenant.settings.marketing.service';
 import { BaseController } from '../../../api/base.controller';
 import { UserHelper } from '../../../api/users/user.helper';
 import { PersonDetailsDto } from '../../../domain.types/person/person.dto';
@@ -40,6 +41,8 @@ export class TenantController extends BaseController {
     _personRoleService: PersonRoleService = Injector.Container.resolve(PersonRoleService);
 
     _tenantSettingsService: TenantSettingsService = Injector.Container.resolve(TenantSettingsService);
+
+    _tenantSettingsMarketingService: TenantSettingsMarketingService = Injector.Container.resolve(TenantSettingsMarketingService);
 
     _assessmentTemplateService: AssessmentTemplateService = Injector.Container.resolve(AssessmentTemplateService);
 
@@ -138,6 +141,8 @@ export class TenantController extends BaseController {
             Logger.instance().log(`Tenant admin user created successfully. UserName: ${adminUserName}`);
 
             const settings = await this._tenantSettingsService.createDefaultSettings(tenant.id);
+            
+            await this._tenantSettingsMarketingService.createDefaultSettings(tenant.id, {});
 
             //Send email to the admin user with username and password
             await this.sendWelcomeEmail(tenant, adminUserName, adminPassword);

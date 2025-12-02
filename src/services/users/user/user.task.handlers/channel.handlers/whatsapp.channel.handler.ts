@@ -1,16 +1,16 @@
 import { injectable } from "tsyringe";
-import { Logger } from "../../../../common/logger";
-import { IUserTaskChannelHandler } from "../../../../database/repository.interfaces/users/user/task/user.task.channel.handler.interface";
-import { UserTaskMessageDto } from "../../../../domain.types/users/user.task/user.task.dto";
-import { ProcessedTaskResultDto } from "../../../../domain.types/users/user.task/user.task.dto";
-import { NotificationChannel } from "../../../../domain.types/general/notification/notification.types";
-import { IPersonRepo } from "../../../../database/repository.interfaces/person/person.repo.interface";
-import { IUserRepo } from "../../../../database/repository.interfaces/users/user/user.repo.interface";
-import { Injector } from "../../../../startup/injector";
-import { IBotService } from "../../../../modules/communication/bot.service/bot.service.interface";
-import { BotService } from "../../../../modules/communication/bot.service/bot.service";
-import { BotRequestDomainModel, BotMessagingType } from "../../../../domain.types/miscellaneous/bot,request.types";
-import { Helper } from "../../../../common/helper";
+import { Logger } from "../../../../../common/logger";
+import { IUserTaskChannelHandler } from "../../../../../database/repository.interfaces/users/user/task/user.task.channel.handler.interface";
+import { UserTaskMessageDto } from "../../../../../domain.types/users/user.task/user.task.dto";
+import { ProcessedTaskResultDto } from "../../../../../domain.types/users/user.task/user.task.dto";
+import { NotificationChannel } from "../../../../../domain.types/general/notification/notification.types";
+import { IPersonRepo } from "../../../../../database/repository.interfaces/person/person.repo.interface";
+import { IUserRepo } from "../../../../../database/repository.interfaces/users/user/user.repo.interface";
+import { Injector } from "../../../../../startup/injector";
+import { IBotService } from "../../../../../modules/communication/bot.service/bot.service.interface";
+import { BotService } from "../../../../../modules/communication/bot.service/bot.service";
+import { BotRequestDomainModel, BotMessagingType } from "../../../../../domain.types/miscellaneous/bot,request.types";
+import { Helper } from "../../../../../common/helper";
 
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -18,14 +18,16 @@ import { Helper } from "../../../../common/helper";
 export class WhatsAppChannelHandler implements IUserTaskChannelHandler {
     
     private _personRepo: IPersonRepo = Injector.Container.resolve('IPersonRepo');
+
     private _userRepo: IUserRepo = Injector.Container.resolve('IUserRepo');
+
     private _botService: IBotService = Injector.Container.resolve(BotService);
     
     async sendMessage(userTask: UserTaskMessageDto, processedResult: ProcessedTaskResultDto): Promise<boolean> {
         try {
             Logger.instance().log(`Sending WhatsApp message for task: ${userTask.id}`);
 
-            if (userTask.Channel !== NotificationChannel.WhatsApp && 
+            if (userTask.Channel !== NotificationChannel.WhatsApp &&
                 userTask.Channel !== NotificationChannel.WhatsappWati) {
                 throw new Error(`Channel handler mismatch. Expected WhatsApp channel, got ${userTask.Channel}`);
             }
@@ -41,14 +43,14 @@ export class WhatsAppChannelHandler implements IUserTaskChannelHandler {
             const messagingType = this.getMessagingType(processedResult.MessageType);
             
             const botRequestModel: BotRequestDomainModel = {
-                PhoneNumber : normalizedPhoneNumber,
-                ClientName  : userTask.TenantName,
-                Channel     : channel,
-                AgentName   : "Reancare",
-                Type        : messagingType,
-                TemplateName: messagingType === BotMessagingType.Template ? processedResult.MessageType : undefined,
-                Message     : processedResult.Message,
-                Payload     : userTask
+                PhoneNumber  : normalizedPhoneNumber,
+                ClientName   : userTask.TenantName,
+                Channel      : channel,
+                AgentName    : "Reancare",
+                Type         : messagingType,
+                TemplateName : messagingType === BotMessagingType.Template ? processedResult.MessageType : undefined,
+                Message      : processedResult.Message,
+                Payload      : userTask
             };
 
             await this._botService.sendWhatsappMessage(botRequestModel);
@@ -73,9 +75,9 @@ export class WhatsAppChannelHandler implements IUserTaskChannelHandler {
     }
 
     private getMessagingType(messageType: string): BotMessagingType {
-        if (messageType && 
-            messageType !== 'text' && 
-            messageType !== 'reancareAssessment' && 
+        if (messageType &&
+            messageType !== 'text' &&
+            messageType !== 'reancareAssessment' &&
             messageType !== 'reancareAssessmentWithForm' &&
             !messageType.startsWith('reancare')) {
             return BotMessagingType.Template;
@@ -96,5 +98,6 @@ export class WhatsAppChannelHandler implements IUserTaskChannelHandler {
             return null;
         }
     }
+
 }
 

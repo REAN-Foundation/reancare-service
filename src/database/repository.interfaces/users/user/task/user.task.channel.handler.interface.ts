@@ -7,4 +7,3 @@ export interface IUserTaskChannelHandler {
     sendMessage(userTask: UserTaskMessageDto, processedResult: ProcessedTaskResultDto): Promise<boolean>;
 }
 
-

@@ -4,14 +4,11 @@ import { Logger } from "../../../common/logger";
 import { IUserTaskRepo } from "../../../database/repository.interfaces/users/user/user.task.repo.interface";
 import { UserActionType, UserTaskCategory } from "../../../domain.types/users/user.task/user.task.types";
 import { ICareplanRepo } from "../../../database/repository.interfaces/clinical/careplan.repo.interface";
-import { Injector } from "../../../startup/injector";
 import { UserTaskMessageDto, ProcessedTaskResultDto } from "../../../domain.types/users/user.task/user.task.dto";
-import { UserTaskActionHandler } from "../../../api/users/user.task/user.task.action.handler";
-import { UserTaskHandler } from "../../../api/users/user.task/user.task.category.handler";
-import { UserTaskChannelHandler } from "../../../api/users/user.task/user.task.channel.handler";
-import { IUserTaskHandler } from "../../../database/repository.interfaces/users/user/task/user.task.handler.interface";
-import { IUserTaskChannelHandler } from "../../../database/repository.interfaces/users/user/task/user.task.channel.handler.interface";
+import { UserTaskActionHandler } from "./user.task.handlers/user.task.action.handler";
 import { UserTaskActionData } from "../../../domain.types/users/user.task/resolved.action.data.types";
+import { UserTaskHandler } from "./user.task.handlers/user.task.category.handler";
+import { UserTaskChannelHandler } from "./user.task.handlers/user.task.channel.handler";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -21,7 +18,9 @@ const ASYNC_TASK_COUNT = 4;
 export class UserTaskSenderService {
 
     private _actionResolver: UserTaskActionHandler = null;
+
     private _taskHandlerResolver: UserTaskHandler = null;
+
     private _channelHandlerResolver: UserTaskChannelHandler = null;
 
     constructor(
@@ -109,7 +108,6 @@ export class UserTaskSenderService {
         userTasks.sort((a, b) => (a.Sequence ?? 0) - (b.Sequence ?? 0));
     }
 
-
     private processUserTask = async (userTask: UserTaskMessageDto): Promise<boolean> => {
         try {
             Logger.instance().log(`Processing user task: ${userTask.id}`);
@@ -140,7 +138,7 @@ export class UserTaskSenderService {
     private async resolveActionData(userTask: UserTaskMessageDto): Promise<UserTaskActionData> {
         try {
             if (!userTask.ActionId || !userTask.ActionType) {
-            return null;
+                return null;
             }
 
             const actionData = await this._actionResolver.resolveAction(
@@ -155,7 +153,8 @@ export class UserTaskSenderService {
         }
     }
 
-    private async processTaskWithHandler(userTask: UserTaskMessageDto, actionData: UserTaskActionData): Promise<ProcessedTaskResultDto | null> {
+    private async processTaskWithHandler(userTask: UserTaskMessageDto, actionData: UserTaskActionData):
+     Promise<ProcessedTaskResultDto | null> {
         if (!userTask.Category) {
             Logger.instance().log(`Task category is missing for task ${userTask.id}`);
             return null;
@@ -169,9 +168,9 @@ export class UserTaskSenderService {
 
         const processedResult = await taskHandler.processTask(userTask, actionData);
 
-        // if (processedResult.Metadata) {
-        //     userTask.Metadata = processedResult.Metadata;
-        // }
+        if (processedResult.Metadata) {
+            userTask.Metadata = processedResult.Metadata;
+        }
 
         return processedResult;
     }

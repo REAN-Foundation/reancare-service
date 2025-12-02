@@ -7,7 +7,3 @@ export interface IUserTaskHandler {
     
     processTask(userTask: UserTaskMessageDto, actionData: UserTaskActionData): Promise<ProcessedTaskResultDto>;
 }
-
-
-
-

@@ -1,15 +1,14 @@
 import { injectable } from "tsyringe";
-import { Logger } from "../../../../common/logger";
-import { IUserTaskChannelHandler } from "../../../../database/repository.interfaces/users/user/task/user.task.channel.handler.interface";
-import { UserTaskMessageDto } from "../../../../domain.types/users/user.task/user.task.dto";
-import { ProcessedTaskResultDto } from "../../../../domain.types/users/user.task/user.task.dto";
-import { NotificationChannel } from "../../../../domain.types/general/notification/notification.types";
-import { IPersonRepo } from "../../../../database/repository.interfaces/person/person.repo.interface";
-import { IUserRepo } from "../../../../database/repository.interfaces/users/user/user.repo.interface";
-import { Injector } from "../../../../startup/injector";
-import { IBotService } from "../../../../modules/communication/bot.service/bot.service.interface";
-import { BotService } from "../../../../modules/communication/bot.service/bot.service";
-import { BotRequestDomainModel, BotMessagingType } from "../../../../domain.types/miscellaneous/bot,request.types";
+import { Logger } from "../../../../../common/logger";
+import { IUserTaskChannelHandler } from "../../../../../database/repository.interfaces/users/user/task/user.task.channel.handler.interface";
+import { ProcessedTaskResultDto, UserTaskMessageDto } from "../../../../../domain.types/users/user.task/user.task.dto";
+import { NotificationChannel } from "../../../../../domain.types/general/notification/notification.types";
+import { IPersonRepo } from "../../../../../database/repository.interfaces/person/person.repo.interface";
+import { IUserRepo } from "../../../../../database/repository.interfaces/users/user/user.repo.interface";
+import { Injector } from "../../../../../startup/injector";
+import { IBotService } from "../../../../../modules/communication/bot.service/bot.service.interface";
+import { BotService } from "../../../../../modules/communication/bot.service/bot.service";
+import { BotRequestDomainModel } from "../../../../../domain.types/miscellaneous/bot,request.types";
 
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -17,7 +16,9 @@ import { BotRequestDomainModel, BotMessagingType } from "../../../../domain.type
 export class TelegramChannelHandler implements IUserTaskChannelHandler {
     
     private _personRepo: IPersonRepo = Injector.Container.resolve('IPersonRepo');
+
     private _userRepo: IUserRepo = Injector.Container.resolve('IUserRepo');
+
     private _botService: IBotService = Injector.Container.resolve(BotService);
     
     async sendMessage(userTask: UserTaskMessageDto, processedResult: ProcessedTaskResultDto): Promise<boolean> {
@@ -29,12 +30,16 @@ export class TelegramChannelHandler implements IUserTaskChannelHandler {
                 return false;
             }
 
+            // const payload = {
+            //     userTask,
+            // };
+
             const botRequestModel: BotRequestDomainModel = {
                 PhoneNumber : telegramChatId,
                 ClientName  : userTask.TenantName,
                 Channel     : NotificationChannel.Telegram,
                 AgentName   : "Reancare",
-                Type        : BotMessagingType.Text,
+                Type        : processedResult.MessageType,
                 Message     : processedResult.Message,
                 Payload     : userTask
             };
@@ -55,5 +60,6 @@ export class TelegramChannelHandler implements IUserTaskChannelHandler {
         const person = user ? await this._personRepo.getById(user.PersonId) : null;
         return person?.UniqueReferenceId ?? null;
     }
+
 }
 

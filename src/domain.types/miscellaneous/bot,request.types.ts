@@ -20,4 +20,6 @@ export enum BotMessagingType {
     Video = "video",
     Audio = "audio",
     File = "file",
+    Assessment = "reancareAssessment",
+    AssessmentForm = "reancareAssessmentWithForm"
 }

@@ -1,10 +1,10 @@
-import { Logger } from "../../../common/logger";
-import { Injector } from "../../../startup/injector";
-import { UserActionType } from "../../../domain.types/users/user.task/user.task.types";
-import { uuid } from "../../../domain.types/miscellaneous/system.types";
-import { UserTaskActionData } from "../../../domain.types/users/user.task/resolved.action.data.types";
-import { IUserTaskActionHandler } from "../../../database/repository.interfaces/users/user/task/user.task.action.handler.interface";
-import { CareplanActionHandler } from "./handlers/careplan.action.handler";
+import { Logger } from "../../../../common/logger";
+import { Injector } from "../../../../startup/injector";
+import { UserActionType } from "../../../../domain.types/users/user.task/user.task.types";
+import { uuid } from "../../../../domain.types/miscellaneous/system.types";
+import { UserTaskActionData } from "../../../../domain.types/users/user.task/resolved.action.data.types";
+import { IUserTaskActionHandler } from "../../../../database/repository.interfaces/users/user/task/user.task.action.handler.interface";
+import { CareplanActionHandler } from "./action.handlers/careplan.action.handler";
 
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -13,19 +13,18 @@ export class UserTaskActionHandler {
     getActionHandler(actionType: UserActionType): IUserTaskActionHandler {
         try {
             switch (actionType) {
-                // case UserActionType.Medication:
-                //     return Injector.Container.resolve(MedicationActionHandler);
-                
-                // case UserActionType.Appointment:
-                //     return Injector.Container.resolve(AppointmentActionHandler);
-                
                 case UserActionType.Careplan:
                     return Injector.Container.resolve(CareplanActionHandler);
+                    // case UserActionType.Medication:
+                    //     return Injector.Container.resolve(MedicationActionHandler);
                 
-                // case UserActionType.Custom:
-                //     return Injector.Container.resolve(CustomActionHandler);
+                    // case UserActionType.Appointment:
+                    //     return Injector.Container.resolve(AppointmentActionHandler);
                 
-                // Add more handlers as needed
+                    // case UserActionType.Custom:
+                    //     return Injector.Container.resolve(CustomActionHandler);
+                
+                    // Add more handlers as needed
                 
                 default:
                     Logger.instance().log(`No action handler found for action type: ${actionType}`);
@@ -60,8 +59,6 @@ export class UserTaskActionHandler {
             throw error;
         }
     }
+
 }
-
-
-
 

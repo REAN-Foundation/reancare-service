@@ -1,9 +1,9 @@
-import { Logger } from "../../../common/logger";
-import { Injector } from "../../../startup/injector";
-import { UserTaskCategory } from "../../../domain.types/users/user.task/user.task.types";
-import { IUserTaskHandler } from "../../../database/repository.interfaces/users/user/task/user.task.handler.interface";
-import { AssessmentTaskHandler } from "./handlers/assessment.task.handler";
-import { MessageTaskHandler } from "./handlers/message.task.handler";
+import { Logger } from "../../../../common/logger";
+import { Injector } from "../../../../startup/injector";
+import { UserTaskCategory } from "../../../../domain.types/users/user.task/user.task.types";
+import { IUserTaskHandler } from "../../../../database/repository.interfaces/users/user/task/user.task.handler.interface";
+import { AssessmentTaskHandler } from "./category.handlers/assessment.task.handler";
+import { MessageTaskHandler } from "./category.handlers/message.task.handler";
 
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -18,9 +18,9 @@ export class UserTaskHandler {
                 case UserTaskCategory.Message:
                     return Injector.Container.resolve(MessageTaskHandler);
                 
-                // Add more handlers as needed
-                // case UserTaskCategory.Medication:
-                //     return Injector.Container.resolve(MedicationTaskHandler);
+                    // Add more handlers as needed
+                    // case UserTaskCategory.Medication:
+                    //     return Injector.Container.resolve(MedicationTaskHandler);
                 
                 default:
                     Logger.instance().log(`No handler found for task category: ${category}`);
@@ -31,8 +31,6 @@ export class UserTaskHandler {
             return null;
         }
     }
+
 }
-
-
-
 

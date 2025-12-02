@@ -1,9 +1,9 @@
-import { Logger } from "../../../common/logger";
-import { Injector } from "../../../startup/injector";
-import { NotificationChannel } from "../../../domain.types/general/notification/notification.types";
-import { IUserTaskChannelHandler } from "../../../database/repository.interfaces/users/user/task/user.task.channel.handler.interface";
-import { WhatsAppChannelHandler } from "./handlers/whatsapp.channel.handler";
-import { TelegramChannelHandler } from "./handlers/telegram.channel.handler";
+import { Logger } from "../../../../common/logger";
+import { Injector } from "../../../../startup/injector";
+import { NotificationChannel } from "../../../../domain.types/general/notification/notification.types";
+import { IUserTaskChannelHandler } from "../../../../database/repository.interfaces/users/user/task/user.task.channel.handler.interface";
+import { WhatsAppChannelHandler } from "./channel.handlers/whatsapp.channel.handler";
+import { TelegramChannelHandler } from "./channel.handlers/telegram.channel.handler";
 
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -20,11 +20,11 @@ export class UserTaskChannelHandler {
                 case NotificationChannel.Telegram:
                     return Injector.Container.resolve(TelegramChannelHandler);
                 
-                // Add more handlers as needed
-                // case NotificationChannel.Email:
-                //     return Injector.Container.resolve(EmailChannelHandler);
-                // case NotificationChannel.SMS:
-                //     return Injector.Container.resolve(SmsChannelHandler);
+                    // Add more handlers as needed
+                    // case NotificationChannel.Email:
+                    //     return Injector.Container.resolve(EmailChannelHandler);
+                    // case NotificationChannel.SMS:
+                    //     return Injector.Container.resolve(SmsChannelHandler);
                 
                 default:
                     Logger.instance().log(`No channel handler found for channel: ${channel}`);
@@ -35,8 +35,6 @@ export class UserTaskChannelHandler {
             return null;
         }
     }
+
 }
-
-
-
 

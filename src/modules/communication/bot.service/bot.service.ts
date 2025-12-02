@@ -25,8 +25,8 @@ export class BotService implements IBotService {
                 'Accept-Encoding' : 'gzip, deflate, br',
                 Connection        : 'keep-alive',
             };
-
-            var url = process.env.REANBOT_BACKEND_BASE_URL + model.ClientName + '/' + model.Channel + '/' + process.env.REANBOT_WEBHOOK_CLIENT_URL_TOKEN + '/send';
+            const channelName = model.Channel.toLowerCase();
+            var url = process.env.REANBOT_BACKEND_BASE_URL + model.ClientName + '/' + channelName + '/' + process.env.REANBOT_WEBHOOK_CLIENT_URL_TOKEN + '/send';
             Logger.instance().log(`URL: ${url}`);
             var body = {
                 type         : model.Type,

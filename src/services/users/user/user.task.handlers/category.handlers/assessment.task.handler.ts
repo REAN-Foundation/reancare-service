@@ -1,16 +1,17 @@
 import { injectable } from "tsyringe";
-import { Logger } from "../../../../common/logger";
-import { IUserTaskHandler } from "../../../../database/repository.interfaces/users/user/task/user.task.handler.interface";
-import { ProcessedTaskResultDto } from "../../../../domain.types/users/user.task/user.task.dto";
-import { UserTaskMessageDto } from "../../../../domain.types/users/user.task/user.task.dto";
-import { UserTaskCategory } from "../../../../domain.types/users/user.task/user.task.types";
-import { NotificationChannel } from "../../../../domain.types/general/notification/notification.types";
-import { AssessmentService } from "../../../../services/clinical/assessment/assessment.service";
-import { Injector } from "../../../../startup/injector";
-import { WhatsAppFlowTemplateRequest } from "../../../../domain.types/webhook/whatsapp.meta.types";
-import { ApiError } from "../../../../common/api.error";
-import { UserTaskActionData } from "../../../../domain.types/users/user.task/resolved.action.data.types";
-import { AssessmentDomainModel } from "../../../../domain.types/clinical/assessment/assessment.domain.model";
+import { Logger } from "../../../../../common/logger";
+import { IUserTaskHandler } from "../../../../../database/repository.interfaces/users/user/task/user.task.handler.interface";
+import { ProcessedTaskResultDto } from "../../../../../domain.types/users/user.task/user.task.dto";
+import { UserTaskMessageDto } from "../../../../../domain.types/users/user.task/user.task.dto";
+import { UserTaskCategory } from "../../../../../domain.types/users/user.task/user.task.types";
+import { NotificationChannel } from "../../../../../domain.types/general/notification/notification.types";
+import { AssessmentService } from "../../../../clinical/assessment/assessment.service";
+import { Injector } from "../../../../../startup/injector";
+import { WhatsAppFlowTemplateRequest } from "../../../../../domain.types/webhook/whatsapp.meta.types";
+import { ApiError } from "../../../../../common/api.error";
+import { UserTaskActionData } from "../../../../../domain.types/users/user.task/resolved.action.data.types";
+import { AssessmentDomainModel } from "../../../../../domain.types/clinical/assessment/assessment.domain.model";
+import { BotMessagingType } from "../../../../../domain.types/miscellaneous/bot,request.types";
 
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -29,21 +30,20 @@ export class AssessmentTaskHandler implements IUserTaskHandler {
 
             const rawContent = actionData?.RawContent ? JSON.parse(actionData.RawContent) : null;
             let isAssessmentWithForm = false;
-            let messageType = '';
+            let messageType = BotMessagingType.Assessment;
             let message = '';
             let metadata: any = null;
             if (
                 rawContent?.Metadata &&
-                (userTask.Channel === NotificationChannel.WhatsApp || 
+                (userTask.Channel === NotificationChannel.WhatsApp ||
                  userTask.Channel === NotificationChannel.WhatsappWati)
             ) {
                 const whatsappFormMetadata = this.getWhatsappFormMetadata(actionData.RawContent);
                 this.validateWhatsappFormMetadata(whatsappFormMetadata);
-                messageType = 'reancareAssessmentWithForm';
-                message = actionData.RawContent;
+                messageType = BotMessagingType.AssessmentForm;
+                message = JSON.stringify({ message: "Sending assessment with form to Rean bot"});
                 metadata = whatsappFormMetadata;
                 isAssessmentWithForm = true;
-                Logger.instance().log(`IsAssessmentWithForm: true for task ${JSON.stringify(userTask)}`);
             }
 
             if (!isAssessmentWithForm) {
@@ -51,21 +51,21 @@ export class AssessmentTaskHandler implements IUserTaskHandler {
                     PatientUserId        : userTask.UserId ?? null,
                     AssessmentTemplateId : rawContent?.ReferenceTemplateId ?? null,
                     UserTaskId           : userTask.id,
-                    ScheduledDateString  : new Date().toISOString().split('T')[0] ?? null,
-                    ParentActivityId     : actionData?.id ?? null
+                    ScheduledDateString  : new Date().toISOString()
+                        .split('T')[0] ?? null,
+                    ParentActivityId : actionData?.id ?? null
                 };
                 const assessment = await this._assessmentService.create(assessmentDomainModel);
                 userTask.Action = { Assessment: assessment };
-                Logger.instance().log(`Assessment created for task ${userTask.id}`);
                 
-                messageType = 'reancareAssessment';
-                message = "{\"message\":\"Sending assessment to Rean bot\"}";
+                messageType = BotMessagingType.Assessment;
+                message =  "Sending assessment to Rean bot";
             }
 
             return {
-                MessageType: messageType,
-                Message: message,
-                Metadata: metadata
+                MessageType : messageType,
+                Message     : message,
+                Metadata    : metadata
             };
 
         } catch (error) {
@@ -103,5 +103,6 @@ export class AssessmentTaskHandler implements IUserTaskHandler {
         }
         return true;
     };
+
 }
 

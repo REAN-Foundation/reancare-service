@@ -9,4 +9,3 @@ export interface IUserTaskActionHandler {
     resolveAction(actionType: UserActionType, actionId: uuid): Promise<UserTaskActionData>;
 }
 
-

@@ -368,7 +368,6 @@ export interface BotSecrets {
   ClickupAuthentication?            : string;
   ClickupIssuesListId?              : string;
   ClickupCaseListId?                : string;
-  NlpService?                       : string;
   CustomMlModelUrl?                 : string;
   DataBaseName?                     : string;
 }

@@ -65,14 +65,14 @@ export class TenantValidator extends BaseValidator {
         await this.validateString(request, 'WebhookWhatsappClientUrlToken', Where.Body, true, true);
         await this.validateString(request, 'SlackTokenFeedback', Where.Body, true, true);
         await this.validateString(request, 'WebhookClickupClientUrlToken', Where.Body, true, true);
-        await this.validateString(request, 'WebhookMockChannelClientUrlToken', Where.Body, true, true);
-        await this.validateString(request, 'DbPassword', Where.Body, true, true);
-        await this.validateString(request, 'DbUserName', Where.Body, true, true);
-        await this.validateString(request, 'DbHost', Where.Body, true, true);
         await this.validateString(request, 'ClickupAuthentication', Where.Body, true, true);
-        await this.validateString(request, 'ReancareApiKey', Where.Body, true, true);
-        await this.validateString(request, 'NlpService', Where.Body, true, true);
         await this.validateString(request, 'CustomMlModelUrl', Where.Body, true, true);
+        await this.validateString(request, 'DataBaseName', Where.Body, true, true);
+        await this.validateString(request, 'MetaApiToken', Where.Body, true,  true);
+        await this.validateString(request, 'WhatsappPhoneNumberId', Where.Body, true,  true);
+        await this.validateString(request, 'ClickupListId', Where.Body, true,  true);
+        await this.validateString(request, 'ClickupIssuesListId', Where.Body, true,  true);
+        await this.validateString(request, 'ClickupCaseListId', Where.Body, true,  true);
         // await this.validateObject(request, 'SecretValue', Where.Body, true, false);
 
         this.validateRequest(request);
@@ -95,7 +95,6 @@ export class TenantValidator extends BaseValidator {
                 ClickupIssuesListId              : body.ClickupIssuesListId ?? null,
                 ClickupCaseListId                : body.ClickupCaseListId ?? null,
                 ClickupAuthentication            : body.ClickupAuthentication ?? null,
-                NlpService                       : body.NlpService ?? null,
                 CustomMlModelUrl                 : body.CustomMlModelUrl ?? null,
                 DataBaseName                     : body.DataBaseName ?? null
             }

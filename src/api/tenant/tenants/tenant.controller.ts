@@ -305,7 +305,8 @@ export class TenantController extends BaseController {
             request.body.Environment = environment;
             const model = await this._validator.createBotSecret(request);
             await this.authorizeOne(request, null, tenant.id);
-            const created = await this._service.createSecret(model);
+            const lambdaFunctionName = process.env.CREATE_SECRET_LAMBDA_FUNCTION;
+            const created = await this._service.createSecret(lambdaFunctionName, model);
             ResponseHandler.success(request, response, 'Secret created successfully!', 200, created);
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
@@ -325,7 +326,8 @@ export class TenantController extends BaseController {
             const model = {
                 SecretName : secretName,
             };
-            const secret = await this._service.getSecret(model);
+            const lambdaFunctionName = process.env.GET_SECRET_LAMBDA_FUNCTION;
+            const secret = await this._service.getSecret(lambdaFunctionName, model);
             await this.authorizeOne(request, null, tenant.id);
             ResponseHandler.success(request, response, 'Secret retrieved successfully!', 200, secret);
         } catch (error) {
@@ -340,7 +342,8 @@ export class TenantController extends BaseController {
               const model = {
                   SecretName : secretName,
               };
-              const secret = await this._service.getSecret(model);
+              const lambdaFunctionName = process.env.GET_SECRET_LAMBDA_FUNCTION;
+              const secret = await this._service.getSecret(lambdaFunctionName, model);
               ResponseHandler.success(request, response, 'Secret retrieved successfully!', 200, secret);
           } catch (error) {
               ResponseHandler.handleError(request, response, error);
@@ -361,7 +364,8 @@ export class TenantController extends BaseController {
             request.body.Environment = environment;
             const model = await this._validator.createBotSecret(request);
             await this.authorizeOne(request, null, tenant.id);
-            const updated = await this._service.updateSecret(model);
+            const lambdaFunctionName = process.env.UPDATE_SECRET_LAMBDA_FUNCTION;
+            const updated = await this._service.updateSecret(lambdaFunctionName, model);
             ResponseHandler.success(request, response, 'Secret updated successfully!', 200, updated);
         } catch (error) {
             ResponseHandler.handleError(request, response, error);

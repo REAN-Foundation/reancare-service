@@ -360,16 +360,17 @@ export interface BotSecrets {
   WebhookTelegramClientUrlToken?    : string;
   WebhookWhatsappClientHeaderToken? : string;
   WebhookWhatsappClientUrlToken?    : string;
+  MetaApiToken?                     : string;
+  WhatsappPhoneNumberId?            : string;
   SlackTokenFeedback?               : string;
   WebhookClickupClientUrlToken?     : string;
-  WebhookMockChannelClientUrlToken? : string;
-  DbPassword?                       : string;
-  DbUserName?                       : string;
-  DbHost?                           : string;
+  ClickupListId?                    : string;
   ClickupAuthentication?            : string;
-  ReancareApiKey?                   : string;
+  ClickupIssuesListId?              : string;
+  ClickupCaseListId?                : string;
   NlpService?                       : string;
   CustomMlModelUrl?                 : string;
+  DataBaseName?                     : string;
 }
 
 export enum Environment {

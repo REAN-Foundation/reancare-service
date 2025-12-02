@@ -53,16 +53,16 @@ export class TenantService {
         return await this._lambdaService.invokeLambdaFunction<TenantSchemaDto>(lambdaFunctionName, model);
     };
 
-    public createSecret = async (model: TenantSecretDomainModel): Promise<BotSecrets> => {
-        return this._lambdaService.invokeLambdaFunction<BotSecrets>('create-secrets-lambda-function', model);
+    public createSecret = async (lambdaFunctionName: string, model: TenantSecretDomainModel): Promise<BotSecrets> => {
+        return this._lambdaService.invokeLambdaFunction<BotSecrets>(lambdaFunctionName, model);
     };
 
-    public getSecret = async (model: GetSecretDomainModel): Promise<BotSecrets> => {
-        return this._lambdaService.invokeLambdaFunction<BotSecrets>('get-secrets-lambda-function', model );
+    public getSecret = async (lambdaFunctionName: string, model: GetSecretDomainModel): Promise<BotSecrets> => {
+        return this._lambdaService.invokeLambdaFunction<BotSecrets>(lambdaFunctionName, model );
     };
 
-    public updateSecret = async (model: TenantSecretDomainModel): Promise<BotSecrets> => {
-        return this._lambdaService.invokeLambdaFunction<BotSecrets>('update-secrets-lambda-function', model);
+    public updateSecret = async (lambdaFunctionName: string, model: TenantSecretDomainModel): Promise<BotSecrets> => {
+        return this._lambdaService.invokeLambdaFunction<BotSecrets>(lambdaFunctionName, model);
     };
 
     public getTenantWithPhone = async (phone: string): Promise<TenantDto> => {

@@ -87,16 +87,17 @@ export class TenantValidator extends BaseValidator {
                 WebhookTelegramClientUrlToken    : body.WebhookTelegramClientUrlToken ?? null,
                 WebhookWhatsappClientHeaderToken : body.WebhookWhatsappClientHeaderToken ?? null,
                 WebhookWhatsappClientUrlToken    : body.WebhookWhatsappClientUrlToken ?? null,
+                MetaApiToken                     : body.MetaApiToken ?? null,
+                WhatsappPhoneNumberId            : body.WhatsappPhoneNumberId ?? null,
                 SlackTokenFeedback               : body.SlackTokenFeedback ?? null,
                 WebhookClickupClientUrlToken     : body.WebhookClickupClientUrlToken ?? null,
-                WebhookMockChannelClientUrlToken : body.WebhookMockChannelClientUrlToken ?? null,
-                DbPassword                       : body.DbPassword ?? null,
-                DbUserName                       : body.DbUserName ?? null,
-                DbHost                           : body.DbHost ?? null,
+                ClickupListId                    : body.ClickupListId ?? null,
+                ClickupIssuesListId              : body.ClickupIssuesListId ?? null,
+                ClickupCaseListId                : body.ClickupCaseListId ?? null,
                 ClickupAuthentication            : body.ClickupAuthentication ?? null,
-                ReancareApiKey                   : body.ReancareApiKey ?? null,
                 NlpService                       : body.NlpService ?? null,
-                CustomMlModelUrl                 : body.CustomMlModelUrl ?? null
+                CustomMlModelUrl                 : body.CustomMlModelUrl ?? null,
+                DataBaseName                     : body.DataBaseName ?? null
             }
         };
         return model;

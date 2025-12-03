@@ -6,7 +6,7 @@ import { CareplanService } from "../../../../clinical/careplan.service";
 import { UserActionType } from "../../../../../domain.types/users/user.task/user.task.types";
 import { uuid } from "../../../../../domain.types/miscellaneous/system.types";
 import { UserTaskActionData } from "../../../../../domain.types/users/user.task/resolved.action.data.types";
-import { IUserTaskActionHandler } from "../../../../../database/repository.interfaces/users/user/task/user.task.action.handler.interface";
+import { IUserTaskActionHandler } from "../../../../../database/repository.interfaces/users/user/task.task/user.task.action.handler.interface";
 
 ///////////////////////////////////////////////////////////////////////////////
 

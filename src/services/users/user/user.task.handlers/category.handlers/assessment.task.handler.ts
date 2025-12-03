@@ -1,7 +1,7 @@
 import { injectable } from "tsyringe";
 import { Logger } from "../../../../../common/logger";
-import { IUserTaskHandler } from "../../../../../database/repository.interfaces/users/user/task/user.task.handler.interface";
-import { ProcessedTaskResultDto } from "../../../../../domain.types/users/user.task/user.task.dto";
+import { IUserTaskHandler } from "../../../../../database/repository.interfaces/users/user/task.task/user.task.handler.interface";
+import { ProcessedTaskDto } from "../../../../../domain.types/users/user.task/user.task.dto";
 import { UserTaskMessageDto } from "../../../../../domain.types/users/user.task/user.task.dto";
 import { UserTaskCategory } from "../../../../../domain.types/users/user.task/user.task.types";
 import { NotificationChannel } from "../../../../../domain.types/general/notification/notification.types";
@@ -20,7 +20,7 @@ export class AssessmentTaskHandler implements IUserTaskHandler {
     
     private _assessmentService: AssessmentService = Injector.Container.resolve(AssessmentService);
     
-    async processTask(userTask: UserTaskMessageDto, actionData: UserTaskActionData): Promise<ProcessedTaskResultDto> {
+    async processTask(userTask: UserTaskMessageDto, actionData: UserTaskActionData): Promise<ProcessedTaskDto> {
         try {
             Logger.instance().log(`Processing assessment task: ${JSON.stringify(userTask)}`);
             
@@ -31,7 +31,7 @@ export class AssessmentTaskHandler implements IUserTaskHandler {
             const rawContent = actionData?.RawContent ? JSON.parse(actionData.RawContent) : null;
             let isAssessmentWithForm = false;
             let messageType = BotMessagingType.Assessment;
-            let message = '';
+            let message = null;
             let metadata: any = null;
             if (
                 rawContent?.Metadata &&

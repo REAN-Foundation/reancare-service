@@ -1,8 +1,8 @@
 import { injectable } from "tsyringe";
 import { Logger } from "../../../../../common/logger";
-import { IUserTaskChannelHandler } from "../../../../../database/repository.interfaces/users/user/task/user.task.channel.handler.interface";
+import { IUserTaskChannelHandler } from "../../../../../database/repository.interfaces/users/user/task.task/user.task.channel.handler.interface";
 import { UserTaskMessageDto } from "../../../../../domain.types/users/user.task/user.task.dto";
-import { ProcessedTaskResultDto } from "../../../../../domain.types/users/user.task/user.task.dto";
+import { ProcessedTaskDto } from "../../../../../domain.types/users/user.task/user.task.dto";
 import { NotificationChannel } from "../../../../../domain.types/general/notification/notification.types";
 import { IPersonRepo } from "../../../../../database/repository.interfaces/person/person.repo.interface";
 import { IUserRepo } from "../../../../../database/repository.interfaces/users/user/user.repo.interface";
@@ -23,7 +23,7 @@ export class WhatsAppChannelHandler implements IUserTaskChannelHandler {
 
     private _botService: IBotService = Injector.Container.resolve(BotService);
     
-    async sendMessage(userTask: UserTaskMessageDto, processedResult: ProcessedTaskResultDto): Promise<boolean> {
+    async sendMessage(userTask: UserTaskMessageDto, processedTask: ProcessedTaskDto): Promise<boolean> {
         try {
             Logger.instance().log(`Sending WhatsApp message for task: ${userTask.id}`);
 
@@ -40,16 +40,15 @@ export class WhatsAppChannelHandler implements IUserTaskChannelHandler {
 
             const normalizedPhoneNumber = Helper.normalizePhoneNumber(personPhone);
             const channel = this.mapChannelToBotChannel(userTask.Channel);
-            const messagingType = this.getMessagingType(processedResult.MessageType);
+            const messagingType = this.getMessagingType(processedTask.MessageType);
             
             const botRequestModel: BotRequestDomainModel = {
                 PhoneNumber  : normalizedPhoneNumber,
                 ClientName   : userTask.TenantName,
-                Channel      : channel,
+                Channel      : userTask.Channel,
                 AgentName    : "Reancare",
                 Type         : messagingType,
-                TemplateName : messagingType === BotMessagingType.Template ? processedResult.MessageType : undefined,
-                Message      : processedResult.Message,
+                Message      : processedTask.Message,
                 Payload      : userTask
             };
 
@@ -76,10 +75,10 @@ export class WhatsAppChannelHandler implements IUserTaskChannelHandler {
 
     private getMessagingType(messageType: string): BotMessagingType {
         if (messageType &&
-            messageType !== 'text' &&
-            messageType !== 'reancareAssessment' &&
-            messageType !== 'reancareAssessmentWithForm' &&
-            !messageType.startsWith('reancare')) {
+            messageType == 'text' ||
+            messageType == 'reancareAssessment' ||
+            messageType == 'reancareAssessmentWithForm' ||
+            messageType.startsWith('reancare')) {
             return BotMessagingType.Template;
         }
         return BotMessagingType.Text;

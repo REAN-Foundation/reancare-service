@@ -4,7 +4,7 @@ import { Logger } from "../../../common/logger";
 import { IUserTaskRepo } from "../../../database/repository.interfaces/users/user/user.task.repo.interface";
 import { UserActionType, UserTaskCategory } from "../../../domain.types/users/user.task/user.task.types";
 import { ICareplanRepo } from "../../../database/repository.interfaces/clinical/careplan.repo.interface";
-import { UserTaskMessageDto, ProcessedTaskResultDto } from "../../../domain.types/users/user.task/user.task.dto";
+import { UserTaskMessageDto, ProcessedTaskDto } from "../../../domain.types/users/user.task/user.task.dto";
 import { UserTaskActionHandler } from "./user.task.handlers/user.task.action.handler";
 import { UserTaskActionData } from "../../../domain.types/users/user.task/resolved.action.data.types";
 import { UserTaskHandler } from "./user.task.handlers/user.task.category.handler";
@@ -154,7 +154,7 @@ export class UserTaskSenderService {
     }
 
     private async processTaskWithHandler(userTask: UserTaskMessageDto, actionData: UserTaskActionData):
-     Promise<ProcessedTaskResultDto | null> {
+     Promise<ProcessedTaskDto | null> {
         if (!userTask.Category) {
             Logger.instance().log(`Task category is missing for task ${userTask.id}`);
             return null;

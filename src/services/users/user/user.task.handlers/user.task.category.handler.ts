@@ -1,7 +1,7 @@
 import { Logger } from "../../../../common/logger";
 import { Injector } from "../../../../startup/injector";
 import { UserTaskCategory } from "../../../../domain.types/users/user.task/user.task.types";
-import { IUserTaskHandler } from "../../../../database/repository.interfaces/users/user/task/user.task.handler.interface";
+import { IUserTaskHandler } from "../../../../database/repository.interfaces/users/user/task.task/user.task.handler.interface";
 import { AssessmentTaskHandler } from "./category.handlers/assessment.task.handler";
 import { MessageTaskHandler } from "./category.handlers/message.task.handler";
 

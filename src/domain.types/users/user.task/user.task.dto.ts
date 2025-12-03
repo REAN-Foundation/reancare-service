@@ -47,13 +47,8 @@ export interface UserTaskMessageDto extends UserTaskDto {
     Metadata?: Record<string, any>;
 }
 
-export interface ProcessedTaskResultDto {
+export interface ProcessedTaskDto {
     MessageType: BotMessagingType;
     Message: string;
     Metadata?: Record<string, any>;
-}
-
-export interface AssessmentProcessedTaskResultDto extends ProcessedTaskResultDto {
-    ShouldCreateAssessment: boolean;
-    AssessmentData?: Record<string, any>;
 }

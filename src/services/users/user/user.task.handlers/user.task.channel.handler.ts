@@ -1,7 +1,7 @@
 import { Logger } from "../../../../common/logger";
 import { Injector } from "../../../../startup/injector";
 import { NotificationChannel } from "../../../../domain.types/general/notification/notification.types";
-import { IUserTaskChannelHandler } from "../../../../database/repository.interfaces/users/user/task/user.task.channel.handler.interface";
+import { IUserTaskChannelHandler } from "../../../../database/repository.interfaces/users/user/task.task/user.task.channel.handler.interface";
 import { WhatsAppChannelHandler } from "./channel.handlers/whatsapp.channel.handler";
 import { TelegramChannelHandler } from "./channel.handlers/telegram.channel.handler";
 

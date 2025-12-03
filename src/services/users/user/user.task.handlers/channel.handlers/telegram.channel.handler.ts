@@ -1,7 +1,7 @@
 import { injectable } from "tsyringe";
 import { Logger } from "../../../../../common/logger";
-import { IUserTaskChannelHandler } from "../../../../../database/repository.interfaces/users/user/task/user.task.channel.handler.interface";
-import { ProcessedTaskResultDto, UserTaskMessageDto } from "../../../../../domain.types/users/user.task/user.task.dto";
+import { IUserTaskChannelHandler } from "../../../../../database/repository.interfaces/users/user/task.task/user.task.channel.handler.interface";
+import { ProcessedTaskDto, UserTaskMessageDto } from "../../../../../domain.types/users/user.task/user.task.dto";
 import { NotificationChannel } from "../../../../../domain.types/general/notification/notification.types";
 import { IPersonRepo } from "../../../../../database/repository.interfaces/person/person.repo.interface";
 import { IUserRepo } from "../../../../../database/repository.interfaces/users/user/user.repo.interface";
@@ -21,7 +21,7 @@ export class TelegramChannelHandler implements IUserTaskChannelHandler {
 
     private _botService: IBotService = Injector.Container.resolve(BotService);
     
-    async sendMessage(userTask: UserTaskMessageDto, processedResult: ProcessedTaskResultDto): Promise<boolean> {
+    async sendMessage(userTask: UserTaskMessageDto, processedResult: ProcessedTaskDto): Promise<boolean> {
         try {
 
             const telegramChatId = await this.getUserTelegramChatId(userTask.UserId);
@@ -29,10 +29,6 @@ export class TelegramChannelHandler implements IUserTaskChannelHandler {
                 Logger.instance().log(`User Telegram chat ID not found for user: ${userTask.UserId}`);
                 return false;
             }
-
-            // const payload = {
-            //     userTask,
-            // };
 
             const botRequestModel: BotRequestDomainModel = {
                 PhoneNumber : telegramChatId,

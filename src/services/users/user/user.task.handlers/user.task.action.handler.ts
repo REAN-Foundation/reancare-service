@@ -36,29 +36,6 @@ export class UserTaskActionHandler {
         }
     }
 
-    async resolveAction(actionType: UserActionType, actionId: uuid): Promise<UserTaskActionData> {
-        try {
-            if (!actionId || !actionType) {
-                Logger.instance().log(`Skipping action resolution - ActionId or ActionType is null`);
-                return null;
-            }
-
-            const actionHandler = this.getActionHandler(actionType);
-            if (!actionHandler) {
-                Logger.instance().log(`No action handler found for action type: ${actionType}`);
-                return null;
-            }
-
-            const actionData = await actionHandler.resolveAction(actionType, actionId);
-            
-            Logger.instance().log(`Action resolved successfully for ${actionType}: ${actionId}`);
-            return actionData;
-
-        } catch (error) {
-            Logger.instance().log(`Error resolving action ${actionType} with ID ${actionId}: ${error}`);
-            throw error;
-        }
-    }
 
 }
 

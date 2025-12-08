@@ -5,10 +5,10 @@ import { IUserTaskRepo } from "../../../database/repository.interfaces/users/use
 import { UserActionType, UserTaskCategory } from "../../../domain.types/users/user.task/user.task.types";
 import { ICareplanRepo } from "../../../database/repository.interfaces/clinical/careplan.repo.interface";
 import { UserTaskMessageDto, ProcessedTaskDto } from "../../../domain.types/users/user.task/user.task.dto";
-import { UserTaskActionHandler } from "./user.task.handlers/user.task.action.handler";
 import { UserTaskActionData } from "../../../domain.types/users/user.task/resolved.action.data.types";
 import { UserTaskHandler } from "./user.task.handlers/user.task.category.handler";
 import { UserTaskChannelHandler } from "./user.task.handlers/user.task.channel.handler";
+import { UserTaskActionHandler } from "./user.task.handlers/user.task.action.handler";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -17,7 +17,7 @@ const ASYNC_TASK_COUNT = 4;
 @injectable()
 export class UserTaskSenderService {
 
-    private _actionResolver: UserTaskActionHandler = null;
+    private _actionHandlerResolver: UserTaskActionHandler = null;
 
     private _taskHandlerResolver: UserTaskHandler = null;
 
@@ -27,7 +27,7 @@ export class UserTaskSenderService {
         @inject('IUserTaskRepo') private _userTaskRepo: IUserTaskRepo,
         @inject('ICareplanRepo') private _careplanRepo: ICareplanRepo,
     ) {
-        this._actionResolver = new UserTaskActionHandler();
+        this._actionHandlerResolver = new UserTaskActionHandler();
         this._taskHandlerResolver = new UserTaskHandler();
         this._channelHandlerResolver = new UserTaskChannelHandler();
     }
@@ -141,11 +141,12 @@ export class UserTaskSenderService {
                 return null;
             }
 
-            const actionData = await this._actionResolver.resolveAction(
-                userTask.ActionType as UserActionType,
-                userTask.ActionId
-            );
-            Logger.instance().log(`Action resolved for task ${userTask.id}`);
+            const actionHandler = this._actionHandlerResolver.getActionHandler(userTask.ActionType as UserActionType);
+            if (!actionHandler) {
+                return null;
+            }
+
+            const actionData =  await actionHandler.resolveAction(userTask.ActionType as UserActionType, userTask.ActionId);
             return actionData;
         } catch (error) {
             Logger.instance().log(`Error resolving action for task ${userTask.id}: ${error}`);

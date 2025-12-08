@@ -1,4 +1,4 @@
-import { BotMessagingType } from "../,./../../../domain.types/miscellaneous/bot,request.types";
+import { BotMessagingType } from "../../miscellaneous/bot.request.types";
 import { ProgressStatus } from "../../../domain.types/miscellaneous/system.types";
 import { UserActionType, UserTaskCategory } from "./user.task.types";
 
@@ -50,5 +50,6 @@ export interface UserTaskMessageDto extends UserTaskDto {
 export interface ProcessedTaskDto {
     MessageType: BotMessagingType;
     Message: string;
+    TemplateName?: string;
     Metadata?: Record<string, any>;
 }

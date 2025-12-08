@@ -1,6 +1,6 @@
 import { injectable } from "tsyringe";
 import { Logger } from "../../../common/logger";
-import { BotRequestDomainModel } from "../../../domain.types/miscellaneous/bot,request.types";
+import { BotRequestDomainModel } from "../../../domain.types/miscellaneous/bot.request.types";
 import axios from "axios";
 import { IBotService } from "./bot.service.interface";
 
@@ -25,8 +25,8 @@ export class BotService implements IBotService {
                 'Accept-Encoding' : 'gzip, deflate, br',
                 Connection        : 'keep-alive',
             };
-            const channelName = model.Channel.toLowerCase();
-            var url = process.env.REANBOT_BACKEND_BASE_URL + model.ClientName + '/' + channelName + '/' + process.env.REANBOT_WEBHOOK_CLIENT_URL_TOKEN + '/send';
+            
+            var url = process.env.REANBOT_BACKEND_BASE_URL + model.ClientName + '/' + model.Channel + '/' + process.env.REANBOT_WEBHOOK_CLIENT_URL_TOKEN + '/send';
             Logger.instance().log(`URL: ${url}`);
             var body = {
                 type         : model.Type,
@@ -37,6 +37,7 @@ export class BotService implements IBotService {
                 templateName : model.TemplateName,
                 payload      : model.Payload ?? {}
             };
+            Logger.instance().log(`Sending body to bot: ${JSON.stringify(body)}`);
             var response = await axios.post(url, body, { headers });
             if (response.status === 201 || response.status === 200) {
                 Logger.instance().log(`Successfully sent message to bot! ${body?.userId}`);

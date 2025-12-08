@@ -3,7 +3,7 @@ import { NotificationChannel } from "../general/notification/notification.types"
 export interface BotRequestDomainModel {
     PhoneNumber: string;
     PlatformId?: string;
-    Channel: NotificationChannel;
+    Channel: NotificationChannel | 'telegram';
     ClientName?: string;
     AgentName?: string;
     Provider?: string;

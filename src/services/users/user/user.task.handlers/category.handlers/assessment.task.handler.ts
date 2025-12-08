@@ -11,7 +11,7 @@ import { WhatsAppFlowTemplateRequest } from "../../../../../domain.types/webhook
 import { ApiError } from "../../../../../common/api.error";
 import { UserTaskActionData } from "../../../../../domain.types/users/user.task/resolved.action.data.types";
 import { AssessmentDomainModel } from "../../../../../domain.types/clinical/assessment/assessment.domain.model";
-import { BotMessagingType } from "../../../../../domain.types/miscellaneous/bot,request.types";
+import { BotMessagingType } from "../../../../../domain.types/miscellaneous/bot.request.types";
 
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -22,12 +22,6 @@ export class AssessmentTaskHandler implements IUserTaskHandler {
     
     async processTask(userTask: UserTaskMessageDto, actionData: UserTaskActionData): Promise<ProcessedTaskDto> {
         try {
-            Logger.instance().log(`Processing assessment task: ${JSON.stringify(userTask)}`);
-            
-            if (userTask.Category !== UserTaskCategory.Assessment) {
-                throw new ApiError(400, `Task handler mismatch. Expected Assessment category, got ${userTask.Category}`);
-            }
-
             const rawContent = actionData?.RawContent ? JSON.parse(actionData.RawContent) : null;
             let isAssessmentWithForm = false;
             let messageType = BotMessagingType.Assessment;
@@ -59,7 +53,7 @@ export class AssessmentTaskHandler implements IUserTaskHandler {
                 userTask.Action = { Assessment: assessment };
                 
                 messageType = BotMessagingType.Assessment;
-                message =  "Sending assessment to Rean bot";
+                message = JSON.stringify({ message: "Sending assessment to Rean bot"});
             }
 
             return {

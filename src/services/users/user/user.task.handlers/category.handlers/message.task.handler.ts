@@ -3,10 +3,10 @@ import { Logger } from "../../../../../common/logger";
 import { IUserTaskHandler } from "../../../../../database/repository.interfaces/users/user/task.task/user.task.handler.interface";
 import { ProcessedTaskDto } from "../../../../../domain.types/users/user.task/user.task.dto";
 import { UserTaskMessageDto } from "../../../../../domain.types/users/user.task/user.task.dto";
-import { UserTaskCategory } from "../../../../../domain.types/users/user.task/user.task.types";
 import { NotificationChannel } from "../../../../../domain.types/general/notification/notification.types";
 import { ApiError } from "../../../../../common/api.error";
 import { UserTaskActionData } from "../../../../../domain.types/users/user.task/resolved.action.data.types";
+import { BotMessagingType } from "../../../../../domain.types/miscellaneous/bot.request.types";
 
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -25,18 +25,26 @@ export class MessageTaskHandler implements IUserTaskHandler {
                 ? (actionData?.RawContent || '')
                 : (rawContent?.Description || actionData?.Description || userTask.Description || '');
             
-            const messageType = isWhatsApp
-                ? (rawContent?.TemplateName || 'text')
-                : 'text';
+            const messageType: BotMessagingType = isWhatsApp
+                ? BotMessagingType.Template
+                :  BotMessagingType.Template;
+            
+            const templateName = isWhatsApp ? (rawContent?.TemplateName ?? null) : null
 
-            if (!message) {
-                Logger.instance().log(`No message content found for task ${userTask.id}`);
-                throw new ApiError(400, `Message content is required for Message category task`);
+            if (message.Variables || message.TemplateVariables) {
+                if (message.TemplateVariables) {
+                    message.Variables = message.TemplateVariables;
+                    const buttonIds = message.TemplateButtonIds;
+                    if (buttonIds != null && Array.isArray(buttonIds) && buttonIds.length > 0) {
+                        message.ButtonsIds = message.TemplateButtonIds;
+                    }
+                }
             }
 
             return {
-                MessageType : messageType,
-                Message     : message
+                MessageType  : messageType,
+                Message      : message,
+                TemplateName : templateName
             };
 
         } catch (error) {

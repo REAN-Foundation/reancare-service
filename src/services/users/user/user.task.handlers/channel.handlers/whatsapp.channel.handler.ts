@@ -9,8 +9,9 @@ import { IUserRepo } from "../../../../../database/repository.interfaces/users/u
 import { Injector } from "../../../../../startup/injector";
 import { IBotService } from "../../../../../modules/communication/bot.service/bot.service.interface";
 import { BotService } from "../../../../../modules/communication/bot.service/bot.service";
-import { BotRequestDomainModel, BotMessagingType } from "../../../../../domain.types/miscellaneous/bot,request.types";
+import { BotRequestDomainModel, BotMessagingType } from "../../../../../domain.types/miscellaneous/bot.request.types";
 import { Helper } from "../../../../../common/helper";
+
 
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -25,13 +26,6 @@ export class WhatsAppChannelHandler implements IUserTaskChannelHandler {
     
     async sendMessage(userTask: UserTaskMessageDto, processedTask: ProcessedTaskDto): Promise<boolean> {
         try {
-            Logger.instance().log(`Sending WhatsApp message for task: ${userTask.id}`);
-
-            if (userTask.Channel !== NotificationChannel.WhatsApp &&
-                userTask.Channel !== NotificationChannel.WhatsappWati) {
-                throw new Error(`Channel handler mismatch. Expected WhatsApp channel, got ${userTask.Channel}`);
-            }
-
             const personPhone = await this.getUserPhoneNumber(userTask.UserId);
             if (!personPhone) {
                 Logger.instance().log(`User phone number not found for user: ${userTask.UserId}`);
@@ -39,21 +33,21 @@ export class WhatsAppChannelHandler implements IUserTaskChannelHandler {
             }
 
             const normalizedPhoneNumber = Helper.normalizePhoneNumber(personPhone);
-            const channel = this.mapChannelToBotChannel(userTask.Channel);
-            const messagingType = this.getMessagingType(processedTask.MessageType);
+            const channel = this.mapChannelToBotChannel(userTask.Channel)
             
             const botRequestModel: BotRequestDomainModel = {
                 PhoneNumber  : normalizedPhoneNumber,
                 ClientName   : userTask.TenantName,
-                Channel      : userTask.Channel,
+                Channel      : channel,
                 AgentName    : "Reancare",
-                Type         : messagingType,
+                Provider     : userTask.TenantName,
+                Type         : processedTask.MessageType,
+                TemplateName : processedTask.TemplateName ?? null,
                 Message      : processedTask.Message,
                 Payload      : userTask
             };
 
             await this._botService.sendWhatsappMessage(botRequestModel);
-            
             Logger.instance().log(`Successfully sent WhatsApp message to ${normalizedPhoneNumber} for task: ${userTask.id}`);
             return true;
 
@@ -73,16 +67,13 @@ export class WhatsAppChannelHandler implements IUserTaskChannelHandler {
         }
     }
 
-    private getMessagingType(messageType: string): BotMessagingType {
-        if (messageType &&
-            messageType == 'text' ||
-            messageType == 'reancareAssessment' ||
-            messageType == 'reancareAssessmentWithForm' ||
-            messageType.startsWith('reancare')) {
+    private getMessagingType(messageType: BotMessagingType): BotMessagingType {
+        if (messageType === BotMessagingType.Text) {
             return BotMessagingType.Template;
         }
-        return BotMessagingType.Text;
+        return messageType;
     }
+    
 
     private async getUserPhoneNumber(userId: string): Promise<string> {
         try {

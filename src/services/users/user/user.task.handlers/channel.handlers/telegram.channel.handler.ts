@@ -8,7 +8,7 @@ import { IUserRepo } from "../../../../../database/repository.interfaces/users/u
 import { Injector } from "../../../../../startup/injector";
 import { IBotService } from "../../../../../modules/communication/bot.service/bot.service.interface";
 import { BotService } from "../../../../../modules/communication/bot.service/bot.service";
-import { BotRequestDomainModel } from "../../../../../domain.types/miscellaneous/bot,request.types";
+import { BotRequestDomainModel } from "../../../../../domain.types/miscellaneous/bot.request.types";
 
 ///////////////////////////////////////////////////////////////////////////////
 

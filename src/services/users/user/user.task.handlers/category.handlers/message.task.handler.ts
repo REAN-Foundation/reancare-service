@@ -21,8 +21,8 @@ export class MessageTaskHandler implements IUserTaskHandler {
             const isWhatsApp = userTask.Channel === NotificationChannel.WhatsApp ||
                               userTask.Channel === NotificationChannel.WhatsappWati;
             
-            const message = isWhatsApp
-                ? (actionData?.RawContent || '')
+            let message = isWhatsApp
+                ? ( rawContent)
                 : (rawContent?.Description || actionData?.Description || userTask.Description || '');
             
             const messageType: BotMessagingType = isWhatsApp
@@ -41,9 +41,11 @@ export class MessageTaskHandler implements IUserTaskHandler {
                 }
             }
 
+            const messageString = typeof message === 'string' ? message : JSON.stringify(message);
+
             return {
                 MessageType  : messageType,
-                Message      : message,
+                Message      : messageString,
                 TemplateName : templateName
             };
 

@@ -33,7 +33,7 @@ export class TelegramChannelHandler implements IUserTaskChannelHandler {
             const botRequestModel: BotRequestDomainModel = {
                 PhoneNumber : telegramChatId,
                 ClientName  : userTask.TenantName,
-                Channel     : NotificationChannel.Telegram,
+                Channel     : 'telegram',
                 AgentName   : "Reancare",
                 Type        : processedResult.MessageType,
                 Message     : processedResult.Message,

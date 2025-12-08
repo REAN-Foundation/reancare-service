@@ -23,49 +23,64 @@ export class AssessmentTaskHandler implements IUserTaskHandler {
     async processTask(userTask: UserTaskMessageDto, actionData: UserTaskActionData): Promise<ProcessedTaskDto> {
         try {
             const rawContent = actionData?.RawContent ? JSON.parse(actionData.RawContent) : null;
-            let isAssessmentWithForm = false;
-            let messageType = BotMessagingType.Assessment;
-            let message = null;
-            let metadata: any = null;
-            if (
+            
+            const isAssessmentWithForm = !!(
                 rawContent?.Metadata &&
                 (userTask.Channel === NotificationChannel.WhatsApp ||
                  userTask.Channel === NotificationChannel.WhatsappWati)
-            ) {
-                const whatsappFormMetadata = this.getWhatsappFormMetadata(actionData.RawContent);
-                this.validateWhatsappFormMetadata(whatsappFormMetadata);
-                messageType = BotMessagingType.AssessmentForm;
-                message = JSON.stringify({ message: "Sending assessment with form to Rean bot"});
-                metadata = whatsappFormMetadata;
-                isAssessmentWithForm = true;
+            );
+            
+            if (isAssessmentWithForm) {
+                return await this.processAssessmentWithForm(userTask, actionData);
             }
-
-            if (!isAssessmentWithForm) {
-                const assessmentDomainModel: AssessmentDomainModel = {
-                    PatientUserId        : userTask.UserId ?? null,
-                    AssessmentTemplateId : rawContent?.ReferenceTemplateId ?? null,
-                    UserTaskId           : userTask.id,
-                    ScheduledDateString  : new Date().toISOString()
-                        .split('T')[0] ?? null,
-                    ParentActivityId : actionData?.id ?? null
-                };
-                const assessment = await this._assessmentService.create(assessmentDomainModel);
-                userTask.Action = { Assessment: assessment };
-                
-                messageType = BotMessagingType.Assessment;
-                message = JSON.stringify({ message: "Sending assessment to Rean bot"});
-            }
-
-            return {
-                MessageType : messageType,
-                Message     : message,
-                Metadata    : metadata
-            };
-
+            
+            return await this.processRegularAssessment(userTask, actionData, rawContent);
         } catch (error) {
             Logger.instance().log(`Error processing assessment task: ${error}`);
             throw error;
         }
+    }
+
+    private async processAssessmentWithForm(
+        userTask: UserTaskMessageDto,
+        actionData: UserTaskActionData
+    ): Promise<ProcessedTaskDto> {
+        const whatsappFormMetadata = this.getWhatsappFormMetadata(actionData.RawContent);
+        this.validateWhatsappFormMetadata(whatsappFormMetadata);
+        
+        const processedTask: ProcessedTaskDto = {
+            MessageType : BotMessagingType.AssessmentForm,
+            Message     : JSON.stringify({ message: "Sending assessment with form to Rean bot"}),
+            Metadata    : whatsappFormMetadata
+        };
+        
+        return processedTask;
+    }
+
+    private async processRegularAssessment(
+        userTask: UserTaskMessageDto,
+        actionData: UserTaskActionData,
+        rawContent: any
+    ): Promise<ProcessedTaskDto> {
+        const assessmentDomainModel: AssessmentDomainModel = {
+            PatientUserId        : userTask.UserId ?? null,
+            AssessmentTemplateId : rawContent?.ReferenceTemplateId ?? null,
+            UserTaskId           : userTask.id,
+            ScheduledDateString  : new Date().toISOString()
+                .split('T')[0] ?? null,
+            ParentActivityId : actionData?.id ?? null
+        };
+        
+        const assessment = await this._assessmentService.create(assessmentDomainModel);
+        userTask.Action = { Assessment: assessment };
+        
+        const processedTask: ProcessedTaskDto = {
+            MessageType : BotMessagingType.Assessment,
+            Message     : JSON.stringify({ message: "Sending assessment to Rean bot"}),
+            Metadata    : null
+        };
+        
+        return processedTask;
     }
 
     private getWhatsappFormMetadata = (rawContent: string): WhatsAppFlowTemplateRequest => {

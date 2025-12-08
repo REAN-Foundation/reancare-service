@@ -27,7 +27,7 @@ export class MessageTaskHandler implements IUserTaskHandler {
             
             const messageType: BotMessagingType = isWhatsApp
                 ? BotMessagingType.Template
-                :  BotMessagingType.Template;
+                :  BotMessagingType.Text;
             
             const templateName = isWhatsApp ? (rawContent?.TemplateName ?? null) : null
 

@@ -1,7 +1,6 @@
 import { injectable } from "tsyringe";
 import { Logger } from "../../../../../common/logger";
 import { Injector } from "../../../../../startup/injector";
-import { ICareplanRepo } from "../../../../../database/repository.interfaces/clinical/careplan.repo.interface";
 import { CareplanService } from "../../../../clinical/careplan.service";
 import { UserActionType } from "../../../../../domain.types/users/user.task/user.task.types";
 import { uuid } from "../../../../../domain.types/miscellaneous/system.types";
@@ -15,17 +14,10 @@ export class CareplanActionHandler implements IUserTaskActionHandler {
     
     private _careplanService: CareplanService = Injector.Container.resolve(CareplanService);
 
-    private _careplanRepo: ICareplanRepo = Injector.Container.resolve('ICareplanRepo');
 
     async resolveAction(actionType: UserActionType, actionId: uuid): Promise<UserTaskActionData> {
         try {
-            if (!actionId || actionType !== UserActionType.Careplan) {
-                Logger.instance().log(`Skipping careplan action resolution - ActionId or ActionType is invalid`);
-                return null;
-            }
-
-            Logger.instance().log(`Resolving careplan action for activity: ${actionId}`);
-            
+      
             const actionData = await this._careplanService.getAction(actionId);
             
             if (!actionData) {
@@ -33,7 +25,6 @@ export class CareplanActionHandler implements IUserTaskActionHandler {
                 return null;
             }
 
-            Logger.instance().log(`Careplan action resolved successfully for activity: ${actionId}`);
             return actionData as UserTaskActionData;
 
         } catch (error) {

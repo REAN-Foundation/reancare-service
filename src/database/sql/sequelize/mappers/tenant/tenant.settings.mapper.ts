@@ -10,13 +10,14 @@ export class TenantSettingsMapper {
             return null;
         }
         const dto: TenantSettingsDto = {
-            TenantId       : record.TenantId,
-            Common         : JSON.parse(record.Common),
-            Followup       : JSON.parse(record.Followup),
-            ChatBot        : JSON.parse(record.ChatBot),
-            Forms          : JSON.parse(record.Forms),
-            Consent        : record.Consent ? JSON.parse(record.Consent) : null,
-            CustomSettings : record.CustomSettings ? JSON.parse(record.CustomSettings) : null,
+            TenantId           : record.TenantId,
+            Common             : JSON.parse(record.Common),
+            Followup           : JSON.parse(record.Followup),
+            ChatBot            : JSON.parse(record.ChatBot),
+            Forms              : JSON.parse(record.Forms),
+            Consent            : record.Consent ? JSON.parse(record.Consent) : null,
+            CustomSettings     : record.CustomSettings ? JSON.parse(record.CustomSettings) : null,
+            VitalAlertSettings : record.VitalAlertSettings ? JSON.parse(record.VitalAlertSettings) : null,
         };
         return dto;
     };

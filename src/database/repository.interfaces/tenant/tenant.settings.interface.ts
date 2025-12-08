@@ -6,6 +6,7 @@ import {
     TenantSettingsDto,
     FollowupSettings,
     CustomSettings,
+    VitalAlertSettings,
 } from "../../../domain.types/tenant/tenant.settings.types";
 
 ///////////////////////////////////////////////////////////////////////////////////////////
@@ -19,4 +20,5 @@ export interface ITenantSettingsRepo {
     updateFormsSettings(tenantId: string, settings: FormsSettings): Promise<TenantSettingsDto>;
     updateConsentSettings(tenantId: string, settings: any): Promise<TenantSettingsDto>;
     updateCustomSettings(tenantId: string, settings: CustomSettings): Promise<TenantSettingsDto>;
+    updateVitalAlertSettings(tenantId: string, settings: VitalAlertSettings): Promise<TenantSettingsDto>;
 }

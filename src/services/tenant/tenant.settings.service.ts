@@ -10,6 +10,8 @@ import {
     FollowupSettings,
     FollowupSource,
     CustomSettings,
+    VitalAlertSettings,
+    getDefaultVitalAlertSettings,
 } from '../../domain.types/tenant/tenant.settings.types';
 import { TenantSettingsDto } from '../../domain.types/tenant/tenant.settings.types';
 import { uuid } from '../../domain.types/miscellaneous/system.types';
@@ -52,13 +54,16 @@ export class TenantSettingsService {
         if (settingsType === TenantSettingsTypes.CustomSettings) {
             return settings.CustomSettings;
         }
+        if (settingsType === TenantSettingsTypes.VitalAlertSettings) {
+            return settings.VitalAlertSettings;
+        }
         return settings;
     };
 
     public updateTenantSettingsByType = async (
         tenantId: uuid,
         settingsType: TenantSettingsTypes,
-        settings: CommonSettings | FollowupSettings | ChatBotSettings | FormsSettings | TenantSettingsDto | CustomSettings
+        settings: CommonSettings | FollowupSettings | ChatBotSettings | FormsSettings | TenantSettingsDto | CustomSettings | VitalAlertSettings
     ): Promise<TenantSettingsDto> => {
         if (settingsType === TenantSettingsTypes.Common) {
             return await this._tenantSettingsRepo.updateCommonSettings(tenantId, settings as CommonSettings);
@@ -78,7 +83,10 @@ export class TenantSettingsService {
         if (settingsType === TenantSettingsTypes.CustomSettings) {
             return await this._tenantSettingsRepo.updateCustomSettings(tenantId, settings as CustomSettings);
         }
-        
+        if (settingsType === TenantSettingsTypes.VitalAlertSettings) {
+            return await this._tenantSettingsRepo.updateVitalAlertSettings(tenantId, settings as VitalAlertSettings);
+        }
+
         return await this._tenantSettingsRepo.getTenantSettings(tenantId);
     };
 
@@ -89,6 +97,9 @@ export class TenantSettingsService {
         await this._tenantSettingsRepo.updateFormsSettings(tenantId, model.Forms);
         await this._tenantSettingsRepo.updateConsentSettings(tenantId, model.Consent);
         await this._tenantSettingsRepo.updateCustomSettings(tenantId, model.CustomSettings);
+        if (model.VitalAlertSettings) {
+            await this._tenantSettingsRepo.updateVitalAlertSettings(tenantId, model.VitalAlertSettings);
+        }
         return await this._tenantSettingsRepo.getTenantSettings(tenantId);
     };
 
@@ -384,11 +395,12 @@ export class TenantSettingsService {
         };
 
         const model: TenantSettingsDomainModel = {
-            Common   : common,
-            Followup : followup,
-            ChatBot  : chatBot,
-            Forms    : formSettings,
-            Consent  : null
+            Common             : common,
+            Followup           : followup,
+            ChatBot            : chatBot,
+            Forms              : formSettings,
+            Consent            : null,
+            VitalAlertSettings : getDefaultVitalAlertSettings(),
         };
 
         return model;

@@ -29,6 +29,8 @@ import { BodyWeightDto } from "../../../domain.types/clinical/biometrics/body.we
 import { BodyHeightDto } from "../../../domain.types/clinical/biometrics/body.height/body.height.dto";
 import { BiometricAlertEmailHandler } from "./biometrics.alert.email.handler";
 import { BiometricAlertSmsHandler } from "./biometrics.alert.sms.handler";
+import { VitalAlertService } from "../../../services/clinical/biometrics/vital.alert.service";
+import { MatchedVitalAlert, VitalAlertSettings } from "../../../domain.types/tenant/vital.alert.settings.types";
 
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -50,17 +52,153 @@ export class BiometricAlerts {
         return Injector.Container.resolve(UserService);
     }
 
+    private static resolveVitalAlertServiceDependency(): VitalAlertService {
+        return Injector.Container.resolve(VitalAlertService);
+    }
+
+    /**
+     * Get tenant-specific vital alert settings for a patient
+     */
+    private static async getTenantVitalAlertSettings(patientUserId: string): Promise<VitalAlertSettings | null> {
+        try {
+            const vitalAlertService = BiometricAlerts.resolveVitalAlertServiceDependency();
+            return await vitalAlertService.getVitalAlertSettingsForUser(patientUserId);
+        } catch (error) {
+            Logger.instance().log(`Error getting tenant vital alert settings: ${error}`);
+            return null;
+        }
+    }
+
+    /**
+     * Process alert using tenant-specific rules if available
+     * Returns true if tenant rules were used and alert was processed
+     */
+    private static async processWithTenantRules(
+        patientUserId: string,
+        vitalType: 'BloodPressure' | 'Pulse' | 'BloodGlucose' | 'BodyTemperature' | 'BloodOxygenSaturation' | 'BodyBmi',
+        values: { [key: string]: number | string },
+        notificationChannel: NotificationChannel,
+        metaData: BiometricAlertSettings | null
+    ): Promise<{ processed: boolean; matchedAlert: MatchedVitalAlert | null }> {
+        try {
+            const tenantSettings = await BiometricAlerts.getTenantVitalAlertSettings(patientUserId);
+            if (!tenantSettings) {
+                return { processed: false, matchedAlert: null };
+            }
+
+            const vitalAlertService = BiometricAlerts.resolveVitalAlertServiceDependency();
+            let matchedAlert: MatchedVitalAlert | null = null;
+
+            switch (vitalType) {
+                case 'BloodPressure':
+                    if (tenantSettings.BloodPressureRules?.length > 0) {
+                        matchedAlert = vitalAlertService.matchBloodPressure(
+                            values.systolic as number,
+                            values.diastolic as number,
+                            tenantSettings.BloodPressureRules
+                        );
+                    }
+                    break;
+                case 'Pulse':
+                    if (tenantSettings.PulseRules?.length > 0) {
+                        matchedAlert = vitalAlertService.matchPulse(
+                            values.pulse as number,
+                            tenantSettings.PulseRules
+                        );
+                    }
+                    break;
+                case 'BloodGlucose':
+                    if (tenantSettings.BloodGlucoseRules?.length > 0) {
+                        matchedAlert = vitalAlertService.matchBloodGlucose(
+                            values.bloodGlucose as number,
+                            tenantSettings.BloodGlucoseRules
+                        );
+                    }
+                    break;
+                case 'BodyTemperature':
+                    if (tenantSettings.BodyTemperatureRules?.length > 0) {
+                        matchedAlert = vitalAlertService.matchBodyTemperature(
+                            values.temperature as number,
+                            values.unit as string,
+                            tenantSettings.BodyTemperatureRules
+                        );
+                    }
+                    break;
+                case 'BloodOxygenSaturation':
+                    if (tenantSettings.BloodOxygenSaturationRules?.length > 0) {
+                        matchedAlert = vitalAlertService.matchBloodOxygenSaturation(
+                            values.oxygenSaturation as number,
+                            tenantSettings.BloodOxygenSaturationRules
+                        );
+                    }
+                    break;
+                case 'BodyBmi':
+                    if (tenantSettings.BodyBmiRules?.length > 0) {
+                        matchedAlert = vitalAlertService.matchBodyBmi(
+                            values.bmi as number,
+                            tenantSettings.BodyBmiRules
+                        );
+                    }
+                    break;
+            }
+
+            if (matchedAlert) {
+                // Format the alert message with actual values
+                const formattedMessage = vitalAlertService.formatAlertMessage(
+                    matchedAlert.alertMessage,
+                    values as { [key: string]: string | number }
+                );
+                matchedAlert.alertMessage = formattedMessage;
+            }
+
+            return { processed: true, matchedAlert };
+        } catch (error) {
+            Logger.instance().log(`Error processing tenant rules: ${error}`);
+            return { processed: false, matchedAlert: null };
+        }
+    }
+
     static async forBloodGlucose(model: BloodGlucoseDto,
         notificationChannel: NotificationChannel = NotificationChannel.MobilePush,
         metaData: BiometricAlertSettings | null = null) {
         try {
-            const notification = BiometricAlerts.getGlucoseNotification(model.BloodGlucose);
-            if (!notification) {
-                return;
-            }
             const biometricAlertHandler = BiometricAlerts.getBiometricAlertHandler(notificationChannel);
             if (!biometricAlertHandler) {
                 throw new ApiError(500, 'Biometric alert handler not found.');
+            }
+
+            // Try tenant-specific rules first
+            const tenantResult = await BiometricAlerts.processWithTenantRules(
+                model.PatientUserId,
+                'BloodGlucose',
+                { BloodGlucose: model.BloodGlucose, bloodGlucose: model.BloodGlucose },
+                notificationChannel,
+                metaData
+            );
+
+            if (tenantResult.processed && tenantResult.matchedAlert) {
+                // Use tenant-specific alert
+                if (!tenantResult.matchedAlert.sendAlert) {
+                    return; // sendAlert is false, skip notification
+                }
+                const glucoseAlertmodel: BloodGlucoseAlertModel = {};
+                glucoseAlertmodel.PatientUserId = model.PatientUserId;
+                glucoseAlertmodel.BloodGlucose = model.BloodGlucose;
+                glucoseAlertmodel.BiometricAlertSettings = metaData;
+                glucoseAlertmodel.GlucoseNotification = {
+                    severity : Severity.HIGH, // Use severity based on tenant category
+                    range    : tenantResult.matchedAlert.category,
+                    title    : tenantResult.matchedAlert.category,
+                    message  : tenantResult.matchedAlert.alertMessage
+                };
+                await biometricAlertHandler.bloodGlucoseAlert(glucoseAlertmodel);
+                return;
+            }
+
+            // Fallback to default logic if no tenant rules
+            const notification = BiometricAlerts.getGlucoseNotification(model.BloodGlucose);
+            if (!notification) {
+                return;
             }
             const glucoseAlertmodel: BloodGlucoseAlertModel = {};
             glucoseAlertmodel.PatientUserId = model.PatientUserId;
@@ -89,6 +227,37 @@ export class BiometricAlerts {
             if (!biometricAlertHandler) {
                 throw new ApiError(500, 'Biometric alert handler not found.');
             }
+
+            // Try tenant-specific rules first
+            const tenantResult = await BiometricAlerts.processWithTenantRules(
+                model.PatientUserId,
+                'BloodPressure',
+                { Systolic: model.Systolic, Diastolic: model.Diastolic, systolic: model.Systolic, diastolic: model.Diastolic },
+                notificationChannel,
+                metaData
+            );
+
+            if (tenantResult.processed && tenantResult.matchedAlert) {
+                // Use tenant-specific alert
+                if (!tenantResult.matchedAlert.sendAlert) {
+                    return; // sendAlert is false, skip notification
+                }
+                const bloodPressureAlertmodel: BloodPressureAlertModel = {};
+                bloodPressureAlertmodel.PatientUserId = model.PatientUserId;
+                bloodPressureAlertmodel.Systolic = model.Systolic;
+                bloodPressureAlertmodel.Diastolic = model.Diastolic;
+                bloodPressureAlertmodel.BiometricAlertSettings = metaData;
+                bloodPressureAlertmodel.BloodPressureNotification = {
+                    severity : Severity.HIGH,
+                    range    : tenantResult.matchedAlert.category,
+                    title    : tenantResult.matchedAlert.category,
+                    message  : tenantResult.matchedAlert.alertMessage
+                };
+                await biometricAlertHandler.bloodPressureAlert(bloodPressureAlertmodel);
+                return;
+            }
+
+            // Fallback to default logic if no tenant rules
             const notification = BiometricAlerts.getBloodPressureNotification(model.Systolic, model.Diastolic);
             if (!notification || notification?.severity === Severity.NORMAL) {
                 return;
@@ -111,7 +280,7 @@ export class BiometricAlerts {
 
             await biometricAlertHandler.bloodPressureAlert(bloodPressureAlertmodel);
         } catch (error) {
-            Logger.instance().log(`Error in sending blood glucose alert notification : ${error}`);
+            Logger.instance().log(`Error in sending blood pressure alert notification : ${error}`);
         }
     }
 
@@ -120,13 +289,44 @@ export class BiometricAlerts {
         metaData: BiometricAlertSettings | null = null) {
         try {
             Logger.instance().log(`Processing pulse alert for model: ${JSON.stringify(model)} and notification channel: ${notificationChannel}`);
-            const notification = BiometricAlerts.getPulseNotification(model.Pulse!);
-            if (!notification || notification?.severity === Severity.NORMAL) {
-                return;
-            }
             const biometricAlertHandler = BiometricAlerts.getBiometricAlertHandler(notificationChannel);
             if (!biometricAlertHandler) {
                 throw new ApiError(500, 'Biometric alert handler not found.');
+            }
+
+            // Try tenant-specific rules first
+            const tenantResult = await BiometricAlerts.processWithTenantRules(
+                model.PatientUserId,
+                'Pulse',
+                { Pulse: model.Pulse, pulse: model.Pulse },
+                notificationChannel,
+                metaData
+            );
+
+            if (tenantResult.processed && tenantResult.matchedAlert) {
+                // Use tenant-specific alert
+                if (!tenantResult.matchedAlert.sendAlert) {
+                    return; // sendAlert is false, skip notification
+                }
+                const pulseAlertModel: PulseAlertModel = {};
+                pulseAlertModel.PatientUserId = model.PatientUserId;
+                pulseAlertModel.Pulse = model.Pulse;
+                pulseAlertModel.BiometricAlertSettings = metaData;
+                pulseAlertModel.PulseNotification = {
+                    severity : Severity.HIGH,
+                    range    : tenantResult.matchedAlert.category,
+                    title    : tenantResult.matchedAlert.category,
+                    message  : tenantResult.matchedAlert.alertMessage
+                };
+                Logger.instance().log(`Sending tenant-specific pulse alert notification: ${JSON.stringify(pulseAlertModel)}`);
+                await biometricAlertHandler.pulseAlert(pulseAlertModel);
+                return;
+            }
+
+            // Fallback to default logic if no tenant rules
+            const notification = BiometricAlerts.getPulseNotification(model.Pulse!);
+            if (!notification || notification?.severity === Severity.NORMAL) {
+                return;
             }
             const pulseAlertModel: PulseAlertModel = {};
             pulseAlertModel.PatientUserId = model.PatientUserId;
@@ -154,6 +354,40 @@ export class BiometricAlerts {
         notificationChannel: NotificationChannel = NotificationChannel.MobilePush,
         metaData: BiometricAlertSettings | null = null) {
         try {
+            const biometricAlertHandler = BiometricAlerts.getBiometricAlertHandler(notificationChannel);
+            if (!biometricAlertHandler) {
+                throw new ApiError(500, 'Biometric alert handler not found.');
+            }
+
+            // Try tenant-specific rules first
+            const tenantResult = await BiometricAlerts.processWithTenantRules(
+                model.PatientUserId,
+                'BodyTemperature',
+                { BodyTemperature: model.BodyTemperature, temperature: model.BodyTemperature, unit: model.Unit || 'fahrenheit' },
+                notificationChannel,
+                metaData
+            );
+
+            if (tenantResult.processed && tenantResult.matchedAlert) {
+                // Use tenant-specific alert
+                if (!tenantResult.matchedAlert.sendAlert) {
+                    return; // sendAlert is false, skip notification
+                }
+                const temperatureAlertModel: BodyTemperatureAlertModel = {};
+                temperatureAlertModel.PatientUserId = model.PatientUserId;
+                temperatureAlertModel.BodyTemperature = model.BodyTemperature;
+                temperatureAlertModel.BiometricAlertSettings = metaData;
+                temperatureAlertModel.TemperatureNotification = {
+                    severity : Severity.HIGH,
+                    range    : tenantResult.matchedAlert.category,
+                    title    : tenantResult.matchedAlert.category,
+                    message  : tenantResult.matchedAlert.alertMessage
+                };
+                await biometricAlertHandler.bodyTemperatureAlert(temperatureAlertModel);
+                return;
+            }
+
+            // Fallback to default logic if no tenant rules
             const tempInFarenheit = bodyTemperatureUnits.includes(model.Unit?.toLowerCase()) ?
                 (model.BodyTemperature * 1.8) + 32 : model.BodyTemperature;
 
@@ -162,10 +396,6 @@ export class BiometricAlerts {
                 return;
             }
 
-            const biometricAlertHandler = BiometricAlerts.getBiometricAlertHandler(notificationChannel);
-            if (!biometricAlertHandler) {
-                throw new ApiError(500, 'Biometric alert handler not found.');
-            }
             const userLanguagePreference = await BiometricAlerts.getUserLanguagePreference(model.PatientUserId);
             const temperatureAlertModel: BodyTemperatureAlertModel = {};
             temperatureAlertModel.PatientUserId = model.PatientUserId;
@@ -191,13 +421,43 @@ export class BiometricAlerts {
         notificationChannel: NotificationChannel = NotificationChannel.MobilePush,
         metaData: BiometricAlertSettings | null = null) {
         try {
-            const notification = BiometricAlerts.getOxygenNotification(model.BloodOxygenSaturation);
-            if (!notification || notification?.severity === Severity.NORMAL) {
-                return;
-            }
             const biometricAlertHandler = BiometricAlerts.getBiometricAlertHandler(notificationChannel);
             if (!biometricAlertHandler) {
                 throw new ApiError(500, 'Biometric alert handler not found.');
+            }
+
+            // Try tenant-specific rules first
+            const tenantResult = await BiometricAlerts.processWithTenantRules(
+                model.PatientUserId,
+                'BloodOxygenSaturation',
+                { BloodOxygenSaturation: model.BloodOxygenSaturation, oxygenSaturation: model.BloodOxygenSaturation },
+                notificationChannel,
+                metaData
+            );
+
+            if (tenantResult.processed && tenantResult.matchedAlert) {
+                // Use tenant-specific alert
+                if (!tenantResult.matchedAlert.sendAlert) {
+                    return; // sendAlert is false, skip notification
+                }
+                const oxygenAlertModel: BloodOxygenAlertModel = {};
+                oxygenAlertModel.PatientUserId = model.PatientUserId;
+                oxygenAlertModel.BloodOxygenSaturation = model.BloodOxygenSaturation;
+                oxygenAlertModel.BiometricAlertSettings = metaData;
+                oxygenAlertModel.OxygenNotification = {
+                    severity : Severity.HIGH,
+                    range    : tenantResult.matchedAlert.category,
+                    title    : tenantResult.matchedAlert.category,
+                    message  : tenantResult.matchedAlert.alertMessage
+                };
+                await biometricAlertHandler.bloodOxygenSaturationAlert(oxygenAlertModel);
+                return;
+            }
+
+            // Fallback to default logic if no tenant rules
+            const notification = BiometricAlerts.getOxygenNotification(model.BloodOxygenSaturation);
+            if (!notification || notification?.severity === Severity.NORMAL) {
+                return;
             }
             const oxygenAlertModel: BloodOxygenAlertModel = {};
             oxygenAlertModel.PatientUserId = model.PatientUserId;
@@ -226,20 +486,49 @@ export class BiometricAlerts {
         metaData: BiometricAlertSettings | null = null) {
         try {
             const bmi = BiometricAlerts.calculateBMI(bodyWeightRecord.BodyWeight, bodyHeightRecord.BodyHeight);
-
-            const notification = BiometricAlerts.getBmiNotification(bmi);
-            if (!notification || notification?.severity === Severity.NORMAL) {
-                return;
-            }
             const biometricAlertHandler = BiometricAlerts.getBiometricAlertHandler(notificationChannel);
             if (!biometricAlertHandler) {
                 throw new ApiError(500, 'Biometric alert handler not found.');
+            }
+
+            // Try tenant-specific rules first
+            const tenantResult = await BiometricAlerts.processWithTenantRules(
+                bodyWeightRecord.PatientUserId,
+                'BodyBmi',
+                { BMI: bmi.toFixed(1), bmi: bmi },
+                notificationChannel,
+                metaData
+            );
+
+            if (tenantResult.processed && tenantResult.matchedAlert) {
+                // Use tenant-specific alert
+                if (!tenantResult.matchedAlert.sendAlert) {
+                    return; // sendAlert is false, skip notification
+                }
+                const bmiAlertModel: BodyBmiAlertModel = {};
+                bmiAlertModel.PatientUserId = bodyWeightRecord.PatientUserId;
+                bmiAlertModel.Bmi = bmi;
+                bmiAlertModel.BiometricAlertSettings = metaData;
+                bmiAlertModel.BmiNotification = {
+                    severity : Severity.HIGH,
+                    range    : tenantResult.matchedAlert.category,
+                    title    : tenantResult.matchedAlert.category,
+                    message  : tenantResult.matchedAlert.alertMessage
+                };
+                await biometricAlertHandler.bmiAlert(bmiAlertModel);
+                return;
+            }
+
+            // Fallback to default logic if no tenant rules
+            const notification = BiometricAlerts.getBmiNotification(bmi);
+            if (!notification || notification?.severity === Severity.NORMAL) {
+                return;
             }
             const bmiAlertModel: BodyBmiAlertModel = {};
             bmiAlertModel.PatientUserId = bodyWeightRecord.PatientUserId;
             bmiAlertModel.Bmi = bmi;
             bmiAlertModel.BiometricAlertSettings = metaData;
-            
+
             const userLanguagePreference = await BiometricAlerts.getUserLanguagePreference(bodyWeightRecord.PatientUserId);
             bmiAlertModel.BmiNotification = {
                 severity : notification.severity,
@@ -249,10 +538,10 @@ export class BiometricAlerts {
                 message : notification.message[userLanguagePreference] ??
                 notification.message[BiometricAlerts.DEFAULT_USER_LANGUAGE_PREFERENCE]
             };
-            
+
             await biometricAlertHandler.bmiAlert(bmiAlertModel);
         } catch (error) {
-            Logger.instance().log(`Error in sending body temperature alert notification : ${error}`);
+            Logger.instance().log(`Error in sending BMI alert notification : ${error}`);
         }
     }
 

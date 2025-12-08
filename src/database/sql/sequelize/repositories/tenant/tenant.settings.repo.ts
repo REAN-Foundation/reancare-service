@@ -6,7 +6,8 @@ import {
     FormsSettings,
     TenantSettingsDomainModel,
     TenantSettingsDto,
-    CustomSettings
+    CustomSettings,
+    VitalAlertSettings
 } from "../../../../../domain.types/tenant/tenant.settings.types";
 import { uuid } from "../../../../../domain.types/miscellaneous/system.types";
 import { ITenantSettingsRepo } from '../../../../repository.interfaces/tenant/tenant.settings.interface';
@@ -30,13 +31,17 @@ export class TenantSettingsRepo implements ITenantSettingsRepo {
             const customSettings =
                 model.CustomSettings ? this.validateJSONStringify(JSON.stringify(model.CustomSettings)) : null;
 
+            const vitalAlertSettings =
+                model.VitalAlertSettings ? this.validateJSONStringify(JSON.stringify(model.VitalAlertSettings)) : null;
+
             const entity = {
-                TenantId       : tenantId,
-                Common         : common,
-                Followup       : followup,
-                ChatBot        : chatBot,
-                Forms          : forms,
-                CustomSettings : customSettings,
+                TenantId           : tenantId,
+                Common             : common,
+                Followup           : followup,
+                ChatBot            : chatBot,
+                Forms              : forms,
+                CustomSettings     : customSettings,
+                VitalAlertSettings : vitalAlertSettings,
             };
             const settings = await TenantSettings.create(entity);
             return TenantSettingsMapper.toDto(settings);
@@ -150,7 +155,24 @@ export class TenantSettingsRepo implements ITenantSettingsRepo {
             throw new ApiError(500, `Failed to update tenant custom settings: ${error.message}`);
         }
     };
-    
+
+    updateVitalAlertSettings = async (tenantId: string, settings: VitalAlertSettings): Promise<TenantSettingsDto> => {
+        try {
+            const vitalAlertSettings = this.validateJSONStringify(JSON.stringify(settings));
+            const record = await TenantSettings.findOne({ where: { TenantId: tenantId } });
+            if (!record) {
+                throw new ApiError(404, `Tenant settings not found for tenant: ${tenantId}`);
+            }
+            record.VitalAlertSettings = vitalAlertSettings;
+            await record.save();
+            return TenantSettingsMapper.toDto(record);
+        }
+        catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, `Failed to update tenant vital alert settings: ${error.message}`);
+        }
+    };
+
     private readonly validateJSONStringify = (str: string) => {
         const validateTrue = Helper.replaceAll(str,`"true"`, 'true');
         const validatedString = Helper.replaceAll(validateTrue, `"false"`, 'false');

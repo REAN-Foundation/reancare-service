@@ -1,4 +1,5 @@
 import { Setting } from "./setting";
+import { VitalAlertSettings } from "./vital.alert.settings.types";
 
 export enum TenantSettingsTypes {
     Common              = 'Common',
@@ -7,6 +8,7 @@ export enum TenantSettingsTypes {
     Forms               = 'Forms',
     Consent             = 'Consent',
     CustomSettings      = 'CustomSettings',
+    VitalAlertSettings  = 'VitalAlertSettings',
 }
 
 export enum WeekDay {
@@ -26,6 +28,7 @@ export const TenantSettingsTypesList = [
     TenantSettingsTypes.Forms,
     TenantSettingsTypes.Consent,
     TenantSettingsTypes.CustomSettings,
+    TenantSettingsTypes.VitalAlertSettings,
 ];
 
 export interface UserInterfaces {
@@ -348,6 +351,7 @@ export interface TenantSettingsDomainModel {
     Forms?                  : FormsSettings,
     Consent?                : ConsentSettings,
     CustomSettings?         : CustomSettings,
+    VitalAlertSettings?     : VitalAlertSettings,
 }
 
 export interface TenantSettingsDto extends TenantSettingsDomainModel {
@@ -377,3 +381,19 @@ export enum Environment {
   Uat         = 'uat',
   Production  = 'production'
 }
+
+// Re-export VitalAlertSettings types for convenience
+export { VitalAlertSettings } from "./vital.alert.settings.types";
+export {
+    VitalRange,
+    BaseVitalAlertRule,
+    BloodPressureAlertRule,
+    PulseAlertRule,
+    BloodGlucoseAlertRule,
+    BodyTemperatureAlertRule,
+    BloodOxygenSaturationAlertRule,
+    BodyBmiAlertRule,
+    MatchedVitalAlert,
+    VitalType,
+    getDefaultVitalAlertSettings
+} from "./vital.alert.settings.types";

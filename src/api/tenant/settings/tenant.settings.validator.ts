@@ -11,7 +11,14 @@ import {
     ConsentSettings,
     CustomSettings,
     CustomSettingItem,
-    CustomSettingDataType
+    CustomSettingDataType,
+    VitalAlertSettings,
+    BloodPressureAlertRule,
+    PulseAlertRule,
+    BloodGlucoseAlertRule,
+    BodyTemperatureAlertRule,
+    BloodOxygenSaturationAlertRule,
+    BodyBmiAlertRule,
 } from '../../../domain.types/tenant/tenant.settings.types';
 import { BaseValidator, Where } from '../../base.validator';
 import { Logger } from '../../../common/logger';
@@ -658,8 +665,168 @@ export class TenantSettingsValidator extends BaseValidator {
         return validatedSettings;
     };
 
+    updateVitalAlertSettings = async (request: express.Request): Promise<VitalAlertSettings> => {
+        const vitalAlertSettings = request.body?.VitalAlertSettings;
+        if (!vitalAlertSettings) {
+            return null;
+        }
+
+        const validatedSettings: VitalAlertSettings = {};
+
+        // Validate Blood Pressure Rules
+        if (vitalAlertSettings.BloodPressureRules && Array.isArray(vitalAlertSettings.BloodPressureRules)) {
+            validatedSettings.BloodPressureRules = [];
+            const maxRules = Math.min(vitalAlertSettings.BloodPressureRules.length, 20);
+            for (let i = 0; i < maxRules; i++) {
+                const rule = vitalAlertSettings.BloodPressureRules[i] as BloodPressureAlertRule;
+                const path = `VitalAlertSettings.BloodPressureRules[${i}]`;
+                await this.validateString(request, `${path}.category`, Where.Body, true, false, false, 1);
+                await this.validateInt(request, `${path}.systolic.min`, Where.Body, true, false);
+                await this.validateInt(request, `${path}.systolic.max`, Where.Body, true, false);
+                await this.validateInt(request, `${path}.diastolic.min`, Where.Body, true, false);
+                await this.validateInt(request, `${path}.diastolic.max`, Where.Body, true, false);
+                await this.validateString(request, `${path}.alertMessage`, Where.Body, true, false, false, 1);
+                await this.validateBoolean(request, `${path}.sendAlert`, Where.Body, true, false);
+                await this.validateInt(request, `${path}.priority`, Where.Body, true, false);
+
+                validatedSettings.BloodPressureRules.push({
+                    category     : rule.category,
+                    systolic     : rule.systolic,
+                    diastolic    : rule.diastolic,
+                    alertMessage : rule.alertMessage,
+                    sendAlert    : rule.sendAlert,
+                    priority     : rule.priority
+                });
+            }
+        }
+
+        // Validate Pulse Rules
+        if (vitalAlertSettings.PulseRules && Array.isArray(vitalAlertSettings.PulseRules)) {
+            validatedSettings.PulseRules = [];
+            const maxRules = Math.min(vitalAlertSettings.PulseRules.length, 20);
+            for (let i = 0; i < maxRules; i++) {
+                const rule = vitalAlertSettings.PulseRules[i] as PulseAlertRule;
+                const path = `VitalAlertSettings.PulseRules[${i}]`;
+                await this.validateString(request, `${path}.category`, Where.Body, true, false, false, 1);
+                await this.validateInt(request, `${path}.pulse.min`, Where.Body, true, false);
+                await this.validateInt(request, `${path}.pulse.max`, Where.Body, true, false);
+                await this.validateString(request, `${path}.alertMessage`, Where.Body, true, false, false, 1);
+                await this.validateBoolean(request, `${path}.sendAlert`, Where.Body, true, false);
+                await this.validateInt(request, `${path}.priority`, Where.Body, true, false);
+
+                validatedSettings.PulseRules.push({
+                    category     : rule.category,
+                    pulse        : rule.pulse,
+                    alertMessage : rule.alertMessage,
+                    sendAlert    : rule.sendAlert,
+                    priority     : rule.priority
+                });
+            }
+        }
+
+        // Validate Blood Glucose Rules
+        if (vitalAlertSettings.BloodGlucoseRules && Array.isArray(vitalAlertSettings.BloodGlucoseRules)) {
+            validatedSettings.BloodGlucoseRules = [];
+            const maxRules = Math.min(vitalAlertSettings.BloodGlucoseRules.length, 20);
+            for (let i = 0; i < maxRules; i++) {
+                const rule = vitalAlertSettings.BloodGlucoseRules[i] as BloodGlucoseAlertRule;
+                const path = `VitalAlertSettings.BloodGlucoseRules[${i}]`;
+                await this.validateString(request, `${path}.category`, Where.Body, true, false, false, 1);
+                await this.validateInt(request, `${path}.bloodGlucose.min`, Where.Body, true, false);
+                await this.validateInt(request, `${path}.bloodGlucose.max`, Where.Body, true, false);
+                await this.validateString(request, `${path}.alertMessage`, Where.Body, true, false, false, 1);
+                await this.validateBoolean(request, `${path}.sendAlert`, Where.Body, true, false);
+                await this.validateInt(request, `${path}.priority`, Where.Body, true, false);
+
+                validatedSettings.BloodGlucoseRules.push({
+                    category     : rule.category,
+                    bloodGlucose : rule.bloodGlucose,
+                    alertMessage : rule.alertMessage,
+                    sendAlert    : rule.sendAlert,
+                    priority     : rule.priority
+                });
+            }
+        }
+
+        // Validate Body Temperature Rules
+        if (vitalAlertSettings.BodyTemperatureRules && Array.isArray(vitalAlertSettings.BodyTemperatureRules)) {
+            validatedSettings.BodyTemperatureRules = [];
+            const maxRules = Math.min(vitalAlertSettings.BodyTemperatureRules.length, 20);
+            for (let i = 0; i < maxRules; i++) {
+                const rule = vitalAlertSettings.BodyTemperatureRules[i] as BodyTemperatureAlertRule;
+                const path = `VitalAlertSettings.BodyTemperatureRules[${i}]`;
+                await this.validateString(request, `${path}.category`, Where.Body, true, false, false, 1);
+                await this.validateDecimal(request, `${path}.temperature.min`, Where.Body, true, false);
+                await this.validateDecimal(request, `${path}.temperature.max`, Where.Body, true, false);
+                await this.validateString(request, `${path}.alertMessage`, Where.Body, true, false, false, 1);
+                await this.validateBoolean(request, `${path}.sendAlert`, Where.Body, true, false);
+                await this.validateInt(request, `${path}.priority`, Where.Body, true, false);
+
+                validatedSettings.BodyTemperatureRules.push({
+                    category     : rule.category,
+                    temperature  : rule.temperature,
+                    unit         : rule.unit ?? 'fahrenheit',
+                    alertMessage : rule.alertMessage,
+                    sendAlert    : rule.sendAlert,
+                    priority     : rule.priority
+                });
+            }
+        }
+
+        // Validate Blood Oxygen Saturation Rules
+        if (vitalAlertSettings.BloodOxygenSaturationRules && Array.isArray(vitalAlertSettings.BloodOxygenSaturationRules)) {
+            validatedSettings.BloodOxygenSaturationRules = [];
+            const maxRules = Math.min(vitalAlertSettings.BloodOxygenSaturationRules.length, 20);
+            for (let i = 0; i < maxRules; i++) {
+                const rule = vitalAlertSettings.BloodOxygenSaturationRules[i] as BloodOxygenSaturationAlertRule;
+                const path = `VitalAlertSettings.BloodOxygenSaturationRules[${i}]`;
+                await this.validateString(request, `${path}.category`, Where.Body, true, false, false, 1);
+                await this.validateInt(request, `${path}.oxygenSaturation.min`, Where.Body, true, false);
+                await this.validateInt(request, `${path}.oxygenSaturation.max`, Where.Body, true, false);
+                await this.validateString(request, `${path}.alertMessage`, Where.Body, true, false, false, 1);
+                await this.validateBoolean(request, `${path}.sendAlert`, Where.Body, true, false);
+                await this.validateInt(request, `${path}.priority`, Where.Body, true, false);
+
+                validatedSettings.BloodOxygenSaturationRules.push({
+                    category         : rule.category,
+                    oxygenSaturation : rule.oxygenSaturation,
+                    alertMessage     : rule.alertMessage,
+                    sendAlert        : rule.sendAlert,
+                    priority         : rule.priority
+                });
+            }
+        }
+
+        // Validate Body BMI Rules
+        if (vitalAlertSettings.BodyBmiRules && Array.isArray(vitalAlertSettings.BodyBmiRules)) {
+            validatedSettings.BodyBmiRules = [];
+            const maxRules = Math.min(vitalAlertSettings.BodyBmiRules.length, 20);
+            for (let i = 0; i < maxRules; i++) {
+                const rule = vitalAlertSettings.BodyBmiRules[i] as BodyBmiAlertRule;
+                const path = `VitalAlertSettings.BodyBmiRules[${i}]`;
+                await this.validateString(request, `${path}.category`, Where.Body, true, false, false, 1);
+                await this.validateDecimal(request, `${path}.bmi.min`, Where.Body, true, false);
+                await this.validateDecimal(request, `${path}.bmi.max`, Where.Body, true, false);
+                await this.validateString(request, `${path}.alertMessage`, Where.Body, true, false, false, 1);
+                await this.validateBoolean(request, `${path}.sendAlert`, Where.Body, true, false);
+                await this.validateInt(request, `${path}.priority`, Where.Body, true, false);
+
+                validatedSettings.BodyBmiRules.push({
+                    category     : rule.category,
+                    bmi          : rule.bmi,
+                    alertMessage : rule.alertMessage,
+                    sendAlert    : rule.sendAlert,
+                    priority     : rule.priority
+                });
+            }
+        }
+
+        this.validateRequest(request);
+        return validatedSettings;
+    };
+
     updateTenantSettingsByType = async (request: express.Request, settingsType: TenantSettingsTypes)
-    : Promise<CommonSettings | FollowupSettings | ChatBotSettings | FormsSettings | ConsentSettings | CustomSettings> => {
+    : Promise<CommonSettings | FollowupSettings | ChatBotSettings | FormsSettings | ConsentSettings | CustomSettings | VitalAlertSettings> => {
         if (settingsType === TenantSettingsTypes.Common) {
             return await this.updateCommonSettings(request);
         }
@@ -678,6 +845,9 @@ export class TenantSettingsValidator extends BaseValidator {
         if (settingsType === TenantSettingsTypes.CustomSettings) {
             return await this.updateCustomSettings(request);
         }
+        if (settingsType === TenantSettingsTypes.VitalAlertSettings) {
+            return await this.updateVitalAlertSettings(request);
+        }
         return null;
     };
 
@@ -689,16 +859,18 @@ export class TenantSettingsValidator extends BaseValidator {
         const formsSettings = await this.updateFormsSettings(request);
         const consentSettings = await this.updateConsentSettings(request);
         const customSettings = await this.updateCustomSettings(request);
+        const vitalAlertSettings = await this.updateVitalAlertSettings(request);
 
         this.validateRequest(request);
 
         const model: TenantSettingsDomainModel = {
-            Common         : commonSettings,
-            Followup       : followup,
-            ChatBot        : chatBotSettings,
-            Forms          : formsSettings,
-            Consent        : consentSettings,
-            CustomSettings : customSettings
+            Common             : commonSettings,
+            Followup           : followup,
+            ChatBot            : chatBotSettings,
+            Forms              : formsSettings,
+            Consent            : consentSettings,
+            CustomSettings     : customSettings,
+            VitalAlertSettings : vitalAlertSettings,
         };
 
         return model;

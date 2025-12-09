@@ -10,19 +10,18 @@ import { ITaskHandlerResolver } from "../../../../database/repository.interfaces
 @injectable()
 export class UserTaskHandler implements ITaskHandlerResolver {
 
-    private static handlers = new Map<UserTaskCategory, any>();
+    private static readonly handlers = new Map<UserTaskCategory, any>();
     private static defaultHandler: any = null;
 
     public registerHandler(category: UserTaskCategory, handlerClass: any): void {
         UserTaskHandler.handlers.set(category, handlerClass);
         Logger.instance().log(`Registered task handler for category: ${category}`);
-    }
-
+    };
 
     public static setDefaultHandler(handlerClass: any): void {
         UserTaskHandler.defaultHandler = handlerClass;
         Logger.instance().log('Registered default task handler for unhandled categories');
-    }
+    };
 
     public getTaskHandler(category: UserTaskCategory): IUserTaskHandler | null {
         try {
@@ -45,7 +44,7 @@ export class UserTaskHandler implements ITaskHandlerResolver {
             Logger.instance().log(`Error getting task handler for category ${category}: ${error}`);
             return null;
         }
-    }
+    };
 
 }
 

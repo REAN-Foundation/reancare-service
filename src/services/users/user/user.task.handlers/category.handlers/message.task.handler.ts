@@ -2,9 +2,8 @@ import { injectable } from "tsyringe";
 import { Logger } from "../../../../../common/logger";
 import { IUserTaskHandler } from "../../../../../database/repository.interfaces/users/user/task.task/user.task.handler.interface";
 import { ProcessedTaskDto } from "../../../../../domain.types/users/user.task/user.task.dto";
-import { UserTaskMessageDto } from "../../../../../domain.types/users/user.task/user.task.dto";
+import { UserTaskMessageDto,  } from "../../../../../domain.types/users/user.task/user.task.dto";
 import { NotificationChannel } from "../../../../../domain.types/general/notification/notification.types";
-import { ApiError } from "../../../../../common/api.error";
 import { UserTaskActionData } from "../../../../../domain.types/users/user.task/resolved.action.data.types";
 import { BotMessagingType } from "../../../../../domain.types/miscellaneous/bot.request.types";
 
@@ -29,7 +28,7 @@ export class MessageTaskHandler implements IUserTaskHandler {
                 ? BotMessagingType.Template
                 :  BotMessagingType.Text;
             
-            const templateName = isWhatsApp ? (rawContent?.TemplateName ?? null) : null
+            const templateName = isWhatsApp ? (rawContent?.TemplateName ?? null) : null;
 
             if (message.Variables || message.TemplateVariables) {
                 if (message.TemplateVariables) {
@@ -53,11 +52,11 @@ export class MessageTaskHandler implements IUserTaskHandler {
             Logger.instance().log(`Error processing message task: ${error}`);
             throw error;
         }
-    }
+    };
 
     shouldAutoFinish(): boolean {
         return true;
-    }
+    };
 
 }
 

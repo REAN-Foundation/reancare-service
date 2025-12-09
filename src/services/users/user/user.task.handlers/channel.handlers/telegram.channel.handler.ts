@@ -12,7 +12,7 @@ import { BaseChannelHandler } from "./base.channel.handler";
 @injectable()
 export class TelegramChannelHandler extends BaseChannelHandler {
 
-    private _botService: IBotService = Injector.Container.resolve(BotService);
+    private readonly _botService: IBotService = Injector.Container.resolve(BotService);
     
     async sendMessage(userTask: UserTaskMessageDto, processedResult: ProcessedTaskDto): Promise<boolean> {
         try {
@@ -42,7 +42,7 @@ export class TelegramChannelHandler extends BaseChannelHandler {
             Logger.instance().log(`Error sending Telegram message: ${error}`);
             return false;
         }
-    }
+    };
 
 }
 

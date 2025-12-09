@@ -10,12 +10,12 @@ import { IChannelHandlerResolver } from "../../../../database/repository.interfa
 @injectable()
 export class UserTaskChannelHandler implements IChannelHandlerResolver {
 
-    private static handlers = new Map<NotificationChannel, any>();
+    private static readonly handlers = new Map<NotificationChannel, any>();
 
     public registerHandler(channel: NotificationChannel, handlerClass: any): void {
         UserTaskChannelHandler.handlers.set(channel, handlerClass);
         Logger.instance().log(`Registered channel handler for channel: ${channel}`);
-    }
+    };
 
     public getChannelHandler(channel: NotificationChannel): IUserTaskChannelHandler | null {
         try {
@@ -32,7 +32,7 @@ export class UserTaskChannelHandler implements IChannelHandlerResolver {
             Logger.instance().log(`Error getting channel handler for ${channel}: ${error}`);
             return null;
         }
-    }
+    };
 
 }
 

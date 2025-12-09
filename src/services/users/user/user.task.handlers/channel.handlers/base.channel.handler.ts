@@ -17,7 +17,6 @@ export abstract class BaseChannelHandler implements IUserTaskChannelHandler {
     protected _personRepo: IPersonRepo = Injector.Container.resolve('IPersonRepo');
     protected _userRepo: IUserRepo = Injector.Container.resolve('IUserRepo');
 
-
     protected async getUserPerson(userId: string) {
         try {
             const user = await this._userRepo.getById(userId);
@@ -37,17 +36,17 @@ export abstract class BaseChannelHandler implements IUserTaskChannelHandler {
             Logger.instance().log(`Error getting user person: ${error}`);
             return null;
         }
-    }
+    };
 
     protected async getUserPhoneNumber(userId: string): Promise<string | null> {
         const person = await this.getUserPerson(userId);
         return person?.Phone ?? null;
-    }
+    };
 
     protected async getUserReferenceId(userId: string): Promise<string | null> {
         const person = await this.getUserPerson(userId);
         return person?.UniqueReferenceId ?? null;
-    }
+    };
 
     abstract sendMessage(userTask: UserTaskMessageDto, processedTask: ProcessedTaskDto): Promise<boolean>;
 

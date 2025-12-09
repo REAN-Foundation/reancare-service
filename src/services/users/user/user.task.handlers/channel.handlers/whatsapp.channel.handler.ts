@@ -1,7 +1,6 @@
 import { injectable } from "tsyringe";
 import { Logger } from "../../../../../common/logger";
-import { UserTaskMessageDto } from "../../../../../domain.types/users/user.task/user.task.dto";
-import { ProcessedTaskDto } from "../../../../../domain.types/users/user.task/user.task.dto";
+import { UserTaskMessageDto, ProcessedTaskDto} from "../../../../../domain.types/users/user.task/user.task.dto";
 import { NotificationChannel } from "../../../../../domain.types/general/notification/notification.types";
 import { Injector } from "../../../../../startup/injector";
 import { IBotService } from "../../../../../modules/communication/bot.service/bot.service.interface";
@@ -10,13 +9,12 @@ import { BotRequestDomainModel } from "../../../../../domain.types/miscellaneous
 import { Helper } from "../../../../../common/helper";
 import { BaseChannelHandler } from "./base.channel.handler";
 
-
 ///////////////////////////////////////////////////////////////////////////////
 
 @injectable()
 export class WhatsAppChannelHandler extends BaseChannelHandler {
 
-    private _botService: IBotService = Injector.Container.resolve(BotService);
+    private readonly _botService: IBotService = Injector.Container.resolve(BotService);
     
     async sendMessage(userTask: UserTaskMessageDto, processedTask: ProcessedTaskDto): Promise<boolean> {
         try {
@@ -49,7 +47,7 @@ export class WhatsAppChannelHandler extends BaseChannelHandler {
             Logger.instance().log(`Error sending WhatsApp message: ${error}`);
             return false;
         }
-    }
+    };
 
     private mapChannelToBotChannel(channel: string): NotificationChannel {
         switch (channel) {
@@ -59,8 +57,9 @@ export class WhatsAppChannelHandler extends BaseChannelHandler {
             default:
                 return NotificationChannel.WhatsappMeta;
         }
-    }
+    };
 
 
 }
+
 

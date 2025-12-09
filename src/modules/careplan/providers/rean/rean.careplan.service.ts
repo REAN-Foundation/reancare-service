@@ -260,17 +260,17 @@ export class ReanCareplanService implements ICareplanService {
     ): Promise<CareplanActivity> => {
 
         const careplanApiBaseUrl = process.env.CAREPLAN_API_BASE_URL;
-        var url = `${careplanApiBaseUrl}/enrollment-tasks/${activityId}`;
+        const url = `${careplanApiBaseUrl}/enrollment-tasks/${activityId}`;
 
         const headerOptions = await this.getHeaderOptions();
-        var response = await needle("get", url, headerOptions);
+        const response = await needle("get", url, headerOptions);
 
         if (response.statusCode !== 200) {
             Logger.instance().log(`Body: ${JSON.stringify(response.body.error)}`);
             throw new ApiError(500, 'Careplan service get activity service error: ' + (response.body.error?.message));
         }
 
-        var activity = response.body.Data;
+        const activity = response.body.Data;
         if (!activity) {
             throw new ApiError(404, 'Activity not found');
         }
@@ -278,7 +278,7 @@ export class ReanCareplanService implements ICareplanService {
         const category = this.getUserTaskCategory(activity.AssetType);
         const status = this.getActivityStatus(activity.Status);
 
-        var entity: CareplanActivity = {
+        const entity: CareplanActivity = {
             ParticipantId          : activity.ParticipantId,
             EnrollmentId           : activity.EnrollmentId,
             Provider               : this.providerName(),
@@ -318,14 +318,14 @@ export class ReanCareplanService implements ICareplanService {
         };
 
         const headerOptions = await this.getHeaderOptions();
-        var response = await needle("put", url, updateData, headerOptions);
+        const response = await needle("put", url, updateData, headerOptions);
 
         if (response.statusCode !== 200) {
             Logger.instance().log(`ResponseCode: ${response.statusCode}, Body: ${JSON.stringify(response.body.error)}`);
             throw new ApiError(500, 'Careplan service update enrollment task error: ' + (response.body.error?.message));
         }
 
-        var updatedActivity = response.body.Data;
+        const updatedActivity = response.body.Data;
         if (!updatedActivity) {
             return await this.getActivity(patientUserId, careplanCode, enrollmentId, activityId);
         }
@@ -333,7 +333,7 @@ export class ReanCareplanService implements ICareplanService {
         const category = this.getUserTaskCategory(updatedActivity.AssetType);
         const status = this.getActivityStatus(updatedActivity.Status);
 
-        var entity: CareplanActivity = {
+        const entity: CareplanActivity = {
             ParticipantId          : updatedActivity.ParticipantId,
             EnrollmentId           : updatedActivity.EnrollmentId,
             Provider               : this.providerName(),

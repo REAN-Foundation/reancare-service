@@ -18,9 +18,9 @@ export class UserTaskSenderService {
 
     constructor(
         @inject('IUserTaskRepo') private _userTaskRepo: IUserTaskRepo,
-        @inject('IActionHandlerResolver') private _actionHandlerResolver: IActionHandlerResolver,
-        @inject('ITaskHandlerResolver') private _taskHandlerResolver: ITaskHandlerResolver,
-        @inject('IChannelHandlerResolver') private _channelHandlerResolver: IChannelHandlerResolver,
+        @inject('IActionHandlerResolver') private readonly _actionHandlerResolver: IActionHandlerResolver,
+        @inject('ITaskHandlerResolver') private readonly _taskHandlerResolver: ITaskHandlerResolver,
+        @inject('IChannelHandlerResolver') private readonly _channelHandlerResolver: IChannelHandlerResolver,
     ) {}
 
     public _q = asyncLib.queue((timePeriod: number, onCompleted) => {
@@ -97,11 +97,11 @@ export class UserTaskSenderService {
                 userTask.Sequence = 0;
             }
         }
-    }
+    };
 
     private sortTasksBySequence(userTasks: UserTaskMessageDto[]): void {
         userTasks.sort((a, b) => (a.Sequence ?? 0) - (b.Sequence ?? 0));
-    }
+    };
 
     private processUserTask = async (userTask: UserTaskMessageDto): Promise<boolean> => {
         try {
@@ -145,7 +145,7 @@ export class UserTaskSenderService {
             Logger.instance().log(`Error resolving action for task ${userTask.id}: ${error}`);
             return null;
         }
-    }
+    };
 
     private async processTaskWithHandler(userTask: UserTaskMessageDto, actionData: UserTaskActionData):
      Promise<ProcessedTaskDto | null> {
@@ -167,7 +167,7 @@ export class UserTaskSenderService {
         }
 
         return processedResult;
-    }
+    };
 
     private async sendMessageViaChannel(userTask: UserTaskMessageDto, processedResult: any): Promise<boolean> {
         if (!userTask.Channel) {
@@ -190,12 +190,8 @@ export class UserTaskSenderService {
         }
 
         return isMessageSent;
-    }
+    };
 
-    /**
-     * Handle task completion using handler lifecycle methods
-     * This replaces the hard-coded logic for shouldFinishTaskAfterMessageSent and careplan completion
-     */
     private async handleTaskCompletion(userTask: UserTaskMessageDto): Promise<void> {
         try {
             const taskHandler = this._taskHandlerResolver.getTaskHandler(userTask.Category);
@@ -216,12 +212,8 @@ export class UserTaskSenderService {
         } catch (error) {
             Logger.instance().log(`Error handling task completion for ${userTask.id}: ${error}`);
         }
-    }
+    };
 
-    /**
-     * Finish the task and trigger action-specific completion logic
-     * This now uses the handler's lifecycle methods instead of hard-coded careplan logic
-     */
     private async finishTask(userTask: UserTaskMessageDto): Promise<void> {
         await this._userTaskRepo.finishTask(userTask.id);
 
@@ -236,7 +228,7 @@ export class UserTaskSenderService {
                 Logger.instance().log(`Error in action completion callback for task ${userTask.id}: ${error}`);
             }
         }
-    }
+    };
 
     private timer = ms => new Promise(res => setTimeout(res, ms));
 

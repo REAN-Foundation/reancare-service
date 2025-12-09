@@ -1,31 +1,46 @@
+import { injectable } from "tsyringe";
 import { Logger } from "../../../../common/logger";
 import { Injector } from "../../../../startup/injector";
 import { UserTaskCategory } from "../../../../domain.types/users/user.task/user.task.types";
 import { IUserTaskHandler } from "../../../../database/repository.interfaces/users/user/task.task/user.task.handler.interface";
-import { AssessmentTaskHandler } from "./category.handlers/assessment.task.handler";
-import { MessageTaskHandler } from "./category.handlers/message.task.handler";
+import { ITaskHandlerResolver } from "../../../../database/repository.interfaces/users/user/task.task/user.task.handler.resolver.interface";
 
 ///////////////////////////////////////////////////////////////////////////////
 
-export class UserTaskHandler {
+@injectable()
+export class UserTaskHandler implements ITaskHandlerResolver {
 
-    getTaskHandler(category: UserTaskCategory): IUserTaskHandler {
+    private static handlers = new Map<UserTaskCategory, any>();
+    private static defaultHandler: any = null;
+
+    public registerHandler(category: UserTaskCategory, handlerClass: any): void {
+        UserTaskHandler.handlers.set(category, handlerClass);
+        Logger.instance().log(`Registered task handler for category: ${category}`);
+    }
+
+
+    public static setDefaultHandler(handlerClass: any): void {
+        UserTaskHandler.defaultHandler = handlerClass;
+        Logger.instance().log('Registered default task handler for unhandled categories');
+    }
+
+    public getTaskHandler(category: UserTaskCategory): IUserTaskHandler | null {
         try {
-            switch (category) {
-                case UserTaskCategory.Assessment:
-                    return Injector.Container.resolve(AssessmentTaskHandler);
-                
-                case UserTaskCategory.Message:
-                    return Injector.Container.resolve(MessageTaskHandler);
-                
-                    // Add more handlers as needed
-                    // case UserTaskCategory.Medication:
-                    //     return Injector.Container.resolve(MedicationTaskHandler);
-                
-                default:
-                    Logger.instance().log(`No handler found for task category: ${category}`);
-                    return null;
+            const HandlerClass = UserTaskHandler.handlers.get(category);
+
+            if (!HandlerClass) {
+                Logger.instance().log(`No specific handler registered for task category: ${category}`);
+
+                if (UserTaskHandler.defaultHandler) {
+                    Logger.instance().log(`Using default handler for category: ${category}`);
+                    return Injector.Container.resolve(UserTaskHandler.defaultHandler);
+                }
+
+                return null;
             }
+
+            return Injector.Container.resolve(HandlerClass);
+
         } catch (error) {
             Logger.instance().log(`Error getting task handler for category ${category}: ${error}`);
             return null;

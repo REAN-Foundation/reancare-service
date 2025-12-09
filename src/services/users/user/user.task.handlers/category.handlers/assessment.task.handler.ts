@@ -113,5 +113,9 @@ export class AssessmentTaskHandler implements IUserTaskHandler {
         return true;
     };
 
+    shouldAutoFinish(): boolean {
+        return false;
+    }
+
 }
 

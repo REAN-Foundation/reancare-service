@@ -1,26 +1,20 @@
 import { injectable } from "tsyringe";
 import { Logger } from "../../../../../common/logger";
-import { IUserTaskChannelHandler } from "../../../../../database/repository.interfaces/users/user/task.task/user.task.channel.handler.interface";
 import { UserTaskMessageDto } from "../../../../../domain.types/users/user.task/user.task.dto";
 import { ProcessedTaskDto } from "../../../../../domain.types/users/user.task/user.task.dto";
 import { NotificationChannel } from "../../../../../domain.types/general/notification/notification.types";
-import { IPersonRepo } from "../../../../../database/repository.interfaces/person/person.repo.interface";
-import { IUserRepo } from "../../../../../database/repository.interfaces/users/user/user.repo.interface";
 import { Injector } from "../../../../../startup/injector";
 import { IBotService } from "../../../../../modules/communication/bot.service/bot.service.interface";
 import { BotService } from "../../../../../modules/communication/bot.service/bot.service";
-import { BotRequestDomainModel, BotMessagingType } from "../../../../../domain.types/miscellaneous/bot.request.types";
+import { BotRequestDomainModel } from "../../../../../domain.types/miscellaneous/bot.request.types";
 import { Helper } from "../../../../../common/helper";
+import { BaseChannelHandler } from "./base.channel.handler";
 
 
 ///////////////////////////////////////////////////////////////////////////////
 
 @injectable()
-export class WhatsAppChannelHandler implements IUserTaskChannelHandler {
-    
-    private _personRepo: IPersonRepo = Injector.Container.resolve('IPersonRepo');
-
-    private _userRepo: IUserRepo = Injector.Container.resolve('IUserRepo');
+export class WhatsAppChannelHandler extends BaseChannelHandler {
 
     private _botService: IBotService = Injector.Container.resolve(BotService);
     
@@ -67,27 +61,6 @@ export class WhatsAppChannelHandler implements IUserTaskChannelHandler {
         }
     }
 
-    private getMessagingType(messageType: BotMessagingType): BotMessagingType {
-        if (messageType === BotMessagingType.Text) {
-            return BotMessagingType.Template;
-        }
-        return messageType;
-    }
-    
-
-    private async getUserPhoneNumber(userId: string): Promise<string> {
-        try {
-            const user = await this._userRepo.getById(userId);
-            if (!user) {
-                return null;
-            }
-            const person = await this._personRepo.getById(user.PersonId);
-            return person?.Phone ?? null;
-        } catch (error) {
-            Logger.instance().log(`Error getting user phone number: ${error}`);
-            return null;
-        }
-    }
 
 }
 

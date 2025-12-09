@@ -55,5 +55,9 @@ export class MessageTaskHandler implements IUserTaskHandler {
         }
     }
 
+    shouldAutoFinish(): boolean {
+        return true;
+    }
+
 }
 

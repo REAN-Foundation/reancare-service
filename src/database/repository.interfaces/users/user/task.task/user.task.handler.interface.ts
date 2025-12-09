@@ -4,6 +4,8 @@ import { UserTaskActionData } from "../../../../../domain.types/users/user.task/
 ///////////////////////////////////////////////////////////////////////////////
 
 export interface IUserTaskHandler {
-    
+
     processTask(userTask: UserTaskMessageDto, actionData: UserTaskActionData): Promise<ProcessedTaskDto>;
+
+    shouldAutoFinish(): boolean;
 }

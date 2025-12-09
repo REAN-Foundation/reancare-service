@@ -2,13 +2,12 @@ import { inject, injectable } from "tsyringe";
 import * as asyncLib from 'async';
 import { Logger } from "../../../common/logger";
 import { IUserTaskRepo } from "../../../database/repository.interfaces/users/user/user.task.repo.interface";
-import { UserActionType, UserTaskCategory } from "../../../domain.types/users/user.task/user.task.types";
-import { ICareplanRepo } from "../../../database/repository.interfaces/clinical/careplan.repo.interface";
+import { UserActionType } from "../../../domain.types/users/user.task/user.task.types";
 import { UserTaskMessageDto, ProcessedTaskDto } from "../../../domain.types/users/user.task/user.task.dto";
 import { UserTaskActionData } from "../../../domain.types/users/user.task/resolved.action.data.types";
-import { UserTaskHandler } from "./user.task.handlers/user.task.category.handler";
-import { UserTaskChannelHandler } from "./user.task.handlers/user.task.channel.handler";
-import { UserTaskActionHandler } from "./user.task.handlers/user.task.action.handler";
+import { ITaskHandlerResolver } from "../../../database/repository.interfaces/users/user/task.task/user.task.handler.resolver.interface";
+import { IChannelHandlerResolver } from "../../../database/repository.interfaces/users/user/task.task/user.task.channel.handler.resolver.interface";
+import { IActionHandlerResolver } from "../../../database/repository.interfaces/users/user/task.task/user.task.action.handler.resolver.interface";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -17,20 +16,12 @@ const ASYNC_TASK_COUNT = 4;
 @injectable()
 export class UserTaskSenderService {
 
-    private _actionHandlerResolver: UserTaskActionHandler = null;
-
-    private _taskHandlerResolver: UserTaskHandler = null;
-
-    private _channelHandlerResolver: UserTaskChannelHandler = null;
-
     constructor(
         @inject('IUserTaskRepo') private _userTaskRepo: IUserTaskRepo,
-        @inject('ICareplanRepo') private _careplanRepo: ICareplanRepo,
-    ) {
-        this._actionHandlerResolver = new UserTaskActionHandler();
-        this._taskHandlerResolver = new UserTaskHandler();
-        this._channelHandlerResolver = new UserTaskChannelHandler();
-    }
+        @inject('IActionHandlerResolver') private _actionHandlerResolver: IActionHandlerResolver,
+        @inject('ITaskHandlerResolver') private _taskHandlerResolver: ITaskHandlerResolver,
+        @inject('IChannelHandlerResolver') private _channelHandlerResolver: IChannelHandlerResolver,
+    ) {}
 
     public _q = asyncLib.queue((timePeriod: number, onCompleted) => {
         (async () => {
@@ -70,7 +61,7 @@ export class UserTaskSenderService {
                 return;
             }
 
-            await this.populateTaskSequenceAndLanguage(userTasks);
+            await this.enrichTasksMetadata(userTasks);
             this.sortTasksBySequence(userTasks);
 
             for (const userTask of userTasks) {
@@ -86,19 +77,23 @@ export class UserTaskSenderService {
         }
     };
 
-    private async populateTaskSequenceAndLanguage(userTasks: UserTaskMessageDto[]): Promise<void> {
+    private async enrichTasksMetadata(userTasks: UserTaskMessageDto[]): Promise<void> {
         for (const userTask of userTasks) {
-            if (!userTask.ActionId) {
+            if (!userTask.ActionType) {
                 userTask.Sequence = 0;
                 continue;
             }
 
             try {
-                const activity = await this._careplanRepo.getActivity(userTask.ActionId);
-                userTask.Sequence = activity?.Sequence ?? 0;
-                userTask.Language = activity?.Language ?? 'en';
+                const actionHandler = this._actionHandlerResolver.getActionHandler(userTask.ActionType as UserActionType);
+
+                if (actionHandler?.enrichTaskMetadata) {
+                    await actionHandler.enrichTaskMetadata(userTask);
+                } else {
+                    userTask.Sequence = 0;
+                }
             } catch (error) {
-                Logger.instance().log(`Error getting careplan activity for task ${userTask.id}: ${error}`);
+                Logger.instance().log(`Error enriching task metadata for task ${userTask.id}: ${error}`);
                 userTask.Sequence = 0;
             }
         }
@@ -114,17 +109,15 @@ export class UserTaskSenderService {
 
             const actionData = await this.resolveActionData(userTask);
             const processedResult = await this.processTaskWithHandler(userTask, actionData);
-            
+
             if (!processedResult) {
                 return false;
             }
 
             const isMessageSent = await this.sendMessageViaChannel(userTask, processedResult);
-            
+
             if (isMessageSent) {
-                if (this.shouldFinishTaskAfterMessageSent(userTask.Category)) {
-                    await this.finishTask(userTask);
-                }
+                await this.handleTaskCompletion(userTask);
                 return true;
             }
 
@@ -146,7 +139,7 @@ export class UserTaskSenderService {
                 return null;
             }
 
-            const actionData =  await actionHandler.resolveAction(userTask.ActionType as UserActionType, userTask.ActionId);
+            const actionData = await actionHandler.resolveAction(userTask.ActionType as UserActionType, userTask.ActionId);
             return actionData;
         } catch (error) {
             Logger.instance().log(`Error resolving action for task ${userTask.id}: ${error}`);
@@ -189,7 +182,7 @@ export class UserTaskSenderService {
         }
 
         const isMessageSent = await channelHandler.sendMessage(userTask, processedResult);
-        
+
         if (isMessageSent) {
             Logger.instance().log(`Message sent successfully for task ${userTask.id}`);
         } else {
@@ -199,26 +192,48 @@ export class UserTaskSenderService {
         return isMessageSent;
     }
 
-    private shouldFinishTaskAfterMessageSent(category: UserTaskCategory | string): boolean {
-        if (!category) {
-            return true;
-        }
-        if (category === UserTaskCategory.Assessment) {
-            return false;
-        }
+    /**
+     * Handle task completion using handler lifecycle methods
+     * This replaces the hard-coded logic for shouldFinishTaskAfterMessageSent and careplan completion
+     */
+    private async handleTaskCompletion(userTask: UserTaskMessageDto): Promise<void> {
+        try {
+            const taskHandler = this._taskHandlerResolver.getTaskHandler(userTask.Category);
 
-        return true;
+            if (!taskHandler) {
+                Logger.instance().log(`No task handler found for completion check: ${userTask.Category}`);
+                return;
+            }
+
+            const shouldAutoFinish = taskHandler.shouldAutoFinish();
+
+            if (shouldAutoFinish) {
+                await this.finishTask(userTask);
+            } else {
+                Logger.instance().log(`Task ${userTask.id} will not auto-finish (requires user interaction)`);
+            }
+
+        } catch (error) {
+            Logger.instance().log(`Error handling task completion for ${userTask.id}: ${error}`);
+        }
     }
 
+    /**
+     * Finish the task and trigger action-specific completion logic
+     * This now uses the handler's lifecycle methods instead of hard-coded careplan logic
+     */
     private async finishTask(userTask: UserTaskMessageDto): Promise<void> {
         await this._userTaskRepo.finishTask(userTask.id);
 
-        if (userTask.ActionType === UserActionType.Careplan && userTask.ActionId) {
+        if (userTask.ActionType && userTask.ActionId) {
             try {
-                await this._careplanRepo.completeActivity(userTask.ActionId);
-                Logger.instance().log(`Careplan activity completed for task ${userTask.id}`);
+                const actionHandler = this._actionHandlerResolver.getActionHandler(userTask.ActionType as UserActionType);
+
+                if (actionHandler?.onTaskCompleted) {
+                    await actionHandler.onTaskCompleted(userTask.id, userTask.ActionId);
+                }
             } catch (error) {
-                Logger.instance().log(`Error completing careplan activity for task ${userTask.id}: ${error}`);
+                Logger.instance().log(`Error in action completion callback for task ${userTask.id}: ${error}`);
             }
         }
     }

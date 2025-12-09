@@ -1,41 +1,38 @@
+import { injectable } from "tsyringe";
 import { Logger } from "../../../../common/logger";
 import { Injector } from "../../../../startup/injector";
 import { UserActionType } from "../../../../domain.types/users/user.task/user.task.types";
-import { uuid } from "../../../../domain.types/miscellaneous/system.types";
-import { UserTaskActionData } from "../../../../domain.types/users/user.task/resolved.action.data.types";
 import { IUserTaskActionHandler } from "../../../../database/repository.interfaces/users/user/task.task/user.task.action.handler.interface";
-import { CareplanActionHandler } from "./action.handlers/careplan.action.handler";
+import { IActionHandlerResolver } from "../../../../database/repository.interfaces/users/user/task.task/user.task.action.handler.resolver.interface";
 
 ///////////////////////////////////////////////////////////////////////////////
 
-export class UserTaskActionHandler {
- 
-    getActionHandler(actionType: UserActionType): IUserTaskActionHandler {
+@injectable()
+export class UserTaskActionHandler implements IActionHandlerResolver {
+
+    private static handlers = new Map<UserActionType, any>();
+
+    public registerHandler(actionType: UserActionType, handlerClass: any): void {
+        UserTaskActionHandler.handlers.set(actionType, handlerClass);
+        Logger.instance().log(`Registered action handler for type: ${actionType}`);
+    }
+
+    public getActionHandler(actionType: UserActionType): IUserTaskActionHandler | null {
         try {
-            switch (actionType) {
-                case UserActionType.Careplan:
-                    return Injector.Container.resolve(CareplanActionHandler);
-                    // case UserActionType.Medication:
-                    //     return Injector.Container.resolve(MedicationActionHandler);
-                
-                    // case UserActionType.Appointment:
-                    //     return Injector.Container.resolve(AppointmentActionHandler);
-                
-                    // case UserActionType.Custom:
-                    //     return Injector.Container.resolve(CustomActionHandler);
-                
-                    // Add more handlers as needed
-                
-                default:
-                    Logger.instance().log(`No action handler found for action type: ${actionType}`);
-                    return null;
+            const HandlerClass = UserTaskActionHandler.handlers.get(actionType);
+
+            if (!HandlerClass) {
+                Logger.instance().log(`No action handler registered for action type: ${actionType}`);
+                return null;
             }
+
+            return Injector.Container.resolve(HandlerClass);
+
         } catch (error) {
             Logger.instance().log(`Error getting action handler for action type ${actionType}: ${error}`);
             return null;
         }
     }
-
 
 }
 

@@ -1,35 +1,33 @@
+import { injectable } from "tsyringe";
 import { Logger } from "../../../../common/logger";
 import { Injector } from "../../../../startup/injector";
 import { NotificationChannel } from "../../../../domain.types/general/notification/notification.types";
 import { IUserTaskChannelHandler } from "../../../../database/repository.interfaces/users/user/task.task/user.task.channel.handler.interface";
-import { WhatsAppChannelHandler } from "./channel.handlers/whatsapp.channel.handler";
-import { TelegramChannelHandler } from "./channel.handlers/telegram.channel.handler";
+import { IChannelHandlerResolver } from "../../../../database/repository.interfaces/users/user/task.task/user.task.channel.handler.resolver.interface";
 
 ///////////////////////////////////////////////////////////////////////////////
 
-export class UserTaskChannelHandler {
- 
-    getChannelHandler(channel: NotificationChannel): IUserTaskChannelHandler {
+@injectable()
+export class UserTaskChannelHandler implements IChannelHandlerResolver {
+
+    private static handlers = new Map<NotificationChannel, any>();
+
+    public registerHandler(channel: NotificationChannel, handlerClass: any): void {
+        UserTaskChannelHandler.handlers.set(channel, handlerClass);
+        Logger.instance().log(`Registered channel handler for channel: ${channel}`);
+    }
+
+    public getChannelHandler(channel: NotificationChannel): IUserTaskChannelHandler | null {
         try {
-            switch (channel) {
-                case NotificationChannel.WhatsApp:
-                case NotificationChannel.WhatsappWati:
-                case NotificationChannel.WhatsappMeta:
-                    return Injector.Container.resolve(WhatsAppChannelHandler);
-                
-                case NotificationChannel.Telegram:
-                    return Injector.Container.resolve(TelegramChannelHandler);
-                
-                    // Add more handlers as needed
-                    // case NotificationChannel.Email:
-                    //     return Injector.Container.resolve(EmailChannelHandler);
-                    // case NotificationChannel.SMS:
-                    //     return Injector.Container.resolve(SmsChannelHandler);
-                
-                default:
-                    Logger.instance().log(`No channel handler found for channel: ${channel}`);
-                    return null;
+            const HandlerClass = UserTaskChannelHandler.handlers.get(channel);
+
+            if (!HandlerClass) {
+                Logger.instance().log(`No channel handler registered for channel: ${channel}`);
+                return null;
             }
+
+            return Injector.Container.resolve(HandlerClass);
+
         } catch (error) {
             Logger.instance().log(`Error getting channel handler for ${channel}: ${error}`);
             return null;

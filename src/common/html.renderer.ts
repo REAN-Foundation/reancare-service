@@ -53,7 +53,15 @@ export const htmlTextToPNG = async (htmlText: string, width: number, height: num
 
 export const htmlTextToPDFBuffer = async (htmlText: string): Promise<Buffer> => {
 
-    const browser = await puppeteer.launch({ args: ['--no-sandbox'], executablePath: '/usr/bin/chromium-browser' });
+    let executablePath = '/usr/bin/chromium-browser';
+    const osType = Helper.getOSType();
+    if (osType === OSType.Windows) {
+        executablePath = undefined;
+    } else if (osType === OSType.MacOS) {
+        executablePath = '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome';
+    }
+
+    const browser = await puppeteer.launch({ args: ['--no-sandbox'], executablePath });
     const page = await browser.newPage();
 
     await page.setContent(htmlText);

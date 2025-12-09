@@ -37,7 +37,7 @@ export class AssessmentTaskHandler implements IUserTaskHandler {
             Logger.instance().log(`Error processing assessment task: ${error}`);
             throw error;
         }
-    };
+    }
 
     private async processAssessmentWithForm(
         userTask: UserTaskMessageDto,
@@ -48,12 +48,12 @@ export class AssessmentTaskHandler implements IUserTaskHandler {
         
         const processedTask: ProcessedTaskDto = {
             MessageType : BotMessagingType.AssessmentForm,
-            Message     : JSON.stringify({ message: "Sending assessment with form to Rean bot"}),
+            Message     : JSON.stringify({ message: "Sending assessment with form to Rean bot" }),
             Metadata    : whatsappFormMetadata
         };
         
         return processedTask;
-    };
+    }
 
     private async processRegularAssessment(
         userTask: UserTaskMessageDto,
@@ -74,12 +74,12 @@ export class AssessmentTaskHandler implements IUserTaskHandler {
         
         const processedTask: ProcessedTaskDto = {
             MessageType : BotMessagingType.Assessment,
-            Message     : JSON.stringify({ message: "Sending assessment to Rean bot"}),
+            Message     : JSON.stringify({ message: "Sending assessment to Rean bot" }),
             Metadata    : null
         };
         
         return processedTask;
-    };
+    }
 
     private readonly getWhatsappFormMetadata = (rawContent: string): WhatsAppFlowTemplateRequest => {
         try {
@@ -113,7 +113,7 @@ export class AssessmentTaskHandler implements IUserTaskHandler {
 
     shouldAutoFinish(): boolean {
         return false;
-    };
+    }
 
 }
 

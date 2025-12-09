@@ -15,7 +15,7 @@ export class UserTaskActionHandler implements IActionHandlerResolver {
     public registerHandler(actionType: UserActionType, handlerClass: any): void {
         UserTaskActionHandler.handlers.set(actionType, handlerClass);
         Logger.instance().log(`Registered action handler for type: ${actionType}`);
-    };
+    }
 
     public getActionHandler(actionType: UserActionType): IUserTaskActionHandler | null {
         try {
@@ -32,7 +32,7 @@ export class UserTaskActionHandler implements IActionHandlerResolver {
             Logger.instance().log(`Error getting action handler for action type ${actionType}: ${error}`);
             return null;
         }
-    };
+    }
 
 }
 

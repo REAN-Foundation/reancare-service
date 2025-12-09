@@ -1,6 +1,6 @@
 import { injectable } from "tsyringe";
 import { Logger } from "../../../../../common/logger";
-import { UserTaskMessageDto, ProcessedTaskDto} from "../../../../../domain.types/users/user.task/user.task.dto";
+import { UserTaskMessageDto, ProcessedTaskDto } from "../../../../../domain.types/users/user.task/user.task.dto";
 import { NotificationChannel } from "../../../../../domain.types/general/notification/notification.types";
 import { Injector } from "../../../../../startup/injector";
 import { IBotService } from "../../../../../modules/communication/bot.service/bot.service.interface";
@@ -25,7 +25,7 @@ export class WhatsAppChannelHandler extends BaseChannelHandler {
             }
 
             const normalizedPhoneNumber = Helper.normalizePhoneNumber(personPhone);
-            const channel = this.mapChannelToBotChannel(userTask.Channel)
+            const channel = this.mapChannelToBotChannel(userTask.Channel);
             
             const botRequestModel: BotRequestDomainModel = {
                 PhoneNumber  : normalizedPhoneNumber,
@@ -47,7 +47,7 @@ export class WhatsAppChannelHandler extends BaseChannelHandler {
             Logger.instance().log(`Error sending WhatsApp message: ${error}`);
             return false;
         }
-    };
+    }
 
     private mapChannelToBotChannel(channel: string): NotificationChannel {
         switch (channel) {
@@ -57,9 +57,6 @@ export class WhatsAppChannelHandler extends BaseChannelHandler {
             default:
                 return NotificationChannel.WhatsappMeta;
         }
-    };
-
+    }
 
 }
-
-

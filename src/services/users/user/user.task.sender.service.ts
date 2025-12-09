@@ -97,11 +97,11 @@ export class UserTaskSenderService {
                 userTask.Sequence = 0;
             }
         }
-    };
+    }
 
     private sortTasksBySequence(userTasks: UserTaskMessageDto[]): void {
         userTasks.sort((a, b) => (a.Sequence ?? 0) - (b.Sequence ?? 0));
-    };
+    }
 
     private processUserTask = async (userTask: UserTaskMessageDto): Promise<boolean> => {
         try {
@@ -145,7 +145,7 @@ export class UserTaskSenderService {
             Logger.instance().log(`Error resolving action for task ${userTask.id}: ${error}`);
             return null;
         }
-    };
+    }
 
     private async processTaskWithHandler(userTask: UserTaskMessageDto, actionData: UserTaskActionData):
      Promise<ProcessedTaskDto | null> {
@@ -167,7 +167,7 @@ export class UserTaskSenderService {
         }
 
         return processedResult;
-    };
+    }
 
     private async sendMessageViaChannel(userTask: UserTaskMessageDto, processedResult: any): Promise<boolean> {
         if (!userTask.Channel) {
@@ -190,7 +190,7 @@ export class UserTaskSenderService {
         }
 
         return isMessageSent;
-    };
+    }
 
     private async handleTaskCompletion(userTask: UserTaskMessageDto): Promise<void> {
         try {
@@ -212,7 +212,7 @@ export class UserTaskSenderService {
         } catch (error) {
             Logger.instance().log(`Error handling task completion for ${userTask.id}: ${error}`);
         }
-    };
+    }
 
     private async finishTask(userTask: UserTaskMessageDto): Promise<void> {
         await this._userTaskRepo.finishTask(userTask.id);
@@ -228,7 +228,7 @@ export class UserTaskSenderService {
                 Logger.instance().log(`Error in action completion callback for task ${userTask.id}: ${error}`);
             }
         }
-    };
+    }
 
     private timer = ms => new Promise(res => setTimeout(res, ms));
 

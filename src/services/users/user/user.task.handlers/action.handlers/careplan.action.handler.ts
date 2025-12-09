@@ -34,7 +34,7 @@ export class CareplanActionHandler implements IUserTaskActionHandler {
             Logger.instance().log(`Error resolving careplan action for activity ${actionId}: ${error}`);
             throw error;
         }
-    };
+    }
 
     async onTaskCompleted(taskId: uuid, actionId: uuid): Promise<void> {
         try {
@@ -44,7 +44,7 @@ export class CareplanActionHandler implements IUserTaskActionHandler {
             Logger.instance().log(`Error completing careplan activity ${actionId} for task ${taskId}: ${error}`);
             throw error;
         }
-    };
+    }
 
     async enrichTaskMetadata(userTask: UserTaskMessageDto): Promise<void> {
         try {
@@ -61,7 +61,7 @@ export class CareplanActionHandler implements IUserTaskActionHandler {
             Logger.instance().log(`Error enriching careplan task metadata for task ${userTask.id}: ${error}`);
             userTask.Sequence = 0;
         }
-    };
+    }
 
 }
 

@@ -20,7 +20,7 @@ export class MessageTaskHandler implements IUserTaskHandler {
             const isWhatsApp = userTask.Channel === NotificationChannel.WhatsApp ||
                               userTask.Channel === NotificationChannel.WhatsappWati;
             
-            let message = isWhatsApp
+            const message = isWhatsApp
                 ? ( rawContent)
                 : (rawContent?.Description || actionData?.Description || userTask.Description || '');
             
@@ -52,11 +52,11 @@ export class MessageTaskHandler implements IUserTaskHandler {
             Logger.instance().log(`Error processing message task: ${error}`);
             throw error;
         }
-    };
+    }
 
     shouldAutoFinish(): boolean {
         return true;
-    };
+    }
 
 }
 

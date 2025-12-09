@@ -42,7 +42,7 @@ export class TelegramChannelHandler extends BaseChannelHandler {
             Logger.instance().log(`Error sending Telegram message: ${error}`);
             return false;
         }
-    };
+    }
 
 }
 

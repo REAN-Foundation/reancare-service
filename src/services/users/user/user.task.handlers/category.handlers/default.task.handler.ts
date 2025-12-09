@@ -32,10 +32,10 @@ export class DefaultTaskHandler implements IUserTaskHandler {
             Logger.instance().log(`Error in default task handler: ${error}`);
             throw error;
         }
-    };
+    }
 
     shouldAutoFinish(): boolean {
         return true;
-    };
+    }
 
 }

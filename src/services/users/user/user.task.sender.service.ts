@@ -8,7 +8,7 @@ import { UserTaskMessageDto, ProcessedTaskDto } from "../../../domain.types/user
 import { UserTaskActionData } from "../../../domain.types/users/user.task/resolved.action.data.types";
 import { UserTaskHandler } from "./user.task.handlers/user.task.category.handler";
 import { UserTaskChannelHandler } from "./user.task.handlers/user.task.channel.handler";
-import { UserTaskActionHandler } from "./user.task.handlers/user.task.action.handler";
+import { UserActionResolver } from "./user.action.resolver";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -17,7 +17,7 @@ const ASYNC_TASK_COUNT = 4;
 @injectable()
 export class UserTaskSenderService {
 
-    private _actionHandlerResolver: UserTaskActionHandler = null;
+    private _actionResolver: UserActionResolver = null;
 
     private _taskHandlerResolver: UserTaskHandler = null;
 
@@ -27,7 +27,7 @@ export class UserTaskSenderService {
         @inject('IUserTaskRepo') private _userTaskRepo: IUserTaskRepo,
         @inject('ICareplanRepo') private _careplanRepo: ICareplanRepo,
     ) {
-        this._actionHandlerResolver = new UserTaskActionHandler();
+        this._actionResolver = new UserActionResolver();
         this._taskHandlerResolver = new UserTaskHandler();
         this._channelHandlerResolver = new UserTaskChannelHandler();
     }
@@ -70,7 +70,7 @@ export class UserTaskSenderService {
                 return;
             }
 
-            await this.populateTaskSequenceAndLanguage(userTasks);
+            await this.populateTaskMetadata(userTasks);
             this.sortTasksBySequence(userTasks);
 
             for (const userTask of userTasks) {
@@ -86,20 +86,22 @@ export class UserTaskSenderService {
         }
     };
 
-    private async populateTaskSequenceAndLanguage(userTasks: UserTaskMessageDto[]): Promise<void> {
+    private async populateTaskMetadata(userTasks: UserTaskMessageDto[]): Promise<void> {
         for (const userTask of userTasks) {
-            if (!userTask.ActionId) {
-                userTask.Sequence = 0;
+            userTask.Sequence = 0;
+            userTask.Language = 'en';
+
+            if (!userTask.ActionId || !userTask.ActionType) {
                 continue;
             }
 
             try {
-                const activity = await this._careplanRepo.getActivity(userTask.ActionId);
-                userTask.Sequence = activity?.Sequence ?? 0;
-                userTask.Language = activity?.Language ?? 'en';
+                const actionType = userTask.ActionType as UserActionType;
+                const actionData = await this._actionResolver.getAction(actionType, userTask.ActionId);
+                userTask.Sequence = actionData?.Sequence ?? 0;
+                userTask.Language = actionData?.Language ?? 'en';
             } catch (error) {
-                Logger.instance().log(`Error getting careplan activity for task ${userTask.id}: ${error}`);
-                userTask.Sequence = 0;
+                Logger.instance().log(`Error resolving action metadata for task ${userTask.id}: ${error}`);
             }
         }
     }
@@ -141,12 +143,7 @@ export class UserTaskSenderService {
                 return null;
             }
 
-            const actionHandler = this._actionHandlerResolver.getActionHandler(userTask.ActionType as UserActionType);
-            if (!actionHandler) {
-                return null;
-            }
-
-            const actionData =  await actionHandler.resolveAction(userTask.ActionType as UserActionType, userTask.ActionId);
+            const actionData = await this._actionResolver.getAction(userTask.ActionType, userTask.ActionId);
             return actionData;
         } catch (error) {
             Logger.instance().log(`Error resolving action for task ${userTask.id}: ${error}`);
@@ -199,17 +196,6 @@ export class UserTaskSenderService {
         return isMessageSent;
     }
 
-    private shouldFinishTaskAfterMessageSent(category: UserTaskCategory | string): boolean {
-        if (!category) {
-            return true;
-        }
-        if (category === UserTaskCategory.Assessment) {
-            return false;
-        }
-
-        return true;
-    }
-
     private async finishTask(userTask: UserTaskMessageDto): Promise<void> {
         await this._userTaskRepo.finishTask(userTask.id);
 
@@ -221,6 +207,17 @@ export class UserTaskSenderService {
                 Logger.instance().log(`Error completing careplan activity for task ${userTask.id}: ${error}`);
             }
         }
+    }
+
+    private shouldFinishTaskAfterMessageSent(category: UserTaskCategory | string): boolean {
+        if (!category) {
+            return true;
+        }
+        if (category === UserTaskCategory.Assessment) {
+            return false;
+        }
+
+        return true;
     }
 
     private timer = ms => new Promise(res => setTimeout(res, ms));

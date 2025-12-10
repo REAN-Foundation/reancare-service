@@ -81,7 +81,7 @@ export class AssessmentTaskHandler implements IUserTaskHandler {
         return processedTask;
     }
 
-    private getWhatsappFormMetadata = (rawContent: string): WhatsAppFlowTemplateRequest => {
+    private readonly getWhatsappFormMetadata = (rawContent: string): WhatsAppFlowTemplateRequest => {
         try {
             if (!rawContent) {
                 return null;
@@ -99,11 +99,11 @@ export class AssessmentTaskHandler implements IUserTaskHandler {
         }
     };
 
-    private validateWhatsappFormMetadata = (whatsappFormMetadata: WhatsAppFlowTemplateRequest): boolean => {
+    private readonly validateWhatsappFormMetadata = (whatsappFormMetadata: WhatsAppFlowTemplateRequest): boolean => {
         if (
             !whatsappFormMetadata ||
-            whatsappFormMetadata.Type !== 'template' ||
-            !whatsappFormMetadata.TemplateName
+            whatsappFormMetadata?.Type !== 'template' ||
+            !whatsappFormMetadata?.TemplateName
         ) {
             Logger.instance().log(`Whatsapp form metadata is not valid : ${JSON.stringify(whatsappFormMetadata)}`);
             throw new ApiError(400, `Whatsapp form metadata is not valid`);

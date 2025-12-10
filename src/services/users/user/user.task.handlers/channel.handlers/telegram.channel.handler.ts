@@ -14,9 +14,9 @@ import { BotRequestDomainModel } from "../../../../../domain.types/miscellaneous
 @injectable()
 export class TelegramChannelHandler implements IUserTaskChannelHandler {
     
-    private _personRepo: IPersonRepo = Injector.Container.resolve('IPersonRepo');
+    private readonly _personRepo: IPersonRepo = Injector.Container.resolve('IPersonRepo');
 
-    private _userRepo: IUserRepo = Injector.Container.resolve('IUserRepo');
+    private readonly _userRepo: IUserRepo = Injector.Container.resolve('IUserRepo');
 
     private readonly _botService: IBotService = Injector.Container.resolve(BotService);
     

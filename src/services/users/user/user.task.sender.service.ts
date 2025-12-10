@@ -109,7 +109,7 @@ export class UserTaskSenderService {
         userTasks.sort((a, b) => (a.Sequence ?? 0) - (b.Sequence ?? 0));
     }
 
-    private processUserTask = async (userTask: UserTaskMessageDto): Promise<boolean> => {
+    private readonly processUserTask = async (userTask: UserTaskMessageDto): Promise<boolean> => {
         try {
             Logger.instance().log(`Processing user task: ${userTask.id}`);
 

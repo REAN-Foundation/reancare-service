@@ -8,7 +8,7 @@ import { IUserRepo } from "../../../../../database/repository.interfaces/users/u
 import { Injector } from "../../../../../startup/injector";
 import { IBotService } from "../../../../../modules/communication/bot.service/bot.service.interface";
 import { BotService } from "../../../../../modules/communication/bot.service/bot.service";
-import { BotRequestDomainModel, BotMessagingType } from "../../../../../domain.types/miscellaneous/bot.request.types";
+import { BotRequestDomainModel } from "../../../../../domain.types/miscellaneous/bot.request.types";
 import { Helper } from "../../../../../common/helper";
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -16,9 +16,9 @@ import { Helper } from "../../../../../common/helper";
 @injectable()
 export class WhatsAppChannelHandler implements IUserTaskChannelHandler {
     
-    private _personRepo: IPersonRepo = Injector.Container.resolve('IPersonRepo');
+    private readonly _personRepo: IPersonRepo = Injector.Container.resolve('IPersonRepo');
 
-    private _userRepo: IUserRepo = Injector.Container.resolve('IUserRepo');
+    private readonly _userRepo: IUserRepo = Injector.Container.resolve('IUserRepo');
 
     private readonly _botService: IBotService = Injector.Container.resolve(BotService);
     
@@ -31,12 +31,11 @@ export class WhatsAppChannelHandler implements IUserTaskChannelHandler {
             }
 
             const normalizedPhoneNumber = Helper.normalizePhoneNumber(personPhone);
-            const channel = this.mapChannelToBotChannel(userTask.Channel);
             
             const botRequestModel: BotRequestDomainModel = {
                 PhoneNumber  : normalizedPhoneNumber,
                 ClientName   : userTask.TenantName,
-                Channel      : channel,
+                Channel      : NotificationChannel.WhatsappMeta,
                 AgentName    : "Reancare",
                 Provider     : userTask.TenantName,
                 Type         : processedTask.MessageType,
@@ -55,23 +54,6 @@ export class WhatsAppChannelHandler implements IUserTaskChannelHandler {
         }
     }
 
-    private mapChannelToBotChannel(channel: string): NotificationChannel {
-        switch (channel) {
-            case NotificationChannel.WhatsApp:
-            case NotificationChannel.WhatsappWati:
-                return NotificationChannel.WhatsappMeta;
-            default:
-                return NotificationChannel.WhatsappMeta;
-        }
-    }
-
-    private getMessagingType(messageType: BotMessagingType): BotMessagingType {
-        if (messageType === BotMessagingType.Text) {
-            return BotMessagingType.Template;
-        }
-        return messageType;
-    }
-    
     private async getUserPhoneNumber(userId: string): Promise<string> {
         try {
             const user = await this._userRepo.getById(userId);

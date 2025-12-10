@@ -17,11 +17,11 @@ const ASYNC_TASK_COUNT = 4;
 @injectable()
 export class UserTaskSenderService {
 
-    private _actionResolver: UserActionResolver = null;
+    private readonly _actionResolver: UserActionResolver = null;
 
-    private _categoryResolver: UserTaskCategoryResolver = null;
+    private readonly _categoryResolver: UserTaskCategoryResolver = null;
 
-    private _channelResolver: UserTaskChannelResolver = null;
+    private readonly _channelResolver: UserTaskChannelResolver = null;
 
     constructor(
         @inject('IUserTaskRepo') private _userTaskRepo: IUserTaskRepo,
@@ -96,8 +96,7 @@ export class UserTaskSenderService {
             }
 
             try {
-                const actionType = userTask.ActionType as UserActionType;
-                const actionData = await this._actionResolver.getAction(actionType, userTask.ActionId);
+                const actionData = await this._actionResolver.getAction(userTask.ActionType, userTask.ActionId);
                 userTask.Sequence = actionData?.Sequence ?? 0;
                 userTask.Language = actionData?.Language ?? 'en';
             } catch (error) {

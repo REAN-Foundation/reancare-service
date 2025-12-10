@@ -1,8 +1,7 @@
 import { injectable } from "tsyringe";
 import { Logger } from "../../../../../common/logger";
 import { IUserTaskChannelHandler } from "../../../../../database/repository.interfaces/users/user/task.task/user.task.channel.handler.interface";
-import { UserTaskMessageDto } from "../../../../../domain.types/users/user.task/user.task.dto";
-import { ProcessedTaskDto } from "../../../../../domain.types/users/user.task/user.task.dto";
+import { UserTaskMessageDto, ProcessedTaskDto } from "../../../../../domain.types/users/user.task/user.task.dto";
 import { NotificationChannel } from "../../../../../domain.types/general/notification/notification.types";
 import { IPersonRepo } from "../../../../../database/repository.interfaces/person/person.repo.interface";
 import { IUserRepo } from "../../../../../database/repository.interfaces/users/user/user.repo.interface";
@@ -21,7 +20,7 @@ export class WhatsAppChannelHandler implements IUserTaskChannelHandler {
 
     private _userRepo: IUserRepo = Injector.Container.resolve('IUserRepo');
 
-    private _botService: IBotService = Injector.Container.resolve(BotService);
+    private readonly _botService: IBotService = Injector.Container.resolve(BotService);
     
     async sendMessage(userTask: UserTaskMessageDto, processedTask: ProcessedTaskDto): Promise<boolean> {
         try {

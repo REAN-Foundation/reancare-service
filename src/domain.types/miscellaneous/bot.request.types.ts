@@ -1,4 +1,3 @@
-import { NotificationChannel } from "../general/notification/notification.types";
 
 export interface BotRequestDomainModel {
     PhoneNumber: string;

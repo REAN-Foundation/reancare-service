@@ -260,17 +260,17 @@ export class ReanCareplanService implements ICareplanService {
     ): Promise<CareplanActivity> => {
 
         const careplanApiBaseUrl = process.env.CAREPLAN_API_BASE_URL;
-        var url = `${careplanApiBaseUrl}/enrollment-tasks/${activityId}`;
+        const url = `${careplanApiBaseUrl}/enrollment-tasks/${activityId}`;
 
         const headerOptions = await this.getHeaderOptions();
-        var response = await needle("get", url, headerOptions);
+        const response = await needle("get", url, headerOptions);
 
         if (response.statusCode !== 200) {
             Logger.instance().log(`Body: ${JSON.stringify(response.body.error)}`);
             throw new ApiError(500, 'Careplan service get activity service error: ' + (response.body.error?.message));
         }
 
-        var activity = response.body.Data;
+        const activity = response.body.Data;
         if (!activity) {
             throw new ApiError(404, 'Activity not found');
         }
@@ -278,7 +278,7 @@ export class ReanCareplanService implements ICareplanService {
         const category = this.getUserTaskCategory(activity.AssetType);
         const status = this.getActivityStatus(activity.Status);
 
-        var entity: CareplanActivity = {
+        const entity: CareplanActivity = {
             ParticipantId          : activity.ParticipantId,
             EnrollmentId           : activity.EnrollmentId,
             Provider               : this.providerName(),
@@ -318,14 +318,14 @@ export class ReanCareplanService implements ICareplanService {
         };
 
         const headerOptions = await this.getHeaderOptions();
-        var response = await needle("put", url, updateData, headerOptions);
+        const response = await needle("put", url, updateData, headerOptions);
 
         if (response.statusCode !== 200) {
             Logger.instance().log(`ResponseCode: ${response.statusCode}, Body: ${JSON.stringify(response.body.error)}`);
             throw new ApiError(500, 'Careplan service update enrollment task error: ' + (response.body.error?.message));
         }
 
-        var updatedActivity = response.body.Data;
+        const updatedActivity = response.body.Data;
         if (!updatedActivity) {
             return await this.getActivity(patientUserId, careplanCode, enrollmentId, activityId);
         }
@@ -333,7 +333,7 @@ export class ReanCareplanService implements ICareplanService {
         const category = this.getUserTaskCategory(updatedActivity.AssetType);
         const status = this.getActivityStatus(updatedActivity.Status);
 
-        var entity: CareplanActivity = {
+        const entity: CareplanActivity = {
             ParticipantId          : updatedActivity.ParticipantId,
             EnrollmentId           : updatedActivity.EnrollmentId,
             Provider               : this.providerName(),
@@ -403,72 +403,48 @@ export class ReanCareplanService implements ICareplanService {
         }
     }
 
+    private readonly assetTypeCategoryMap = new Map<string, UserTaskCategory>([
+        ['VIDEO', UserTaskCategory.EducationalVideo],
+        ['AUDIO', UserTaskCategory.EducationalAudio],
+        ['ANIMATION', UserTaskCategory.EducationalAnimation],
+        ['ARTICLE', UserTaskCategory.EducationalLink],
+        ['WEB LINK', UserTaskCategory.EducationalLink],
+        ['WEBLINK', UserTaskCategory.EducationalLink],
+        ['INFOGRAPHICS', UserTaskCategory.EducationalInfographics],
+        ['INFOGRAPHIC', UserTaskCategory.EducationalInfographics],
+        ['WEB NEWSFEED', UserTaskCategory.EducationalNewsFeed],
+        ['WEBNEWSFEED', UserTaskCategory.EducationalNewsFeed],
+        ['ASSESSMENT', UserTaskCategory.Assessment],
+        ['QUESTIONNAIRE', UserTaskCategory.Assessment],
+        ['QUESTION', UserTaskCategory.Assessment],
+        ['MESSAGE', UserTaskCategory.Message],
+        ['REMINDER', UserTaskCategory.Message],
+        ['GOAL', UserTaskCategory.Goal],
+        ['CHALLENGE', UserTaskCategory.Challenge],
+        ['EXERCISE', UserTaskCategory.Exercise],
+        ['PHYSIOTHERAPY', UserTaskCategory.Exercise],
+        ['NUTRITION', UserTaskCategory.Nutrition],
+        ['BIOMETRICS', UserTaskCategory.Biometrics],
+        ['MEDICATION', UserTaskCategory.Medication],
+        ['APPOINTMENT', UserTaskCategory.Appointment],
+        ['CONSULTATION', UserTaskCategory.Consultation],
+        ['CHECKUP', UserTaskCategory.Consultation],
+        ['MEDITATION', UserTaskCategory.StressManagement],
+        ['REFLECTION', UserTaskCategory.PersonalReflection],
+        ['ACTION PLAN', UserTaskCategory.Custom],
+        ['ACTIONPLAN', UserTaskCategory.Custom],
+        ['PRIORITY', UserTaskCategory.Custom],
+        ['WORD POWER', UserTaskCategory.Custom],
+        ['WORDPOWER', UserTaskCategory.Custom],
+    ]);
+
     private getUserTaskCategory(assetType: string): UserTaskCategory {
         if (!assetType) {
             return UserTaskCategory.Custom;
         }
 
         const type = assetType.toUpperCase();
-
-        if (type === 'VIDEO') {
-            return UserTaskCategory.EducationalVideo;
-        }
-        if (type === 'AUDIO') {
-            return UserTaskCategory.EducationalAudio;
-        }
-        if (type === 'ANIMATION') {
-            return UserTaskCategory.EducationalAnimation;
-        }
-        if (type === 'ARTICLE' || type === 'WEB LINK' || type === 'WEBLINK') {
-            return UserTaskCategory.EducationalLink;
-        }
-        if (type === 'INFOGRAPHICS' || type === 'INFOGRAPHIC') {
-            return UserTaskCategory.EducationalInfographics;
-        }
-        if (type === 'WEB NEWSFEED' || type === 'WEBNEWSFEED') {
-            return UserTaskCategory.EducationalNewsFeed;
-        }
-        if (type === 'ASSESSMENT' || type === 'QUESTIONNAIRE' || type === 'QUESTION') {
-            return UserTaskCategory.Assessment;
-        }
-        if (type === 'MESSAGE' || type === 'REMINDER') {
-            return UserTaskCategory.Message;
-        }
-        if (type === 'GOAL') {
-            return UserTaskCategory.Goal;
-        }
-        if (type === 'CHALLENGE') {
-            return UserTaskCategory.Challenge;
-        }
-        if (type === 'EXERCISE' || type === 'PHYSIOTHERAPY') {
-            return UserTaskCategory.Exercise;
-        }
-        if (type === 'NUTRITION') {
-            return UserTaskCategory.Nutrition;
-        }
-        if (type === 'BIOMETRICS') {
-            return UserTaskCategory.Biometrics;
-        }
-        if (type === 'MEDICATION') {
-            return UserTaskCategory.Medication;
-        }
-        if (type === 'APPOINTMENT') {
-            return UserTaskCategory.Appointment;
-        }
-        if (type === 'CONSULTATION' || type === 'CHECKUP') {
-            return UserTaskCategory.Consultation;
-        }
-        if (type === 'MEDITATION') {
-            return UserTaskCategory.StressManagement;
-        }
-        if (type === 'REFLECTION') {
-            return UserTaskCategory.PersonalReflection;
-        }
-        if (type === 'ACTION PLAN' || type === 'ACTIONPLAN' || type === 'PRIORITY' || type === 'WORD POWER' || type === 'WORDPOWER') {
-            return UserTaskCategory.Custom;
-        }
-
-        return UserTaskCategory.Custom;
+        return this.assetTypeCategoryMap.get(type) || UserTaskCategory.Custom;
     }
 
     convertToAssessmentTemplate(assessmentActivity: CareplanActivity): Promise<CAssessmentTemplate> {

@@ -1,9 +1,7 @@
 import { injectable } from "tsyringe";
 import { Logger } from "../../../../../common/logger";
 import { IUserTaskHandler } from "../../../../../database/repository.interfaces/users/user/task.task/user.task.handler.interface";
-import { ProcessedTaskDto } from "../../../../../domain.types/users/user.task/user.task.dto";
-import { UserTaskMessageDto } from "../../../../../domain.types/users/user.task/user.task.dto";
-import { UserTaskCategory } from "../../../../../domain.types/users/user.task/user.task.types";
+import { UserTaskMessageDto, ProcessedTaskDto } from "../../../../../domain.types/users/user.task/user.task.dto";
 import { NotificationChannel } from "../../../../../domain.types/general/notification/notification.types";
 import { AssessmentService } from "../../../../clinical/assessment/assessment.service";
 import { Injector } from "../../../../../startup/injector";
@@ -18,7 +16,7 @@ import { BotMessagingType } from "../../../../../domain.types/miscellaneous/bot.
 @injectable()
 export class AssessmentTaskHandler implements IUserTaskHandler {
     
-    private _assessmentService: AssessmentService = Injector.Container.resolve(AssessmentService);
+    private readonly _assessmentService: AssessmentService = Injector.Container.resolve(AssessmentService);
     
     async processTask(userTask: UserTaskMessageDto, actionData: UserTaskActionData): Promise<ProcessedTaskDto> {
         try {

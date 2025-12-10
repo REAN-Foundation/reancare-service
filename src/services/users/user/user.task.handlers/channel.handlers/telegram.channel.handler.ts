@@ -18,7 +18,7 @@ export class TelegramChannelHandler implements IUserTaskChannelHandler {
 
     private _userRepo: IUserRepo = Injector.Container.resolve('IUserRepo');
 
-    private _botService: IBotService = Injector.Container.resolve(BotService);
+    private readonly _botService: IBotService = Injector.Container.resolve(BotService);
     
     async sendMessage(userTask: UserTaskMessageDto, processedResult: ProcessedTaskDto): Promise<boolean> {
         try {

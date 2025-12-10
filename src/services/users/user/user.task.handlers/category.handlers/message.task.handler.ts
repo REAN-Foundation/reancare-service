@@ -4,7 +4,6 @@ import { IUserTaskHandler } from "../../../../../database/repository.interfaces/
 import { ProcessedTaskDto } from "../../../../../domain.types/users/user.task/user.task.dto";
 import { UserTaskMessageDto } from "../../../../../domain.types/users/user.task/user.task.dto";
 import { NotificationChannel } from "../../../../../domain.types/general/notification/notification.types";
-import { ApiError } from "../../../../../common/api.error";
 import { UserTaskActionData } from "../../../../../domain.types/users/user.task/resolved.action.data.types";
 import { BotMessagingType } from "../../../../../domain.types/miscellaneous/bot.request.types";
 
@@ -21,7 +20,7 @@ export class MessageTaskHandler implements IUserTaskHandler {
             const isWhatsApp = userTask.Channel === NotificationChannel.WhatsApp ||
                               userTask.Channel === NotificationChannel.WhatsappWati;
             
-            let message = isWhatsApp
+            const message = isWhatsApp
                 ? ( rawContent)
                 : (rawContent?.Description || actionData?.Description || userTask.Description || '');
             
@@ -29,7 +28,7 @@ export class MessageTaskHandler implements IUserTaskHandler {
                 ? BotMessagingType.Template
                 :  BotMessagingType.Text;
             
-            const templateName = isWhatsApp ? (rawContent?.TemplateName ?? null) : null
+            const templateName = isWhatsApp ? (rawContent?.TemplateName ?? null) : null;
 
             if (message.Variables || message.TemplateVariables) {
                 if (message.TemplateVariables) {

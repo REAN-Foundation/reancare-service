@@ -6,9 +6,9 @@ import { UserActionType, UserTaskCategory } from "../../../domain.types/users/us
 import { ICareplanRepo } from "../../../database/repository.interfaces/clinical/careplan.repo.interface";
 import { UserTaskMessageDto, ProcessedTaskDto } from "../../../domain.types/users/user.task/user.task.dto";
 import { UserTaskActionData } from "../../../domain.types/users/user.task/resolved.action.data.types";
-import { UserTaskHandler } from "./user.task.handlers/user.task.category.handler";
-import { UserTaskChannelHandler } from "./user.task.handlers/user.task.channel.handler";
 import { UserActionResolver } from "./user.action.resolver";
+import { UserTaskCategoryResolver } from "./user.task.category.resolver";
+import { UserTaskChannelResolver } from "./user.task.channel.resolver";
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -19,17 +19,17 @@ export class UserTaskSenderService {
 
     private _actionResolver: UserActionResolver = null;
 
-    private _taskHandlerResolver: UserTaskHandler = null;
+    private _categoryResolver: UserTaskCategoryResolver = null;
 
-    private _channelHandlerResolver: UserTaskChannelHandler = null;
+    private _channelResolver: UserTaskChannelResolver = null;
 
     constructor(
         @inject('IUserTaskRepo') private _userTaskRepo: IUserTaskRepo,
         @inject('ICareplanRepo') private _careplanRepo: ICareplanRepo,
     ) {
         this._actionResolver = new UserActionResolver();
-        this._taskHandlerResolver = new UserTaskHandler();
-        this._channelHandlerResolver = new UserTaskChannelHandler();
+        this._categoryResolver = new UserTaskCategoryResolver();
+        this._channelResolver = new UserTaskChannelResolver();
     }
 
     public _q = asyncLib.queue((timePeriod: number, onCompleted) => {
@@ -158,13 +158,16 @@ export class UserTaskSenderService {
             return null;
         }
 
-        const taskHandler = this._taskHandlerResolver.getTaskHandler(userTask.Category);
-        if (!taskHandler) {
+        const processedResult = await this._categoryResolver.processTask(
+            userTask.Category,
+            userTask,
+            actionData
+        );
+
+        if (!processedResult) {
             Logger.instance().log(`No task handler found for category: ${userTask.Category}`);
             return null;
         }
-
-        const processedResult = await taskHandler.processTask(userTask, actionData);
 
         if (processedResult.Metadata) {
             userTask.Metadata = processedResult.Metadata;
@@ -179,14 +182,12 @@ export class UserTaskSenderService {
             return false;
         }
 
-        const channelHandler = this._channelHandlerResolver.getChannelHandler(userTask.Channel as any);
-        if (!channelHandler) {
-            Logger.instance().log(`No channel handler found for channel: ${userTask.Channel}`);
-            return false;
-        }
+        const isMessageSent = await this._channelResolver.sendMessage(
+            userTask.Channel as any,
+            userTask,
+            processedResult
+        );
 
-        const isMessageSent = await channelHandler.sendMessage(userTask, processedResult);
-        
         if (isMessageSent) {
             Logger.instance().log(`Message sent successfully for task ${userTask.id}`);
         } else {

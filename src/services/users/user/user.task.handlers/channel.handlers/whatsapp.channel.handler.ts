@@ -12,7 +12,6 @@ import { BotService } from "../../../../../modules/communication/bot.service/bot
 import { BotRequestDomainModel, BotMessagingType } from "../../../../../domain.types/miscellaneous/bot.request.types";
 import { Helper } from "../../../../../common/helper";
 
-
 ///////////////////////////////////////////////////////////////////////////////
 
 @injectable()
@@ -33,7 +32,7 @@ export class WhatsAppChannelHandler implements IUserTaskChannelHandler {
             }
 
             const normalizedPhoneNumber = Helper.normalizePhoneNumber(personPhone);
-            const channel = this.mapChannelToBotChannel(userTask.Channel)
+            const channel = this.mapChannelToBotChannel(userTask.Channel);
             
             const botRequestModel: BotRequestDomainModel = {
                 PhoneNumber  : normalizedPhoneNumber,
@@ -74,7 +73,6 @@ export class WhatsAppChannelHandler implements IUserTaskChannelHandler {
         return messageType;
     }
     
-
     private async getUserPhoneNumber(userId: string): Promise<string> {
         try {
             const user = await this._userRepo.getById(userId);

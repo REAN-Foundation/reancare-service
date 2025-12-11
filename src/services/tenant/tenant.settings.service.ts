@@ -25,8 +25,8 @@ export class TenantSettingsService {
 
     //#region Publics
 
-    createDefaultSettings = async (tenantId: uuid): Promise<TenantSettingsDto> => {
-        const model: TenantSettingsDomainModel = this.getDefaultSettings();
+    createDefaultSettings = async (tenantId: uuid, tenantCode: string): Promise<TenantSettingsDto> => {
+        const model: TenantSettingsDomainModel = this.getDefaultSettings(tenantCode);
         return await this._tenantSettingsRepo.createDefaultSettings(tenantId, model);
     };
 
@@ -94,7 +94,7 @@ export class TenantSettingsService {
 
     //#endregion
 
-    private getDefaultSettings = (): TenantSettingsDomainModel => {
+    private getDefaultSettings = (tenantCode: string): TenantSettingsDomainModel => {
 
         const common: CommonSettings = {
      
@@ -337,7 +337,7 @@ export class TenantSettingsService {
         };
        
         const chatBot: ChatBotSettings = {
-            Name                : 'Chatbot',
+            Name                : tenantCode,
             OrganizationName    : null,
             OrganizationLogo    : null,
             OrganizationWebsite : null,

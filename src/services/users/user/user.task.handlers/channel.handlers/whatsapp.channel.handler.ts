@@ -16,10 +16,12 @@ import { UserTaskHelper } from "../user.task.helper";
 export class WhatsAppChannelHandler implements IUserTaskChannelHandler {
 
     private readonly _botService: IBotService = Injector.Container.resolve(BotService);
+
+    private readonly _userTaskHelper: UserTaskHelper = Injector.Container.resolve(UserTaskHelper);
     
     async sendMessage(userTask: UserTaskMessageDto, processedTask: ProcessedTaskDto): Promise<boolean> {
         try {
-            const personPhone = await UserTaskHelper.getUserPhoneNumber(userTask.UserId);
+            const personPhone = await this._userTaskHelper.getUserPhoneNumber(userTask.UserId);
             if (!personPhone) {
                 Logger.instance().log(`User phone number not found for user: ${userTask.UserId}`);
                 return false;

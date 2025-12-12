@@ -1,17 +1,20 @@
+import { inject, injectable } from "tsyringe";
 import { Logger } from "../../../../common/logger";
 import { IPersonRepo } from "../../../../database/repository.interfaces/person/person.repo.interface";
 import { IUserRepo } from "../../../../database/repository.interfaces/users/user/user.repo.interface";
-import { Injector } from "../../../../startup/injector";
 
 ///////////////////////////////////////////////////////////////////////////////
 
+@injectable()
 export class UserTaskHelper {
 
-    private static readonly _personRepo: IPersonRepo = Injector.Container.resolve('IPersonRepo');
+    constructor(
+        @inject('IUserRepo') private _userRepo: IUserRepo,
+        @inject('IPersonRepo') private _personRepo: IPersonRepo,
+    
+    ) {}
 
-    private static readonly _userRepo: IUserRepo = Injector.Container.resolve('IUserRepo');
-
-    public static async getUserTelegramChatId(userId: string): Promise<string> {
+    public async getUserTelegramChatId(userId: string): Promise<string> {
         try {
             const user = await this._userRepo.getById(userId);
             if (!user) {
@@ -25,7 +28,7 @@ export class UserTaskHelper {
         }
     }
 
-    public static async getUserPhoneNumber(userId: string): Promise<string> {
+    public async getUserPhoneNumber(userId: string): Promise<string> {
         try {
             const user = await this._userRepo.getById(userId);
             if (!user) {

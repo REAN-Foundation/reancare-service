@@ -15,11 +15,13 @@ import { UserTaskHelper } from "../user.task.helper";
 export class TelegramChannelHandler implements IUserTaskChannelHandler {
 
     private readonly _botService: IBotService = Injector.Container.resolve(BotService);
-    
+
+    private readonly _userTaskHelper: UserTaskHelper = Injector.Container.resolve(UserTaskHelper);
+
     async sendMessage(userTask: UserTaskMessageDto, processedResult: ProcessedTaskDto): Promise<boolean> {
         try {
 
-            const telegramChatId = await UserTaskHelper.getUserTelegramChatId(userTask.UserId);
+            const telegramChatId = await this._userTaskHelper.getUserTelegramChatId(userTask.UserId);
             if (!telegramChatId) {
                 Logger.instance().log(`User Telegram chat ID not found for user: ${userTask.UserId}`);
                 return false;

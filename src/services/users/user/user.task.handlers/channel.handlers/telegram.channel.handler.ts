@@ -8,6 +8,7 @@ import { Injector } from "../../../../../startup/injector";
 import { IBotService } from "../../../../../modules/communication/bot.service/bot.service.interface";
 import { BotService } from "../../../../../modules/communication/bot.service/bot.service";
 import { BotRequestDomainModel } from "../../../../../domain.types/miscellaneous/bot.request.types";
+import { NotificationChannel } from "../../../../../domain.types/general/notification/notification.types";
 
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -32,7 +33,7 @@ export class TelegramChannelHandler implements IUserTaskChannelHandler {
             const botRequestModel: BotRequestDomainModel = {
                 PhoneNumber : telegramChatId,
                 ClientName  : userTask.TenantName,
-                Channel     : 'telegram',
+                Channel     : NotificationChannel.Telegram,
                 AgentName   : "Reancare",
                 Type        : processedResult.MessageType,
                 Message     : processedResult.Message,

@@ -1,8 +1,9 @@
+import { NotificationChannel } from "../general/notification/notification.types";
 
 export interface BotRequestDomainModel {
     PhoneNumber: string;
     PlatformId?: string;
-    Channel: any;
+    Channel: NotificationChannel;
     ClientName?: string;
     AgentName?: string;
     Provider?: string;
@@ -22,3 +23,4 @@ export enum BotMessagingType {
     Assessment = "reancareAssessment",
     AssessmentForm = "reancareAssessmentWithForm"
 }
+

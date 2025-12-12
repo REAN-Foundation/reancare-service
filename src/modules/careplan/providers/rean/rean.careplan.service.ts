@@ -274,8 +274,6 @@ export class ReanCareplanService implements ICareplanService {
         if (!activity) {
             throw new ApiError(404, 'Activity not found');
         }
-
-        const category = this.getUserTaskCategory(activity.AssetType);
         const status = this.getActivityStatus(activity.Status);
 
         const entity: CareplanActivity = {
@@ -285,7 +283,7 @@ export class ReanCareplanService implements ICareplanService {
             ProviderActionId       : activity.id,
             Title                  : activity.Asset?.Name || activity.Title,
             Type                   : activity.AssetType,
-            Category               : category,
+            Category               : activity.AssetType,
             Description            : activity.Asset?.Description || activity.Description,
             Language               : activity.Language,
             ScheduledAt            : activity.ScheduledDate ? new Date(activity.ScheduledDate) : null,
@@ -329,8 +327,6 @@ export class ReanCareplanService implements ICareplanService {
         if (!updatedActivity) {
             return await this.getActivity(patientUserId, careplanCode, enrollmentId, activityId);
         }
-
-        const category = this.getUserTaskCategory(updatedActivity.AssetType);
         const status = this.getActivityStatus(updatedActivity.Status);
 
         const entity: CareplanActivity = {
@@ -340,7 +336,7 @@ export class ReanCareplanService implements ICareplanService {
             ProviderActionId       : updatedActivity.id,
             Title                  : updatedActivity.Asset?.Name,
             Type                   : updatedActivity.AssetType,
-            Category               : category,
+            Category               : updatedActivity.AssetType,
             Description            : updatedActivity.Asset?.Description,
             Language               : 'English',
             ScheduledAt            : updatedActivity.ScheduledDate,
@@ -403,49 +399,6 @@ export class ReanCareplanService implements ICareplanService {
         }
     }
 
-    private readonly assetTypeCategoryMap = new Map<string, UserTaskCategory>([
-        ['VIDEO', UserTaskCategory.EducationalVideo],
-        ['AUDIO', UserTaskCategory.EducationalAudio],
-        ['ANIMATION', UserTaskCategory.EducationalAnimation],
-        ['ARTICLE', UserTaskCategory.EducationalLink],
-        ['WEB LINK', UserTaskCategory.EducationalLink],
-        ['WEBLINK', UserTaskCategory.EducationalLink],
-        ['INFOGRAPHICS', UserTaskCategory.EducationalInfographics],
-        ['INFOGRAPHIC', UserTaskCategory.EducationalInfographics],
-        ['WEB NEWSFEED', UserTaskCategory.EducationalNewsFeed],
-        ['WEBNEWSFEED', UserTaskCategory.EducationalNewsFeed],
-        ['ASSESSMENT', UserTaskCategory.Assessment],
-        ['QUESTIONNAIRE', UserTaskCategory.Assessment],
-        ['QUESTION', UserTaskCategory.Assessment],
-        ['MESSAGE', UserTaskCategory.Message],
-        ['REMINDER', UserTaskCategory.Message],
-        ['GOAL', UserTaskCategory.Goal],
-        ['CHALLENGE', UserTaskCategory.Challenge],
-        ['EXERCISE', UserTaskCategory.Exercise],
-        ['PHYSIOTHERAPY', UserTaskCategory.Exercise],
-        ['NUTRITION', UserTaskCategory.Nutrition],
-        ['BIOMETRICS', UserTaskCategory.Biometrics],
-        ['MEDICATION', UserTaskCategory.Medication],
-        ['APPOINTMENT', UserTaskCategory.Appointment],
-        ['CONSULTATION', UserTaskCategory.Consultation],
-        ['CHECKUP', UserTaskCategory.Consultation],
-        ['MEDITATION', UserTaskCategory.StressManagement],
-        ['REFLECTION', UserTaskCategory.PersonalReflection],
-        ['ACTION PLAN', UserTaskCategory.Custom],
-        ['ACTIONPLAN', UserTaskCategory.Custom],
-        ['PRIORITY', UserTaskCategory.Custom],
-        ['WORD POWER', UserTaskCategory.Custom],
-        ['WORDPOWER', UserTaskCategory.Custom],
-    ]);
-
-    private getUserTaskCategory(assetType: string): UserTaskCategory {
-        if (!assetType) {
-            return UserTaskCategory.Custom;
-        }
-
-        const type = assetType.toUpperCase();
-        return this.assetTypeCategoryMap.get(type) || UserTaskCategory.Custom;
-    }
 
     convertToAssessmentTemplate(assessmentActivity: CareplanActivity): Promise<CAssessmentTemplate> {
         throw new Error("Method not implemented.");

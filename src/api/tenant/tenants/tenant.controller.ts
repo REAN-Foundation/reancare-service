@@ -140,7 +140,7 @@ export class TenantController extends BaseController {
             }
             Logger.instance().log(`Tenant admin user created successfully. UserName: ${adminUserName}`);
 
-            const settings = await this._tenantSettingsService.createDefaultSettings(tenant.id);
+            const settings = await this._tenantSettingsService.createDefaultSettings(tenant.id, tenantCode);
             
             await this._tenantSettingsMarketingService.createDefaultSettings(tenant.id, {});
 

@@ -64,6 +64,8 @@ export class TenantValidator extends BaseValidator {
         await this.validateString(request, 'WebhookWhatsappClientHeaderToken', Where.Body, true, true);
         await this.validateString(request, 'WebhookWhatsappClientUrlToken', Where.Body, true, true);
         await this.validateString(request, 'SlackTokenFeedback', Where.Body, true, true);
+        await this.validateString(request, 'SlackFeedbackChannelId', Where.Body, true, true);
+        await this.validateString(request, 'SlackSecretFeedback', Where.Body, true, true);
         await this.validateString(request, 'WebhookClickupClientUrlToken', Where.Body, true, true);
         await this.validateString(request, 'ClickupAuthentication', Where.Body, true, true);
         await this.validateString(request, 'CustomMlModelUrl', Where.Body, true, true);
@@ -82,21 +84,43 @@ export class TenantValidator extends BaseValidator {
             SecretName  : body.SecretName,
             Environment : body.Environment,
             SecretValue : {
-                TelegramBotToken                 : body.TelegramBotToken ?? null,
-                TelegramMediaPathUrl             : body.TelegramMediaPathUrl ?? null,
-                WebhookTelegramClientUrlToken    : body.WebhookTelegramClientUrlToken ?? null,
-                WebhookWhatsappClientHeaderToken : body.WebhookWhatsappClientHeaderToken ?? null,
-                WebhookWhatsappClientUrlToken    : body.WebhookWhatsappClientUrlToken ?? null,
-                MetaApiToken                     : body.MetaApiToken ?? null,
-                WhatsappPhoneNumberId            : body.WhatsappPhoneNumberId ?? null,
-                SlackTokenFeedback               : body.SlackTokenFeedback ?? null,
-                WebhookClickupClientUrlToken     : body.WebhookClickupClientUrlToken ?? null,
-                ClickupListId                    : body.ClickupListId ?? null,
-                ClickupIssuesListId              : body.ClickupIssuesListId ?? null,
-                ClickupCaseListId                : body.ClickupCaseListId ?? null,
-                ClickupAuthentication            : body.ClickupAuthentication ?? null,
-                CustomMlModelUrl                 : body.CustomMlModelUrl ?? null,
-                DataBaseName                     : body.DataBaseName ?? null
+                telegram : {
+                    BotToken              : body.TelegramBotToken ?? null,
+                    MediaPathUrl          : body.TelegramMediaPathUrl ?? null,
+                    WebhookClientUrlToken : body.WebhookTelegramClientUrlToken ?? null,
+                },
+
+                whatsapp : {
+                    WebhookClientHeaderToken : body.WebhookWhatsappClientHeaderToken ?? null,
+                    WebhookClientUrlToken    : body.WebhookWhatsappClientUrlToken ?? null,
+                    PhoneNumberId            : body.WhatsappPhoneNumberId ?? null,
+                },
+
+                meta : {
+                    ApiToken : body.MetaApiToken ?? null,
+                },
+
+                slack : {
+                    TokenFeedback     : body.SlackTokenFeedback ?? null,
+                    FeedbackChannelId : body.SlackFeedbackChannelId ?? null,
+                    SecretFeedback    : body.SlackSecretFeedback ?? null,
+                },
+
+                clickup : {
+                    WebhookClientUrlToken : body.WebhookClickupClientUrlToken ?? null,
+                    Authentication        : body.ClickupAuthentication ?? null,
+                    ListId                : body.ClickupListId ?? null,
+                    IssuesListId          : body.ClickupIssuesListId ?? null,
+                    CaseListId            : body.ClickupCaseListId ?? null,
+                },
+
+                ml : {
+                    CustomMlModelUrl : body.CustomMlModelUrl ?? null,
+                },
+
+                database : {
+                    DataBaseName : body.DataBaseName ?? null,
+                }
             }
         };
         return model;

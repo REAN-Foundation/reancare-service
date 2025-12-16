@@ -425,6 +425,17 @@ export class ReanCareplanService implements ICareplanService {
         throw new Error("Method not implemented.");
     }
 
+    public processActivityDetails = async (
+        activity: any,
+        details: CareplanActivity,
+        scheduledAt: string
+    ): Promise<any> => {
+
+        activity['RawContent'] = details.RawContent;
+
+        return activity;
+    };
+
     //#endregion
 
 }

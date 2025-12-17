@@ -54,16 +54,35 @@ export class TenantService {
         return await this._lambdaService.invokeLambdaFunction<TenantSchemaDto>(lambdaFunctionName, model);
     };
 
-    public createSecret = async (model: TenantSecretDomainModel): Promise<BotSecrets> => {
-        return this._lambdaService.invokeLambdaFunction<BotSecrets>('create-secrets-lambda-function', model);
+    public createSecret = async (lambdaFunctionName: string, model: TenantSecretDomainModel): Promise<BotSecrets> => {
+        return this._lambdaService.invokeLambdaFunction<BotSecrets>(lambdaFunctionName, model);
     };
 
-    public getSecret = async (model: GetSecretDomainModel): Promise<BotSecrets> => {
-        return this._lambdaService.invokeLambdaFunction<BotSecrets>('get-secrets-lambda-function', model );
+    public getSecret = async (lambdaFunctionName: string, model: GetSecretDomainModel): Promise<any> => {
+        const secret = await this._lambdaService.invokeLambdaFunction<BotSecrets>(lambdaFunctionName, model );
+        return {
+            "TelegramBotToken"                 : secret.telegram?.BotToken,
+            "TelegramMediaPathUrl"             : secret.telegram?.MediaPathUrl,
+            "WebhookTelegramClientUrlToken"    : secret.telegram?.WebhookClientUrlToken,
+            "WebhookWhatsappClientHeaderToken" : secret.whatsapp?.WebhookClientHeaderToken,
+            "WebhookWhatsappClientUrlToken"    : secret.whatsapp?.WebhookClientUrlToken,
+            "WhatsappPhoneNumberId"            : secret.whatsapp?.PhoneNumberId,
+            "MetaApiToken"                     : secret.meta?.ApiToken,
+            "SlackTokenFeedback"               : secret.slack?.TokenFeedback,
+            "SlackFeedbackChannelId"           : secret.slack?.FeedbackChannelId,
+            "SlackSecretFeedback"              : secret.slack?.SecretFeedback,
+            "WebhookClickupClientUrlToken"     : secret.clickup?.WebhookClientUrlToken,
+            "ClickupAuthentication"            : secret.clickup?.Authentication,
+            "ClickupListId"                    : secret.clickup?.ListId,
+            "ClickupIssuesListId"              : secret.clickup?.IssuesListId,
+            "ClickupCaseListId"                : secret.clickup?.CaseListId,
+            "CustomMlModelUrl"                 : secret.ml?.CustomMlModelUrl,
+            "DataBaseName"                     : secret.database?.DataBaseName,
+        };
     };
 
-    public updateSecret = async (model: TenantSecretDomainModel): Promise<BotSecrets> => {
-        return this._lambdaService.invokeLambdaFunction<BotSecrets>('update-secrets-lambda-function', model);
+    public updateSecret = async (lambdaFunctionName: string, model: TenantSecretDomainModel): Promise<BotSecrets> => {
+        return this._lambdaService.invokeLambdaFunction<BotSecrets>(lambdaFunctionName, model);
     };
 
     public getTenantWithPhone = async (phone: string): Promise<TenantDto> => {
@@ -117,7 +136,7 @@ export class TenantService {
             await this._tenantSettingsRepo.createDefaultSettings(defaultTenant.id, model);
             const marketingService = Injector.Container.resolve(TenantSettingsMarketingService);
             await marketingService.createDefaultSettings(defaultTenant.id, {});
-            
+
             return defaultTenant;
         }
         else {

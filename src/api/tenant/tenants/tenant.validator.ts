@@ -64,15 +64,17 @@ export class TenantValidator extends BaseValidator {
         await this.validateString(request, 'WebhookWhatsappClientHeaderToken', Where.Body, true, true);
         await this.validateString(request, 'WebhookWhatsappClientUrlToken', Where.Body, true, true);
         await this.validateString(request, 'SlackTokenFeedback', Where.Body, true, true);
+        await this.validateString(request, 'SlackFeedbackChannelId', Where.Body, true, true);
+        await this.validateString(request, 'SlackSecretFeedback', Where.Body, true, true);
         await this.validateString(request, 'WebhookClickupClientUrlToken', Where.Body, true, true);
-        await this.validateString(request, 'WebhookMockChannelClientUrlToken', Where.Body, true, true);
-        await this.validateString(request, 'DbPassword', Where.Body, true, true);
-        await this.validateString(request, 'DbUserName', Where.Body, true, true);
-        await this.validateString(request, 'DbHost', Where.Body, true, true);
         await this.validateString(request, 'ClickupAuthentication', Where.Body, true, true);
-        await this.validateString(request, 'ReancareApiKey', Where.Body, true, true);
-        await this.validateString(request, 'NlpService', Where.Body, true, true);
         await this.validateString(request, 'CustomMlModelUrl', Where.Body, true, true);
+        await this.validateString(request, 'DataBaseName', Where.Body, true, true);
+        await this.validateString(request, 'MetaApiToken', Where.Body, true,  true);
+        await this.validateString(request, 'WhatsappPhoneNumberId', Where.Body, true,  true);
+        await this.validateString(request, 'ClickupListId', Where.Body, true,  true);
+        await this.validateString(request, 'ClickupIssuesListId', Where.Body, true,  true);
+        await this.validateString(request, 'ClickupCaseListId', Where.Body, true,  true);
         // await this.validateObject(request, 'SecretValue', Where.Body, true, false);
 
         this.validateRequest(request);
@@ -82,21 +84,43 @@ export class TenantValidator extends BaseValidator {
             SecretName  : body.SecretName,
             Environment : body.Environment,
             SecretValue : {
-                TelegramBotToken                 : body.TelegramBotToken ?? null,
-                TelegramMediaPathUrl             : body.TelegramMediaPathUrl ?? null,
-                WebhookTelegramClientUrlToken    : body.WebhookTelegramClientUrlToken ?? null,
-                WebhookWhatsappClientHeaderToken : body.WebhookWhatsappClientHeaderToken ?? null,
-                WebhookWhatsappClientUrlToken    : body.WebhookWhatsappClientUrlToken ?? null,
-                SlackTokenFeedback               : body.SlackTokenFeedback ?? null,
-                WebhookClickupClientUrlToken     : body.WebhookClickupClientUrlToken ?? null,
-                WebhookMockChannelClientUrlToken : body.WebhookMockChannelClientUrlToken ?? null,
-                DbPassword                       : body.DbPassword ?? null,
-                DbUserName                       : body.DbUserName ?? null,
-                DbHost                           : body.DbHost ?? null,
-                ClickupAuthentication            : body.ClickupAuthentication ?? null,
-                ReancareApiKey                   : body.ReancareApiKey ?? null,
-                NlpService                       : body.NlpService ?? null,
-                CustomMlModelUrl                 : body.CustomMlModelUrl ?? null
+                telegram : {
+                    BotToken              : body.TelegramBotToken ?? null,
+                    MediaPathUrl          : body.TelegramMediaPathUrl ?? null,
+                    WebhookClientUrlToken : body.WebhookTelegramClientUrlToken ?? null,
+                },
+
+                whatsapp : {
+                    WebhookClientHeaderToken : body.WebhookWhatsappClientHeaderToken ?? null,
+                    WebhookClientUrlToken    : body.WebhookWhatsappClientUrlToken ?? null,
+                    PhoneNumberId            : body.WhatsappPhoneNumberId ?? null,
+                },
+
+                meta : {
+                    ApiToken : body.MetaApiToken ?? null,
+                },
+
+                slack : {
+                    TokenFeedback     : body.SlackTokenFeedback ?? null,
+                    FeedbackChannelId : body.SlackFeedbackChannelId ?? null,
+                    SecretFeedback    : body.SlackSecretFeedback ?? null,
+                },
+
+                clickup : {
+                    WebhookClientUrlToken : body.WebhookClickupClientUrlToken ?? null,
+                    Authentication        : body.ClickupAuthentication ?? null,
+                    ListId                : body.ClickupListId ?? null,
+                    IssuesListId          : body.ClickupIssuesListId ?? null,
+                    CaseListId            : body.ClickupCaseListId ?? null,
+                },
+
+                ml : {
+                    CustomMlModelUrl : body.CustomMlModelUrl ?? null,
+                },
+
+                database : {
+                    DataBaseName : body.DataBaseName ?? null,
+                }
             }
         };
         return model;

@@ -1,7 +1,7 @@
 import { injectable } from "tsyringe";
 import { Logger } from "../../../../../../common/logger";
 import { ApiError } from "../../../../../../common/api.error";
-import { ChannelMetadata } from "../../../../../../domain.types/webhook/whatsapp.meta.types";
+import { ChannelMetadata } from "../../../../../../domain.types/webhook/channel.metadata.types";
 import { NotificationChannel } from "../../../../../../domain.types/general/notification/notification.types";
 import { IChannelMetadataFormatter } from "../../../../../../database/repository.interfaces/users/user/task.task/channel.metadata.formatter.interface";
 import { WhatsAppMetadataFormatter } from "./whatsapp.metadata.formatter";
@@ -66,13 +66,9 @@ export class MetadataHandler {
     }
 
     validateChannelMetadata(channelMetadata: ChannelMetadata): boolean {
-        if (
-            !channelMetadata ||
-            !channelMetadata.Type ||
-            !channelMetadata.TemplateName
-        ) {
+        if (!channelMetadata || !channelMetadata.Type) {
             Logger.instance().log(`Channel metadata is not valid: ${JSON.stringify(channelMetadata)}`);
-            throw new ApiError(400, 'Channel metadata is not valid. Type and TemplateName are required.');
+            throw new ApiError(400, 'Channel metadata is not valid. Type is required.');
         }
         return true;
     }

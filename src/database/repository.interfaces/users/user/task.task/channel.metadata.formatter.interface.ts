@@ -1,4 +1,4 @@
-import { ChannelMetadata } from "../../../../../domain.types/webhook/whatsapp.meta.types";
+import { ChannelMetadata } from "../../../../../domain.types/webhook/channel.metadata.types";
 import { NotificationChannel } from "../../../../../domain.types/general/notification/notification.types";
 
 ///////////////////////////////////////////////////////////////////////////////

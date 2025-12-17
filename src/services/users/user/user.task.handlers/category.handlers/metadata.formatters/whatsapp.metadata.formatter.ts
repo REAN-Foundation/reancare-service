@@ -1,6 +1,6 @@
 import { injectable } from "tsyringe";
 import { IChannelMetadataFormatter } from "../../../../../../database/repository.interfaces/users/user/task.task/channel.metadata.formatter.interface";
-import { ChannelMetadata } from "../../../../../../domain.types/webhook/whatsapp.meta.types";
+import { ChannelMetadata } from "../../../../../../domain.types/webhook/channel.metadata.types";
 
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -11,15 +11,9 @@ export class WhatsAppMetadataFormatter implements IChannelMetadataFormatter {
         channelMetadata: ChannelMetadata,
         channelConfig: any,
     ): any {
-        const baseMetadata = {
-            Type             : channelMetadata.Type,
-            TemplateName     : channelMetadata.TemplateName,
-            TemplateLanguage : channelMetadata.TemplateLanguage
-        };
-
         return {
-            ...baseMetadata,
-            ...channelConfig
+            Type          : channelMetadata.Type,
+            ChannelConfig : channelConfig
         };
     }
     

@@ -5,7 +5,7 @@ import { UserTaskMessageDto, ProcessedTaskDto } from "../../../../../domain.type
 import { NotificationChannel } from "../../../../../domain.types/general/notification/notification.types";
 import { AssessmentService } from "../../../../clinical/assessment/assessment.service";
 import { Injector } from "../../../../../startup/injector";
-import { ChannelMetadata } from "../../../../../domain.types/webhook/whatsapp.meta.types";
+import { ChannelMetadata } from "../../../../../domain.types/webhook/channel.metadata.types";
 import { UserTaskActionData } from "../../../../../domain.types/users/user.task/resolved.action.data.types";
 import { AssessmentDomainModel } from "../../../../../domain.types/clinical/assessment/assessment.domain.model";
 import { BotMessagingType } from "../../../../../domain.types/miscellaneous/bot.request.types";

@@ -9,7 +9,7 @@ import { ChannelMetadata } from "../../../../../domain.types/webhook/channel.met
 import { UserTaskActionData } from "../../../../../domain.types/users/user.task/resolved.action.data.types";
 import { AssessmentDomainModel } from "../../../../../domain.types/clinical/assessment/assessment.domain.model";
 import { BotMessagingType } from "../../../../../domain.types/miscellaneous/bot.request.types";
-import { MetadataHandler } from "./metadata.formatters/metadata.handler";
+import { MetadataHandler } from "./metadata.handler";
 
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -53,7 +53,7 @@ export class AssessmentTaskHandler implements IUserTaskHandler {
 
         const channelConfig = this._metadataHandler.getChannelConfiguration(channelMetadata, channel);
 
-        const formMetadata = this._metadataHandler.buildChannelFormMetadata(channelMetadata, channelConfig, channel);
+        const formMetadata = this._metadataHandler.buildChannelFormMetadata(channelMetadata, channelConfig);
 
         const processedTask: ProcessedTaskDto = {
             MessageType : BotMessagingType.AssessmentForm,

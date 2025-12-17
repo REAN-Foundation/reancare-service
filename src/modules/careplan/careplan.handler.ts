@@ -216,6 +216,16 @@ export class CareplanHandler {
         return true;
     };
 
+    public processActivityDetails = async (
+        activity: any,
+        details: CareplanActivity,
+        scheduledAt: string,
+        provider: string
+    ): Promise<any> => {
+        var service = CareplanHandler._services.getItem(provider);
+        return await service.processActivityDetails(activity, details, scheduledAt);
+    };
+
     private isEnabledProvider(provider: string) {
         var careplans = ConfigurationManager.careplans();
         return careplans.find(x => {

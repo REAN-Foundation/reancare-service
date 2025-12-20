@@ -3,6 +3,10 @@ import { IUserTaskChannelHandler } from "../../../database/repository.interfaces
 import { Injector } from "../../../startup/injector";
 import { WhatsAppChannelHandler } from "./user.task.handlers/channel.handlers/whatsapp.channel.handler";
 import { TelegramChannelHandler } from "./user.task.handlers/channel.handlers/telegram.channel.handler";
+import { EmailChannelHandler } from "./user.task.handlers/channel.handlers/email.channel.handler";
+import { SmsChannelHandler } from "./user.task.handlers/channel.handlers/sms.channel.handler";
+import { MobilePushChannelHandler } from "./user.task.handlers/channel.handlers/mobile.push.channel.handler";
+import { WebPushChannelHandler } from "./user.task.handlers/channel.handlers/web.push.channel.handler";
 import { UserTaskMessageDto, ProcessedTaskDto } from "../../../domain.types/users/user.task/user.task.dto";
 import { Logger } from "../../../common/logger";
 
@@ -33,13 +37,19 @@ export class UserTaskChannelResolver {
                 
                 case NotificationChannel.Telegram:
                     return Injector.Container.resolve(TelegramChannelHandler);
-                
-                    // Add more handlers as needed
-                    // case NotificationChannel.Email:
-                    //     return Injector.Container.resolve(EmailChannelHandler);
-                    // case NotificationChannel.SMS:
-                    //     return Injector.Container.resolve(SmsChannelHandler);
-                
+
+                case NotificationChannel.Email:
+                    return Injector.Container.resolve(EmailChannelHandler);
+
+                case NotificationChannel.SMS:
+                    return Injector.Container.resolve(SmsChannelHandler);
+
+                case NotificationChannel.MobilePush:
+                    return Injector.Container.resolve(MobilePushChannelHandler);
+
+                case NotificationChannel.WebPush:
+                    return Injector.Container.resolve(WebPushChannelHandler);
+
                 default:
                     Logger.instance().log(`No channel handler found for channel: ${channel}`);
                     return null;

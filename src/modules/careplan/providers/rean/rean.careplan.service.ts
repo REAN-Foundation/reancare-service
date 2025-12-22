@@ -188,7 +188,7 @@ export class ReanCareplanService implements ICareplanService {
                 ProviderActionId       : activity.id,
                 Title                  : activity.Asset.Name,
                 Type                   : activity.AssetType,
-                Category               : activity.AssetType,
+                Category               : this.mapAssetTypeToUserTaskCategory(activity.AssetType),
                 Description            : activity.Asset.Description,
                 Language               : 'English',
                 ScheduledAt            : activity.ScheduledDate,
@@ -283,7 +283,7 @@ export class ReanCareplanService implements ICareplanService {
             ProviderActionId       : activity.id,
             Title                  : activity.Asset?.Name || activity.Title,
             Type                   : activity.AssetType,
-            Category               : activity.AssetType,
+            Category               : this.mapAssetTypeToUserTaskCategory(activity.AssetType),
             Description            : activity.Asset?.Description || activity.Description,
             Language               : activity.Language,
             ScheduledAt            : activity.ScheduledDate ? new Date(activity.ScheduledDate) : null,
@@ -336,7 +336,7 @@ export class ReanCareplanService implements ICareplanService {
             ProviderActionId       : updatedActivity.id,
             Title                  : updatedActivity.Asset?.Name,
             Type                   : updatedActivity.AssetType,
-            Category               : updatedActivity.AssetType,
+            Category               : this.mapAssetTypeToUserTaskCategory(updatedActivity.AssetType),
             Description            : updatedActivity.Asset?.Description,
             Language               : 'English',
             ScheduledAt            : updatedActivity.ScheduledDate,
@@ -399,6 +399,37 @@ export class ReanCareplanService implements ICareplanService {
         }
     }
 
+    private mapAssetTypeToUserTaskCategory(assetType: string): UserTaskCategory {
+        const mapping: { [key: string]: UserTaskCategory } = {
+            'Video'         : UserTaskCategory.EducationalVideo,
+            'Audio'         : UserTaskCategory.EducationalAudio,
+            'Animation'     : UserTaskCategory.EducationalAnimation,
+            'Web link'      : UserTaskCategory.EducationalLink,
+            'Infographics'  : UserTaskCategory.EducationalInfographics,
+            'Web newsfeed'  : UserTaskCategory.EducationalNewsFeed,
+            'Medication'    : UserTaskCategory.Medication,
+            'Appointment'   : UserTaskCategory.Appointment,
+            'Exercise'      : UserTaskCategory.Exercise,
+            'Nutrition'     : UserTaskCategory.Nutrition,
+            'Biometrics'    : UserTaskCategory.Biometrics,
+            'Assessment'    : UserTaskCategory.Assessment,
+            'Challenge'     : UserTaskCategory.Challenge,
+            'Goal'          : UserTaskCategory.Goal,
+            'Consultation'  : UserTaskCategory.Consultation,
+            'Reflection'    : UserTaskCategory.PersonalReflection,
+            'Message'       : UserTaskCategory.Message,
+            'Meditation'    : UserTaskCategory.StressManagement,
+            'Action plan'   : UserTaskCategory.Custom,
+            'Article'       : UserTaskCategory.EducationalLink,
+            'Checkup'       : UserTaskCategory.Custom,
+            'Physiotherapy' : UserTaskCategory.Exercise,
+            'Priority'      : UserTaskCategory.Custom,
+            'Reminder'      : UserTaskCategory.Custom,
+            'Word power'    : UserTaskCategory.Custom
+        };
+
+        return mapping[assetType] || UserTaskCategory.Custom;
+    }
 
     convertToAssessmentTemplate(assessmentActivity: CareplanActivity): Promise<CAssessmentTemplate> {
         throw new Error("Method not implemented.");

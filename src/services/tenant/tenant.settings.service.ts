@@ -13,6 +13,8 @@ import {
 } from '../../domain.types/tenant/tenant.settings.types';
 import { TenantSettingsDto } from '../../domain.types/tenant/tenant.settings.types';
 import { uuid } from '../../domain.types/miscellaneous/system.types';
+import { VitalsThresholds } from '../../domain.types/tenant/vitals.thresholds.types';
+import { DEFAULT_VITALS_THRESHOLDS } from '../../domain.types/tenant/default.vitals.thresholds';
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -52,13 +54,17 @@ export class TenantSettingsService {
         if (settingsType === TenantSettingsTypes.CustomSettings) {
             return settings.CustomSettings;
         }
+        if (settingsType === TenantSettingsTypes.VitalsThresholds) {
+            return settings.VitalsThresholds;
+        }
         return settings;
     };
 
     public updateTenantSettingsByType = async (
         tenantId: uuid,
         settingsType: TenantSettingsTypes,
-        settings: CommonSettings | FollowupSettings | ChatBotSettings | FormsSettings | TenantSettingsDto | CustomSettings
+        settings: CommonSettings | FollowupSettings | ChatBotSettings |
+        FormsSettings | TenantSettingsDto | CustomSettings | VitalsThresholds
     ): Promise<TenantSettingsDto> => {
         if (settingsType === TenantSettingsTypes.Common) {
             return await this._tenantSettingsRepo.updateCommonSettings(tenantId, settings as CommonSettings);
@@ -78,7 +84,10 @@ export class TenantSettingsService {
         if (settingsType === TenantSettingsTypes.CustomSettings) {
             return await this._tenantSettingsRepo.updateCustomSettings(tenantId, settings as CustomSettings);
         }
-        
+        if (settingsType === TenantSettingsTypes.VitalsThresholds) {
+            return await this._tenantSettingsRepo.updateVitalsThresholds(tenantId, settings as VitalsThresholds);
+        }
+
         return await this._tenantSettingsRepo.getTenantSettings(tenantId);
     };
 
@@ -89,7 +98,21 @@ export class TenantSettingsService {
         await this._tenantSettingsRepo.updateFormsSettings(tenantId, model.Forms);
         await this._tenantSettingsRepo.updateConsentSettings(tenantId, model.Consent);
         await this._tenantSettingsRepo.updateCustomSettings(tenantId, model.CustomSettings);
+        if (model.VitalsThresholds) {
+            await this._tenantSettingsRepo.updateVitalsThresholds(tenantId, model.VitalsThresholds);
+        }
         return await this._tenantSettingsRepo.getTenantSettings(tenantId);
+    };
+
+    public getVitalsThresholds = async (tenantId: uuid): Promise<VitalsThresholds> => {
+        const settings = await this._tenantSettingsRepo.getTenantSettings(tenantId);
+        if (!settings || !settings.VitalsThresholds) {
+            return DEFAULT_VITALS_THRESHOLDS;
+        }
+        return {
+            ...DEFAULT_VITALS_THRESHOLDS,
+            ...settings.VitalsThresholds
+        };
     };
 
     //#endregion

@@ -25,6 +25,8 @@ export enum BiometricsType {
     Pulse                 = 'Pulse',
 }
 
+export const DEFAULT_ALERT_TITLE = "Dear {{PatientName}},";
+
 export enum BiometricAlertType {
     BloodGlucoseAlert          = 'BloodGlucoseAlert',
     BloodOxygenSaturationAlert = 'BloodOxygenSaturationAlert',
@@ -57,11 +59,13 @@ export enum Severity {
     LOW = "Low",
     NORMAL = "Normal",
     ELEVATED = "Elevated",
-    HYPERTENSION_STAGE1 = "Hypertension_stage1",
-    HYPERTENSION_STAGE2 = "Hypertension_stage2",
-    HYPERTENSIVE_CRISIS = "Hypertensive_crisis",
+    HYPERTENSION_STAGE1 = "Hypertension Stage1",
+    HYPERTENSION_STAGE2 = "Hypertension Stage2",
+    HYPERTENSIVE_CRISIS = "Hypertensive Crisis",
     HIGH = "High",
-    VERY_HIGH = "Very High"
+    VERY_HIGH = "Very High",
+    LOW_INVALID = "Low Invalid",
+    HIGH_INVALID = "High Invalid"
     }
 
 export interface AlertNotificationCreateModel {

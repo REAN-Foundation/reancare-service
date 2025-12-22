@@ -20,6 +20,7 @@ import { BiometricsController } from '../biometrics.controller';
 import { BiometricsEvents } from '../biometrics.events';
 import { BiometricAlerts } from '../biometrics.alert';
 import { ActivityTrackerHandler } from '../../../../services/users/patient/activity.tracker/activity.tracker.handler';
+import { NotificationChannel } from '../../../../domain.types/general/notification/notification.types';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -89,7 +90,13 @@ export class BloodPressureController extends BiometricsController {
                 });
             }
             BiometricsEvents.onBiometricsAdded(request, bloodPressure, 'blood.pressure');
-            BiometricAlerts.forBloodPressure(bloodPressure);
+            const tenantId = request.currentUser?.TenantId ?? request.currentUserTenantId;
+            BiometricAlerts.forBloodPressure(
+                bloodPressure,
+                NotificationChannel.MobilePush,
+                null,
+                tenantId
+            );
             ActivityTrackerHandler.addOrUpdateActivity({
                 PatientUserId      : model.PatientUserId,
                 RecentActivityDate : new Date(),

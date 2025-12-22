@@ -8,6 +8,7 @@ import {
     TenantSettingsDto,
     CustomSettings
 } from "../../../../../domain.types/tenant/tenant.settings.types";
+import { VitalsThresholds } from "../../../../../domain.types/tenant/vitals.thresholds.types";
 import { uuid } from "../../../../../domain.types/miscellaneous/system.types";
 import { ITenantSettingsRepo } from '../../../../repository.interfaces/tenant/tenant.settings.interface';
 import { TenantSettingsMapper } from '../../mappers/tenant/tenant.settings.mapper';
@@ -150,7 +151,24 @@ export class TenantSettingsRepo implements ITenantSettingsRepo {
             throw new ApiError(500, `Failed to update tenant custom settings: ${error.message}`);
         }
     };
-    
+
+    updateVitalsThresholds = async (tenantId: string, settings: VitalsThresholds): Promise<TenantSettingsDto> => {
+        try {
+            const vitalsThresholds = this.validateJSONStringify(JSON.stringify(settings));
+            const record = await TenantSettings.findOne({ where: { TenantId: tenantId } });
+            if (!record) {
+                throw new ApiError(404, `Tenant settings not found for tenant: ${tenantId}`);
+            }
+            record.VitalsThresholds = vitalsThresholds;
+            await record.save();
+            return TenantSettingsMapper.toDto(record);
+        }
+        catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, `Failed to update tenant vitals thresholds: ${error.message}`);
+        }
+    };
+
     private readonly validateJSONStringify = (str: string) => {
         const validateTrue = Helper.replaceAll(str,`"true"`, 'true');
         const validatedString = Helper.replaceAll(validateTrue, `"false"`, 'false');

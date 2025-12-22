@@ -59,13 +59,15 @@ export class UserTaskHelper {
 
     public async getUserDeviceTokens(userId: string): Promise<string[]> {
         try {
-            const devices = await this._userDeviceDetailsRepo.getByUserId(userId);
-            if (!devices || devices.length === 0) {
+            const UserDeviceDetails = await this._userDeviceDetailsRepo.getByUserId(userId);
+            if (!UserDeviceDetails || UserDeviceDetails.length === 0) {
                 return [];
             }
-            return devices
-                .filter(device => device.Token && device.IsNotificationEnabled)
-                .map(device => device.Token);
+            const deviceTokens = [];
+            UserDeviceDetails.forEach((device) => {
+                deviceTokens.push(device.Token);
+            });
+            return deviceTokens;
         } catch (error) {
             Logger.instance().log(`Error getting user device tokens: ${error}`);
             return [];

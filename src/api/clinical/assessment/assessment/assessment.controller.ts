@@ -537,7 +537,7 @@ export class AssessmentController extends BaseController {
                 message = message + status ? ' ' + status : '';
             }
 
-            this.handleBiometricAlerts(completedAssessment.id, patient.UserId);
+            this.handleBiometricAlerts(completedAssessment.id, patient.UserId, submissionModel.TenantId);
 
             ResponseHandler.success(request, response, message, 200, { Assessment: completedAssessment });
         } catch (error) {
@@ -549,7 +549,11 @@ export class AssessmentController extends BaseController {
 
     //#region Privates
 
-    private handleBiometricAlerts = async (assessmentId: uuid, patientUserId: string) => {
+    private handleBiometricAlerts = async (
+        assessmentId: uuid,
+        patientUserId: string,
+        tenantId?: string
+    ) => {
         try {
             Logger.instance().log(`Handling biometric alerts for assessment id: ${assessmentId}`);
             const assessment = await this._service.getById(assessmentId);
@@ -574,8 +578,13 @@ export class AssessmentController extends BaseController {
             }
             const biometricAlertSettings: BiometricAlertSettings =
             this._validator.validateBiometricAlertSettings(alertSettings);
-            this.processBiometricAlertsByCategory(biometricAlertSettings, fieldIdentifier, patientUserId);
-            
+            this.processBiometricAlertsByCategory(
+                biometricAlertSettings,
+                fieldIdentifier,
+                patientUserId,
+                tenantId
+            );
+
         } catch (error) {
             Logger.instance().log(`Error in handling biometric alerts: ${error}`);
         }
@@ -584,7 +593,8 @@ export class AssessmentController extends BaseController {
     private processBiometricAlertsByCategory = (
         biometricAlertSettings: BiometricAlertSettings,
         fieldIdentifier: Record<string, string>,
-        patientUserId: string
+        patientUserId: string,
+        tenantId?: string
     ) => {
         try {
             if (
@@ -600,14 +610,15 @@ export class AssessmentController extends BaseController {
                     Diastolic     : isNaN(Number(fieldIdentifier.Diastolic)) ? 0 : Number(fieldIdentifier.Diastolic),
                     Unit          : 'mmHg',
                 };
-        
+
                 BiometricAlerts.forBloodPressure(
                     model,
                     biometricAlertSettings.Channel ?? NotificationChannel.WhatsappMeta,
-                    biometricAlertSettings
+                    biometricAlertSettings,
+                    tenantId
                 );
             }
-    
+
             if (
                 biometricAlertSettings.BiometricAlertCategories.length > 0 &&
                 biometricAlertSettings.BiometricAlertCategories.includes("Pulse") &&
@@ -622,10 +633,11 @@ export class AssessmentController extends BaseController {
                 BiometricAlerts.forPulse(
                     model,
                     biometricAlertSettings.Channel ?? NotificationChannel.WhatsappMeta,
-                    biometricAlertSettings
+                    biometricAlertSettings,
+                    tenantId
                 );
             }
-    
+
             if (
                 biometricAlertSettings.BiometricAlertCategories.length > 0 &&
                 biometricAlertSettings.BiometricAlertCategories.includes("OxygenSaturation") &&
@@ -641,10 +653,11 @@ export class AssessmentController extends BaseController {
                 BiometricAlerts.forBloodOxygenSaturation(
                     model,
                     biometricAlertSettings.Channel ?? NotificationChannel.WhatsappMeta,
-                    biometricAlertSettings
+                    biometricAlertSettings,
+                    tenantId
                 );
             }
-    
+
             if (
                 biometricAlertSettings.BiometricAlertCategories.length > 0 &&
                 biometricAlertSettings.BiometricAlertCategories.includes("BloodGlucose") &&
@@ -660,10 +673,11 @@ export class AssessmentController extends BaseController {
                 BiometricAlerts.forBloodGlucose(
                     model,
                     biometricAlertSettings.Channel ?? NotificationChannel.WhatsappMeta,
-                    biometricAlertSettings
+                    biometricAlertSettings,
+                    tenantId
                 );
             }
-    
+
             if (
                 biometricAlertSettings.BiometricAlertCategories.length > 0 &&
                 biometricAlertSettings.BiometricAlertCategories.includes("Temperature") &&
@@ -672,16 +686,18 @@ export class AssessmentController extends BaseController {
                 Logger.instance().log(`Processing body temperature alert`);
                 const model: BodyTemperatureDto = {
                     PatientUserId   : patientUserId,
-                    BodyTemperature : isNaN(Number(fieldIdentifier.Temperature)) ? 0 : Number(fieldIdentifier.Temperature),
+                    BodyTemperature : isNaN(Number(fieldIdentifier.Temperature)) ?
+                        0 : Number(fieldIdentifier.Temperature),
                     Unit            : '°C',
                 };
                 BiometricAlerts.forBodyTemperature(
                     model,
                     biometricAlertSettings.Channel ?? NotificationChannel.WhatsappMeta,
-                    biometricAlertSettings
+                    biometricAlertSettings,
+                    tenantId
                 );
             }
-    
+
             if (
                 biometricAlertSettings.BiometricAlertCategories.length > 0 &&
                 biometricAlertSettings.BiometricAlertCategories.includes("BodyBMI") &&
@@ -691,18 +707,22 @@ export class AssessmentController extends BaseController {
                 Logger.instance().log(`Processing body BMI alert`);
                 const model: BodyWeightDto = {
                     PatientUserId : patientUserId,
-                    BodyWeight    : isNaN(Number(fieldIdentifier.BodyWeight)) ? 0 : Number(fieldIdentifier.BodyWeight),
+                    BodyWeight    : isNaN(Number(fieldIdentifier.BodyWeight)) ?
+                        0 : Number(fieldIdentifier.BodyWeight),
                     Unit          : 'kg',
                 };
                 const bodyHeightModel: BodyHeightDto = {
                     PatientUserId : patientUserId,
-                    BodyHeight    : isNaN(Number(fieldIdentifier.BodyHeight)) ? 0 : Number(fieldIdentifier.BodyHeight),
+                    BodyHeight    : isNaN(Number(fieldIdentifier.BodyHeight)) ?
+                        0 : Number(fieldIdentifier.BodyHeight),
                     Unit          : 'cm',
                 };
                 BiometricAlerts.forBodyBMI(
-                    model, bodyHeightModel,
+                    model,
+                    bodyHeightModel,
                     biometricAlertSettings.Channel ?? NotificationChannel.WhatsappMeta,
-                    biometricAlertSettings
+                    biometricAlertSettings,
+                    tenantId
                 );
             }
         } catch (error) {

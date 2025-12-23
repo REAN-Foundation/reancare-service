@@ -3,7 +3,7 @@ import { Logger } from "../../../../../common/logger";
 import { IUserTaskChannelHandler } from "../../../../../database/repository.interfaces/users/user/task.task/user.task.channel.handler.interface";
 import { UserTaskMessageDto, ProcessedTaskDto } from "../../../../../domain.types/users/user.task/user.task.dto";
 import { Injector } from "../../../../../startup/injector";
-import { IEmailService } from "../../../../../modules/communication/email/email.service.interface";
+import { EmailService } from "../../../../../modules/communication/email/email.service";
 import { EmailDetails } from "../../../../../modules/communication/email/email.details";
 import { UserTaskHelper } from "../user.task.helper";
 
@@ -12,7 +12,7 @@ import { UserTaskHelper } from "../user.task.helper";
 @injectable()
 export class EmailChannelHandler implements IUserTaskChannelHandler {
 
-    private readonly _emailService: IEmailService = Injector.Container.resolve('IEmailService') as IEmailService;
+    private readonly _emailService: EmailService = Injector.Container.resolve(EmailService);
 
     private readonly _userTaskHelper: UserTaskHelper = Injector.Container.resolve(UserTaskHelper);
 

@@ -12,7 +12,7 @@ export class UserTaskHelper {
     constructor(
         @inject('IUserRepo') private _userRepo: IUserRepo,
         @inject('IPersonRepo') private _personRepo: IPersonRepo,
-        @inject('IUserDeviceDetailsRepo') private _userDeviceDetailsRepo: IUserDeviceDetailsRepo,
+        @inject('IUserDeviceDetailsRepo') private readonly _userDeviceDetailsRepo: IUserDeviceDetailsRepo,
     ) {}
 
     public async getUserTelegramChatId(userId: string): Promise<string> {

@@ -102,8 +102,8 @@
                 "Category": "Hypertensive Crisis",
                 "Severity": "Hypertensive Crisis",
                 "Ranges": {
-                    "Systolic": { "Min": 181, "Max": 999 },
-                    "Diastolic": { "Min": 121, "Max": 999 }
+                    "Systolic": { "Min": 181, "Max": null },
+                    "Diastolic": { "Min": 121, "Max": null }
                 },
                 "AlertMessage": {
                     "en-US": "Your recent blood pressure reading is {{Systolic}}/{{Diastolic}} mmHg. You may be in a hypertensive crisis. If your readings remain high after five minutes, call your healthcare provider immediately.",

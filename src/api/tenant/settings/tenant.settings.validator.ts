@@ -20,7 +20,7 @@ import { ApiError } from '../../../common/api.error';
 import { Severity } from '../../../domain.types/clinical/biometrics/biometrics.types';
 
 ///////////////////////////////////////////////////////////////////////////////////////
-
+const maxVitalItems = 20;
 export class TenantSettingsValidator extends BaseValidator {
 
     constructor() {
@@ -668,7 +668,7 @@ export class TenantSettingsValidator extends BaseValidator {
         }
 
         const vitalTypes = ['BloodPressure', 'Pulse', 'BloodGlucose', 'BodyTemperature', 'BloodOxygenSaturation', 'BodyBmi'];
-        const MAX_CATEGORIES = 20;
+        const MAX_CATEGORIES = maxVitalItems;
 
         const providedKeys = Object.keys(vitalsThresholds);
         const invalidKeys = providedKeys.filter(key => !vitalTypes.includes(key));

@@ -27,17 +27,21 @@ export class TenantSettingsRepo implements ITenantSettingsRepo {
             const chatBot = this.validateJSONStringify(JSON.stringify(model.ChatBot));
             const followup = this.validateJSONStringify(JSON.stringify(model.Followup));
             const forms = this.validateJSONStringify(JSON.stringify(model.Forms));
- 
+
             const customSettings =
                 model.CustomSettings ? this.validateJSONStringify(JSON.stringify(model.CustomSettings)) : null;
 
+            const vitalsThresholds =
+                model.VitalsThresholds ? this.validateJSONStringify(JSON.stringify(model.VitalsThresholds)) : null;
+
             const entity = {
-                TenantId       : tenantId,
-                Common         : common,
-                Followup       : followup,
-                ChatBot        : chatBot,
-                Forms          : forms,
-                CustomSettings : customSettings,
+                TenantId         : tenantId,
+                Common           : common,
+                Followup         : followup,
+                ChatBot          : chatBot,
+                Forms            : forms,
+                CustomSettings   : customSettings,
+                VitalsThresholds : vitalsThresholds,
             };
             const settings = await TenantSettings.create(entity);
             return TenantSettingsMapper.toDto(settings);

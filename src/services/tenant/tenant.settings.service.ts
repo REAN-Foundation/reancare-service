@@ -14,7 +14,7 @@ import {
 import { TenantSettingsDto } from '../../domain.types/tenant/tenant.settings.types';
 import { uuid } from '../../domain.types/miscellaneous/system.types';
 import { VitalsThresholds } from '../../domain.types/tenant/vitals.thresholds.types';
-import { DEFAULT_VITALS_THRESHOLDS } from '../../domain.types/tenant/default.vitals.thresholds';
+import * as DefaultVitalsThresholds from '../../../seed.data/default.vitals.thresholds.json';
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -106,13 +106,7 @@ export class TenantSettingsService {
 
     public getVitalsThresholds = async (tenantId: uuid): Promise<VitalsThresholds> => {
         const settings = await this._tenantSettingsRepo.getTenantSettings(tenantId);
-        if (!settings || !settings.VitalsThresholds) {
-            return DEFAULT_VITALS_THRESHOLDS;
-        }
-        return {
-            ...DEFAULT_VITALS_THRESHOLDS,
-            ...settings.VitalsThresholds
-        };
+        return settings?.VitalsThresholds ?? null;
     };
 
     //#endregion
@@ -407,11 +401,12 @@ export class TenantSettingsService {
         };
 
         const model: TenantSettingsDomainModel = {
-            Common   : common,
-            Followup : followup,
-            ChatBot  : chatBot,
-            Forms    : formSettings,
-            Consent  : null
+            Common           : common,
+            Followup         : followup,
+            ChatBot          : chatBot,
+            Forms            : formSettings,
+            Consent          : null,
+            VitalsThresholds : DefaultVitalsThresholds as VitalsThresholds
         };
 
         return model;

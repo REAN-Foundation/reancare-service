@@ -53,23 +53,26 @@ export class AssessmentHelperService {
     }
 
     public static extractFieldIdentifierData(assessment: AssessmentDto): Record<string, string> | null {
-      
+
         const userResponses = assessment.UserResponses || [];
         const extractedData: Record<string, string> = {};
-      
+
         for (const response of userResponses) {
             const fieldIdentifier = response.Node?.FieldIdentifier;
-            const value = response.ResponseType === QueryResponseType.Text ||
-            response.ResponseType === QueryResponseType.Integer ||
-            response.ResponseType === QueryResponseType.Float ?
-                response.TextValue || response.IntegerValue || response.FloatValue : null;
-      
-            if (fieldIdentifier && value) {
+            let value: string | number | null = null;
+
+            if (response.ResponseType === QueryResponseType.Text ||
+                response.ResponseType === QueryResponseType.Integer ||
+                response.ResponseType === QueryResponseType.Float) {
+                value = response.TextValue ?? response.IntegerValue ?? response.FloatValue ?? null;
+            }
+
+            if (fieldIdentifier && value !== null && value !== undefined) {
                 const key = fieldIdentifier.split(":").pop();
-                extractedData[key] = value;
+                extractedData[key] = value as string;
             }
         }
-      
+
         return extractedData;
     }
 

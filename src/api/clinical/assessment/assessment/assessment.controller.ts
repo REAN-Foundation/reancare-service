@@ -601,7 +601,7 @@ export class AssessmentController extends BaseController {
                 biometricAlertSettings.BiometricAlertCategories.length > 0 &&
                 biometricAlertSettings.BiometricAlertCategories.includes("Systolic") &&
                 biometricAlertSettings.BiometricAlertCategories.includes("Diastolic") &&
-                fieldIdentifier.Systolic && fieldIdentifier.Diastolic
+                fieldIdentifier.Systolic != null && fieldIdentifier.Diastolic != null
             ) {
                 Logger.instance().log(`Processing blood pressure alert`);
                 const model: BloodPressureDto = {
@@ -622,7 +622,7 @@ export class AssessmentController extends BaseController {
             if (
                 biometricAlertSettings.BiometricAlertCategories.length > 0 &&
                 biometricAlertSettings.BiometricAlertCategories.includes("Pulse") &&
-                fieldIdentifier.Pulse
+                fieldIdentifier.Pulse != null
             ) {
                 Logger.instance().log(`Processing pulse alert`);
                 const model: PulseDto = {
@@ -641,7 +641,7 @@ export class AssessmentController extends BaseController {
             if (
                 biometricAlertSettings.BiometricAlertCategories.length > 0 &&
                 biometricAlertSettings.BiometricAlertCategories.includes("OxygenSaturation") &&
-                fieldIdentifier.OxygenSaturation
+                fieldIdentifier.OxygenSaturation != null
             ) {
                 Logger.instance().log(`Processing blood oxygen saturation alert`);
                 const model: BloodOxygenSaturationDto = {
@@ -661,7 +661,7 @@ export class AssessmentController extends BaseController {
             if (
                 biometricAlertSettings.BiometricAlertCategories.length > 0 &&
                 biometricAlertSettings.BiometricAlertCategories.includes("BloodGlucose") &&
-                fieldIdentifier.BloodGlucose
+                fieldIdentifier.BloodGlucose != null
             ) {
                 Logger.instance().log(`Processing blood glucose alert`);
                 const model: BloodGlucoseDto = {
@@ -681,7 +681,7 @@ export class AssessmentController extends BaseController {
             if (
                 biometricAlertSettings.BiometricAlertCategories.length > 0 &&
                 biometricAlertSettings.BiometricAlertCategories.includes("Temperature") &&
-                fieldIdentifier.Temperature
+                fieldIdentifier.Temperature != null
             ) {
                 Logger.instance().log(`Processing body temperature alert`);
                 const model: BodyTemperatureDto = {
@@ -701,8 +701,8 @@ export class AssessmentController extends BaseController {
             if (
                 biometricAlertSettings.BiometricAlertCategories.length > 0 &&
                 biometricAlertSettings.BiometricAlertCategories.includes("BodyBMI") &&
-                fieldIdentifier.BodyWeight &&
-                fieldIdentifier.BodyHeight
+                fieldIdentifier.BodyWeight != null &&
+                fieldIdentifier.BodyHeight != null
             ) {
                 Logger.instance().log(`Processing body BMI alert`);
                 const model: BodyWeightDto = {

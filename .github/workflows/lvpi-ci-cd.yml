@@ -5,7 +5,7 @@ name: LVPI-CI-CD
 
 on:
   push:
-    branches: [main]
+    branches: [main, feature/lvpi-ci-cd]  # TODO: Remove feature branch after testing
   workflow_dispatch:
     inputs:
       deploy_to_ecs:

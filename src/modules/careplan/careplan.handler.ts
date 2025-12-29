@@ -16,6 +16,7 @@ import { ApiError } from "../../common/api.error";
 import { DateStringFormat, DurationType } from "../../domain.types/miscellaneous/time.types";
 import { Injector } from "../../startup/injector";
 import { CareplanRepo } from "../../database/sql/sequelize/repositories/clinical/careplan/careplan.repo";
+import { DEFAULT_CAREPLAN_DURATION_DAYS } from "../../domain.types/clinical/careplan/careplan/careplan.types";
 
 ////////////////////////////////////////////////////////////////////////
 
@@ -253,7 +254,7 @@ export class CareplanHandler {
         if (planDetails && planDetails.DefaultDurationDays) {
             return planDetails.DefaultDurationDays;
         }
-        return 84; // default duration
+        return DEFAULT_CAREPLAN_DURATION_DAYS; // default duration
     };
   
 }

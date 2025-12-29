@@ -11,12 +11,19 @@ import { CAssessmentTemplate } from "../../domain.types/clinical/assessment/asse
 import { GoalDto } from "../../domain.types/users/patient/goal/goal.dto";
 import { ActionPlanDto } from "../../domain.types/users/patient/action.plan/action.plan.dto";
 import { HealthPriorityDto } from "../../domain.types/users/patient/health.priority/health.priority.dto";
+import { TimeHelper } from "../../common/time.helper";
+import { ApiError } from "../../common/api.error";
+import { DateStringFormat, DurationType } from "../../domain.types/miscellaneous/time.types";
+import { Injector } from "../../startup/injector";
+import { CareplanRepo } from "../../database/sql/sequelize/repositories/clinical/careplan/careplan.repo";
 
 ////////////////////////////////////////////////////////////////////////
 
 export class CareplanHandler {
 
     static _services: Dictionary<ICareplanService> = new Dictionary<ICareplanService>();
+
+    _careplanRepo: CareplanRepo = Injector.Container.resolve(CareplanRepo);
 
     public static init = async (): Promise<boolean> => {
 
@@ -101,6 +108,7 @@ export class CareplanHandler {
         const provider = enrollmentDetails.Provider;
         if (this.isEnabledProvider(provider)) {
             var service = CareplanHandler._services.getItem(provider);
+            await this.checkOverlappingEnrollment(enrollmentDetails);
             return await service.enrollPatientToCarePlan(enrollmentDetails);
         }
         return null;
@@ -222,5 +230,30 @@ export class CareplanHandler {
             return x.Provider === provider && x.Enabled;
         });
     }
+
+    private checkOverlappingEnrollment = async (model: EnrollmentDomainModel): Promise<void> => {
+        const enrollments = await this._careplanRepo.getOverlappingEnrollments(
+            model.PatientUserId,
+            model.Provider,
+            model.PlanCode
+        );
+    
+        enrollments.forEach(enrollment => {
+            const daysToAdd = this.getCareplanDuration(model.Provider,model.PlanCode);
+            const endDate = TimeHelper.addDuration(enrollment.StartAt, daysToAdd, DurationType.Day);
+            if (endDate >= new Date()) {
+                const endDateString = TimeHelper.getDateString(endDate, DateStringFormat.YYYY_MM_DD);
+                throw new ApiError(400, `You can not enroll to the ${model.PlanCode} careplan before ${endDateString}`);
+            }
+        });
+    };
+
+    private getCareplanDuration = (provider: string, planCode: string): number => {
+        const planDetails = this.getPlanDetails(provider, planCode);
+        if (planDetails && planDetails.DefaultDurationDays) {
+            return planDetails.DefaultDurationDays;
+        }
+        return 84; // default duration
+    };
   
 }

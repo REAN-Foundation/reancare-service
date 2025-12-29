@@ -16,7 +16,7 @@ on:
 
 env:
   AWS_REGION: ap-south-2
-  ECR_REPOSITORY: lvpi-prod-reancare-service
+  ECR_REPOSITORY: lvpei-prod-reancare-service
   IMAGE_TAG: ${{ github.sha }}
 
 permissions:
@@ -39,7 +39,7 @@ jobs:
       - name: Configure AWS credentials via OIDC
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          role-to-assume: arn:aws:iam::777184858387:role/lvpi-prod-github-actions-role
+          role-to-assume: arn:aws:iam::777184858387:role/lvpei-prod-github-actions-role
           role-session-name: GitHubActions-${{ github.run_id }}
           aws-region: ${{ env.AWS_REGION }}
 
@@ -96,14 +96,14 @@ jobs:
   #     - name: Configure AWS credentials via OIDC
   #       uses: aws-actions/configure-aws-credentials@v4
   #       with:
-  #         role-to-assume: arn:aws:iam::777184858387:role/lvpi-prod-github-actions-role
+  #         role-to-assume: arn:aws:iam::777184858387:role/lvpei-prod-github-actions-role
   #         role-session-name: GitHubActions-${{ github.run_id }}
   #         aws-region: ${{ env.AWS_REGION }}
   #
   #     - name: Download task definition
   #       run: |
   #         aws ecs describe-task-definition \
-  #           --task-definition lvpi-prod-reancare-service \
+  #           --task-definition lvpei-prod-reancare-service \
   #           --query taskDefinition > task-definition.json
   #
   #     - name: Update image in task definition
@@ -118,6 +118,6 @@ jobs:
   #       uses: aws-actions/amazon-ecs-deploy-task-definition@v1
   #       with:
   #         task-definition: ${{ steps.task-def.outputs.task-definition }}
-  #         service: lvpi-prod-reancare-service
-  #         cluster: lvpi-prod-cluster
+  #         service: lvpei-prod-reancare-service
+  #         cluster: lvpei-prod-cluster
   #         wait-for-service-stability: true

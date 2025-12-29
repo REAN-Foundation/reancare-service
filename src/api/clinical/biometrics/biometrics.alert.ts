@@ -184,7 +184,7 @@ export class BiometricAlerts {
                 );
                 if (category) {
                     shouldSendAlert = category.SendAlert;
-                    if (category.Severity !== Severity.NORMAL) {
+                    if (shouldSendAlert) {
                         notification = BiometricAlerts.buildAlertFromCategory(category);
                     }
                 }
@@ -245,7 +245,7 @@ export class BiometricAlerts {
                 );
                 if (category) {
                     shouldSendAlert = category.SendAlert;
-                    if (category.Severity !== Severity.NORMAL) {
+                    if (shouldSendAlert) {
                         notification = BiometricAlerts.buildAlertFromCategory(category);
                     }
                 }
@@ -253,7 +253,7 @@ export class BiometricAlerts {
                 notification = BiometricAlerts.getBloodPressureNotification(model.Systolic, model.Diastolic);
             }
 
-            if (!notification || notification?.severity === Severity.NORMAL || !shouldSendAlert) {
+            if (!notification || !shouldSendAlert) {
                 throw new Error('No alert to send for the given blood pressure values.');
             }
 
@@ -302,7 +302,7 @@ export class BiometricAlerts {
                 );
                 if (category) {
                     shouldSendAlert = category.SendAlert;
-                    if (category.Severity !== Severity.NORMAL) {
+                    if (shouldSendAlert) {
                         notification = BiometricAlerts.buildAlertFromCategory(category);
                     }
                 }
@@ -310,7 +310,7 @@ export class BiometricAlerts {
                 notification = BiometricAlerts.getPulseNotification(model.Pulse!);
             }
 
-            if (!notification || notification?.severity === Severity.NORMAL || !shouldSendAlert) {
+            if (!notification || !shouldSendAlert) {
                 throw new Error('No alert to send for the given pulse value.');
             }
 
@@ -364,7 +364,7 @@ export class BiometricAlerts {
                 );
                 if (category) {
                     shouldSendAlert = category.SendAlert;
-                    if (category.Severity !== Severity.NORMAL) {
+                    if (shouldSendAlert) {
                         notification = BiometricAlerts.buildAlertFromCategory(category);
                     }
                 }
@@ -372,7 +372,7 @@ export class BiometricAlerts {
                 notification = BiometricAlerts.getTemperatureNotification(tempInFarenheit);
             }
 
-            if (!notification || notification?.severity === Severity.NORMAL || !shouldSendAlert) {
+            if (!notification || !shouldSendAlert) {
                 throw new Error('No alert to send for the given body temperature value.');
             }
 
@@ -422,7 +422,7 @@ export class BiometricAlerts {
                 );
                 if (category) {
                     shouldSendAlert = category.SendAlert;
-                    if (category.Severity !== Severity.NORMAL) {
+                    if (shouldSendAlert) {
                         notification = BiometricAlerts.buildAlertFromCategory(category);
                     }
                 }
@@ -430,7 +430,7 @@ export class BiometricAlerts {
                 notification = BiometricAlerts.getOxygenNotification(model.BloodOxygenSaturation);
             }
 
-            if (!notification || notification?.severity === Severity.NORMAL || !shouldSendAlert) {
+            if (!notification || !shouldSendAlert) {
                 throw new Error('No alert to send for the given blood oxygen saturation value.');
             }
 
@@ -483,7 +483,7 @@ export class BiometricAlerts {
                 );
                 if (category) {
                     shouldSendAlert = category.SendAlert;
-                    if (category.Severity !== Severity.NORMAL) {
+                    if (shouldSendAlert) {
                         notification = BiometricAlerts.buildAlertFromCategory(category);
                     }
                 }
@@ -491,7 +491,7 @@ export class BiometricAlerts {
                 notification = BiometricAlerts.getBmiNotification(bmi);
             }
 
-            if (!notification || notification?.severity === Severity.NORMAL || !shouldSendAlert) {
+            if (!notification || !shouldSendAlert) {
                 throw new Error('No alert to send for the given BMI value.');
             }
 

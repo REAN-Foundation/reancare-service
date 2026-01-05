@@ -1,4 +1,5 @@
 import { Setting } from "./setting";
+import { VitalsThresholds } from "./vitals.thresholds.types";
 
 export enum TenantSettingsTypes {
     Common              = 'Common',
@@ -7,6 +8,7 @@ export enum TenantSettingsTypes {
     Forms               = 'Forms',
     Consent             = 'Consent',
     CustomSettings      = 'CustomSettings',
+    VitalsThresholds    = 'VitalsThresholds',
 }
 
 export enum WeekDay {
@@ -26,6 +28,7 @@ export const TenantSettingsTypesList = [
     TenantSettingsTypes.Forms,
     TenantSettingsTypes.Consent,
     TenantSettingsTypes.CustomSettings,
+    TenantSettingsTypes.VitalsThresholds,
 ];
 
 export interface UserInterfaces {
@@ -348,6 +351,7 @@ export interface TenantSettingsDomainModel {
     Forms?                  : FormsSettings,
     Consent?                : ConsentSettings,
     CustomSettings?         : CustomSettings,
+    VitalsThresholds?       : VitalsThresholds,
 }
 
 export interface TenantSettingsDto extends TenantSettingsDomainModel {

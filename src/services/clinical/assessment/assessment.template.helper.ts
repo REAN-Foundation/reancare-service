@@ -49,13 +49,19 @@ export class AssessmentTemplateHelper {
                 if (questionNode.Options?.length) {
                     questionNode.Options = this.copyOptions(questionNode.Options, optionCodeMap);
                 }
-    
+
                 if (questionNode.Paths && Array.isArray(questionNode.Paths)) {
                     questionNode.Paths = this.copyConditionCodes(
                         questionNode.Paths,
                         questionNode.DisplayCode,
                         conditionCodeMap
                     );
+
+                    for (const path of questionNode.Paths) {
+                        if (path.NextNodeDisplayCode && nodeCodeMap[path.NextNodeDisplayCode]) {
+                            path.NextNodeDisplayCode = nodeCodeMap[path.NextNodeDisplayCode];
+                        }
+                    }
                 }
             }
         }

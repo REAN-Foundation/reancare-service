@@ -363,7 +363,9 @@ export class AssessmentTemplateFileConverter {
                     nodePath.NextNodeDisplayCode = pathObj.NextNodeDisplayCode;
                     nodePath.IsExitPath = pathObj.IsExitPath;
                     nodePath.MessageBeforeQuestion = pathObj.MessageBeforeQuestion;
-                    nodePath.Condition = AssessmentTemplateFileConverter.conditionFromJson(pathObj.Condition);
+                    if (pathObj.Condition) {
+                        nodePath.Condition = AssessmentTemplateFileConverter.conditionFromJson(pathObj.Condition);
+                    }
                     paths.push(nodePath);
                 }
                 questionNode.Paths = paths;
@@ -373,6 +375,10 @@ export class AssessmentTemplateFileConverter {
     }
 
     private static conditionFromJson(conditionObj: any) : CAssessmentPathCondition {
+
+        if (!conditionObj) {
+            return null;
+        }
 
         var condition: CAssessmentPathCondition = new CAssessmentPathCondition();
 

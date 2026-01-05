@@ -71,7 +71,8 @@ interface PamphletTemplateModel {
 @injectable()
 export class TenantMarketingPdfService {
 
-    private _template: HandlebarsTemplateDelegate = null;
+    private _template2Page: HandlebarsTemplateDelegate = null;
+    private _template1Page: HandlebarsTemplateDelegate = null;
 
     public async generatePamphletBuffer(settings: TenantSettingsMarketingDto): Promise<Buffer> {
         const html = await this.renderPamphletHtml(settings);
@@ -92,26 +93,42 @@ export class TenantMarketingPdfService {
     }
 
     private async renderPamphletHtml(settings: TenantSettingsMarketingDto): Promise<string> {
-        const template = await this.getTemplate();
+        const pageView = settings?.PageView ?? 2;
+        const template = await this.getTemplate(pageView);
         const model = await this.mapSettingsToTemplateModel(settings);
         const html = template(model);
         
         return html;
     }
 
-    private async getTemplate(): Promise<HandlebarsTemplateDelegate> {
-        if (this._template) {
-            return this._template;
-        }
+    private async getTemplate(pageView: number): Promise<HandlebarsTemplateDelegate> {
+        if (pageView === 1) {
+            if (this._template1Page) {
+                return this._template1Page;
+            }
 
-        const templatePath = path.join(process.cwd(), 'assets', 'pdf.templates', 'tenant.marketing.pamphlet.hbs');
-        if (!fs.existsSync(templatePath)) {
-            throw new Error(`PDF template tenant.marketing.pamphlet.hbs not found at ${templatePath}`);
-        }
+            const templatePath = path.join(process.cwd(), 'assets', 'pdf.templates', 'tenant.marketing.pamphlet.1page.hbs');
+            if (!fs.existsSync(templatePath)) {
+                throw new Error(`PDF template tenant.marketing.pamphlet.1page.hbs not found at ${templatePath}`);
+            }
 
-        const templateSource = await fs.promises.readFile(templatePath, { encoding: 'utf8' });
-        this._template = Handlebars.compile(templateSource);
-        return this._template;
+            const templateSource = await fs.promises.readFile(templatePath, { encoding: 'utf8' });
+            this._template1Page = Handlebars.compile(templateSource);
+            return this._template1Page;
+        } else {
+            if (this._template2Page) {
+                return this._template2Page;
+            }
+
+            const templatePath = path.join(process.cwd(), 'assets', 'pdf.templates', 'tenant.marketing.pamphlet.hbs');
+            if (!fs.existsSync(templatePath)) {
+                throw new Error(`PDF template tenant.marketing.pamphlet.hbs not found at ${templatePath}`);
+            }
+
+            const templateSource = await fs.promises.readFile(templatePath, { encoding: 'utf8' });
+            this._template2Page = Handlebars.compile(templateSource);
+            return this._template2Page;
+        }
     }
 
     private async mapSettingsToTemplateModel(settings: TenantSettingsMarketingDto): Promise<PamphletTemplateModel> {

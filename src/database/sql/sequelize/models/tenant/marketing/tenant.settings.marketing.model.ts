@@ -85,6 +85,13 @@ export default class TenantSettingsMarketing extends Model {
     })
     PDFResourceId: string;
 
+    @Column({
+        type         : DataType.INTEGER,
+        allowNull    : true,
+        defaultValue : 2,
+    })
+    PageView: number;
+
     @Column
     @CreatedAt
     CreatedAt: Date;
@@ -96,4 +103,3 @@ export default class TenantSettingsMarketing extends Model {
     DeletedAt: Date;
 
 }
-

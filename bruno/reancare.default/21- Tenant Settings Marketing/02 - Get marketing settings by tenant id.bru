@@ -1,0 +1,53 @@
+meta {
+  name: Get marketing settings by tenant id
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{BASE_URL}}/tenant-settings-marketing/{{TENANT_ID}}
+  body: json
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+  Authorization: Bearer {{TENANT_ADMIN_USER_JWT}}
+}
+
+tests {
+  try {
+      var jsonRes = res.getBody();
+  }
+  catch (error) {
+      console.log("Error parsing response:", error.message);
+  }
+  
+  test("Request is successful", function () {
+      expect(res.getStatus()).to.equal(200);
+      var jsonRes = res.getBody();
+      expect(jsonRes.Status).to.eql("success");
+  });
+  
+  test("Marketing settings are retrieved", function () {
+      var jsonRes = res.getBody();
+      expect(jsonRes).to.have.property("Data");
+      expect(jsonRes.Data).to.have.property("TenantMarketingSettings");
+      expect(jsonRes.Data.TenantMarketingSettings).to.have.property("TenantId");
+  });
+  
+}
+
+docs {
+  Retrieves all marketing settings for a tenant by tenant UUID.
+  
+  Returns:
+  - Styling (14 CSS variables)
+  - Content (header, introduction, benefits, userInterface, footer)
+  - QRcode (resource id or object, may be null)
+  - Images (object/array of resource ids, may be null)
+  - Logos (object/array of resource ids, may be null)
+  - PDFResourceId (generated PDF resource id, may be null)
+}
+

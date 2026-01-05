@@ -138,18 +138,14 @@ export class AssessmentTemplateFileConverter {
             Tags              : nodeObj.Tags
         };
 
-        // Handle RawData - convert objects to JSON string for export
         if (nodeObj.RawData !== null && nodeObj.RawData !== undefined) {
             const rawDataType = typeof nodeObj.RawData;
             if (rawDataType === 'object') {
-                // If it's an empty object, skip it; otherwise stringify it
                 const keys = Object.keys(nodeObj.RawData);
                 if (keys.length > 0) {
                     node.RawData = JSON.stringify(nodeObj.RawData);
                 }
-                // Skip empty objects - don't export them
             } else {
-                // It's already a string, number, or boolean - keep as-is
                 node.RawData = nodeObj.RawData;
             }
         }

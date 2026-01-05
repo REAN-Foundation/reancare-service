@@ -1,4 +1,5 @@
 import { Setting } from "./setting";
+import { VitalsThresholds } from "./vitals.thresholds.types";
 
 export enum TenantSettingsTypes {
     Common              = 'Common',
@@ -7,6 +8,7 @@ export enum TenantSettingsTypes {
     Forms               = 'Forms',
     Consent             = 'Consent',
     CustomSettings      = 'CustomSettings',
+    VitalsThresholds    = 'VitalsThresholds',
 }
 
 export enum WeekDay {
@@ -26,6 +28,7 @@ export const TenantSettingsTypesList = [
     TenantSettingsTypes.Forms,
     TenantSettingsTypes.Consent,
     TenantSettingsTypes.CustomSettings,
+    TenantSettingsTypes.VitalsThresholds,
 ];
 
 export interface UserInterfaces {
@@ -348,32 +351,112 @@ export interface TenantSettingsDomainModel {
     Forms?                  : FormsSettings,
     Consent?                : ConsentSettings,
     CustomSettings?         : CustomSettings,
+    VitalsThresholds?       : VitalsThresholds,
 }
 
 export interface TenantSettingsDto extends TenantSettingsDomainModel {
     TenantId ?: string;
 }
 
-export interface BotSecrets {
-  TelegramBotToken?                 : string;
-  TelegramMediaPathUrl?             : string;
-  WebhookTelegramClientUrlToken?    : string;
-  WebhookWhatsappClientHeaderToken? : string;
-  WebhookWhatsappClientUrlToken?    : string;
-  SlackTokenFeedback?               : string;
-  WebhookClickupClientUrlToken?     : string;
-  WebhookMockChannelClientUrlToken? : string;
-  DbPassword?                       : string;
-  DbUserName?                       : string;
-  DbHost?                           : string;
-  ClickupAuthentication?            : string;
-  ReancareApiKey?                   : string;
-  NlpService?                       : string;
-  CustomMlModelUrl?                 : string;
-}
+// export interface BotSecrets {
+//   TelegramBotToken?                 : string;
+//   TelegramMediaPathUrl?             : string;
+//   WebhookTelegramClientUrlToken?    : string;
+//   WebhookWhatsappClientHeaderToken? : string;
+//   WebhookWhatsappClientUrlToken?    : string;
+//   MetaApiToken?                     : string;
+//   WhatsappPhoneNumberId?            : string;
+//   SlackTokenFeedback?               : string;
+//   WebhookClickupClientUrlToken?     : string;
+//   ClickupListId?                    : string;
+//   ClickupAuthentication?            : string;
+//   ClickupIssuesListId?              : string;
+//   ClickupCaseListId?                : string;
+//   CustomMlModelUrl?                 : string;
+//   DataBaseName?                     : string;
+// }
 
 export enum Environment {
   Development = 'development',
   Uat         = 'uat',
   Production  = 'production'
 }
+
+export enum TelegramSecrets {
+  BotToken = "BotToken",
+  MediaPathUrl = "MediaPathUrl",
+  WebhookClientUrlToken = "WebhookClientUrlToken",
+}
+
+export enum WhatsappSecrets {
+  WebhookClientHeaderToken = "WebhookClientHeaderToken",
+  WebhookClientUrlToken = "WebhookClientUrlToken",
+  PhoneNumberId = "PhoneNumberId",
+}
+
+export enum MetaSecrets {
+  ApiToken = "ApiToken",
+}
+
+export enum SlackSecrets {
+  TokenFeedback = "TokenFeedback",
+  FeedbackChannelId = "FeedbackChannelId",
+  SecretFeedback = "SecretFeedback"
+}
+
+export enum ClickupSecrets {
+  WebhookClientUrlToken = "WebhookClientUrlToken",
+  ListId = "ListId",
+  Authentication = "Authentication",
+  IssuesListId = "IssuesListId",
+  CaseListId = "CaseListId",
+}
+
+export enum MlSecrets {
+  CustomMlModelUrl = "CustomMlModelUrl",
+}
+
+export enum DatabaseSecrets {
+  Name = "DataBaseName"
+}
+
+export interface BotSecrets {
+  telegram?: {
+    [TelegramSecrets.BotToken]?: string;
+    [TelegramSecrets.MediaPathUrl]?: string;
+    [TelegramSecrets.WebhookClientUrlToken]?: string;
+  };
+
+  whatsapp?: {
+    [WhatsappSecrets.WebhookClientHeaderToken]?: string;
+    [WhatsappSecrets.WebhookClientUrlToken]?: string;
+    [WhatsappSecrets.PhoneNumberId]?: string;
+  };
+
+  meta?: {
+    [MetaSecrets.ApiToken]?: string;
+  };
+
+  slack?: {
+    [SlackSecrets.TokenFeedback]?: string;
+    [SlackSecrets.FeedbackChannelId]?: string;
+    [SlackSecrets.SecretFeedback]?: string;
+  };
+
+  clickup?: {
+    [ClickupSecrets.WebhookClientUrlToken]?: string;
+    [ClickupSecrets.ListId]?: string;
+    [ClickupSecrets.Authentication]?: string;
+    [ClickupSecrets.IssuesListId]?: string;
+    [ClickupSecrets.CaseListId]?: string;
+  };
+
+  ml?: {
+    [MlSecrets.CustomMlModelUrl]?: string;
+  };
+
+  database?: {
+    [DatabaseSecrets.Name]?: string;
+  };
+}
+

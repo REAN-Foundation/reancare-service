@@ -5,7 +5,9 @@ import { TenantDto, TenantSchemaDto } from '../../domain.types/tenant/tenant.dto
 import { TenantSearchFilters, TenantSearchResults } from '../../domain.types/tenant/tenant.search.types';
 import { uuid } from '../../domain.types/miscellaneous/system.types';
 import { ChatBotSettings, CommonSettings, FormsIntegrations, FormsSettings, TenantSettingsDomainModel, FollowupSettings, FollowupSource, BotSecrets } from '../../domain.types/tenant/tenant.settings.types';
+import { VitalsThresholds } from '../../domain.types/tenant/vitals.thresholds.types';
 import { ITenantSettingsRepo } from '../../database/repository.interfaces/tenant/tenant.settings.interface';
+import * as DefaultVitalsThresholds from '../../../seed.data/default.vitals.thresholds.json';
 import { Injector } from '../../startup/injector';
 import { TenantSettingsMarketingService } from './marketing/tenant.settings.marketing.service';
 import { AwsLambdaService } from '../../modules/cloud.services/aws.service';
@@ -419,11 +421,12 @@ export class TenantService {
         };
 
         const model: TenantSettingsDomainModel = {
-            Common   : common,
-            Followup : followup,
-            ChatBot  : chatBot,
-            Forms    : formSettings,
-            Consent  : null
+            Common           : common,
+            Followup         : followup,
+            ChatBot          : chatBot,
+            Forms            : formSettings,
+            Consent          : null,
+            VitalsThresholds : DefaultVitalsThresholds as VitalsThresholds
         };
         return model;
     };

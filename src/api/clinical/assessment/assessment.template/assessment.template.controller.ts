@@ -183,7 +183,12 @@ export class AssessmentTemplateController extends BaseController {
             const sourceFilePath = metadata.SourceFilePath;
             const originalFileName = metadata.OriginalName;
 
-            Helper.sleep(1000);
+            await Helper.sleep(1000);
+            
+            if (!fs.existsSync(sourceFilePath)) {
+                throw new ApiError(400, `Uploaded file not found at path: ${sourceFilePath}`);
+            }
+
             const fileContent = fs.readFileSync(sourceFilePath, 'utf8');
             const extension = Helper.getFileExtension(originalFileName);
             if (extension.toLowerCase() !== 'json') {

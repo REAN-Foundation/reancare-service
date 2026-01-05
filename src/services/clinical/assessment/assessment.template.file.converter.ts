@@ -43,15 +43,17 @@ export class AssessmentTemplateFileConverter {
         try {
 
             var tmpl = {
-                DisplayCode            : templateObj.DisplayCode,
-                Version                : templateObj.Version,
-                Type                   : templateObj.Type,
-                Title                  : templateObj.Title,
-                Description            : templateObj.Description,
-                Provider               : templateObj.Provider,
-                ProviderAssessmentCode : templateObj.ProviderAssessmentCode,
-                RootNodeDisplayCode    : templateObj.RootNodeDisplayCode,
-                Nodes                  : []
+                DisplayCode                 : templateObj.DisplayCode,
+                Version                     : templateObj.Version,
+                Type                        : templateObj.Type,
+                Title                       : templateObj.Title,
+                Description                 : templateObj.Description,
+                Provider                    : templateObj.Provider,
+                ProviderAssessmentCode      : templateObj.ProviderAssessmentCode,
+                ServeListNodeChildrenAtOnce : templateObj.ServeListNodeChildrenAtOnce,
+                RootNodeDisplayCode         : templateObj.RootNodeDisplayCode,
+                Tags                        : templateObj.Tags,
+                Nodes                       : []
 
             };
 
@@ -72,15 +74,17 @@ export class AssessmentTemplateFileConverter {
         try {
 
             var tmpl: CAssessmentTemplate = new CAssessmentTemplate();
-            tmpl.DisplayCode            = templateObj.DisplayCode;
-            tmpl.Version                = templateObj.Version;
-            tmpl.Type                   = templateObj.Type;
-            tmpl.Title                  = templateObj.Title;
-            tmpl.Description            = templateObj.Description;
-            tmpl.Provider               = templateObj.Provider;
-            tmpl.ProviderAssessmentCode = templateObj.ProviderAssessmentCode;
-            tmpl.RootNodeDisplayCode    = templateObj.RootNodeDisplayCode;
-            tmpl.Nodes                  = [];
+            tmpl.DisplayCode                 = templateObj.DisplayCode;
+            tmpl.Version                     = templateObj.Version;
+            tmpl.Type                        = templateObj.Type;
+            tmpl.Title                       = templateObj.Title;
+            tmpl.Description                 = templateObj.Description;
+            tmpl.Provider                    = templateObj.Provider;
+            tmpl.ProviderAssessmentCode      = templateObj.ProviderAssessmentCode;
+            tmpl.ServeListNodeChildrenAtOnce = templateObj.ServeListNodeChildrenAtOnce;
+            tmpl.RootNodeDisplayCode         = templateObj.RootNodeDisplayCode;
+            tmpl.Tags                        = templateObj.Tags;
+            tmpl.Nodes                       = [];
 
             for (var nodeObj of templateObj.Nodes) {
                 const node = AssessmentTemplateFileConverter.nodeFromJson(tmpl.Nodes, nodeObj);
@@ -120,20 +124,36 @@ export class AssessmentTemplateFileConverter {
 
     private static nodeToJson(nodeObj: CAssessmentNode) {
 
-        var node = {
+        var node: any = {
             DisplayCode       : nodeObj.DisplayCode,
             NodeType          : nodeObj.NodeType,
             ProviderGivenId   : nodeObj.ProviderGivenId,
             ProviderGivenCode : nodeObj.ProviderGivenCode,
             Title             : nodeObj.Title,
             Description       : nodeObj.Description,
+            Hint              : nodeObj.Hint,
             Sequence          : nodeObj.Sequence,
             Score             : nodeObj.Score,
+            Required          : nodeObj.Required,
+            Tags              : nodeObj.Tags
         };
+
+        if (nodeObj.RawData !== null && nodeObj.RawData !== undefined) {
+            const rawDataType = typeof nodeObj.RawData;
+            if (rawDataType === 'object') {
+                const keys = Object.keys(nodeObj.RawData);
+                if (keys.length > 0) {
+                    node.RawData = JSON.stringify(nodeObj.RawData);
+                }
+            } else {
+                node.RawData = nodeObj.RawData;
+            }
+        }
 
         if (nodeObj.NodeType === AssessmentNodeType.NodeList) {
             var listNode: CAssessmentListNode = nodeObj as CAssessmentListNode;
             node['ChildrenNodeDisplayCodes'] = listNode.ChildrenNodeDisplayCodes;
+            node['ServeListNodeChildrenAtOnce'] = listNode.ServeListNodeChildrenAtOnce;
         }
         else if (nodeObj.NodeType === AssessmentNodeType.Message) {
             const messageNode = nodeObj as CAssessmentMessageNode;
@@ -143,6 +163,9 @@ export class AssessmentTemplateFileConverter {
             //thisNode.NodeType === AssessmentNodeType.Question
             const questionNode = nodeObj as CAssessmentQuestionNode;
             node['QueryResponseType'] = questionNode.QueryResponseType;
+            node['CorrectAnswer'] = questionNode.CorrectAnswer;
+            node['FieldIdentifier'] = questionNode.FieldIdentifier;
+            node['FieldIdentifierUnit'] = questionNode.FieldIdentifierUnit;
 
             //Add options
             if (questionNode.Options && questionNode.Options.length > 0) {
@@ -172,6 +195,7 @@ export class AssessmentTemplateFileConverter {
                         ParentNodeDisplayCode : nodeObj.DisplayCode,
                         NextNodeDisplayCode   : pathObj.NextNodeDisplayCode,
                         IsExitPath            : pathObj.IsExitPath,
+                        MessageBeforeQuestion : pathObj.MessageBeforeQuestion,
                         Condition             : AssessmentTemplateFileConverter.conditionToJson(pathObj.Condition)
                     };
                     paths.push(nodePath);
@@ -246,8 +270,16 @@ export class AssessmentTemplateFileConverter {
             listNode.ProviderGivenCode           = nodeObj.ProviderGivenCode;
             listNode.Title                       = nodeObj.Title;
             listNode.Description                 = nodeObj.Description;
+            listNode.Hint                        = nodeObj.Hint;
+            listNode.RawData = typeof nodeObj.RawData === 'string'
+                ? nodeObj.RawData
+                : (nodeObj.RawData && Object.keys(nodeObj.RawData).length > 0
+                    ? JSON.stringify(nodeObj.RawData)
+                    : undefined);
             listNode.Sequence                    = nodeObj.Sequence;
             listNode.Score                       = nodeObj.Score;
+            listNode.Required                    = nodeObj.Required;
+            listNode.Tags                        = nodeObj.Tags;
             listNode.ChildrenNodeDisplayCodes    = nodeObj.ChildrenNodeDisplayCodes;
             listNode.ServeListNodeChildrenAtOnce = nodeObj.ServeListNodeChildrenAtOnce;
 
@@ -256,14 +288,49 @@ export class AssessmentTemplateFileConverter {
         else if (nodeObj.NodeType === AssessmentNodeType.Message) {
 
             var messageNode: CAssessmentMessageNode = new CAssessmentMessageNode();
-            messageNode.Message = nodeObj.Message;
+            messageNode.DisplayCode      = nodeObj.DisplayCode;
+            messageNode.NodeType         = nodeObj.NodeType;
+            messageNode.ProviderGivenId  = nodeObj.ProviderGivenId;
+            messageNode.ProviderGivenCode = nodeObj.ProviderGivenCode;
+            messageNode.Title            = nodeObj.Title;
+            messageNode.Description      = nodeObj.Description;
+            messageNode.Hint             = nodeObj.Hint;
+            messageNode.RawData = typeof nodeObj.RawData === 'string'
+                ? nodeObj.RawData
+                : (nodeObj.RawData && Object.keys(nodeObj.RawData).length > 0
+                    ? JSON.stringify(nodeObj.RawData)
+                    : undefined);
+            messageNode.Sequence         = nodeObj.Sequence;
+            messageNode.Score            = nodeObj.Score;
+            messageNode.Required         = nodeObj.Required;
+            messageNode.Tags             = nodeObj.Tags;
+            messageNode.Message          = nodeObj.Message;
 
             return messageNode;
         }
         else {
 
             var questionNode: CAssessmentQuestionNode = new CAssessmentQuestionNode();
-            questionNode.QueryResponseType = nodeObj.QueryResponseType;
+            questionNode.DisplayCode         = nodeObj.DisplayCode;
+            questionNode.NodeType            = nodeObj.NodeType;
+            questionNode.ProviderGivenId     = nodeObj.ProviderGivenId;
+            questionNode.ProviderGivenCode   = nodeObj.ProviderGivenCode;
+            questionNode.Title               = nodeObj.Title;
+            questionNode.Description         = nodeObj.Description;
+            questionNode.Hint                = nodeObj.Hint;
+            questionNode.RawData = typeof nodeObj.RawData === 'string'
+                ? nodeObj.RawData
+                : (nodeObj.RawData && Object.keys(nodeObj.RawData).length > 0
+                    ? JSON.stringify(nodeObj.RawData)
+                    : undefined);
+            questionNode.Sequence            = nodeObj.Sequence;
+            questionNode.Score               = nodeObj.Score;
+            questionNode.Required            = nodeObj.Required;
+            questionNode.Tags                = nodeObj.Tags;
+            questionNode.QueryResponseType   = nodeObj.QueryResponseType;
+            questionNode.CorrectAnswer       = nodeObj.CorrectAnswer;
+            questionNode.FieldIdentifier     = nodeObj.FieldIdentifier;
+            questionNode.FieldIdentifierUnit = nodeObj.FieldIdentifierUnit;
 
             //Add options
 
@@ -291,7 +358,10 @@ export class AssessmentTemplateFileConverter {
                     nodePath.ParentNodeDisplayCode = nodeObj.DisplayCode;
                     nodePath.NextNodeDisplayCode = pathObj.NextNodeDisplayCode;
                     nodePath.IsExitPath = pathObj.IsExitPath;
-                    nodePath.Condition = AssessmentTemplateFileConverter.conditionFromJson(pathObj.Condition);
+                    nodePath.MessageBeforeQuestion = pathObj.MessageBeforeQuestion;
+                    if (pathObj.Condition) {
+                        nodePath.Condition = AssessmentTemplateFileConverter.conditionFromJson(pathObj.Condition);
+                    }
                     paths.push(nodePath);
                 }
                 questionNode.Paths = paths;
@@ -301,6 +371,10 @@ export class AssessmentTemplateFileConverter {
     }
 
     private static conditionFromJson(conditionObj: any) : CAssessmentPathCondition {
+
+        if (!conditionObj) {
+            return null;
+        }
 
         var condition: CAssessmentPathCondition = new CAssessmentPathCondition();
 

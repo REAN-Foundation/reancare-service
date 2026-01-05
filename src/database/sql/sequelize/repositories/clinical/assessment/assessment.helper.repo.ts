@@ -724,10 +724,11 @@ export class AssessmentHelperRepo implements IAssessmentHelperRepo {
 
             for await (var sPath of paths) {
                 const pathEntity = {
-                    DisplayCode         : sPath.DisplayCode,
-                    ParentNodeId        : thisNode.id,
-                    NextNodeDisplayCode : sPath.NextNodeDisplayCode,
-                    IsExitPath          : sPath.IsExitPath
+                    DisplayCode           : sPath.DisplayCode,
+                    ParentNodeId          : thisNode.id,
+                    NextNodeDisplayCode   : sPath.NextNodeDisplayCode,
+                    IsExitPath            : sPath.IsExitPath,
+                    MessageBeforeQuestion : sPath.MessageBeforeQuestion
                 };
 
                 var path = await AssessmentNodePath.create(pathEntity);
@@ -909,10 +910,13 @@ export class AssessmentHelperRepo implements IAssessmentHelperRepo {
 
         const condition = await AssessmentPathCondition.create(conditionEntity);
 
-        for await (var childCondition of sCondition.Children) {
-            var child = await this.createNewPathCondition(childCondition, currentNodeId, pathId, condition.id);
-            Logger.instance().log(`Operator type: ${child.OperatorType}`);
-            Logger.instance().log(`Composition type: ${child.CompositionType}`);
+        // Only process children if this is a composite condition with children
+        if (sCondition.IsCompositeCondition && sCondition.Children && sCondition.Children.length > 0) {
+            for await (var childCondition of sCondition.Children) {
+                var child = await this.createNewPathCondition(childCondition, currentNodeId, pathId, condition.id);
+                Logger.instance().log(`Operator type: ${child.OperatorType}`);
+                Logger.instance().log(`Composition type: ${child.CompositionType}`);
+            }
         }
         return condition;
     }

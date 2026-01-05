@@ -84,7 +84,13 @@ export default class TenantSettings extends Model {
         allowNull : true,
     })
     CustomSettings: string;
-    
+
+    @Column({
+        type      : DataType.TEXT,
+        allowNull : true,
+    })
+    VitalsThresholds: string;
+
     @Column
     @CreatedAt
     CreatedAt: Date;

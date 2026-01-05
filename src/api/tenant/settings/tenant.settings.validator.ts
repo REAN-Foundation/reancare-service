@@ -13,11 +13,14 @@ import {
     CustomSettingItem,
     CustomSettingDataType
 } from '../../../domain.types/tenant/tenant.settings.types';
+import { VitalsThresholds } from '../../../domain.types/tenant/vitals.thresholds.types';
 import { BaseValidator, Where } from '../../base.validator';
 import { Logger } from '../../../common/logger';
+import { ApiError } from '../../../common/api.error';
+import { Severity } from '../../../domain.types/clinical/biometrics/biometrics.types';
 
 ///////////////////////////////////////////////////////////////////////////////////////
-
+const maxVitalItems = 20;
 export class TenantSettingsValidator extends BaseValidator {
 
     constructor() {
@@ -645,7 +648,7 @@ export class TenantSettingsValidator extends BaseValidator {
             await this.validateString(request, `${path}.Name`, Where.Body, true, false, false);
             await this.validateString(request, `${path}.Description`, Where.Body, false, false, false);
             await this.validateEnum(request, `${path}.DataType`, Where.Body, true, false, CustomSettingDataType);
-            
+
             validatedSettings[key] = {
                 Name        : customSettingItem.Name,
                 Description : customSettingItem.Description,
@@ -658,8 +661,48 @@ export class TenantSettingsValidator extends BaseValidator {
         return validatedSettings;
     };
 
+    updateVitalsThresholds = async (request: express.Request): Promise<VitalsThresholds> => {
+        const vitalsThresholds = request.body?.VitalsThresholds;
+        if (!vitalsThresholds) {
+            return null;
+        }
+
+        const vitalTypes = ['BloodPressure', 'Pulse', 'BloodGlucose', 'BodyTemperature', 'BloodOxygenSaturation', 'BodyBmi'];
+        const MAX_CATEGORIES = maxVitalItems;
+
+        const providedKeys = Object.keys(vitalsThresholds);
+        const invalidKeys = providedKeys.filter(key => !vitalTypes.includes(key));
+        if (invalidKeys.length > 0) {
+            throw new ApiError(400, `Invalid vital type(s): ${invalidKeys.join(', ')}. Allowed types: ${vitalTypes.join(', ')}`);
+        }
+
+        for (const vitalType of vitalTypes) {
+            if (vitalsThresholds[vitalType]) {
+                const basePath = `VitalsThresholds.${vitalType}`;
+                await this.validateBoolean(request, `${basePath}.Enabled`, Where.Body, true, false);
+                await this.validateString(request, `${basePath}.Unit`, Where.Body, true, false, false, 1);
+                await this.validateArray(request, `${basePath}.Categories`, Where.Body, true, false, 1);
+
+                const categories = vitalsThresholds[vitalType]?.Categories || [];
+                for (let i = 0; i < Math.min(categories.length, MAX_CATEGORIES); i++) {
+                    const catPath = `${basePath}.Categories[${i}]`;
+                    await this.validateString(request, `${catPath}.Category`, Where.Body, true, false, false, 1);
+                    await this.validateEnum(request, `${catPath}.Severity`, Where.Body, true, false, Severity);
+                    await this.validateObject(request, `${catPath}.Ranges`, Where.Body, true, false);
+                    await this.validateObject(request, `${catPath}.AlertMessage`, Where.Body, true, false);
+                    await this.validateBoolean(request, `${catPath}.SendAlert`, Where.Body, true, false);
+                    await this.validateInt(request, `${catPath}.Priority`, Where.Body, true, false);
+                }
+            }
+        }
+
+        this.validateRequest(request);
+        return vitalsThresholds as VitalsThresholds;
+    };
+
     updateTenantSettingsByType = async (request: express.Request, settingsType: TenantSettingsTypes)
-    : Promise<CommonSettings | FollowupSettings | ChatBotSettings | FormsSettings | ConsentSettings | CustomSettings> => {
+    : Promise<CommonSettings | FollowupSettings | ChatBotSettings | FormsSettings |
+    ConsentSettings | CustomSettings | VitalsThresholds> => {
         if (settingsType === TenantSettingsTypes.Common) {
             return await this.updateCommonSettings(request);
         }
@@ -678,6 +721,9 @@ export class TenantSettingsValidator extends BaseValidator {
         if (settingsType === TenantSettingsTypes.CustomSettings) {
             return await this.updateCustomSettings(request);
         }
+        if (settingsType === TenantSettingsTypes.VitalsThresholds) {
+            return await this.updateVitalsThresholds(request);
+        }
         return null;
     };
 
@@ -689,16 +735,18 @@ export class TenantSettingsValidator extends BaseValidator {
         const formsSettings = await this.updateFormsSettings(request);
         const consentSettings = await this.updateConsentSettings(request);
         const customSettings = await this.updateCustomSettings(request);
+        const vitalsThresholds = await this.updateVitalsThresholds(request);
 
         this.validateRequest(request);
 
         const model: TenantSettingsDomainModel = {
-            Common         : commonSettings,
-            Followup       : followup,
-            ChatBot        : chatBotSettings,
-            Forms          : formsSettings,
-            Consent        : consentSettings,
-            CustomSettings : customSettings
+            Common           : commonSettings,
+            Followup         : followup,
+            ChatBot          : chatBotSettings,
+            Forms            : formsSettings,
+            Consent          : consentSettings,
+            CustomSettings   : customSettings,
+            VitalsThresholds : vitalsThresholds
         };
 
         return model;

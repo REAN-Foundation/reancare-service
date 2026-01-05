@@ -117,7 +117,7 @@ export class TenantSettingsMarketingController extends BaseController {
                 await this._service.updateSettingsByType(tenantId, TenantSettingsMarketingTypes.Logos, payload.Logos);
             }
 
-            if(payload.PageView !== undefined) {
+            if (payload.PageView !== undefined) {
                 await this._service.updateSettingsByType(tenantId, TenantSettingsMarketingTypes.PageView, payload.PageView);
             }
 

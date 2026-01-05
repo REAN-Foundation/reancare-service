@@ -1,0 +1,1 @@
+export const DEFAULT_CAREPLAN_DURATION_DAYS = 84;

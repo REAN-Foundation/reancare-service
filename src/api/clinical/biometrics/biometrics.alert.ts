@@ -29,6 +29,8 @@ import { BodyWeightDto } from "../../../domain.types/clinical/biometrics/body.we
 import { BodyHeightDto } from "../../../domain.types/clinical/biometrics/body.height/body.height.dto";
 import { BiometricAlertEmailHandler } from "./biometrics.alert.email.handler";
 import { BiometricAlertSmsHandler } from "./biometrics.alert.sms.handler";
+import { TenantSettingsService } from "../../../services/tenant/tenant.settings.service";
+import { ThresholdCategory, VitalThresholdConfig, VitalsThresholds } from "../../../domain.types/tenant/vitals.thresholds.types";
 
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -50,14 +52,150 @@ export class BiometricAlerts {
         return Injector.Container.resolve(UserService);
     }
 
-    static async forBloodGlucose(model: BloodGlucoseDto,
-        notificationChannel: NotificationChannel = NotificationChannel.MobilePush,
-        metaData: BiometricAlertSettings | null = null) {
+    private static resolveTenantSettingsService(): TenantSettingsService {
+        return Injector.Container.resolve(TenantSettingsService);
+    }
+
+    private static async getThresholdsForTenant(tenantId?: string): Promise<VitalsThresholds | null> {
+        if (!tenantId) {
+            return null;
+        }
         try {
-            const notification = BiometricAlerts.getGlucoseNotification(model.BloodGlucose);
-            if (!notification) {
-                return;
+            const tenantSettingsService = BiometricAlerts.resolveTenantSettingsService();
+            return await tenantSettingsService.getVitalsThresholds(tenantId);
+        } catch (error) {
+            Logger.instance().log(`Error fetching tenant thresholds: ${error}`);
+            return null;
+        }
+    }
+
+    private static evaluateSingleValueThreshold(
+        value: number,
+        config: VitalThresholdConfig,
+        measurementName: string
+    ): ThresholdCategory | null {
+        if (!config || !config.Enabled || !config.Categories) {
+            return null;
+        }
+
+        const sortedCategories = [...config.Categories].sort((a, b) => a.Priority - b.Priority);
+
+        for (const category of sortedCategories) {
+            const range = category.Ranges[measurementName];
+            if (!range) {
+                continue;
             }
+
+            const minOk = range.Min === undefined || range.Min === null || value >= range.Min;
+            const maxOk = range.Max === undefined || range.Max === null || value <= range.Max;
+
+            if (minOk && maxOk) {
+                return category;
+            }
+        }
+
+        return null;
+    }
+
+    private static evaluateBloodPressureThreshold(
+        systolic: number,
+        diastolic: number,
+        config: VitalThresholdConfig
+    ): ThresholdCategory | null {
+        if (!config || !config.Enabled || !config.Categories) {
+            return null;
+        }
+
+        let systolicCategory: ThresholdCategory | null = null;
+        for (const category of config.Categories) {
+            const systolicRange = category.Ranges["Systolic"];
+            if (!systolicRange) {
+                continue;
+            }
+            const minOk = systolicRange.Min === undefined ||
+                systolicRange.Min === null || systolic >= systolicRange.Min;
+            const maxOk = systolicRange.Max === undefined ||
+                systolicRange.Max === null || systolic <= systolicRange.Max;
+            if (minOk && maxOk) {
+                systolicCategory = category;
+                break;
+            }
+        }
+
+        let diastolicCategory: ThresholdCategory | null = null;
+        for (const category of config.Categories) {
+            const diastolicRange = category.Ranges["Diastolic"];
+            if (!diastolicRange) {
+                continue;
+            }
+            const minOk = diastolicRange.Min === undefined ||
+                diastolicRange.Min === null || diastolic >= diastolicRange.Min;
+            const maxOk = diastolicRange.Max === undefined ||
+                diastolicRange.Max === null || diastolic <= diastolicRange.Max;
+            if (minOk && maxOk) {
+                diastolicCategory = category;
+                break;
+            }
+        }
+
+        if (!systolicCategory && !diastolicCategory) {
+            return null;
+        }
+
+        if (!systolicCategory) {
+            return diastolicCategory;
+        }
+        if (!diastolicCategory) {
+            return systolicCategory;
+        }
+
+        return systolicCategory.Priority >= diastolicCategory.Priority
+            ? systolicCategory
+            : diastolicCategory;
+    }
+
+    private static buildAlertFromCategory(category: ThresholdCategory): AlertNotification {
+        return {
+            severity : category.Severity,
+            range    : category.Category,
+            title    : category.AlertMessage,
+            message  : category.AlertMessage
+        };
+    }
+
+    static async forBloodGlucose(
+        model: BloodGlucoseDto,
+        notificationChannel: NotificationChannel = NotificationChannel.MobilePush,
+        metaData: BiometricAlertSettings | null = null,
+        tenantId?: string
+    ) {
+        try {
+            const thresholds = await BiometricAlerts.getThresholdsForTenant(tenantId);
+            const glucoseConfig = thresholds?.BloodGlucose;
+
+            let notification: AlertNotification | null = null;
+            let shouldSendAlert = true;
+
+            if (glucoseConfig && glucoseConfig.Enabled) {
+                const category = BiometricAlerts.evaluateSingleValueThreshold(
+                    model.BloodGlucose,
+                    glucoseConfig,
+                    "BloodGlucose"
+                );
+                if (category) {
+                    shouldSendAlert = category.SendAlert;
+                    if (shouldSendAlert) {
+                        notification = BiometricAlerts.buildAlertFromCategory(category);
+                    }
+                }
+            } else {
+                notification = BiometricAlerts.getGlucoseNotification(model.BloodGlucose);
+            }
+
+            if (!notification || !shouldSendAlert) {
+                throw new Error('No alert to send for the given blood glucose value.');
+            }
+
             const biometricAlertHandler = BiometricAlerts.getBiometricAlertHandler(notificationChannel);
             if (!biometricAlertHandler) {
                 throw new ApiError(500, 'Biometric alert handler not found.');
@@ -81,18 +219,44 @@ export class BiometricAlerts {
         }
     }
     
-    static async forBloodPressure(model: BloodPressureDto,
+    static async forBloodPressure(
+        model: BloodPressureDto,
         notificationChannel: NotificationChannel = NotificationChannel.MobilePush,
-        metaData: BiometricAlertSettings | null = null) {
+        metaData: BiometricAlertSettings | null = null,
+        tenantId?: string
+    ) {
         try {
             const biometricAlertHandler = BiometricAlerts.getBiometricAlertHandler(notificationChannel);
             if (!biometricAlertHandler) {
                 throw new ApiError(500, 'Biometric alert handler not found.');
             }
-            const notification = BiometricAlerts.getBloodPressureNotification(model.Systolic, model.Diastolic);
-            if (!notification || notification?.severity === Severity.NORMAL) {
-                return;
+
+            const thresholds = await BiometricAlerts.getThresholdsForTenant(tenantId);
+            const bpConfig = thresholds?.BloodPressure;
+
+            let notification: AlertNotification | null = null;
+            let shouldSendAlert = true;
+
+            if (bpConfig && bpConfig.Enabled) {
+                const category = BiometricAlerts.evaluateBloodPressureThreshold(
+                    model.Systolic,
+                    model.Diastolic,
+                    bpConfig
+                );
+                if (category) {
+                    shouldSendAlert = category.SendAlert;
+                    if (shouldSendAlert) {
+                        notification = BiometricAlerts.buildAlertFromCategory(category);
+                    }
+                }
+            } else {
+                notification = BiometricAlerts.getBloodPressureNotification(model.Systolic, model.Diastolic);
             }
+
+            if (!notification || !shouldSendAlert) {
+                throw new Error('No alert to send for the given blood pressure values.');
+            }
+
             const bloodPressureAlertmodel: BloodPressureAlertModel = {};
             bloodPressureAlertmodel.PatientUserId = model.PatientUserId;
             bloodPressureAlertmodel.Systolic = model.Systolic;
@@ -111,19 +275,45 @@ export class BiometricAlerts {
 
             await biometricAlertHandler.bloodPressureAlert(bloodPressureAlertmodel);
         } catch (error) {
-            Logger.instance().log(`Error in sending blood glucose alert notification : ${error}`);
+            Logger.instance().log(`Error in sending blood pressure alert notification : ${error}`);
         }
     }
 
-    static async forPulse(model: PulseDto,
+    static async forPulse(
+        model: PulseDto,
         notificationChannel: NotificationChannel = NotificationChannel.MobilePush,
-        metaData: BiometricAlertSettings | null = null) {
+        metaData: BiometricAlertSettings | null = null,
+        tenantId?: string
+    ) {
         try {
-            Logger.instance().log(`Processing pulse alert for model: ${JSON.stringify(model)} and notification channel: ${notificationChannel}`);
-            const notification = BiometricAlerts.getPulseNotification(model.Pulse!);
-            if (!notification || notification?.severity === Severity.NORMAL) {
-                return;
+            Logger.instance().log(`Processing pulse alert for model: ${JSON.stringify(model)}`);
+
+            const thresholds = await BiometricAlerts.getThresholdsForTenant(tenantId);
+            const pulseConfig = thresholds?.Pulse;
+
+            let notification: AlertNotification | null = null;
+            let shouldSendAlert = true;
+
+            if (pulseConfig && pulseConfig.Enabled) {
+                const category = BiometricAlerts.evaluateSingleValueThreshold(
+                    model.Pulse!,
+                    pulseConfig,
+                    "Pulse"
+                );
+                if (category) {
+                    shouldSendAlert = category.SendAlert;
+                    if (shouldSendAlert) {
+                        notification = BiometricAlerts.buildAlertFromCategory(category);
+                    }
+                }
+            } else {
+                notification = BiometricAlerts.getPulseNotification(model.Pulse!);
             }
+
+            if (!notification || !shouldSendAlert) {
+                throw new Error('No alert to send for the given pulse value.');
+            }
+
             const biometricAlertHandler = BiometricAlerts.getBiometricAlertHandler(notificationChannel);
             if (!biometricAlertHandler) {
                 throw new ApiError(500, 'Biometric alert handler not found.');
@@ -143,23 +333,47 @@ export class BiometricAlerts {
                 notification.message[BiometricAlerts.DEFAULT_USER_LANGUAGE_PREFERENCE]
             };
 
-            Logger.instance().log(`Sending pulse alert notification to biometric alert handler: ${JSON.stringify(pulseAlertModel)}`);
+            Logger.instance().log(`Sending pulse alert notification`);
             await biometricAlertHandler.pulseAlert(pulseAlertModel);
         } catch (error) {
             Logger.instance().log(`Error in sending pulse alert notification : ${error}`);
         }
     }
     
-    static async forBodyTemperature(model: BodyTemperatureDto,
+    static async forBodyTemperature(
+        model: BodyTemperatureDto,
         notificationChannel: NotificationChannel = NotificationChannel.MobilePush,
-        metaData: BiometricAlertSettings | null = null) {
+        metaData: BiometricAlertSettings | null = null,
+        tenantId?: string
+    ) {
         try {
             const tempInFarenheit = bodyTemperatureUnits.includes(model.Unit?.toLowerCase()) ?
                 (model.BodyTemperature * 1.8) + 32 : model.BodyTemperature;
 
-            const notification = BiometricAlerts.getTemperatureNotification(tempInFarenheit);
-            if (!notification || notification?.severity === Severity.NORMAL) {
-                return;
+            const thresholds = await BiometricAlerts.getThresholdsForTenant(tenantId);
+            const tempConfig = thresholds?.BodyTemperature;
+
+            let notification: AlertNotification | null = null;
+            let shouldSendAlert = true;
+
+            if (tempConfig && tempConfig.Enabled) {
+                const category = BiometricAlerts.evaluateSingleValueThreshold(
+                    tempInFarenheit,
+                    tempConfig,
+                    "BodyTemperature"
+                );
+                if (category) {
+                    shouldSendAlert = category.SendAlert;
+                    if (shouldSendAlert) {
+                        notification = BiometricAlerts.buildAlertFromCategory(category);
+                    }
+                }
+            } else {
+                notification = BiometricAlerts.getTemperatureNotification(tempInFarenheit);
+            }
+
+            if (!notification || !shouldSendAlert) {
+                throw new Error('No alert to send for the given body temperature value.');
             }
 
             const biometricAlertHandler = BiometricAlerts.getBiometricAlertHandler(notificationChannel);
@@ -187,14 +401,39 @@ export class BiometricAlerts {
         }
     }
 
-    static async forBloodOxygenSaturation(model: BloodOxygenSaturationDto,
+    static async forBloodOxygenSaturation(
+        model: BloodOxygenSaturationDto,
         notificationChannel: NotificationChannel = NotificationChannel.MobilePush,
-        metaData: BiometricAlertSettings | null = null) {
+        metaData: BiometricAlertSettings | null = null,
+        tenantId?: string
+    ) {
         try {
-            const notification = BiometricAlerts.getOxygenNotification(model.BloodOxygenSaturation);
-            if (!notification || notification?.severity === Severity.NORMAL) {
-                return;
+            const thresholds = await BiometricAlerts.getThresholdsForTenant(tenantId);
+            const oxygenConfig = thresholds?.BloodOxygenSaturation;
+
+            let notification: AlertNotification | null = null;
+            let shouldSendAlert = true;
+
+            if (oxygenConfig && oxygenConfig.Enabled) {
+                const category = BiometricAlerts.evaluateSingleValueThreshold(
+                    model.BloodOxygenSaturation,
+                    oxygenConfig,
+                    "BloodOxygenSaturation"
+                );
+                if (category) {
+                    shouldSendAlert = category.SendAlert;
+                    if (shouldSendAlert) {
+                        notification = BiometricAlerts.buildAlertFromCategory(category);
+                    }
+                }
+            } else {
+                notification = BiometricAlerts.getOxygenNotification(model.BloodOxygenSaturation);
             }
+
+            if (!notification || !shouldSendAlert) {
+                throw new Error('No alert to send for the given blood oxygen saturation value.');
+            }
+
             const biometricAlertHandler = BiometricAlerts.getBiometricAlertHandler(notificationChannel);
             if (!biometricAlertHandler) {
                 throw new ApiError(500, 'Biometric alert handler not found.');
@@ -220,17 +459,42 @@ export class BiometricAlerts {
         }
     }
     
-    static async forBodyBMI(bodyWeightRecord: BodyWeightDto,
+    static async forBodyBMI(
+        bodyWeightRecord: BodyWeightDto,
         bodyHeightRecord: BodyHeightDto,
         notificationChannel: NotificationChannel = NotificationChannel.MobilePush,
-        metaData: BiometricAlertSettings | null = null) {
+        metaData: BiometricAlertSettings | null = null,
+        tenantId?: string
+    ) {
         try {
             const bmi = BiometricAlerts.calculateBMI(bodyWeightRecord.BodyWeight, bodyHeightRecord.BodyHeight);
 
-            const notification = BiometricAlerts.getBmiNotification(bmi);
-            if (!notification || notification?.severity === Severity.NORMAL) {
-                return;
+            const thresholds = await BiometricAlerts.getThresholdsForTenant(tenantId);
+            const bmiConfig = thresholds?.BodyBmi;
+
+            let notification: AlertNotification | null = null;
+            let shouldSendAlert = true;
+
+            if (bmiConfig && bmiConfig.Enabled) {
+                const category = BiometricAlerts.evaluateSingleValueThreshold(
+                    bmi,
+                    bmiConfig,
+                    "BMI"
+                );
+                if (category) {
+                    shouldSendAlert = category.SendAlert;
+                    if (shouldSendAlert) {
+                        notification = BiometricAlerts.buildAlertFromCategory(category);
+                    }
+                }
+            } else {
+                notification = BiometricAlerts.getBmiNotification(bmi);
             }
+
+            if (!notification || !shouldSendAlert) {
+                throw new Error('No alert to send for the given BMI value.');
+            }
+
             const biometricAlertHandler = BiometricAlerts.getBiometricAlertHandler(notificationChannel);
             if (!biometricAlertHandler) {
                 throw new ApiError(500, 'Biometric alert handler not found.');
@@ -239,8 +503,9 @@ export class BiometricAlerts {
             bmiAlertModel.PatientUserId = bodyWeightRecord.PatientUserId;
             bmiAlertModel.Bmi = bmi;
             bmiAlertModel.BiometricAlertSettings = metaData;
-            
-            const userLanguagePreference = await BiometricAlerts.getUserLanguagePreference(bodyWeightRecord.PatientUserId);
+
+            const userLanguagePreference = await BiometricAlerts
+                .getUserLanguagePreference(bodyWeightRecord.PatientUserId);
             bmiAlertModel.BmiNotification = {
                 severity : notification.severity,
                 range    : notification.range,
@@ -249,10 +514,10 @@ export class BiometricAlerts {
                 message : notification.message[userLanguagePreference] ??
                 notification.message[BiometricAlerts.DEFAULT_USER_LANGUAGE_PREFERENCE]
             };
-            
+
             await biometricAlertHandler.bmiAlert(bmiAlertModel);
         } catch (error) {
-            Logger.instance().log(`Error in sending body temperature alert notification : ${error}`);
+            Logger.instance().log(`Error in sending BMI alert notification : ${error}`);
         }
     }
 

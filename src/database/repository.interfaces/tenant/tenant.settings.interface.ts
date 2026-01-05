@@ -7,6 +7,7 @@ import {
     FollowupSettings,
     CustomSettings,
 } from "../../../domain.types/tenant/tenant.settings.types";
+import { VitalsThresholds } from "../../../domain.types/tenant/vitals.thresholds.types";
 
 ///////////////////////////////////////////////////////////////////////////////////////////
 
@@ -19,4 +20,5 @@ export interface ITenantSettingsRepo {
     updateFormsSettings(tenantId: string, settings: FormsSettings): Promise<TenantSettingsDto>;
     updateConsentSettings(tenantId: string, settings: any): Promise<TenantSettingsDto>;
     updateCustomSettings(tenantId: string, settings: CustomSettings): Promise<TenantSettingsDto>;
+    updateVitalsThresholds(tenantId: string, settings: VitalsThresholds): Promise<TenantSettingsDto>;
 }

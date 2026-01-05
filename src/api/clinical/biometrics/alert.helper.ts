@@ -7,7 +7,7 @@ import { UserRepo } from "../../../database/sql/sequelize/repositories/users/use
 import { BloodPressureAlertModel } from "../../../domain.types/clinical/biometrics/alert.notificattion/blood.pressure";
 import { ErrorHandler } from "../../../common/handlers/error.handler";
 import { Logger } from "../../../common/logger";
-import { AlertMessage } from "../../../domain.types/clinical/biometrics/biometrics.types";
+import { AlertMessage, DEFAULT_ALERT_TITLE } from "../../../domain.types/clinical/biometrics/biometrics.types";
 import { PulseAlertModel } from "../../../domain.types/clinical/biometrics/alert.notificattion/pulse";
 import { BodyTemperatureAlertModel } from "../../../domain.types/clinical/biometrics/alert.notificattion/body.temperature";
 import { BloodOxygenAlertModel } from "../../../domain.types/clinical/biometrics/alert.notificattion/blood.oxygen.saturation";
@@ -32,7 +32,7 @@ export class AlertHelper {
             ErrorHandler.throwNotFoundError('Person not found');
         }
 
-        const notificationTitle = model.GlucoseNotification.title.replace("{{PatientName}}", person.FirstName ?? "there");
+        const notificationTitle = DEFAULT_ALERT_TITLE.replace("{{PatientName}}", person.FirstName ?? "there");
 
         var body = model.GlucoseNotification.message;
         body = body.replace("{{BloodGlucose}}", model.BloodGlucose.toString());
@@ -60,7 +60,7 @@ export class AlertHelper {
             ErrorHandler.throwNotFoundError('Person not found');
         }
 
-        const notificationTitle = model.BloodPressureNotification.title.replace("{{PatientName}}", person.FirstName ?? '');
+        const notificationTitle = DEFAULT_ALERT_TITLE.replace("{{PatientName}}", person.FirstName ?? '');
 
         var body = model.BloodPressureNotification.message;
         body = body.replace("{{Systolic}}", model.Systolic.toString());
@@ -89,7 +89,7 @@ export class AlertHelper {
             ErrorHandler.throwNotFoundError('Person not found');
         }
 
-        const notificationTitle = model.PulseNotification.title.replace("{{PatientName}}", person.FirstName ?? "there");
+        const notificationTitle = DEFAULT_ALERT_TITLE.replace("{{PatientName}}", person.FirstName ?? "there");
 
         var body = model.PulseNotification.message;
         body = body.replace("{{Pulse}}", model.Pulse.toString());
@@ -117,7 +117,7 @@ export class AlertHelper {
             ErrorHandler.throwNotFoundError('Person not found');
         }
 
-        const notificationTitle = model.TemperatureNotification.title.replace("{{PatientName}}", person.FirstName ?? "there");
+        const notificationTitle = DEFAULT_ALERT_TITLE.replace("{{PatientName}}", person.FirstName ?? "there");
 
         var body = model.TemperatureNotification.message;
         body = body.replace("{{BodyTemperature}}", model.BodyTemperature.toString());
@@ -145,7 +145,7 @@ export class AlertHelper {
             ErrorHandler.throwNotFoundError('Person not found');
         }
 
-        const notificationTitle = model.OxygenNotification.title.replace("{{PatientName}}", person.FirstName ?? "there");
+        const notificationTitle = DEFAULT_ALERT_TITLE.replace("{{PatientName}}", person.FirstName ?? "there");
 
         var body = model.OxygenNotification.message;
         body = body.replace("{{BloodOxygenSaturation}}", model.BloodOxygenSaturation.toString());
@@ -173,7 +173,7 @@ export class AlertHelper {
             ErrorHandler.throwNotFoundError('Person not found');
         }
 
-        const notificationTitle = model.BmiNotification.title.replace("{{PatientName}}", person.FirstName ?? "there");
+        const notificationTitle = DEFAULT_ALERT_TITLE.replace("{{PatientName}}", person.FirstName ?? "there");
 
         var body = model.BmiNotification.message;
         body = body.replace("{{BMI}}", model.Bmi.toString());

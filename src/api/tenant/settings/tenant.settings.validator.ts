@@ -540,7 +540,18 @@ export class TenantSettingsValidator extends BaseValidator {
         await this.validateBoolean(request, 'ChatBot.BasicAssessment', Where.Body, true, false);
         await this.validateBoolean(request, 'ChatBot.BasicCarePlan', Where.Body, true, false);
         await this.validateString(request, 'ChatBot.Timezone', Where.Body, false, false);
-      
+        await this.validateArray(request, 'ChatBot.WelcomeMessages', Where.Body, false, false, 1);
+
+        const MAX_WELCOME_MESSAGES = 25;
+
+        const welcomeMessages = request.body?.ChatBot?.WelcomeMessages || [];
+        for (let i = 0; i < Math.min(welcomeMessages.length, MAX_WELCOME_MESSAGES); i++) {
+            const path = `ChatBot.WelcomeMessages[${i}]`;
+            await this.validateString(request, `${path}.LanguageCode`, Where.Body, true, false, false, 1);
+            await this.validateString(request, `${path}.Content`, Where.Body, true, false, false, 1);
+            await this.validateString(request, `${path}.URL`, Where.Body, false, false, false, 1);
+        }
+
         const model: ChatBotSettings = {
             Name                : request.body.ChatBot.Name,
             OrganizationName    : request.body.ChatBot.OrganizationName,
@@ -566,6 +577,7 @@ export class TenantSettingsValidator extends BaseValidator {
             QnA                 : request.body.ChatBot.QnA,
             Consent             : request.body.ChatBot.Consent,
             WelcomeMessage      : request.body.ChatBot.WelcomeMessage,
+            WelcomeMessages     : request.body.ChatBot.WelcomeMessages,
             Feedback            : request.body.ChatBot.Feedback,
             ReminderAppointment : request.body.ChatBot.ReminderAppointment,
             AppointmentFollowup : request.body.ChatBot.AppointmentFollowup,

@@ -180,6 +180,10 @@ export class AssessmentTemplateRepo implements IAssessmentTemplateRepo {
             if (updateModel.RawData != null) {
                 assessmentTemplate.RawData = JSON.stringify(updateModel.RawData);
             }
+            if (updateModel.TenantId != null) {
+                assessmentTemplate.TenantId = updateModel.TenantId;
+            }
+
             await assessmentTemplate.save();
 
             return AssessmentTemplateMapper.toDto(assessmentTemplate);

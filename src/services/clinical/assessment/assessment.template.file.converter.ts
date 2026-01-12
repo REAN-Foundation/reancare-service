@@ -51,6 +51,8 @@ export class AssessmentTemplateFileConverter {
                 Provider                    : templateObj.Provider,
                 ProviderAssessmentCode      : templateObj.ProviderAssessmentCode,
                 ServeListNodeChildrenAtOnce : templateObj.ServeListNodeChildrenAtOnce,
+                ScoringApplicable           : templateObj.ScoringApplicable,
+                RawData                     : templateObj.RawData,
                 RootNodeDisplayCode         : templateObj.RootNodeDisplayCode,
                 Tags                        : templateObj.Tags,
                 Nodes                       : []
@@ -82,6 +84,8 @@ export class AssessmentTemplateFileConverter {
             tmpl.Provider                    = templateObj.Provider;
             tmpl.ProviderAssessmentCode      = templateObj.ProviderAssessmentCode;
             tmpl.ServeListNodeChildrenAtOnce = templateObj.ServeListNodeChildrenAtOnce;
+            tmpl.ScoringApplicable           = templateObj.ScoringApplicable,
+            tmpl.RawData                     = templateObj.RawData,
             tmpl.RootNodeDisplayCode         = templateObj.RootNodeDisplayCode;
             tmpl.Tags                        = templateObj.Tags;
             tmpl.Nodes                       = [];

@@ -71,6 +71,8 @@ export class CareplanService implements IUserActionService {
             throw new Error('Patient does not exist!');
         }
 
+        var tenantId = patient.User.TenantId;
+
         var participantId = null;
         const provider = enrollmentDetails.Provider;
         const planCode = enrollmentDetails.PlanCode;
@@ -94,25 +96,27 @@ export class CareplanService implements IUserActionService {
 
             //Since not registered with provider, register
             var participantDetails: ParticipantDomainModel = {
-                Name           : patient.User.Person.DisplayName,
-                Phone          : patient.User.Person.Phone,
-                Email          : patient.User.Person.Email,
-                PatientUserId  : enrollmentDetails.PatientUserId,
-                Provider       : provider,
-                Gender         : patient.User.Person.Gender,
-                Age            : null, //Helper.getAgeFromBirthDate(patient.User.Person.BirthDate),
-                Dob            : patient.User.Person.BirthDate,
-                HeightInInches : null,
-                WeightInLbs    : null,
-                MaritalStatus  : null,
-                ZipCode        : null,
+                Name              : patient.User.Person.DisplayName,
+                Phone             : patient.User.Person.Phone,
+                Email             : patient.User.Person.Email,
+                PatientUserId     : enrollmentDetails.PatientUserId,
+                Provider          : provider,
+                Gender            : patient.User.Person.Gender,
+                Age               : null, //Helper.getAgeFromBirthDate(patient.User.Person.BirthDate),
+                Dob               : patient.User.Person.BirthDate,
+                HeightInInches    : null,
+                WeightInLbs       : null,
+                MaritalStatus     : null,
+                ZipCode           : null,
+                TenantId          : tenantId,
+                UniqueReferenceId : patient.User.Person.UniqueReferenceId,
             };
 
             participantId = await this._handler.registerPatientWithProvider(
                 participantDetails, enrollmentDetails.Provider);
 
             participant = await this._careplanRepo.addPatientWithProvider(
-                enrollmentDetails.PatientUserId, provider, participantId);
+                enrollmentDetails.PatientUserId, provider, participantId, tenantId);
 
             if (!participant) {
                 throw new Error('Error while adding care plan participant details to database.');
@@ -121,6 +125,7 @@ export class CareplanService implements IUserActionService {
 
         enrollmentDetails.ParticipantId = participant.ParticipantId;
         enrollmentDetails.Gender = patient.User.Person.Gender;
+        enrollmentDetails.TenantId = tenantId;
 
         return await this.enrollAndCreateTask(enrollmentDetails);
     };
@@ -160,7 +165,7 @@ export class CareplanService implements IUserActionService {
 
                 let phoneNumber = null;
                 if (message.includes("Messages")) {
-                    phoneNumber = patient.Person.TelegramChatId;
+                    phoneNumber = patient.Person.UniqueReferenceId;
                 } else {
                     phoneNumber = patient.Person.Phone;
                 }
@@ -593,7 +598,7 @@ export class CareplanService implements IUserActionService {
                 Title            : x.Title,
                 Description      : x.Description,
                 Url              : x.Url,
-                Language         : x.Language,
+                Language         : enrollmentDetails.Language,
                 ScheduledAt      : x.ScheduledAt,
                 Sequence         : x.Sequence,
                 Frequency        : x.Frequency,

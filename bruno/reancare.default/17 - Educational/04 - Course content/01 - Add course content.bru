@@ -1,0 +1,65 @@
+meta {
+  name: Add course content
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{BASE_URL}}/educational/course-contents
+  body: json
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{ADMIN_USER_JWT}}
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+  Content-Type: application/json
+}
+
+body:json {
+  {
+      "ModuleId": "{{COURSE_MODULE_ID}}",
+      "Title": "English Grammer ",
+      "Description": "Learning course",
+      "ImageUrl": "https://docs.google.com/spreadsheets/d/1FcQMxJJAIVZtyuAKJHjSgI0qr86GVttGzm65Azzm8XM/edit#gid=0",
+      "DurationInMins": 90,
+      "ContentType":"Text",
+      "ResourceLink":"https://docs.google.com/spreadsheets/d/1FcQMxJJAIVZtyuAKJHjSgI0qr86GVttGzm65Azzm8XM/edit#gid=0",
+      "Sequence": 1
+  }
+}
+
+tests {
+  var jsonRes = res.getBody();
+  
+  try {
+      bru.setEnvVar("COURSE_CONTENT_ID", jsonRes.Data.CourseContent.id);
+  }
+  catch (error) {
+      console.log(error.message);
+  }
+  
+  
+  test("Request is successfull", function () {
+      expect(res.getStatus()).to.equal(201);
+      var jsonRes = res.getBody();
+      expect(jsonRes.Status).to.eql('success');
+  });
+  
+  test("New course content is returned", function () {
+  
+      var expectedTitle = "English Grammer";
+      var expectedDurationInMins = 90;
+      
+      var jsonRes = res.getBody();
+      expect(jsonRes.Data).to.have.property('CourseContent');
+      expect(jsonRes.Data.CourseContent).to.not.be.empty;
+      expect(jsonRes.Data.CourseContent).to.have.property('Title');
+      expect(jsonRes.Data.CourseContent).to.have.property('DurationInMins');
+      
+      expect(jsonRes.Data.CourseContent.Title).equals(expectedTitle );
+      expect(jsonRes.Data.CourseContent.DurationInMins).equals(expectedDurationInMins);
+  });
+  
+  
+}

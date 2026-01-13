@@ -1,0 +1,43 @@
+meta {
+  name: Get course module by id
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{BASE_URL}}/educational/course-modules/{{COURSE_MODULE_ID}}
+  body: none
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{ADMIN_USER_JWT}}
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+  Content-Type: application/json
+}
+
+tests {
+  test("Request is successfull", function () {
+      expect(res.getStatus()).to.equal(200);
+      var jsonRes = res.getBody();
+      expect(jsonRes.Status).to.eql('success');
+  });
+  
+  test("Course module is returned", function () {
+  
+      var expectedName = "English";
+      var expectedDurationInMins = 90;
+      
+      var jsonRes = res.getBody();
+      expect(jsonRes.Data).to.have.property('CourseModule');
+      expect(jsonRes.Data.CourseModule).to.not.be.empty;
+      expect(jsonRes.Data.CourseModule).to.have.property('Name');
+      expect(jsonRes.Data.CourseModule).to.have.property('DurationInMins');
+      
+      expect(jsonRes.Data.CourseModule.Name).equals(expectedName);
+      expect(jsonRes.Data.CourseModule.DurationInMins).equals(expectedDurationInMins);
+  
+  });
+  
+  
+}

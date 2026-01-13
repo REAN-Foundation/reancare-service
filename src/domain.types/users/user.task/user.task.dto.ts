@@ -39,3 +39,9 @@ export interface TaskSummaryDto {
     InProgressTasks: UserTaskDto[];
     PendingTasks   : UserTaskDto[];
 }
+
+export interface ChatBotTaskDto extends UserTaskDto {
+    Language?: string;
+    Sequence?: number;
+    Metadata?: any;
+}

@@ -1,0 +1,46 @@
+meta {
+  name: Register doctor- with same phone number - should fail
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{BASE_URL}}/doctors
+  body: json
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{PATIENT_USER_JWT}}
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+  Content-Type: application/json
+}
+
+body:json {
+  {
+      "Phone": "{{PHONE_COUNTRY_CODE}}-{{PHONE_NUMBER}}"
+  }
+}
+
+script:pre-request {
+  var password = "";
+  bru.setEnvVar("API_CLIENT_PASSWORD", password);
+  
+}
+
+tests {
+  try {
+      var jsonRes = res.getBody();
+  }
+  catch (error) {
+      console.log(error.message);
+  }
+  
+  test("Response should be failure", function () {
+      expect(res.getStatus()).to.equal(409);
+      var jsonRes = res.getBody();
+      expect(jsonRes.Status).to.eql('failure');
+  });
+  
+  
+}

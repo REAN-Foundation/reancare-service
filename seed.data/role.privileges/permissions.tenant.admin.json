@@ -79,7 +79,9 @@
                 "ScoreAssessment": false,
                 "Search": false,
                 "StartAssessment": false,
-                "Update": false
+                "Update": false,
+                "SkipQuestion": false,
+                "SubmitAtOnce": false
             },
             "AssessmentTemplate": {
                 "AddNode": true,
@@ -199,7 +201,7 @@
             }
         },
         "Careplan": {
-            "Enroll": false,
+            "Enroll": true,
             "FetchTasks": false,
             "GetAvailableCareplans": true,
             "GetPatientEligibility": true,
@@ -581,6 +583,10 @@
         "Update": true
     },
     "Statistics": {
+        "AhaNumbers": {
+            "Upload": true,
+            "Download": true
+        },
         "AppStats": {
             "GetAllYears": true,
             "GetAppDownlodCount": true,
@@ -631,14 +637,32 @@
             "GetTenantStats": true,
             "PromoteTenantUserAsAdmin": true,
             "Search": true,
-            "Update": true
+            "Update": true,
+            "CreateBotSchema": true,
+            "CreateSecret": true,
+            "GetSecret": true,
+            "GetSecretByCode": true,
+            "UpdateSecret": true,
+            "GetActiveTenants": false
         },
         "Settings": {
             "GetTenantSettingsTypes": true,
             "GetTenantSettings": true,
             "GetTenantSettingsByType": true,
+            "GetTenantSettingsByCode": true,
             "UpdateTenantSettingsByType": true,
             "UpdateTenantSettings": true
+        },
+        "SettingsMarketing": {
+            "Create": true,
+            "GetByTenant": true,
+            "UpdateAll": true,
+            "UpdateImages": true,
+            "UpdateLogos": true,
+            "UpdateQRCode": true,
+            "UpdateContent": true,
+            "DownloadPdf": true,
+            "Delete": true
         }
     },
     "User": {
@@ -752,7 +776,8 @@
             "Search": true,
             "Update": true,
             "DeleteProfileImage": true,
-            "Delete": true
+            "Delete": true,
+            "ValidateUserById":true
         },
         "UserTask": {
             "CancelTask": true,
@@ -885,5 +910,5 @@
         "Update": true,
         "Delete": true
     }
-   
+
 }

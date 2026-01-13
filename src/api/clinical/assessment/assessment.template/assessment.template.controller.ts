@@ -183,7 +183,12 @@ export class AssessmentTemplateController extends BaseController {
             const sourceFilePath = metadata.SourceFilePath;
             const originalFileName = metadata.OriginalName;
 
-            Helper.sleep(1000);
+            await Helper.sleep(1000);
+            
+            if (!fs.existsSync(sourceFilePath)) {
+                throw new ApiError(400, `Uploaded file not found at path: ${sourceFilePath}`);
+            }
+
             const fileContent = fs.readFileSync(sourceFilePath, 'utf8');
             const extension = Helper.getFileExtension(originalFileName);
             if (extension.toLowerCase() !== 'json') {
@@ -706,12 +711,12 @@ export class AssessmentTemplateController extends BaseController {
             const optionId: uuid = await this._validator.getParamUuid(request, 'optionId');
             const templateId: uuid = await this._validator.getParamUuid(request, 'id');
             await this.checkNodeAndTemplate(nodeId, templateId);
-            const path = await this._service.getPath(optionId);
-            if (path == null) {
+            const option = await this._service.getOption(optionId);
+            if (option == null) {
                 throw new ApiError(404, 'Cannot retrieve record for option!');
             }
             ResponseHandler.success(request, response, 'Option record retrieved successfully!', 200, {
-                NodePath : path,
+                Option : option,
             });
         } catch (error) {
             ResponseHandler.handleError(request, response, error);

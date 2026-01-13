@@ -40,4 +40,8 @@ export interface IFoodConsumptionRepo {
 
     getAllUserResponsesBefore(patientUserId: string, date: Date): Promise<any[]>;
 
+    deleteByUserId(patientUserId: string, hardDelete: boolean): Promise<boolean>;
+
+    // deleteQuestionnaireByUserId(patientUserId: string, hardDelete: boolean): Promise<boolean>;
+
 }

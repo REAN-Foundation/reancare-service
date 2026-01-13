@@ -1,0 +1,50 @@
+meta {
+  name: Get blood-groups
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{BASE_URL}}/types/blood-groups
+  body: none
+  auth: none
+}
+
+headers {
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+  Content-Type: application/json
+}
+
+tests {
+  try {
+      var jsonRes = res.getBody();
+      var personRoles = jsonRes.Data.PersonRoleTypes;
+      for(var i = 0; i < personRoles.length; i++) {
+          var r = personRoles[i];
+          var name = r.RoleName;
+          var id = r.id;
+          var str = "ROLE_" + name.toUpperCase();
+          console.log(str);
+          console.log(id);
+          bru.setEnvVar(str, id);
+      }
+  }
+  catch (error) {
+      console.log(error.message);
+  }
+  
+  test("Request is successfull", function () {
+      expect(res.getStatus()).to.equal(200);
+      var jsonRes = res.getBody();
+      expect(jsonRes.Status).to.eql('success');
+  });
+  
+  test("Person roles are retrieved", function () {
+      var jsonRes = res.getBody();
+      expect(jsonRes.Data).to.have.property('BloodGroups');
+      expect(jsonRes.Data.BloodGroups).to.not.be.empty;
+      var count = jsonRes.Data.BloodGroups.length;
+      expect(count).greaterThan(0);
+  });
+  
+}

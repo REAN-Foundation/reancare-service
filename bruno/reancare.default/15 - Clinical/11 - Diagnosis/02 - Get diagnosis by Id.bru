@@ -1,0 +1,44 @@
+meta {
+  name: Get diagnosis by Id
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{BASE_URL}}/clinical/diagnoses/{{DIAGNOSIS_ID}}
+  body: none
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{PATIENT_USER_JWT}}
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+  Content-Type: application/json
+}
+
+tests {
+  test("Request is successfull", function () {
+      expect(res.getStatus()).to.equal(200);
+      var jsonRes = res.getBody();
+      expect(jsonRes.Status).to.eql('success');
+  });
+  
+  test("Diagnosis record is returned", function () {
+  
+      var expectedValue = false;
+      var expectedDiagnosisId = bru.getEnvVar("DIAGNOSIS_ID");
+      
+      var jsonRes = res.getBody();
+      expect(jsonRes.Data).to.have.property('Diagnosis');
+      expect(jsonRes.Data.Diagnosis).to.not.be.empty;
+      expect(jsonRes.Data.Diagnosis).to.have.property('id');
+      expect(jsonRes.Data.Diagnosis).to.have.property('IsClinicallyActive');
+      expect(jsonRes.Data.Diagnosis).to.have.property('ValidationStatus');
+      expect(jsonRes.Data.Diagnosis).to.have.property('Interpretation');
+      
+      expect(jsonRes.Data.Diagnosis.IsClinicallyActive).equals(expectedValue);
+      expect(jsonRes.Data.Diagnosis.id).equals(expectedDiagnosisId);
+      
+  });
+  
+}

@@ -1,4 +1,3 @@
-
 import puppeteer from 'puppeteer';
 import { DateStringFormat } from '../domain.types/miscellaneous/time.types';
 import { TimeHelper } from './time.helper';
@@ -6,9 +5,9 @@ import { ConfigurationManager } from '../config/configuration.manager';
 import path from 'path';
 import fs from 'fs';
 import { Logger } from './logger';
-import nodeHtmlToImage from 'node-html-to-image';
 import { Helper } from './helper';
 import { OSType } from '../domain.types/miscellaneous/system.types';
+import nodeHtmlToImage from 'node-html-to-image';
 
 ////////////////////////////////////////////////////////////////////////////////////
 
@@ -54,7 +53,15 @@ export const htmlTextToPNG = async (htmlText: string, width: number, height: num
 
 export const htmlTextToPDFBuffer = async (htmlText: string): Promise<Buffer> => {
 
-    const browser = await puppeteer.launch({ args: ['--no-sandbox'], executablePath: '/usr/bin/chromium-browser' });
+    let executablePath = '/usr/bin/chromium-browser';
+    const osType = Helper.getOSType();
+    if (osType === OSType.Windows) {
+        executablePath = undefined;
+    } else if (osType === OSType.MacOS) {
+        executablePath = '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome';
+    }
+
+    const browser = await puppeteer.launch({ args: ['--no-sandbox'], executablePath });
     const page = await browser.newPage();
 
     await page.setContent(htmlText);
@@ -78,29 +85,3 @@ async function getGeneratedFilePath(filename: string, extension = '.png'): Promi
     const absFilepath = path.join(fileFolder, filename);
     return absFilepath;
 }
-
-// export const htmlTextToPNG = async (htmlText: string, width: number, height: number, filename?: string) => {
-//     try {
-//         const browser: puppeteer.Browser = await puppeteer.launch();
-//         const page = await browser.newPage();
-//         await page.setViewport({
-//             width  : width,
-//             height : height,
-//
-//         });
-//         //await page.goto('file:///F:/service-1/index.html');
-//         await page.setContent(htmlText);
-//
-//         const generatedFilePath = await getGeneratedFilePath(filename);
-//         await page.screenshot({
-//             path     : generatedFilePath,
-//             fullPage : false,
-//         });
-//         await browser.close();
-//
-//         return generatedFilePath;
-//     }
-//     catch (error) {
-//         Logger.instance().log(`HTML Error: ${error.message}`);
-//     }
-// };

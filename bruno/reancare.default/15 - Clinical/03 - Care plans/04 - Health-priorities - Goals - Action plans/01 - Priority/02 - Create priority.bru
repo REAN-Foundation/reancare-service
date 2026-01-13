@@ -1,0 +1,67 @@
+meta {
+  name: Create priority
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{BASE_URL}}/patient-health-priorities
+  body: json
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{PATIENT_USER_JWT}}
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+  Content-Type: application/json
+}
+
+body:json {
+  {
+      "PatientUserId": "{{PATIENT_USER_ID}}",
+      "Provider": "{{CAREPLAN_PROVIDER}}",
+      "Source": "Careplan",
+      "ProviderEnrollmentId": "{{CAREPLAN_ENROLLMENT_ID}}",
+      "ProviderCareplanCode": "{{CAREPLAN_CODE}}",
+      "ProviderCareplanName": "{{CAREPLAN_CODE}}",
+      "HealthPriorityType": "{{HEALTH_PRIORITY_TYPE}}",
+      "IsPrimary": true
+  
+  }
+}
+
+tests {
+  var jsonRes = res.getBody();
+  
+  try {
+      bru.setEnvVar("HEALTH_PRIORITY_ID", jsonRes.Data.HealthPriority.id);
+  }
+  catch (error) {
+      console.log(error.message);
+  }
+  
+  test("Request is successfull", function () {
+      expect(res.getStatus()).to.equal(201);
+      var jsonRes = res.getBody();
+      expect(jsonRes.Status).to.eql('success');
+  });
+  
+  
+  
+  test("New Health pririty record is created", function () {
+         
+      var jsonRes = res.getBody();
+      expect(jsonRes.Data).to.have.property('HealthPriority');
+      expect(jsonRes.Data.HealthPriority).to.not.be.empty;
+      expect(jsonRes.Data.HealthPriority).to.have.property('id');
+      expect(jsonRes.Data.HealthPriority).to.have.property('PatientUserId');
+      expect(jsonRes.Data.HealthPriority).to.have.property('Source');
+      expect(jsonRes.Data.HealthPriority).to.have.property('ProviderEnrollmentId');
+      expect(jsonRes.Data.HealthPriority).to.have.property('Provider');
+      expect(jsonRes.Data.HealthPriority).to.have.property('ProviderCareplanName');
+      expect(jsonRes.Data.HealthPriority).to.have.property('ProviderCareplanCode');
+      expect(jsonRes.Data.HealthPriority).to.have.property('HealthPriorityType');
+      expect(jsonRes.Data.HealthPriority).to.have.property('IsPrimary');
+  
+  });
+}

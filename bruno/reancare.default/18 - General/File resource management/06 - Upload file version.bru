@@ -1,0 +1,65 @@
+meta {
+  name: Upload file version
+  type: http
+  seq: 5
+}
+
+post {
+  url: {{BASE_URL}}/file-resources/{{RESOURCE_ID}}/upload-version/
+  body: multipartForm
+  auth: none
+}
+
+headers {
+  enc: multipart/form-data
+  Authorization: Bearer {{PATIENT_USER_JWT}}
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+}
+
+body:multipart-form {
+  name: @file(D:\REAN foundation\Rean service authenticated\storage\local\assets\images\stock.medication.images\09_Generic_dropper.png)
+}
+
+tests {
+  try {
+      var jasonRes = res.getBody();
+      var resource = jasonRes.Data.FileResource;
+      var version = resource.DefaultVersion;
+  
+      bru.setEnvVar("RESOURCE_VERSION", version.Version);
+      bru.setEnvVar("RESOURCE_VERSION_ID", version.VersionId);
+  
+  }
+  catch (error) {
+      console.log(error.message);
+  }
+  
+  test("Request is successfull", function () {
+      expect(res.getStatus()).to.equal(201);
+      var jsonRes = res.getBody();
+      expect(jsonRes.Status).to.eql('success');
+  });
+  
+  test("A new file version is uploaded", function () {
+  
+      var jsonRes = res.getBody();
+      expect(jsonRes.Data).to.have.property('FileResource');
+  
+      var resource = jsonRes.Data.FileResource;
+  
+      expect(resource).to.have.property('id');
+      expect(resource).to.have.property('FileName');
+      expect(resource).to.have.property('Url');
+      expect(resource).to.have.property('UploadedByUserId');
+      expect(resource).to.have.property('MimeType');
+      expect(resource).to.have.property('Versions');
+      expect(resource).to.have.property('Tags');
+      expect(resource).to.have.property('References');
+      expect(resource).to.have.property('IsPublicResource');
+      expect(resource).to.have.property('DefaultVersion');
+  
+      expect(resource.Versions.length).greaterThan(0);
+  
+  });
+  
+}

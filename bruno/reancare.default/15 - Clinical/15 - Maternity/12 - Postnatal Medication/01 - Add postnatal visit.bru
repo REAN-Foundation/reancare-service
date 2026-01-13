@@ -1,0 +1,63 @@
+meta {
+  name: Create
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{BASE_URL}}/clinical/maternity/maternity-deliveries/{{DELIVERY_ID}}/postnatal-medications
+  body: json
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{ADMIN_USER_JWT}}
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+  Content-Type: application/json
+}
+
+body:json {
+  {
+      "PostNatalVisitId": "{{POSTNATAL_VISIT_ID}}",
+      "DeliveryId": "{{DELIVERY_ID}}",
+      "VisitId": "{{VISIT_ID}}",
+      "Name": "Paracetamol",
+      "Given": "None",
+      "MedicationId": "{{MEDICATION_ID}}"
+  }
+  
+}
+
+tests {
+  try {
+  
+      var jsonData = res.getBody();
+      var id = jsonData.Data.PostnatalMedication.id;
+      bru.setEnvVar("POSTNATAL_MEDICATION_ID", id);
+  
+  }
+  catch (error) {
+      console.log(error.message);
+  }
+  
+  test("Request is successfull", function () {
+      expect(res.getStatus()).to.equal(201);
+      var jsonRes = res.getBody();
+      expect(jsonRes.Status).to.eql('success');
+  });
+  
+  test("New Postnatal medication record is created", function () {
+  
+      var jsonRes = res.getBody();
+      expect(jsonRes.Data).to.have.property('PostnatalMedication');
+      
+      expect(jsonRes.Data.PostnatalMedication).to.have.property('id');
+      expect(jsonRes.Data.PostnatalMedication).to.have.property('PostNatalVisitId');
+      expect(jsonRes.Data.PostnatalMedication).to.have.property('DeliveryId');
+      expect(jsonRes.Data.PostnatalMedication).to.have.property('VisitId');
+      expect(jsonRes.Data.PostnatalMedication).to.have.property('Name');
+      expect(jsonRes.Data.PostnatalMedication).to.have.property('Given');
+      expect(jsonRes.Data.PostnatalMedication).to.have.property('MedicationId');
+  });
+  
+}

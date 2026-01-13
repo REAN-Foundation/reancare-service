@@ -118,7 +118,7 @@ export default class CareplanActivity extends Model {
     @Column({
         type         : DataType.STRING(16),
         allowNull    : false,
-        defaultValue : 'English'
+        defaultValue : 'en'
     })
     Language: string;
 

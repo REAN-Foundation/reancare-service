@@ -1,0 +1,36 @@
+meta {
+  name: Delete
+  type: http
+  seq: 4
+}
+
+delete {
+  url: {{BASE_URL}}/clinical/maternity/maternity-pregnancies/{{PREGNANCY_ID}}/antenatal-visit/{{ANTENATAL_VISIT_ID}}
+  body: none
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{ADMIN_USER_JWT}}
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+  Content-Type: application/json
+}
+
+tests {
+  test("Request is successfull", function () {
+      expect(res.getStatus()).to.equal(200);
+      var jsonRes = res.getBody();
+      expect(jsonRes.Status).to.eql('success');
+  });
+  
+  test("Antenatal visit record is deleted", function () {
+  
+      var expectedValue = true;
+      
+      var jsonRes = res.getBody();
+      expect(jsonRes.Data).to.have.property('Deleted');
+      expect(jsonRes.Data.Deleted).equals(expectedValue);
+  
+  });
+  
+}

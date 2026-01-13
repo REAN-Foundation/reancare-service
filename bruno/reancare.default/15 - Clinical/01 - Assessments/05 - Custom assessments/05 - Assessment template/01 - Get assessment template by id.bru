@@ -1,0 +1,44 @@
+meta {
+  name: Get assessment template by id
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{BASE_URL}}/clinical/assessment-templates/{{ASSESSMENT_TEMPLATE_ID}}
+  body: none
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{PATIENT_USER_JWT}}
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+  Content-Type: application/json
+}
+
+tests {
+  test("Request is successfull", function () {
+      expect(res.getStatus()).to.equal(200);
+      var jsonRes = res.getBody();
+      expect(jsonRes.Status).to.eql('success');
+  });
+  
+  test("Assessment template is returned", function () {
+  
+      var jsonRes = res.getBody();
+  
+      expect(jsonRes.Data).to.have.property('AssessmentTemplate');
+      expect(jsonRes.Data.AssessmentTemplate).to.not.be.empty;
+      expect(jsonRes.Data.AssessmentTemplate).to.have.property('id');
+      expect(jsonRes.Data.AssessmentTemplate).to.have.property('Title');
+      expect(jsonRes.Data.AssessmentTemplate).to.have.property('Description');
+      expect(jsonRes.Data.AssessmentTemplate).to.have.property('Type');
+      
+      expect(jsonRes.Data.AssessmentTemplate.Title).equals("A new assessment template");
+      expect(jsonRes.Data.AssessmentTemplate.Description).equals("Description of template");
+      expect(jsonRes.Data.AssessmentTemplate.Type).equals("Careplan");
+  
+  });
+  
+  
+}

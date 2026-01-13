@@ -1,0 +1,44 @@
+meta {
+  name: Symptom types by id
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{BASE_URL}}/clinical/symptom-types/{{SYMPTOM_TYPE_ID}}
+  body: none
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+  authorization: Bearer {{ADMIN_USER_JWT}}
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+}
+
+tests {
+  
+  test("Request is successfull", function () {
+      expect(res.getStatus()).to.equal(200);
+      var jsonRes = res.getBody();
+      expect(jsonRes.Status).to.eql('success');
+  });
+  
+  test("Symptom type by id is returned", function () {
+  
+      var jsonRes = res.getBody();
+      expect(jsonRes.Data).to.have.property('SymptomType');
+      expect(jsonRes.Data.SymptomType).to.have.property('id');
+      expect(jsonRes.Data.SymptomType).to.have.property('Symptom');
+      expect(jsonRes.Data.SymptomType).to.have.property('Description');
+      expect(jsonRes.Data.SymptomType).to.have.property('Tags');
+      expect(jsonRes.Data.SymptomType).to.have.property('Language');
+      expect(jsonRes.Data.SymptomType).to.have.property('ImageResourceId');
+  
+      expect(jsonRes.Data.SymptomType.Symptom).equals("Headache");
+      expect(jsonRes.Data.SymptomType.Description).equals("Severe to moderate headache");
+      expect(jsonRes.Data.SymptomType.Language).equals("en-US");
+      expect(jsonRes.Data.SymptomType.Tags.length).greaterThan(0);
+  });
+  
+}

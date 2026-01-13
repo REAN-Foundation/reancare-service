@@ -32,6 +32,8 @@ export interface IPersonRepo {
 
     getPersonWithEmail(email: string): Promise<PersonDetailsDto>;
 
+    getPersonWithUniqueReferenceId(uniqueReferenceId: string): Promise<PersonDetailsDto>;
+
     search(filters: PersonSearchFilters): Promise<PersonSearchResults>;
 
     // searchFull(filters: any): Promise<PersonDetailsDto[]>;

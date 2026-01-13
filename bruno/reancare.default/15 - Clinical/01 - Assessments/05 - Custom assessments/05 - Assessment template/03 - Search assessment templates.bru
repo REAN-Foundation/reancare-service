@@ -1,0 +1,43 @@
+meta {
+  name: Search assessment templates
+  type: http
+  seq: 3
+}
+
+get {
+  url: {{BASE_URL}}/clinical/assessment-templates/search
+  body: none
+  auth: none
+}
+
+params:query {
+  ~orderBy: CreatedAt
+  ~order: ascending
+  ~pageIndex: 0
+  ~itemsPerPage: 25
+  ~minValue: 0
+  ~maxValue: 100
+  ~title: genera
+  ~type: Careplan
+}
+
+headers {
+  Authorization: Bearer {{ADMIN_USER_JWT}}
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+  Content-Type: application/json
+}
+
+tests {
+  test("Request is successfull", function () {
+      expect(res.getStatus()).to.equal(200);
+      var jsonRes = res.getBody();
+      expect(jsonRes.Status).to.eql('success');
+  });
+  
+  test("List of assessment tempaltes is returned", function () {
+      var jsonRes = res.getBody();
+      expect(jsonRes.Data).to.have.property('AssessmentTemplateRecords');
+      expect(jsonRes.Data.AssessmentTemplateRecords.Items.length).greaterThan(0);
+  });
+  
+}

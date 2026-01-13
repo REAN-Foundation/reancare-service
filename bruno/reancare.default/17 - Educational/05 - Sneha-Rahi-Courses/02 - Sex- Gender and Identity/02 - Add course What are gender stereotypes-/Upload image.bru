@@ -1,0 +1,63 @@
+meta {
+  name: Upload image
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{BASE_URL}}/file-resources/upload/
+  body: multipartForm
+  auth: none
+}
+
+headers {
+  enc: multipart/form-data
+  Authorization: Bearer {{ADMIN_USER_JWT}}
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+}
+
+body:multipart-form {
+  name: @file(D:\REAN foundation\Rean service authenticated\storage\local\resources\2025-03-31\Heart & Stroke statistics1743413400671.pdf)
+  IsPublicResource: true
+}
+
+tests {
+  try {
+      var jsonRes = res.getBody();
+      bru.setEnvVar("FILE_RESOURCE_URL", jsonRes.Data.FileResources[0].Url);
+  }
+  catch(error) {
+      console.log(error.message);
+  }
+  
+  test("Request is successfull", function () {
+      expect(res.getStatus()).to.equal(201);
+      var jsonRes = res.getBody();
+      expect(jsonRes.Status).to.eql('success');
+  });
+  
+  test("File is uploaded as public resource", function () {
+  
+      var jsonRes = res.getBody();
+      expect(jsonRes.Data).to.have.property('FileResources');
+      expect(jsonRes.Data.FileResources.length).greaterThan(0);
+  
+      var resource = jsonRes.Data.FileResources[0];
+  
+      expect(resource).to.have.property('id');
+      expect(resource).to.have.property('FileName');
+      expect(resource).to.have.property('Url');
+      expect(resource).to.have.property('UploadedByUserId');
+      expect(resource).to.have.property('MimeType');
+      expect(resource).to.have.property('Versions');
+      expect(resource).to.have.property('Tags');
+      expect(resource).to.have.property('References');
+      expect(resource).to.have.property('IsPublicResource');
+      expect(resource).to.have.property('DefaultVersion');
+  
+      expect(resource.Versions.length).greaterThan(0);
+      expect(resource.IsPublicResource).equals(true);
+  });
+  
+  
+}

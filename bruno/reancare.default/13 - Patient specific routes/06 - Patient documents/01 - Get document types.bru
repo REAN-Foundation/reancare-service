@@ -1,0 +1,38 @@
+meta {
+  name: Get document types
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{BASE_URL}}/patient-documents/types
+  body: none
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{PATIENT_USER_JWT}}
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+  Content-Type: application/json
+}
+
+tests {
+      var jsonRes = res.getBody();
+      var documentType = jsonRes.Data.PatientDocumentTypes[0];
+      bru.setEnvVar("DOCUMENT_TYPE", documentType);
+  
+  test("Request is successfull", function () {
+      expect(res.getStatus()).to.equal(200);
+      var jsonRes = res.getBody();
+      expect(jsonRes.Status).to.eql('success');
+  });
+  
+  test("Document types are returned", function () {
+      var jsonRes = res.getBody();
+      expect(jsonRes.Data).to.have.property('PatientDocumentTypes');
+      expect(jsonRes.Data.PatientDocumentTypes).to.not.be.empty;
+      expect(jsonRes.Data.PatientDocumentTypes.length).greaterThan(0);
+  });
+  
+  
+}

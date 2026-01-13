@@ -19,6 +19,23 @@
     "FileStorage" : {
         "Provider": "Custom"
     },
+    "Messaging" : {
+        "Provider": "AWS-SNS-SQS",
+        "Events": {          
+                "Enabled": true,
+                "RetryPolicy": {
+                    "MaxRetries": 2,
+                    "BackoffMultiplier": 1.5,
+                    "MaxBackoffSeconds": 30
+                },
+                "DeadLetterQueue": {
+                    "Enabled": true,
+                    "MaxReceiveCount": 3
+                },
+                "MessageRetentionPeriod": 1209600,
+                "VisibilityTimeout": 300
+        }
+    },
     "FeatureFlags" : {
         "Provider": "Custom"
     },

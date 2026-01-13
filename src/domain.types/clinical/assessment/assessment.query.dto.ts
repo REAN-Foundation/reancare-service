@@ -16,9 +16,12 @@ export interface AssessmentQueryDto {
     RawData?            : string;
     Message?            : string;
     Options             : CAssessmentQueryOption[];
-    CorrectAnswer?     : string | any;
+    CorrectAnswer?      : string | any;
     ProviderGivenCode?  : string;
     ProviderGivenId?    : string;
+    Required?           : boolean;
+    FieldIdentifier?    : string;
+    FieldIdentifierUnit?: string;
 }
 
 export interface AssessmentQueryListDto {

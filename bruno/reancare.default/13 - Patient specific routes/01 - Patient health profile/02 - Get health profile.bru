@@ -1,0 +1,48 @@
+meta {
+  name: Get health profile
+  type: http
+  seq: 4
+}
+
+get {
+  url: {{BASE_URL}}/patient-health-profiles/{{PATIENT_USER_ID}}
+  body: json
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{ADMIN_USER_JWT}}
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+  Content-Type: application/json
+}
+
+tests {
+  test("Request is successfull", function () {
+      expect(res.getStatus()).to.equal(200);
+      var jsonRes = res.getBody();
+      expect(jsonRes.Status).to.eql('success');
+  });
+  
+  test("Default patient health profile is returned", function () {
+  
+      var jsonRes = res.getBody();
+      expect(jsonRes.Data).to.have.property('HealthProfile');
+      expect(jsonRes.Data.HealthProfile).to.not.be.empty;
+      expect(jsonRes.Data.HealthProfile).to.have.property('id');
+      expect(jsonRes.Data.HealthProfile).to.have.property('PatientUserId');
+      expect(jsonRes.Data.HealthProfile).to.have.property('BloodGroup');
+      expect(jsonRes.Data.HealthProfile).to.have.property('IsDiabetic');
+      expect(jsonRes.Data.HealthProfile).to.have.property('HasHeartAilment');
+      expect(jsonRes.Data.HealthProfile).to.have.property('MaritalStatus');
+      expect(jsonRes.Data.HealthProfile).to.have.property('SedentaryLifestyle');
+      expect(jsonRes.Data.HealthProfile).to.have.property('IsSmoker');
+      expect(jsonRes.Data.HealthProfile).to.have.property('IsDrinker');
+      expect(jsonRes.Data.HealthProfile).to.have.property('SubstanceAbuse');
+  
+  });
+  
+}
+
+docs {
+  Add an address.
+}

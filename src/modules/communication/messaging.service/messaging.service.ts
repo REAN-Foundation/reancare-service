@@ -29,7 +29,7 @@ export class MessagingService {
     };
 
     sendWhatsappWithReanBot = async (toPhone: string, message: any, provider:string,
-        type:string, PlanCode:string, payload = null, channelName?: string ): Promise<boolean> => {
+        type:string, PlanCode:string, payload?: any, channelName?: string ): Promise<boolean> => {
 
         let templateName = null;
         const channel = await this.getBotChannel(channelName);

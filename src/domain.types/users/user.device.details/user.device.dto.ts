@@ -10,4 +10,5 @@ export interface UserDeviceDetailsDto {
     AppName?          : string;
     AppVersion?       : string;
     ChangeCount?      : number;
+    IsNotificationEnabled? : boolean;
 }

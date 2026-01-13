@@ -189,7 +189,7 @@ export class BodyHeightRepo implements IBodyHeightRepo {
                     },
                 },
             });
-                
+
             if (!recentActivityDetails) {
                 return null;
             }
@@ -200,11 +200,29 @@ export class BodyHeightRepo implements IBodyHeightRepo {
             };
 
             return result;
-                
+
         } catch (error) {
             Logger.instance().log(error.message);
             return null;
         }
     };
-    
+
+    deleteByUserId = async(patientUserId: string, hardDelete: boolean = false): Promise<boolean> =>{
+        try {
+            const deletedCount = await BodyHeight.destroy({
+                where : {
+                    PatientUserId : patientUserId
+                },
+                force : hardDelete
+            });
+
+            if (deletedCount === 0) {
+                Logger.instance().log(`No BodyHeight records found for user: ${patientUserId}`);
+            }
+            return true;
+        } catch (error) {
+            Logger.instance().log(error.message);
+        }
+    };
+
 }

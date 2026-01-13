@@ -1,0 +1,23 @@
+meta {
+  name: Download by version name
+  type: http
+  seq: 12
+}
+
+get {
+  url: {{BASE_URL}}/file-resources/{{RESOURCE_ID}}/download-by-version-name/{{RESOURCE_VERSION}}
+  body: none
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{PATIENT_USER_JWT}}
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+}
+
+tests {
+  test("Request is successfull", function () {
+      expect(res.getStatus()).to.equal(200);
+  });
+  
+}

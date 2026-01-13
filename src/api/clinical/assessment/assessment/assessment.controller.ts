@@ -8,20 +8,46 @@ import { UserTaskService } from '../../../../services/users/user/user.task.servi
 import { Injector } from '../../../../startup/injector';
 import { AssessmentValidator } from './assessment.validator';
 import { AssessmentQuestionResponseDto } from '../../../../domain.types/clinical/assessment/assessment.question.response.dto';
-import { AssessmentNodeType, CAssessmentListNode } from '../../../../domain.types/clinical/assessment/assessment.types';
+import { AssessmentNodeType, AssessmentType, CAssessmentListNode } from '../../../../domain.types/clinical/assessment/assessment.types';
 import { AssessmentHelperRepo } from '../../../../database/sql/sequelize/repositories/clinical/assessment/assessment.helper.repo';
 import { CustomActionsHandler } from '../../../../custom/custom.actions.handler';
 import { AssessmentDto } from '../../../../domain.types/clinical/assessment/assessment.dto';
 import { Logger } from '../../../../common/logger';
 import { EHRAssessmentService } from '../../../../modules/ehr.analytics/ehr.services/ehr.assessment.service';
 import { BaseController } from '../../../../api/base.controller';
-import { AssessmentDomainModel } from '../../../../domain.types/clinical/assessment/assessment.domain.model';
+import { AssessmentDomainModel, AssessmentSubmissionDomainModel } from '../../../../domain.types/clinical/assessment/assessment.domain.model';
 import { PermissionHandler } from '../../../../auth/custom/permission.handler';
 import { AssessmentSearchFilters } from '../../../../domain.types/clinical/assessment/assessment.search.types';
 import { EHRPatientService } from '../../../../modules/ehr.analytics/ehr.services/ehr.patient.service';
 import { HealthProfileService } from '../../../../services/users/patient/health.profile.service';
 import { AssessmentEvents } from '../assessment.events';
 import { ActivityTrackerHandler } from '../../../../services/users/patient/activity.tracker/activity.tracker.handler';
+import { PatientService } from '../../../../services/users/patient/patient.service';
+import { AssessmentTemplateService } from '../../../../services/clinical/assessment/assessment.template.service';
+import { TenantService } from '../../../../services/tenant/tenant.service';
+import { AssessmentSubmissionAtOnceService } from '../../../../services/clinical/assessment/assessment.submission.at.once.service';
+import { AssessmentHelperService } from '../../../../services/clinical/assessment/assessment.helper';
+import { PatientDomainModel } from '../../../../domain.types/users/patient/patient/patient.domain.model';
+import { UserHelper } from '../../../../api/users/user.helper';
+import { UserService } from '../../../../services/users/user/user.service';
+import { PersonDomainModel } from '../../../../domain.types/person/person.domain.model';
+import { Roles } from '../../../../domain.types/role/role.types';
+import { DoctorDomainModel } from '../../../../domain.types/users/doctor/doctor.domain.model';
+import { UserBasicDetails, UserDomainModel } from '../../../../domain.types/users/user/user.domain.model';
+import { PersonDetailsDto } from '../../../../domain.types/person/person.dto';
+import { RoleService } from '../../../../services/role/role.service';
+import { UserDetailsDto } from '../../../../domain.types/users/user/user.dto';
+import { PersonService } from '../../../../services/person/person.service';
+import { BiometricAlertSettings } from '../../../../domain.types/clinical/biometrics/biometrics.types';
+import { BiometricAlerts } from '../../biometrics/biometrics.alert';
+import { BloodPressureDto } from '../../../../domain.types/clinical/biometrics/blood.pressure/blood.pressure.dto';
+import { NotificationChannel } from '../../../../domain.types/general/notification/notification.types';
+import { PulseDto } from '../../../../domain.types/clinical/biometrics/pulse/pulse.dto';
+import { BloodOxygenSaturationDto } from '../../../../domain.types/clinical/biometrics/blood.oxygen.saturation/blood.oxygen.saturation.dto';
+import { BodyWeightDto } from '../../../../domain.types/clinical/biometrics/body.weight/body.weight.dto';
+import { BodyHeightDto } from '../../../../domain.types/clinical/biometrics/body.height/body.height.dto';
+import { BloodGlucoseDto } from '../../../../domain.types/clinical/biometrics/blood.glucose/blood.glucose.dto';
+import { BodyTemperatureDto } from '../../../../domain.types/clinical/biometrics/body.temperature/body.temperature.dto';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -43,7 +69,23 @@ export class AssessmentController extends BaseController {
 
     _healthProfileService = Injector.Container.resolve(HealthProfileService);
 
+    _patientService = Injector.Container.resolve(PatientService);
+
+    _assessmentTemplateService = Injector.Container.resolve(AssessmentTemplateService);
+
+    _tenantService = Injector.Container.resolve(TenantService);
+
+    _userHelper: UserHelper = new UserHelper();
+
+    _assessmentSubmissionAtOnceService = Injector.Container.resolve(AssessmentSubmissionAtOnceService);
+
     _validator: AssessmentValidator = new AssessmentValidator();
+
+   _userService: UserService = Injector.Container.resolve(UserService);
+   
+     _roleService: RoleService = Injector.Container.resolve(RoleService);
+     
+    _personService: PersonService = Injector.Container.resolve(PersonService);
 
     constructor() {
         super();
@@ -275,8 +317,7 @@ export class AssessmentController extends BaseController {
 
             var answerResponse: AssessmentQuestionResponseDto = await this._service.answerQuestion(answerModel);
 
-            var options = await this._service.getQuestionById(assessment.id, answerResponse.Answer.NodeId);
-            await this._ehrAssessmentService.addEHRRecordForAppNames(assessment, answerResponse, options);
+            await this._ehrAssessmentService.addEHRRecordForAppNames(assessment, answerResponse, question);
 
             //check if questions are related to race and ethnicity
             if (assessment.Provider && assessment.Provider === 'REAN' ) {
@@ -397,9 +438,476 @@ export class AssessmentController extends BaseController {
         }
     };
 
+    skipQuestion = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+            const id: uuid = await this._validator.getParamUuid(request, 'id');
+            const questionId: uuid = await this._validator.getParamUuid(request, 'questionId');
+
+            const assessment = await this._service.getById(id);
+            if (assessment == null) {
+                throw new ApiError(404, 'Assessment record not found.');
+            }
+            await this.authorizeOne(request, assessment.PatientUserId);
+
+            const question = await this._service.getQuestionById(id, questionId);
+            if (question == null) {
+                throw new ApiError(404, 'Assessment question not found.');
+            }
+
+            const isAnswered = await this._service.isAnswered(assessment.id, questionId);
+            if (isAnswered) {
+                throw new ApiError(400, `The question has already been answered!`);
+            }
+
+            if (question.Required) {
+                throw new ApiError(400, `The question is not skippable!`);
+            }
+            //Check if the question is of type list
+            if (question.NodeType !== AssessmentNodeType.Question) {
+                throw new ApiError(400, `The node is not skippable!`);
+            }
+
+            var skipResponse: AssessmentQuestionResponseDto = await this._service.skipQuestion(id, questionId);
+            const isAssessmentCompleted = skipResponse === null || skipResponse?.Next === null;
+            if (isAssessmentCompleted) {
+                //Assessment has no more questions left and is completed successfully!
+                await this.completeAssessmentTask(id);
+                //If the assessment has scoring enabled, score the assessment
+                if (assessment.ScoringApplicable) {
+                    var { score, reportUrl } = await this.generateScoreReport(assessment);
+                    if (score) {
+                        skipResponse['AssessmentScore'] = score;
+                        skipResponse['AssessmentScoreReport'] = reportUrl;
+                    }
+                }
+                var updatedAssessment = await this._service.getById(assessment.id);
+                updatedAssessment['Score'] = JSON.stringify(skipResponse['AssessmentScore']);
+                await this._ehrAssessmentService.addEHRRecordForAppNames(updatedAssessment, null, null);
+
+                AssessmentEvents.onAssessmentCompleted(request, updatedAssessment, 'assessment');
+            }
+
+            const message = skipResponse === null || skipResponse?.Next === null
+                ? 'Assessment has completed successfully!'
+                : 'Assessment question skipped successfully!';
+
+            AssessmentEvents.onAssessmentQuestionSkipped(request, skipResponse, assessment, 'assessment');
+
+            ResponseHandler.success(request, response, message, 200, { AnswerResponse: skipResponse });
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
+    submitAtOnce = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+            await this._validator.getParamUuid(request, 'templateId');
+            await this._validator.getParamStr(request, 'submissionType');
+            
+            const submissionModel: AssessmentSubmissionDomainModel = await this._validator.submitAtOnce(request);
+            await this.authorizeOne(request, submissionModel.PatientUserId);
+            
+            const patient = await this._patientService.getByUserId(submissionModel.PatientUserId);
+            if (patient == null) {
+                throw new ApiError(404, 'Patient not found.');
+            }
+
+            const template = await this._assessmentTemplateService.getById(submissionModel.AssessmentTemplateId);
+            if (template == null) {
+                throw new ApiError(404, 'Assessment template not found.');
+            }
+
+            const tenant = await this._tenantService.getById(submissionModel.TenantId);
+            if (tenant == null) {
+                throw new ApiError(404, 'Tenant not found.');
+            }
+            
+            const completedAssessment = await this._assessmentSubmissionAtOnceService.submitAtOnce(submissionModel);
+            
+            let message = 'Assessment submitted successfully.';
+            Logger.instance().log(`Template Type: ${template.Type}`);
+            Logger.instance().log(`Completed Assessment Type: ${completedAssessment.Type}`);
+            if (template.Type === AssessmentType.UserRegistration) {
+                const status = await this.registerAssessmentTargetUser(completedAssessment.id, submissionModel.TenantId);
+                message = message + status ? ' ' + status : '';
+            }
+
+            if (template.Type === AssessmentType.Clinical) {
+                const status = await this.verifyAssessmentTargetUser(completedAssessment.id, submissionModel.TenantId);
+                message = message + status ? ' ' + status : '';
+            }
+
+            this.handleBiometricAlerts(completedAssessment.id, patient.UserId, submissionModel.TenantId);
+
+            ResponseHandler.success(request, response, message, 200, { Assessment: completedAssessment });
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
     //#endregion
 
     //#region Privates
+
+    private handleBiometricAlerts = async (
+        assessmentId: uuid,
+        patientUserId: string,
+        tenantId?: string
+    ) => {
+        try {
+            Logger.instance().log(`Handling biometric alerts for assessment id: ${assessmentId}`);
+            const assessment = await this._service.getById(assessmentId);
+            if (assessment == null) {
+                throw new ApiError(404, 'Assessment not found.');
+            }
+
+            const fieldIdentifier = AssessmentHelperService.extractFieldIdentifierData(assessment);
+            Logger.instance().log(`Field identifier: ${JSON.stringify(fieldIdentifier)}`);
+
+            const template = await this._assessmentTemplateService.getById(assessment.AssessmentTemplateId);
+            if (template == null) {
+                throw new ApiError(404, 'Assessment template not found.');
+            }
+            const rawData = template.RawData ?? null;
+            const alertSettings = AssessmentHelperService.extractBiometricData(rawData);
+            Logger.instance().log(`Biometric Alert settings: ${JSON.stringify(alertSettings)}`);
+
+            if (!alertSettings) {
+                Logger.instance().log('No biometric alert settings found.');
+                return;
+            }
+            const biometricAlertSettings: BiometricAlertSettings =
+            this._validator.validateBiometricAlertSettings(alertSettings);
+            this.processBiometricAlertsByCategory(
+                biometricAlertSettings,
+                fieldIdentifier,
+                patientUserId,
+                tenantId
+            );
+
+        } catch (error) {
+            Logger.instance().log(`Error in handling biometric alerts: ${error}`);
+        }
+    };
+    
+    private processBiometricAlertsByCategory = (
+        biometricAlertSettings: BiometricAlertSettings,
+        fieldIdentifier: Record<string, string>,
+        patientUserId: string,
+        tenantId?: string
+    ) => {
+        try {
+            if (
+                biometricAlertSettings.BiometricAlertCategories.length > 0 &&
+                biometricAlertSettings.BiometricAlertCategories.includes("Systolic") &&
+                biometricAlertSettings.BiometricAlertCategories.includes("Diastolic") &&
+                fieldIdentifier.Systolic != null && fieldIdentifier.Diastolic != null
+            ) {
+                Logger.instance().log(`Processing blood pressure alert`);
+                const model: BloodPressureDto = {
+                    PatientUserId : patientUserId,
+                    Systolic      : isNaN(Number(fieldIdentifier.Systolic)) ? 0 : Number(fieldIdentifier.Systolic),
+                    Diastolic     : isNaN(Number(fieldIdentifier.Diastolic)) ? 0 : Number(fieldIdentifier.Diastolic),
+                    Unit          : 'mmHg',
+                };
+
+                BiometricAlerts.forBloodPressure(
+                    model,
+                    biometricAlertSettings.Channel ?? NotificationChannel.WhatsappMeta,
+                    biometricAlertSettings,
+                    tenantId
+                );
+            }
+
+            if (
+                biometricAlertSettings.BiometricAlertCategories.length > 0 &&
+                biometricAlertSettings.BiometricAlertCategories.includes("Pulse") &&
+                fieldIdentifier.Pulse != null
+            ) {
+                Logger.instance().log(`Processing pulse alert`);
+                const model: PulseDto = {
+                    PatientUserId : patientUserId,
+                    Pulse         : isNaN(Number(fieldIdentifier.Pulse)) ? 0 : Number(fieldIdentifier.Pulse),
+                    Unit          : 'bpm',
+                };
+                BiometricAlerts.forPulse(
+                    model,
+                    biometricAlertSettings.Channel ?? NotificationChannel.WhatsappMeta,
+                    biometricAlertSettings,
+                    tenantId
+                );
+            }
+
+            if (
+                biometricAlertSettings.BiometricAlertCategories.length > 0 &&
+                biometricAlertSettings.BiometricAlertCategories.includes("OxygenSaturation") &&
+                fieldIdentifier.OxygenSaturation != null
+            ) {
+                Logger.instance().log(`Processing blood oxygen saturation alert`);
+                const model: BloodOxygenSaturationDto = {
+                    PatientUserId         : patientUserId,
+                    BloodOxygenSaturation : isNaN(Number(fieldIdentifier.OxygenSaturation)) ?
+                        0 : Number(fieldIdentifier.OxygenSaturation),
+                    Unit : 'percentage',
+                };
+                BiometricAlerts.forBloodOxygenSaturation(
+                    model,
+                    biometricAlertSettings.Channel ?? NotificationChannel.WhatsappMeta,
+                    biometricAlertSettings,
+                    tenantId
+                );
+            }
+
+            if (
+                biometricAlertSettings.BiometricAlertCategories.length > 0 &&
+                biometricAlertSettings.BiometricAlertCategories.includes("BloodGlucose") &&
+                fieldIdentifier.BloodGlucose != null
+            ) {
+                Logger.instance().log(`Processing blood glucose alert`);
+                const model: BloodGlucoseDto = {
+                    PatientUserId : patientUserId,
+                    BloodGlucose  : isNaN(Number(fieldIdentifier.BloodGlucose)) ?
+                        0 : Number(fieldIdentifier.BloodGlucose),
+                    Unit : 'mg/dL',
+                };
+                BiometricAlerts.forBloodGlucose(
+                    model,
+                    biometricAlertSettings.Channel ?? NotificationChannel.WhatsappMeta,
+                    biometricAlertSettings,
+                    tenantId
+                );
+            }
+
+            if (
+                biometricAlertSettings.BiometricAlertCategories.length > 0 &&
+                biometricAlertSettings.BiometricAlertCategories.includes("Temperature") &&
+                fieldIdentifier.Temperature != null
+            ) {
+                Logger.instance().log(`Processing body temperature alert`);
+                const model: BodyTemperatureDto = {
+                    PatientUserId   : patientUserId,
+                    BodyTemperature : isNaN(Number(fieldIdentifier.Temperature)) ?
+                        0 : Number(fieldIdentifier.Temperature),
+                    Unit            : '°C',
+                };
+                BiometricAlerts.forBodyTemperature(
+                    model,
+                    biometricAlertSettings.Channel ?? NotificationChannel.WhatsappMeta,
+                    biometricAlertSettings,
+                    tenantId
+                );
+            }
+
+            if (
+                biometricAlertSettings.BiometricAlertCategories.length > 0 &&
+                biometricAlertSettings.BiometricAlertCategories.includes("BodyBMI") &&
+                fieldIdentifier.BodyWeight != null &&
+                fieldIdentifier.BodyHeight != null
+            ) {
+                Logger.instance().log(`Processing body BMI alert`);
+                const model: BodyWeightDto = {
+                    PatientUserId : patientUserId,
+                    BodyWeight    : isNaN(Number(fieldIdentifier.BodyWeight)) ?
+                        0 : Number(fieldIdentifier.BodyWeight),
+                    Unit          : 'kg',
+                };
+                const bodyHeightModel: BodyHeightDto = {
+                    PatientUserId : patientUserId,
+                    BodyHeight    : isNaN(Number(fieldIdentifier.BodyHeight)) ?
+                        0 : Number(fieldIdentifier.BodyHeight),
+                    Unit          : 'cm',
+                };
+                BiometricAlerts.forBodyBMI(
+                    model,
+                    bodyHeightModel,
+                    biometricAlertSettings.Channel ?? NotificationChannel.WhatsappMeta,
+                    biometricAlertSettings,
+                    tenantId
+                );
+            }
+        } catch (error) {
+            Logger.instance().log(`Error in processing biometric alerts by category: ${error}`);
+        }
+    };
+ 
+    private verifyAssessmentTargetUser = async (assessmentId: uuid, tenantId: uuid =  null) => {
+        try {
+            const assessment = await this._service.getById(assessmentId);
+            if (assessment == null) {
+                throw new ApiError(404, 'Assessment not found.');
+            }
+            const userData = AssessmentHelperService.extractFieldIdentifierData(assessment);
+            const userName = this._validator.validateAssessmentTargetUser(userData);
+            if (!userName) {
+                return;
+            }
+            const user = await this._userService.getByUserName(userName);
+            if (user == null) {
+                throw new ApiError(404, 'Invalid user name. Please resubmit the assessment with valid user name.');
+            }
+            return 'EMR Id ' + userName + ' validated successfully.';
+        } catch (error) {
+            Logger.instance().log(`Error in post user validation: ${error}`);
+            await this._service.delete(assessmentId);
+            return error.message || 'Unable to validate user.';
+        }
+    };
+
+    private registerAssessmentTargetUser  = async (assessmentId: uuid, tenantId: uuid =  null) => {
+        try {
+            const assessment = await this._service.getById(assessmentId);
+            if (assessment == null) {
+                throw new ApiError(404, 'Assessment not found.');
+            }
+            const template = await this._assessmentTemplateService.getById(assessment.AssessmentTemplateId);
+            if (template == null) {
+                throw new ApiError(404, 'Assessment template not found.');
+            }
+            const rawData = template.RawData ?? null;
+
+            const userRole: Roles  = AssessmentHelperService.extractUserRole(rawData);
+
+            const userData = AssessmentHelperService.extractFieldIdentifierData(assessment);
+            const model: PersonDomainModel = this._validator.userRegistration(userData);
+
+            const createdUser = await this.createUser(model, userRole, tenantId);
+
+            if (createdUser) {
+                return `Welcome ${createdUser.Person?.FirstName ?? 'Dear'} ${createdUser.Person?.LastName ?? ''}!. Please note your username is ${createdUser.UserName}`;
+            }
+
+            throw new ApiError(400, `User already exists with the Phone ${createdUser?.Person?.Phone} and user name is ${createdUser?.UserName}`);
+        } catch (error) {
+            Logger.instance().log(`Error in post user registration: ${error}`);
+            await this._service.delete(assessmentId);
+            return error.message || 'Unable to register user.';
+        }
+    
+    };
+    
+    private createUser = async (model: PersonDomainModel, userRole: Roles, tenantId: uuid) => {
+        if (userRole === Roles.Patient) {
+            return await this.createPatientUser(model, tenantId);
+        }
+    
+        if (userRole === Roles.Doctor) {
+            return await this.createDoctorUser(model, tenantId);
+        }
+    
+        return await this.createGenericUser(model, userRole, tenantId);
+    };
+
+    private async createPatientUser(model: PersonDomainModel, tenantId: uuid) {
+        const patientDomainModel: PatientDomainModel = {
+            User : {
+                Person : model
+            },
+            HealthProfile : {
+                BloodGroup           : null,
+                BloodTransfusionDate : null,
+                BloodDonationCycle   : null,
+                OtherInformation     : null,
+            },
+            UserId                        : null,
+            Address                       : null,
+            CohortId                      : null,
+            ExternalMedicalRegistrationId : null,
+            GenerateOtp                   : true,
+        };
+    
+        if (tenantId) {
+            patientDomainModel.User.TenantId = tenantId;
+        }
+    
+        const [patient, createdNew] = await this._userHelper.createPatient(patientDomainModel);
+    
+        if (createdNew) {
+            return await this._userService.getById(patient.User.id);
+        }
+    
+        return patient.User;
+    }
+    
+    private async createDoctorUser(model: PersonDomainModel, tenantId: uuid) {
+        const doctorDomainModel: DoctorDomainModel = {
+            User : { Person: model },
+        };
+    
+        if (tenantId) {
+            doctorDomainModel.User.TenantId = tenantId;
+        }
+    
+        const [doctor, createdNew] = await this._userHelper.createDoctor(doctorDomainModel);
+    
+        if (createdNew) {
+            return await this._userService.getById(doctor.User.id);
+        }
+    
+        return doctor.User;
+    }
+    
+    private async createGenericUser(model: PersonDomainModel, userRole: Roles, tenantId: uuid) {
+        const userDomainModel: UserDomainModel = { Person: model };
+    
+        if (tenantId) {
+            userDomainModel.TenantId = tenantId;
+        }
+    
+        const role = await this._roleService.getByName(userRole);
+        userDomainModel.RoleId = role?.id;
+    
+        let person: PersonDetailsDto = null;
+        let user: UserDetailsDto = null;
+
+        const basicDetails: UserBasicDetails = {
+            Phone      : userDomainModel.Person.Phone,
+            Email      : userDomainModel.Person.Email,
+            UserName   : userDomainModel.UserName,
+            TenantId   : userDomainModel.TenantId,
+            TenantCode : userDomainModel.TenantCode,
+        };
+    
+        await this._userHelper.performDuplicatePersonCheck(basicDetails.Phone, basicDetails.Email);
+    
+        const existingPerson = await this._userService.getExistingPerson(basicDetails);
+    
+        if (existingPerson == null) {
+            person = await this._personService.create(userDomainModel.Person);
+            if (person == null) {
+                throw new ApiError(400, 'Cannot create person!');
+            }
+        }
+        else {
+            person = existingPerson;
+            var existingUserWithRole = await this._userService.getUserByPersonIdAndRole(
+                existingPerson.id, userDomainModel.RoleId
+            );
+            if (existingUserWithRole) {
+                throw new ApiError(409, `User already exists with the same role.`);
+            }
+            await this._userHelper.checkMultipleAdministrativeRoles(userDomainModel.RoleId, existingPerson.id);
+        }
+
+        userDomainModel.Person.id = person.id;
+
+        const updatedPerson = await this._userHelper.updatePersonInformation(person, userDomainModel);
+
+        if (!updatedPerson) {
+            throw new ApiError(409, `User already exists with the same email.`);
+        }
+
+        if (!userDomainModel.UserName) {
+            userDomainModel.UserName = await this._userService.generateUserName(
+                userDomainModel.Person.FirstName, userDomainModel.Person.LastName
+            );
+        }
+
+        user = await this._userService.create(userDomainModel);
+        if (user == null) {
+            throw new ApiError(400, 'Cannot create user!');
+        }
+        return await this._userService.getById(user.id);
+    }
 
     private async completeAssessmentTask(assessmentId: uuid) {
         var assessment = await this._service.completeAssessment(assessmentId);
@@ -425,12 +933,20 @@ export class AssessmentController extends BaseController {
                 });
             }
         }
+        if (assessment.Type === AssessmentType.UserRegistration) {
+            await this.registerAssessmentTargetUser(assessmentId);
+        }
+        if (assessment.Type === AssessmentType.Clinical) {
+            await this.verifyAssessmentTargetUser(assessmentId);
+        }
+
+        this.handleBiometricAlerts(assessmentId, assessment.PatientUserId);
     }
 
     private async generateScoreReport(assessment: AssessmentDto) {
         var customActions = new CustomActionsHandler();
 
-        var score = await customActions.performActions_PostAssessmentScoring(assessment.PatientUserId, assessment.id);
+        var score = await customActions.performActionsPostAssessmentScoring(assessment.PatientUserId, assessment.id);
 
         Logger.instance().log(`Score: ${JSON.stringify(score, null, 2)}`);
 

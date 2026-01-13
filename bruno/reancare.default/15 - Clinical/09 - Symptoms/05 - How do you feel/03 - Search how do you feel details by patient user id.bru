@@ -1,0 +1,38 @@
+meta {
+  name: Search how do you feel details by patient user id
+  type: http
+  seq: 3
+}
+
+get {
+  url: {{BASE_URL}}/clinical/symptoms/how-do-you-feel/search?PatientUserId={{PATIENT_USER_ID}}
+  body: none
+  auth: none
+}
+
+params:query {
+  PatientUserId: {{PATIENT_USER_ID}}
+  ~startDate: 2025-06-15
+  ~endDate: 2025-06-21
+}
+
+headers {
+  Content-Type: application/json
+  authorization: Bearer {{PATIENT_USER_JWT}}
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+}
+
+tests {
+  
+  test("Request is successfull", function () {
+      expect(res.getStatus()).to.equal(200);
+      var jsonRes = res.getBody();
+      expect(jsonRes.Status).to.eql('success');
+  });
+  
+  test("List of How do you feel are returned", function () {
+      var jsonRes = res.getBody();
+      expect(jsonRes.Data).to.have.property('HowDoYouFeelRecords');
+      expect(jsonRes.Data.HowDoYouFeelRecords.Items.length).greaterThan(0);
+  });
+}

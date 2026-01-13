@@ -30,7 +30,9 @@
         "ScheduleHFHelperTextMessage": "0 1 * * 1",
         "ScheduleGGHNFollowUpReminder": "0 5 * * *",
         "UserActivityTracker": "5 21 31 12 *",
-        "scheduleNotificationToInactiveUsers": "5 17 */15 * *"
+        "scheduleNotificationToInactiveUsers": "5 17 */15 * *",
+        "CreateMedicationConsumptionTask": "30 16 */3 * *"
+        
     },
     "development": {
         "FileCleanup": "*/55 * * * *",
@@ -63,7 +65,8 @@
         "ScheduleHFHelperTextMessage": "0 1 6 8 *",
         "ScheduleGGHNFollowUpReminder": "0 5 * * *",
          "UserActivityTracker": "20 8 6 1 *",
-        "scheduleNotificationToInactiveUsers": "5 9 9 1 *"
+        "scheduleNotificationToInactiveUsers": "5 9 9 1 *",
+        "CreateMedicationConsumptionTask": "22 6 1 * *"
     },
     "uat": {
         "FileCleanup": "*/30 * * * *",
@@ -96,7 +99,8 @@
         "ScheduleHFHelperTextMessage": "0 10 * * 3,6",
         "ScheduleGGHNFollowUpReminder": "0 5 * * *",
         "UserActivityTracker": "5 21 13 1 *",
-        "scheduleNotificationToInactiveUsers": "5 17 */7 * *"
+        "scheduleNotificationToInactiveUsers": "5 17 */7 * *",
+        "CreateMedicationConsumptionTask": "22 6 1 * *"
     },
     "production": {
         "FileCleanup": "*/30 * * * *",
@@ -129,6 +133,7 @@
         "ScheduleHFHelperTextMessage": "0 10 * * 3,6",
         "ScheduleGGHNFollowUpReminder": "0 5 * * *",
         "UserActivityTracker": "5 21 16 1 *",
-        "scheduleNotificationToInactiveUsers": "5 17 */7 * *"
+        "scheduleNotificationToInactiveUsers": "5 17 */7 * *",
+        "CreateMedicationConsumptionTask": "20 1 1 * *"
     }
 }

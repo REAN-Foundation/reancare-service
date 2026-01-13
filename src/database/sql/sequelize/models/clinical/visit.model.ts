@@ -1,11 +1,12 @@
 import {
-    Column, CreatedAt, DataType, DeletedAt, ForeignKey, IsDate, IsUUID, Length, Model, PrimaryKey, Table, UpdatedAt
+    Column, CreatedAt, DataType, DeletedAt, ForeignKey, HasMany, IsDate, IsUUID, Length, Model, PrimaryKey, Table, UpdatedAt
 } from 'sequelize-typescript';
 import { v4 } from 'uuid';
 import { VisitType, VisitTypeList } from '../../../../../domain.types/miscellaneous/clinical.types';
 import { ProgressStatus, ProgressStatusList } from '../../../../../domain.types/miscellaneous/system.types';
 import Organization from '../general/organization/organization.model';
 import User from '../users/user/user.model';
+import AnteNatalVisit from './maternity/antenatal.visit.model';
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -48,7 +49,7 @@ export default class Visit extends Model {
     @Length({ max: 128 })
     @Column({
         type      : DataType.STRING(128),
-        allowNull : false,
+        allowNull : true,
     })
     DisplayId: string;
 
@@ -121,6 +122,9 @@ export default class Visit extends Model {
         allowNull : true,
     })
     AdditionalInformation: string;
+
+    @HasMany(() => AnteNatalVisit)
+    AnteNatalVisits: AnteNatalVisit[];
 
     @Column
     @CreatedAt

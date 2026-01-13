@@ -1,0 +1,53 @@
+meta {
+  name: Get medication stock images
+  type: http
+  seq: 6
+}
+
+get {
+  url: {{BASE_URL}}/clinical/medications/stock-images
+  body: json
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{PATIENT_USER_JWT}}
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+  Content-Type: application/json
+}
+
+tests {
+  try {
+  
+      var jsonData = res.getBody();
+      var id = jsonData.Data.MedicationStockImages[5].id;
+      var resourceId = jsonData.Data.MedicationStockImages[5].ResourceId;
+      bru.setEnvVar("STOCK_MEDICATION_IMAGE_ID", id);
+      bru.setEnvVar("STOCK_MEDICATION_IMAGE_RESOURCE_ID", resourceId);
+  
+  }
+  catch (error) {
+      console.log(error.message);
+  }
+  
+  
+  test("Request is successfull", function () {
+      expect(res.getStatus()).to.equal(200);
+      var jsonRes = res.getBody();
+      expect(jsonRes.Status).to.eql('success');
+  });
+  
+  test("Medication medication stock image list is returned", function () {
+     
+      var jsonRes = res.getBody();
+      expect(jsonRes.Data).to.have.property('MedicationStockImages');
+      expect(jsonRes.Data.MedicationStockImages).to.not.be.empty; 
+      expect(jsonRes.Data.MedicationStockImages.length).greaterThan(0);    
+  });
+  
+  
+}
+
+docs {
+  Returns the list of drugs/medicines stored in the system.
+}

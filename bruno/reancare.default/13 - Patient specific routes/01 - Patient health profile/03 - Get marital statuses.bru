@@ -1,0 +1,50 @@
+meta {
+  name: Get marital statuses
+  type: http
+  seq: 3
+}
+
+get {
+  url: {{BASE_URL}}/types/marital-statuses
+  body: none
+  auth: none
+}
+
+headers {
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+  Content-Type: application/json
+}
+
+tests {
+  try {
+      var jsonRes = res.getBody();
+      var personRoles = jsonRes.Data.PersonRoleTypes;
+      for(var i = 0; i < personRoles.length; i++) {
+          var r = personRoles[i];
+          var name = r.RoleName;
+          var id = r.id;
+          var str = "ROLE_" + name.toUpperCase();
+          console.log(str);
+          console.log(id);
+          bru.setEnvVar(str, id);
+      }
+  }
+  catch (error) {
+      console.log(error.message);
+  }
+  
+  test("Request is successfull", function () {
+      expect(res.getStatus()).to.equal(200);
+      var jsonRes = res.getBody();
+      expect(jsonRes.Status).to.eql('success');
+  });
+  
+  test("Person roles are retrieved", function () {
+      var jsonRes = res.getBody();
+      expect(jsonRes.Data).to.have.property('MaritalStatuses');
+      expect(jsonRes.Data.MaritalStatuses).to.not.be.empty;
+      var count = jsonRes.Data.MaritalStatuses.length;
+      expect(count).greaterThan(0);
+  });
+  
+}

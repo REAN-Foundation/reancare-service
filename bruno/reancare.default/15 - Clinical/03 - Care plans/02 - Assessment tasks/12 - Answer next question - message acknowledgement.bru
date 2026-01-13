@@ -1,0 +1,36 @@
+meta {
+  name: Answer next question - message acknowledgement
+  type: http
+  seq: 11
+}
+
+post {
+  url: {{BASE_URL}}/clinical/assessments/{{CAREPLAN_ASSESSMENT_ID}}/questions/{{ASSESSMENT_NEXT_QUESTION_ID}}/answer
+  body: json
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{PATIENT_USER_JWT}}
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+  Content-Type: application/json
+}
+
+body:json {
+  {
+      "ResponseType": "Ok",
+      "Answer": "Ok"
+  }
+}
+
+tests {
+  var jsonRes = res.getBody();
+  
+  try {
+      bru.setEnvVar("ASSESSMENT_QUESTION_ID", jsonRes.Data.AnswerResponse.Next.id);
+      bru.setEnvVar("ASSESSMENT_NEXT_QUESTION_ID", jsonRes.Data.AnswerResponse.Next.id);
+  }
+  catch (error) {
+      console.log(error.message);
+  }
+}

@@ -1,0 +1,91 @@
+meta {
+  name: Create emergency contact with existing person
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{BASE_URL}}/patient-emergency-contacts
+  body: json
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{PATIENT_USER_JWT}}
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+  Content-Type: application/json
+}
+
+body:json {
+  {
+      "PatientUserId":"{{PATIENT_USER_ID}}",
+      "ContactPersonId":"{{PERSON_ID}}",
+      "ContactRelation":"{{CONTACT_RELATION}}",
+      "AddressId":"{{ADDRESS_ID}}",
+      "IsAvailableForEmergency":true,
+      "TimeOfAvailability":"10:00 AM - 5:00 PM",
+      "Description":"Some description here",
+      "AdditionalPhoneNumbers":"+91-3243243334"
+  }
+}
+
+script:pre-request {
+  let patientUserId = bru.getEnvVar('PATIENT_USER_ID');
+  let doctorId = bru.getEnvVar('DOCTOR_PERSON_ID');
+  let addressId = bru.getEnvVar('ADDRESS_ID');
+  let orgId = bru.getEnvVar('ORGANIZATION_ID');
+  bru.setEnvVar("PATIENT_USER_ID", patientUserId);
+  bru.setEnvVar("CONTACT_PERSON_ID", doctorId);
+  bru.setEnvVar("CONTACT_RELATION", 'Doctor');
+  bru.setEnvVar("ADDRESS_ID", addressId);
+  bru.setEnvVar("ORGANIZATION_ID", orgId);
+}
+
+tests {
+  var jsonRes = res.getBody();
+  
+  try {
+      bru.setEnvVar("PATIENT_EMERGENCY_CONTACT_ID", jsonRes.Data.EmergencyContact.id);
+  }
+  catch (error) {
+      console.log(error.message);
+  }
+  
+  test("Request is successfull", function () {
+      expect(res.getStatus()).to.equal(201);
+      var jsonRes = res.getBody();
+      expect(jsonRes.Status).to.eql('success');
+  });
+  
+  test("Emergency contact is created", function () {
+  
+      let expectedPatientUserId = bru.getEnvVar("PATIENT_USER_ID");
+      let expectedContactRelation = bru.getEnvVar("CONTACT_RELATION");
+      let expectedIsAvailableForEmergency = true;
+      let expectedTimeOfAvailability = "10:00 AM - 5:00 PM";
+      let expectedDescription = "Some description here";
+      let expectedAdditionalPhoneNumbers = "+91-3243243334";
+  
+      var jsonRes = res.getBody();
+      expect(jsonRes.Data).to.have.property('EmergencyContact');
+      expect(jsonRes.Data.EmergencyContact).to.not.be.empty;
+      expect(jsonRes.Data.EmergencyContact).to.have.property('PatientUserId');
+      expect(jsonRes.Data.EmergencyContact).to.have.property('ContactRelation');
+      expect(jsonRes.Data.EmergencyContact).to.have.property('IsAvailableForEmergency');
+      expect(jsonRes.Data.EmergencyContact).to.have.property('TimeOfAvailability');
+      expect(jsonRes.Data.EmergencyContact).to.have.property('Description');
+      expect(jsonRes.Data.EmergencyContact).to.have.property('AdditionalPhoneNumbers');
+  
+      expect(jsonRes.Data.EmergencyContact.PatientUserId).equals(expectedPatientUserId);
+      expect(jsonRes.Data.EmergencyContact.ContactRelation).equals(expectedContactRelation);
+      expect(jsonRes.Data.EmergencyContact.IsAvailableForEmergency).equals(expectedIsAvailableForEmergency);
+      expect(jsonRes.Data.EmergencyContact.TimeOfAvailability).equals(expectedTimeOfAvailability);
+      expect(jsonRes.Data.EmergencyContact.Description).equals(expectedDescription);
+      expect(jsonRes.Data.EmergencyContact.AdditionalPhoneNumbers).equals(expectedAdditionalPhoneNumbers);
+  });
+  
+}
+
+docs {
+  Add an emergency contact.
+}

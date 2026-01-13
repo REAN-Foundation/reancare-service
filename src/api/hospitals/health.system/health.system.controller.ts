@@ -36,10 +36,10 @@ export class HealthSystemController extends BaseController {
             await this.authorizeOne(request, null, domainModel.TenantId);
             const hospitalSystem = await this._service.create(domainModel);
             if (hospitalSystem == null) {
-                throw new ApiError(400, 'Cannot create hospitalSystem!');
+                throw new ApiError(400, 'Cannot create Hospital System!');
             }
 
-            ResponseHandler.success(request, response, 'HealthSystem created successfully!', 201, {
+            ResponseHandler.success(request, response, 'Health system created successfully!', 201, {
                 HealthSystem : hospitalSystem,
             });
 
@@ -53,10 +53,10 @@ export class HealthSystemController extends BaseController {
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const hospitalSystem = await this._service.getById(id);
             if (hospitalSystem == null) {
-                throw new ApiError(404, 'HealthSystem not found.');
+                throw new ApiError(404, 'Health system not found.');
             }
 
-            ResponseHandler.success(request, response, 'HealthSystem retrieved successfully!', 200, {
+            ResponseHandler.success(request, response, 'Health system retrieved successfully!', 200, {
                 HealthSystem : hospitalSystem,
             });
 
@@ -73,7 +73,7 @@ export class HealthSystemController extends BaseController {
             const message =
                 count === 0
                     ? 'No records found!'
-                    : `Total ${count} hospitalSystem records retrieved successfully!`;
+                    : `Total ${count} Hospital system records retrieved successfully!`;
 
             ResponseHandler.success(request, response, message, 200, { HealthSystems: searchResults });
 
@@ -88,15 +88,15 @@ export class HealthSystemController extends BaseController {
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const existingHealthSystem = await this._service.getById(id);
             if (existingHealthSystem == null) {
-                throw new ApiError(404, 'HealthSystem not found.');
+                throw new ApiError(404, 'Health system not found.');
             }
             await this.authorizeOne(request, null, existingHealthSystem.TenantId);
             const updated = await this._service.update(domainModel.id, domainModel);
             if (updated == null) {
-                throw new ApiError(400, 'Unable to update hospitalSystem record!');
+                throw new ApiError(400, 'Unable to update hospital system record!');
             }
 
-            ResponseHandler.success(request, response, 'HealthSystem record updated successfully!', 200, {
+            ResponseHandler.success(request, response, 'Health system record updated successfully!', 200, {
                 HealthSystem : updated,
             });
 
@@ -111,15 +111,15 @@ export class HealthSystemController extends BaseController {
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const existingHealthSystem = await this._service.getById(id);
             if (existingHealthSystem == null) {
-                throw new ApiError(404, 'HealthSystem not found.');
+                throw new ApiError(404, 'Health system not found.');
             }
             await this.authorizeOne(request, null, existingHealthSystem.TenantId);
             const deleted = await this._service.delete(id);
             if (!deleted) {
-                throw new ApiError(400, 'HealthSystem cannot be deleted.');
+                throw new ApiError(400, 'Health system cannot be deleted.');
             }
 
-            ResponseHandler.success(request, response, 'HealthSystem record deleted successfully!', 200, {
+            ResponseHandler.success(request, response, 'Health system record deleted successfully!', 200, {
                 Deleted : true,
             });
 
@@ -133,7 +133,7 @@ export class HealthSystemController extends BaseController {
             const tags = request.query.tags as string;
             const hospitalSystems = await this._service.getHealthSystemsWithTags(tags);
 
-            ResponseHandler.success(request, response, 'HealthSystem records retrieved successfully!', 200, {
+            ResponseHandler.success(request, response, 'Health system records retrieved successfully!', 200, {
                 HealthSystems : hospitalSystems,
             });
 

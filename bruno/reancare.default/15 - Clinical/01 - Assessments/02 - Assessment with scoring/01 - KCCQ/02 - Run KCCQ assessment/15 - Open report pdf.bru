@@ -1,0 +1,42 @@
+meta {
+  name: Open report pdf
+  type: http
+  seq: 15
+}
+
+get {
+  url: http://localhost:7272/api/v1/file-resources/985fe5e8-40d1-4367-8730-fece135adb5e/download-by-version-name/1
+  body: json
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{PATIENT_USER_JWT}}
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+  Content-Type: application/json
+}
+
+tests {
+  try {
+      var jsonRes = res.getBody();
+      for (i = 0; i<jsonRes.Data.Next.ChildrenQuestions.length;i++ ) {
+          bru.setEnvVar("ASSESSMENT_LIST_QUESTION_ID_"+i, jsonRes.Data.Next.ChildrenQuestions[i].id);
+      }
+  }
+  catch (error) {
+      console.log(error.message);
+  }
+  
+  test("Request is successfull", function () {
+      expect(res.getStatus()).to.equal(200);
+      var jsonRes = res.getBody();
+      expect(jsonRes.Status).to.eql('success');
+  });
+  
+  test("Assessment is started", function () {
+      var jsonRes = res.getBody();
+      expect(jsonRes.Data.AnswerResponse).to.have.property('Next');
+      expect(jsonRes.Data.AnswerResponse).to.have.property('Answer');
+      expect(jsonRes.Data.AnswerResponse.Next).to.have.property('ChildrenNodeIds');
+  });
+}

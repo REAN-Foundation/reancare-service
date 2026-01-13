@@ -24,9 +24,9 @@ export class AWSS3FileStorageService implements IFileStorageService {
             Logger.instance().log(JSON.stringify(result, null, 2));
 
             if (result.$metadata.httpStatusCode <= 204) {
-                return null;
+                return storageKey;
             }
-            return storageKey;
+            return null;
         }
         catch (error) {
             Logger.instance().log(JSON.stringify(error, null, 2));

@@ -1,0 +1,63 @@
+meta {
+  name: Create an API client
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{BASE_URL}}/api-clients
+  body: json
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{ADMIN_USER_JWT}}
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+  Content-Type: application/json
+}
+
+body:json {
+  {
+      "ClientName": "Rean Bot Wrapper",
+      "Password": "{{API_CLIENT_PASSWORD}}",
+      "Phone": "+91 9876543219",
+      "Email": "dev@excell-medicos.com"
+  }
+}
+
+script:pre-request {
+      //bru.setEnvVar("ADMIN_PASSWORD", jsonRes.Data.Client.id);
+}
+
+tests {
+  try {
+      var jsonRes = res.getBody();
+      bru.setEnvVar("API_CLIENT_ID", jsonRes.Data.Client.id);
+      bru.setEnvVar("API_CLIENT_CODE", jsonRes.Data.Client.ClientCode);
+  }
+  catch (error) {
+      console.log(error.message);
+  }
+  
+  test("Request is successfull", function () {
+      expect(res.getStatus()).to.equal(201);
+      var jsonRes = res.getBody();
+      expect(jsonRes.Status).to.eql('success');
+  });
+  
+  test("Api client is created", function () {
+      var jsonRes = res.getBody();
+      expect(jsonRes.Data).to.have.property('Client');
+      expect(jsonRes.Data.Client).to.not.be.empty;
+      expect(jsonRes.Data.Client).to.have.property('id');
+      expect(jsonRes.Data.Client).to.have.property('ClientCode');
+      expect(jsonRes.Data.Client.ClientCode).to.not.be.null;
+  });
+  
+}
+
+docs {
+  Register an API client.
+  
+  This API will register a new API client and returns the generated 'client code' and 'api-key'. The API key has finite lifetime. By default, it is 1 year from the date of the registration.
+}

@@ -19,4 +19,6 @@ export interface IReminderRepo {
 
     deleteRemindersForUser(userId: string): Promise<boolean>;
 
+    deleteByUserId(userId: string, hardDelete: boolean): Promise<boolean>;
+
 }

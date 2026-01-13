@@ -19,4 +19,6 @@ export interface IUserDeviceDetailsRepo {
 
     delete(id: string): Promise<boolean>;
 
+    deleteByUserId(userId: string, hardDelete: boolean): Promise<boolean>;
+
 }

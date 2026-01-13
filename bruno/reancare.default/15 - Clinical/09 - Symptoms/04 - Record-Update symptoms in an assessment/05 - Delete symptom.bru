@@ -1,0 +1,33 @@
+meta {
+  name: Delete symptom
+  type: http
+  seq: 5
+}
+
+delete {
+  url: {{BASE_URL}}/clinical/symptoms/{{PATIENT_SYMPTOM_ID}}
+  body: none
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+  authorization: Bearer {{PATIENT_USER_JWT}}
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+}
+
+tests {
+  
+  test("Request is successfull", function () {
+      expect(res.getStatus()).to.equal(200);
+      var jsonRes = res.getBody();
+      expect(jsonRes.Status).to.eql('success');
+  });
+  
+  test("Symptom is deleted", function () {
+      var jsonRes = res.getBody();
+      expect(jsonRes.Data).to.have.property('Deleted');
+      expect(jsonRes.Data.Deleted).equals(true);
+  
+  });
+}

@@ -103,6 +103,9 @@ export class UserDeviceDetailsRepo implements IUserDeviceDetailsRepo {
             if (filters.AppVersion != null) {
                 search.where['AppVersion'] = filters.AppVersion;
             }
+            if (filters.IsNotificationEnabled != null) {
+                search.where['IsNotificationEnabled'] = filters.IsNotificationEnabled;
+            }
             let orderByColum = 'CreatedAt';
             if (filters.OrderBy) {
                 orderByColum = filters.OrderBy;
@@ -180,7 +183,10 @@ export class UserDeviceDetailsRepo implements IUserDeviceDetailsRepo {
             if (userDeviceDetailsDomainModel.ChangeCount != null) {
                 userDeviceDetails.ChangeCount = userDeviceDetailsDomainModel.ChangeCount;
             }
-
+            if (userDeviceDetailsDomainModel.IsNotificationEnabled != null) {
+                userDeviceDetails.IsNotificationEnabled = userDeviceDetailsDomainModel.IsNotificationEnabled;
+            }
+            
             await userDeviceDetails.save();
 
             const dto = UserDeviceDetailsMapper.toDto(userDeviceDetails);
@@ -200,6 +206,24 @@ export class UserDeviceDetailsRepo implements IUserDeviceDetailsRepo {
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
+        }
+    };
+
+    deleteByUserId = async (userId: string, hardDelete: boolean = false): Promise<boolean> => {
+        try {
+            const deletedCount = await UserDeviceDetailsModel.destroy({
+                where : {
+                    UserId : userId,
+                },
+                force : hardDelete
+            });
+
+            if (deletedCount === 0) {
+                Logger.instance().log(`No Device Details records found for user: ${userId}`);
+            }
+            return true;
+        } catch (error) {
+            Logger.instance().log(error.message);
         }
     };
 

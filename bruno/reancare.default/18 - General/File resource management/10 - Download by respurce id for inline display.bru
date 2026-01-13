@@ -1,0 +1,28 @@
+meta {
+  name: Download by respurce id for inline display
+  type: http
+  seq: 11
+}
+
+get {
+  url: {{BASE_URL}}/file-resources/{{RESOURCE_ID}}/download?disposition=inline
+  body: none
+  auth: none
+}
+
+params:query {
+  disposition: inline
+}
+
+headers {
+  Authorization: Bearer {{PATIENT_USER_JWT}}
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+  Content-Type: 
+}
+
+tests {
+  test("Request is successfull", function () {
+      expect(res.getStatus()).to.equal(200);
+  });
+  
+}

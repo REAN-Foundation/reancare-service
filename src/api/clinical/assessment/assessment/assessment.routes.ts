@@ -16,6 +16,7 @@ export const register = (app: express.Application): void => {
     router.get('/:id/questions/next', auth(AssessmentAuth.getNextQuestion), controller.getNextQuestion);
     router.get('/:id/questions/:questionId', auth(AssessmentAuth.getQuestionById), controller.getQuestionById);
     router.post('/:id/questions/:questionId/answer', auth(AssessmentAuth.answerQuestion), controller.answerQuestion);
+    router.post('/:id/questions/:questionId/skip', auth(AssessmentAuth.skipQuestion), controller.skipQuestion);
     router.post('/:id/question-lists/:listId/answer', auth(AssessmentAuth.answerQuestionList), controller.answerQuestionList);
 
     router.post('/', auth(AssessmentAuth.create), controller.create);
@@ -23,6 +24,8 @@ export const register = (app: express.Application): void => {
     router.get('/:id', auth(AssessmentAuth.getById), controller.getById);
     router.put('/:id', auth(AssessmentAuth.update), controller.update);
     router.delete('/:id', auth(AssessmentAuth.delete), controller.delete);
+
+    router.post('/:templateId/submit-at-once/:submissionType', auth(AssessmentAuth.submitAtOnce), controller.submitAtOnce);
 
     app.use('/api/v1/clinical/assessments/', router);
 };

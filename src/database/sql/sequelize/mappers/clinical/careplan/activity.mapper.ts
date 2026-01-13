@@ -35,6 +35,7 @@ export class CareplanActivityMapper {
             Frequency        : activity.Frequency,
             Status           : activity.Status,
             RawContent       : activity.RawContent,
+            Language         : activity.Language,
             CreatedAt        : activity.CreatedAt,
             UpdatedAt        : activity.UpdatedAt,
 

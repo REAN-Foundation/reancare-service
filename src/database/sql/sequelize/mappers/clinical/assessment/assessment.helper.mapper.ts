@@ -24,7 +24,8 @@ import {
     FileQueryAnswer,
     BooleanQueryAnswer,
     ConditionOperand,
-    CScoringCondition
+    CScoringCondition,
+    SkipQueryAnswer
 } from '../../../../../../domain.types/clinical/assessment/assessment.types';
 import { uuid } from '../../../../../../domain.types/miscellaneous/system.types';
 import AssessmentNode from '../../../models/clinical/assessment/assessment.node.model';
@@ -118,8 +119,9 @@ export class AssessmentHelperMapper {
         dto.Sequence = node.Sequence;
         dto.Score = node.Score;
         dto.ServeListNodeChildrenAtOnce = node.ServeListNodeChildrenAtOnce;
-        dto.RawData = node.RawData;
+        dto.RawData = node.RawData ? JSON.parse(node.RawData) : {};
         dto.Tags = node.Tags ? JSON.parse(node.Tags) : [];
+        dto.Required = node.Required;
     }
 
     static toNodeDto = (
@@ -149,6 +151,9 @@ export class AssessmentHelperMapper {
             questionNodeDto.Paths = paths;
             questionNodeDto.CorrectAnswer = node.CorrectAnswer ? JSON.parse(node.CorrectAnswer) : null;
             questionNodeDto.ScoringCondition = scoringCondition ?? null;
+            questionNodeDto.Required = node.Required;
+            questionNodeDto.FieldIdentifier = node.FieldIdentifier;
+            questionNodeDto.FieldIdentifierUnit = node.FieldIdentifierUnit;
             return questionNodeDto;
         }
         if (node.NodeType === AssessmentNodeType.NodeList) {
@@ -157,6 +162,7 @@ export class AssessmentHelperMapper {
             listNodeDto.ChildrenNodeIds = children?.map((x) => x.id);
             listNodeDto.ChildrenNodeDisplayCodes = children?.map((x) => x.DisplayCode);
             listNodeDto.Children = children;
+            listNodeDto.Required = node.Required;
             return listNodeDto;
         }
         return null;
@@ -178,6 +184,7 @@ export class AssessmentHelperMapper {
         responseDto.Sequence = response.Sequence;
         responseDto.Additional = response.Additional;
         responseDto.CreatedAt = response.CreatedAt;
+        responseDto.Skipped = response.Skipped;
 
         if (response.Node) {
             responseDto.Node = this.toNodeDto(response.Node);
@@ -214,7 +221,7 @@ export class AssessmentHelperMapper {
 
         return responseDto;
     }
-
+ 
     static toSingleChoiceAnswerDto(
         assessmentId: uuid,
         questionNode: CAssessmentQuestionNode,
@@ -395,6 +402,23 @@ export class AssessmentHelperMapper {
             Filepath         : url,
             Url              : url,
             ResourceId       : resourceId
+        };
+        return dto;
+    }
+
+    static toSkipQueryAnswerDto(
+        assessmentId: uuid,
+        node: CAssessmentQuestionNode,
+        skipped: boolean,
+    ): SkipQueryAnswer {
+        var dto: SkipQueryAnswer = {
+            AssessmentId     : assessmentId,
+            NodeId           : node.id,
+            QuestionSequence : node.Sequence,
+            NodeDisplayCode  : node.DisplayCode,
+            Title            : node.Title,
+            ResponseType     : node.QueryResponseType as QueryResponseType,
+            Skipped          : skipped
         };
         return dto;
     }

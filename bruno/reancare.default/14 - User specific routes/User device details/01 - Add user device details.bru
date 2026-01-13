@@ -1,0 +1,79 @@
+meta {
+  name: Add user device details
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{BASE_URL}}/user-device-details
+  body: json
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{PATIENT_USER_JWT}}
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+  Content-Type: application/json
+}
+
+body:json {
+  {
+      "Token": "abcds",
+      "UserId": "{{PATIENT_USER_ID}}",
+      "DeviceName": "Iphone13",
+      "OSType": "aaa",
+      "OSVersion": "14.2",
+      "AppName": "Reancare",
+      "AppVersion": "1.2.0"
+  }
+}
+
+tests {
+  var jsonRes = res.getBody();
+  
+  test("Request is successful", function () {
+      expect(res.getStatus()).to.equal(201);
+      expect(jsonRes.Status).to.eql('success');
+      expect(jsonRes.Message).to.include("record created");
+  });
+  
+  test("UserDeviceDetails is set to true", function () {
+      expect(jsonRes.Data).to.have.property('UserDeviceDetails');
+      expect(jsonRes.Data.UserDeviceDetails).to.equal(true);
+  });
+  
+  // var jsonRes = res.getBody();
+  // try {
+  //     bru.setEnvVar("USER_DEVICE_DETAILS_ID", jsonRes.Data.UserDeviceDetails.id);
+  // }
+  // catch (error) {
+  //     console.log(error.message);
+  // }
+  
+  // test("Request is successfull", function () {
+  //     expect(res.getStatus()).to.equal(201);
+  //     var jsonRes = res.getBody();
+  //     expect(jsonRes.Status).to.eql('success');
+  // });
+  
+  // test("New user device details is created", function () {
+  
+  //     var expectedDeviceName = "Iphone13";
+  //     var expectedUserId = bru.getEnvVar("PATIENT_USER_ID");
+  //     var expectedAppVersion = "1.2.0";
+  
+  //     var jsonRes = res.getBody();
+  //     expect(jsonRes.Data).to.have.property('UserDeviceDetails');
+  //     expect(jsonRes.Data.UserDeviceDetails).to.not.be.empty;
+  //     expect(jsonRes.Data.UserDeviceDetails).to.have.property('id');
+  //     expect(jsonRes.Data.UserDeviceDetails).to.have.property('DeviceName');
+  //     expect(jsonRes.Data.UserDeviceDetails).to.have.property('UserId');
+  //     expect(jsonRes.Data.UserDeviceDetails).to.have.property('AppVersion');
+  
+  //     expect(jsonRes.Data.UserDeviceDetails.DeviceName).equals(expectedDeviceName);
+  //     expect(jsonRes.Data.UserDeviceDetails.UserId).equals(expectedUserId);
+  //     expect(jsonRes.Data.UserDeviceDetails.AppVersion).equals(expectedAppVersion);
+  
+  // });
+  
+}

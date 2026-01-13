@@ -1,0 +1,74 @@
+meta {
+  name: Update patient details - only email and first name
+  type: http
+  seq: 10
+}
+
+put {
+  url: {{BASE_URL}}/patients/{{PATIENT_USER_ID}}
+  body: json
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{ADMIN_USER_JWT}}
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+  Content-Type: application/json
+}
+
+body:json {
+  {
+      "FirstName": "{{FIRST_NAME}}",
+      "Email": "{{EMAIL}}"
+  }
+}
+
+script:pre-request {
+  // Generate random first name
+  const firstNames = ["Anand", "Sneha", "Rahul", "Priya", "Kiran"];
+  const randomFirstName = firstNames[Math.floor(Math.random() * firstNames.length)];
+  
+  // Generate email using first name + random number
+  const randomNum = Math.floor(Math.random() * 10000);
+  const email = `${randomFirstName.toLowerCase()}.${randomNum}@gmail.com`;
+  
+  // Set variables
+  bru.setEnvVar("FIRST_NAME", randomFirstName);
+  bru.setEnvVar("EMAIL", email);
+  
+}
+
+tests {
+  try {
+      var jsonRes = res.getBody();
+      bru.setEnvVar("PATIENT_FIRST_NAME", jsonRes.Data.Patient.User.Person.FirstName);
+      bru.setEnvVar("PATIENT_EMAIL", jsonRes.Data.Patient.User.Person.Email);
+  
+      var phone = jsonRes.Data.Patient.User.Person.Phone;
+      var tokens = phone.split('-');
+      var phoneNumber = tokens[1];
+  
+      bru.setEnvVar("PATIENT_PHONE_NUMBER", phoneNumber);
+  }
+  catch (error) {
+      console.log(error.message);
+  }
+  
+  test("Request is successfull", function () {
+      expect(res.getStatus()).to.equal(200);
+      var jsonRes = res.getBody();
+      expect(jsonRes.Status).to.eql('success');
+  });
+  
+  test("Patient is updated", function () {
+      var jsonRes = res.getBody();
+      expect(jsonRes.Data).to.have.property('Patient');
+      expect(jsonRes.Data.Patient).to.not.be.empty;
+      expect(jsonRes.Data.Patient).to.have.property('id');
+      expect(jsonRes.Data.Patient).to.have.property('User');
+      expect(jsonRes.Data.Patient.User).to.not.be.empty;
+      expect(jsonRes.Data.Patient.User).to.have.property('id');
+      expect(jsonRes.Data.Patient.User.Person).to.not.be.empty;
+      expect(jsonRes.Data.Patient.User.Person).to.have.property('id');
+  });
+}

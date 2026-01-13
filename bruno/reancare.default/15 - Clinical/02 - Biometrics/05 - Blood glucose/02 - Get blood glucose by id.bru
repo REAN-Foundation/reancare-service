@@ -1,0 +1,44 @@
+meta {
+  name: Get blood glucose by id
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{BASE_URL}}/clinical/biometrics/blood-glucose/{{BIOMETRICS_BLOOD_GLUCOSE_ID}}
+  body: none
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{PATIENT_USER_JWT}}
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+  Content-Type: application/json
+}
+
+tests {
+  test("Request is successfull", function () {
+      expect(res.getStatus()).to.equal(200);
+      var jsonRes = res.getBody();
+      expect(jsonRes.Status).to.eql('success');
+  });
+  
+  test("Blood glucose record is returned", function () {
+  
+      var expectedValue = 98;
+      var expectedPatientUserId = bru.getEnvVar("PATIENT_USER_ID");
+      
+      var jsonRes = res.getBody();
+      expect(jsonRes.Data).to.have.property('BloodGlucose');
+      expect(jsonRes.Data.BloodGlucose).to.not.be.empty;
+      expect(jsonRes.Data.BloodGlucose).to.have.property('id');
+      expect(jsonRes.Data.BloodGlucose).to.have.property('BloodGlucose');
+      expect(jsonRes.Data.BloodGlucose).to.have.property('PatientUserId');
+      
+  
+      expect(jsonRes.Data.BloodGlucose.BloodGlucose).equals(expectedValue);
+      expect(jsonRes.Data.BloodGlucose.PatientUserId).equals(expectedPatientUserId);
+      
+  });
+  
+}

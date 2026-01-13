@@ -1,0 +1,46 @@
+meta {
+  name: Search daily assessment records
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{BASE_URL}}/clinical/daily-assessments/search?pageIndex=0&itemsPerPage=25&patientUserId={{PATIENT_USER_ID}}
+  body: none
+  auth: none
+}
+
+params:query {
+  pageIndex: 0
+  itemsPerPage: 25
+  patientUserId: {{PATIENT_USER_ID}}
+  ~dateFrom: 2021-11-18
+  ~dateTo: 2021-11-19
+  ~orderBy: RecordDate
+  ~order: ascending
+  ~feeling: Same
+  ~mood: Stressed
+  ~energyLevels: Get off the bed
+}
+
+headers {
+  Authorization: Bearer {{PATIENT_USER_JWT}}
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+  Content-Type: application/json
+}
+
+tests {
+  test("Request is successfull", function () {
+      expect(res.getStatus()).to.equal(200);
+      var jsonRes = res.getBody();
+      expect(jsonRes.Status).to.eql('success');
+  });
+  
+  test("Daily assessment records is retrieved successfully", function () {
+      var jsonRes = res.getBody();
+      expect(jsonRes.Data).to.have.property('DailyAssessmentRecords');
+      expect(jsonRes.Data.DailyAssessmentRecords).to.not.be.empty;
+      expect(jsonRes.Data.DailyAssessmentRecords.Items).length.greaterThan(0);
+  });
+  
+}

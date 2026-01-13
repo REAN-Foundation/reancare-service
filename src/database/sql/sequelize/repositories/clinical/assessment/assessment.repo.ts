@@ -10,6 +10,8 @@ import { IAssessmentRepo } from '../../../../../repository.interfaces/clinical/a
 import { AssessmentMapper } from '../../../mappers/clinical/assessment/assessment.mapper';
 import Assessment from '../../../models/clinical/assessment/assessment.model';
 import AssessmentTemplate from '../../../models/clinical/assessment/assessment.template.model';
+import AssessmentQueryResponse from '../../../models/clinical/assessment/assessment.query.response.model';
+import Symptom from '../../../models/clinical/symptom/symptom.model';
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -347,6 +349,48 @@ export class AssessmentRepo implements IAssessmentRepo {
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);
+        }
+    };
+
+    public deleteByUserId = async (patientUserId: string, hardDelete: boolean = false) : Promise<boolean> => {
+        try {
+
+            const assessments = await Assessment.findAll({
+                where : {
+                    PatientUserId : patientUserId
+                },
+                attributes : ['id']
+            });
+
+            const assessmentIds = assessments.map(a => a.id);
+
+            for (const id of assessmentIds) {
+                await AssessmentQueryResponse.destroy({
+                    where : {
+                        AssessmentId : id
+                    },
+                    force : hardDelete
+                });
+                await Symptom.destroy({
+                    where : {
+                        AssessmentId : id
+                    },
+                    force : hardDelete
+                });
+            }
+            const deletedCount = await Assessment.destroy({
+                where : {
+                    PatientUserId : patientUserId
+                },
+                force : hardDelete
+            });
+
+            if (deletedCount === 0) {
+                Logger.instance().log(`No Assessment records found for user: ${patientUserId}`);
+            }
+            return true;
+        } catch (error) {
+            Logger.instance().log(error.message);
         }
     };
 

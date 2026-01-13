@@ -1,0 +1,67 @@
+meta {
+  name: Add  seventh module content
+  type: http
+  seq: 4
+}
+
+post {
+  url: {{BASE_URL}}/educational/course-contents
+  body: json
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{ADMIN_USER_JWT}}
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+  Content-Type: application/json
+}
+
+body:json {
+  {
+      "CourseId": "{{COURSE_ID}}",
+      "LearningPathId": "{{LEARNING_PATH_ID}}",
+      "ModuleId": "{{SEVENTH_COURSE_MODULE_ID}}",
+      "Title": "Taking care of nutrition: Overview",
+      "Description": "Why does a growing body needs the right kind of nutrition? Get answers to these and more in this module.",
+      "DurationInMins": 2.49,
+      "ContentType": "Video",
+      "ResourceLink": "https://www.youtube.com/watch?v=W3eXoKmL-M0",
+      "ImageUrl": "{{FILE_RESOURCE_URL}}",
+      "Sequence": 1
+  }
+}
+
+tests {
+  var jsonRes = res.getBody();
+  
+  try {
+      bru.setEnvVar("SEVENTH_MODULE_CONTENT_ID", jsonRes.Data.CourseContent.id);
+  }
+  catch (error) {
+      console.log(error.message);
+  }
+  
+  
+  test("Request is successfull", function () {
+      expect(res.getStatus()).to.equal(201);
+      var jsonRes = res.getBody();
+      expect(jsonRes.Status).to.eql('success');
+  });
+  
+  test("New course content is returned", function () {
+  
+      var expectedTitle = "Taking care of nutrition: Overview";
+      var expectedDurationInMins = 2.49;
+      
+      var jsonRes = res.getBody();
+      expect(jsonRes.Data).to.have.property('CourseContent');
+      expect(jsonRes.Data.CourseContent).to.not.be.empty;
+      expect(jsonRes.Data.CourseContent).to.have.property('Title');
+      expect(jsonRes.Data.CourseContent).to.have.property('DurationInMins');
+      
+      expect(jsonRes.Data.CourseContent.Title).equals(expectedTitle );
+      expect(jsonRes.Data.CourseContent.DurationInMins).equals(expectedDurationInMins);
+  });
+  
+  
+}

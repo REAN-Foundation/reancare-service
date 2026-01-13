@@ -25,4 +25,6 @@ export interface IBodyWeightRepo {
     getAllUserResponsesBefore(patientUserId: string, date: Date): Promise<any[]>;
 
     getMostRecentBodyWeightActivity(patientUserId: string): Promise<MostRecentActivityDto>;
+
+    deleteByUserId(patientUserId: string, hardDelete: boolean): Promise<boolean>;
 }

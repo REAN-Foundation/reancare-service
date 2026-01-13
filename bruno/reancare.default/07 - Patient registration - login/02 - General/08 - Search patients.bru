@@ -1,0 +1,54 @@
+meta {
+  name: Search patients
+  type: http
+  seq: 12
+}
+
+get {
+  url: {{BASE_URL}}/patients/search?orderBy=Email&order=ascending&pageIndex=0&itemsPerPage=25
+  body: json
+  auth: none
+}
+
+params:query {
+  orderBy: Email
+  order: ascending
+  pageIndex: 0
+  itemsPerPage: 25
+  ~phone: {{PATIENT_PHONE_NUMBER}}
+  ~email: {{PATIENT_EMAIL}}
+  ~name: {{PATIENT_FIRST_NAME}}
+  ~gender: {{PATIENT_GENDER}}
+  ~birthdateFrom: 1975-01-01
+  ~birthdateTo: 2021-12-12
+  ~createdDateFrom: 2021-05-01
+  ~createdDateTo: 2021-12-12
+}
+
+headers {
+  Authorization: Bearer {{ADMIN_USER_JWT}}
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+  Content-Type: application/json
+}
+
+tests {
+  test("Request is successfull", function () {
+      expect(res.getStatus()).to.equal(200);
+      var jsonRes = res.getBody();
+      expect(jsonRes.Status).to.eql('success');
+  });
+  
+  test("List of patients is returned", function () {
+  
+      var jsonRes = res.getBody();
+      expect(jsonRes.Data).to.have.property('Patients');
+      expect(jsonRes.Data.Patients.Items.length).to.be.greaterThan(0);
+  
+  });
+  
+  
+}
+
+docs {
+  Search addresses using query parameters.
+}

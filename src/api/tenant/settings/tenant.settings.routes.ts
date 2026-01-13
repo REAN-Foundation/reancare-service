@@ -12,6 +12,7 @@ export const register = (app: express.Application): void => {
 
     router.get('/types', auth(TenantSettingsAuth.getTenantSettingsTypes), controller.getTenantSettingsTypes);
     router.get('/:tenantId/types/:settingsType', auth(TenantSettingsAuth.getTenantSettingsByType), controller.getTenantSettingsByType);
+    router.get('/by-code/:tenantCode', auth(TenantSettingsAuth.getTenantSettingsByCode), controller.getTenantSettingsByCode);
     router.get('/:tenantId', auth(TenantSettingsAuth.getTenantSettings), controller.getTenantSettings);
     router.put('/:tenantId/types/:settingsType', auth(TenantSettingsAuth.updateTenantSettingsByType), controller.updateTenantSettingsByType);
     router.put('/:tenantId', auth(TenantSettingsAuth.updateTenantSettings), controller.updateTenantSettings);

@@ -54,4 +54,12 @@ export class TenantSettingsAuth {
         RequestType : RequestType.UpdateOne,
     };
 
+    static readonly getTenantSettingsByCode: AuthOptions = {
+        ...DefaultAuthOptions,
+        Context     : `${this._baseContext}.GetTenantSettingsByCode`,
+        Ownership   : ResourceOwnership.Tenant,
+        ActionScope : ActionScope.Tenant,
+        RequestType : RequestType.GetOne,
+    };
+
 }

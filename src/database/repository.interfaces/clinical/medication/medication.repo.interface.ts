@@ -14,6 +14,8 @@ export interface IMedicationRepo {
 
     getCurrentMedications(patientUserId: string): Promise<MedicationDto[]>;
 
+    getAllActiveMedications(): Promise<MedicationDto[]>;
+
     search(filters: MedicationSearchFilters): Promise<MedicationSearchResults>;
 
     update(id: string, medicationDomainModel: MedicationDomainModel): Promise<MedicationDto>;

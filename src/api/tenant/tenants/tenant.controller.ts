@@ -17,8 +17,12 @@ import { EmailDetails } from "../../../modules/communication/email/email.details
 import { TenantDto } from '../../../domain.types/tenant/tenant.dto';
 import { Helper } from '../../../common/helper';
 import { TenantSettingsService } from '../../../services/tenant/tenant.settings.service';
+import { TenantSettingsMarketingService } from '../../../services/tenant/marketing/tenant.settings.marketing.service';
 import { BaseController } from '../../../api/base.controller';
 import { UserHelper } from '../../../api/users/user.helper';
+import { PersonDetailsDto } from '../../../domain.types/person/person.dto';
+import { AssessmentTemplateService } from '../../../services/clinical/assessment/assessment.template.service';
+import { Environment } from '../../../domain.types/tenant/tenant.settings.types';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -38,6 +42,10 @@ export class TenantController extends BaseController {
 
     _tenantSettingsService: TenantSettingsService = Injector.Container.resolve(TenantSettingsService);
 
+    _tenantSettingsMarketingService: TenantSettingsMarketingService = Injector.Container.resolve(TenantSettingsMarketingService);
+
+    _assessmentTemplateService: AssessmentTemplateService = Injector.Container.resolve(AssessmentTemplateService);
+
     _validator: TenantValidator = new TenantValidator();
 
     _userHelper: UserHelper = new UserHelper();
@@ -45,20 +53,37 @@ export class TenantController extends BaseController {
     //#endregion
 
     create = async (request: express.Request, response: express.Response): Promise<void> => {
+        let tenant: TenantDto = null;
         try {
             const model = await this._validator.createOrUpdate(request, false);
+            let person: PersonDetailsDto = null;
             await this._userHelper.performDuplicatePersonCheck(model.Phone, model.Email);
             if (model.Code === 'default') {
                 throw new ApiError(400, 'Cannot create tenant with code "default"!');
             }
+
             await this.authorizeOne(request);
-            const tenant = await this._service.create(model);
+
+            const searchResults = await this._service.search({
+                Code : model.Code,
+            });
+            if (searchResults.TotalCount > 0) {
+                throw new ApiError(400, 'Tenant with this code already exists.');
+            }
+
+            tenant = await this._service.create(model);
             if (tenant == null) {
                 throw new ApiError(400, 'Unable to create tenant.');
             }
+
             const tenantCode = tenant.Code;
-            const adminUserName = (tenantCode + '-admin').toLowerCase();
-            const adminPassword = Helper.generatePassword();
+            const adminUserName = model.UserName?.toLowerCase() ?? (tenantCode + '-admin').toLowerCase();
+            const existingUser = await this._userService.getByUserName(adminUserName);
+            if (existingUser) {
+                throw new ApiError(400, 'Username already exists');
+            }
+
+            const adminPassword = model.Password ?? Helper.generatePassword();
             const role = await this._roleService.getByName(Roles.TenantAdmin);
             const userModel: UserDomainModel = {
                 Person : {
@@ -73,8 +98,38 @@ export class TenantController extends BaseController {
                 RoleId   : role.id,
             };
 
-            const person = await this._personService.create(userModel.Person);
+            const existingPerson = await this._userService.getExistingPerson({
+                Phone      : userModel.Person.Phone,
+                Email      : userModel.Person.Email,
+                UserName   : userModel.UserName,
+                TenantId   : userModel.TenantId,
+                TenantCode : tenant.Code,
+            });
+
+            if (existingPerson == null) {
+                person = await this._personService.create(userModel.Person);
+                if (person == null) {
+                    throw new ApiError(400, 'Cannot create person!');
+                }
+            }
+            else {
+                person = existingPerson;
+                var existingUserWithRole = await this._userService.getUserByPersonIdAndRole(
+                    existingPerson.id, userModel.RoleId);
+                if (existingUserWithRole) {
+                    throw new ApiError(409, `User already exists with the same role.`);
+                }
+                await this._userHelper.checkMultipleAdministrativeRoles(userModel.RoleId, existingPerson.id);
+            }
+
             userModel.Person.id = person.id;
+
+            const updatedPerson = await this._userHelper.updatePersonInformation(person, userModel);
+
+            if (!updatedPerson) {
+                throw new ApiError(409, `User already exists with the same email.`);
+            }
+
             const user = await this._userService.create(userModel);
             if (user == null) {
                 throw new ApiError(400, 'Unable to create tenant admin user.');
@@ -85,18 +140,27 @@ export class TenantController extends BaseController {
             }
             Logger.instance().log(`Tenant admin user created successfully. UserName: ${adminUserName}`);
 
-            const settings = await this._tenantSettingsService.createDefaultSettings(tenant.id);
+            const settings = await this._tenantSettingsService.createDefaultSettings(tenant.id, tenantCode);
+            
+            await this._tenantSettingsMarketingService.createDefaultSettings(tenant.id, {});
 
             //Send email to the admin user with username and password
             await this.sendWelcomeEmail(tenant, adminUserName, adminPassword);
 
+            await this.setupBasicAssessmentTemplate(tenant.id);
+
             ResponseHandler.success(request, response, 'Tenant added successfully!', 201, {
-                Tenant   : tenant,
-                Settings : settings,
+                Tenant    : tenant,
+                Settings  : settings,
+                AdminUser : {
+                    UserName : adminUserName
+                }
             });
         } catch (error) {
+            await this.rollbackCreateTenant(tenant);
             ResponseHandler.handleError(request, response, error);
         }
+
     };
 
     getById = async (request: express.Request, response: express.Response): Promise<void> => {
@@ -109,6 +173,20 @@ export class TenantController extends BaseController {
             await this.authorizeOne(request, null, tenant.id);
             ResponseHandler.success(request, response, 'Tenant retrieved successfully!', 200, {
                 Tenant : tenant,
+            });
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
+    getActiveTenants = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+            const tenants = await this._service.getActiveTenants();
+            if (tenants == null) {
+                throw new ApiError(404, 'No active tenant found.');
+            }
+            ResponseHandler.success(request, response, 'Active tenants retrieved successfully!', 200, {
+                Tenants : tenants,
             });
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
@@ -171,10 +249,129 @@ export class TenantController extends BaseController {
             if (tenant.Code === 'default') {
                 throw new ApiError(400, 'Cannot delete tenant with code "default"!');
             }
+            const user = await this._userService.getUserByTenantIdAndRole(id, Roles.TenantAdmin);
+            if (!user) {
+                throw new ApiError(400, 'Tenant admin user not found!');
+            }
+            await this._userService.delete(user.id);
+
+            await this._personService.delete(user.PersonId);
+
             const deleted = await this._service.delete(id);
             ResponseHandler.success(request, response, 'Tenant deleted successfully!', 200, {
                 Deleted : deleted,
             });
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
+    createBotSchema = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+            const id: uuid = await this._validator.getParamUuid(request, 'id');
+            const tenant = await this._service.getById(id);
+            if (tenant == null) {
+                throw new ApiError(404, 'Tenant not found.');
+            }
+
+            const tenantCode = tenant.Code;
+            const SchemaName = await this.getSchemaName(tenantCode);
+            const environment = await this.getEnvironment();
+            request.body.SchemaName = SchemaName;
+            request.body.Environment = environment;
+
+            const model = await this._validator.createBotSchema(request);
+
+            await this.authorizeOne(request, null, tenant.id);
+
+            const lambdaFunctionName = process.env.CREATE_BOT_SCHEMA_LAMBDA_FUNCTION_NAME;
+            if (!lambdaFunctionName) {
+                throw new ApiError(500, 'Lambda function name for creating bot schema is not configured.');
+            }
+
+            const created = await this._service.createBotSchema(lambdaFunctionName, model);
+            ResponseHandler.success(request, response, 'Bot schema created successfully!', 200, created);
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
+    createSecret = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+            const id: uuid = await this._validator.getParamUuid(request, 'id');
+            const tenant = await this._service.getById(id);
+            if (tenant == null) {
+                throw new ApiError(404, 'Tenant not found.');
+            }
+            const tenantCode = tenant.Code;
+            const secretName = await this.getSecretName(tenantCode);
+            const environment = await this.getEnvironment();
+            request.body.SecretName = secretName;
+            request.body.Environment = environment;
+            const model = await this._validator.createBotSecret(request);
+            await this.authorizeOne(request, null, tenant.id);
+            const lambdaFunctionName = process.env.CREATE_SECRET_LAMBDA_FUNCTION;
+            const created = await this._service.createSecret(lambdaFunctionName, model);
+            ResponseHandler.success(request, response, 'Secret created successfully!', 200, created);
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
+    getSecret = async(request: express.Request, response: express.Response): Promise<void> => {
+        try {
+            const id: uuid = await this._validator.getParamUuid(request, 'id');
+            const tenant = await this._service.getById(id);
+            if (tenant == null) {
+                throw new ApiError(404, 'Tenant not found.');
+            }
+            const tenantCode = tenant.Code;
+            const secretName = await this.getSecretName(tenantCode);
+            request.body.SecretName = secretName;
+            const model = {
+                SecretName : secretName,
+            };
+            const lambdaFunctionName = process.env.GET_SECRET_LAMBDA_FUNCTION;
+            const secret = await this._service.getSecret(lambdaFunctionName, model);
+            await this.authorizeOne(request, null, tenant.id);
+            ResponseHandler.success(request, response, 'Secret retrieved successfully!', 200, secret);
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
+      getSecretByCode = async(request: express.Request, response: express.Response): Promise<void> => {
+          try {
+              const tenantCode: string = request.params.tenantCode;
+              const secretName = await this.getSecretName(tenantCode);
+              const model = {
+                  SecretName : secretName,
+              };
+              const lambdaFunctionName = process.env.GET_SECRET_LAMBDA_FUNCTION;
+              const secret = await this._service.getSecret(lambdaFunctionName, model);
+              ResponseHandler.success(request, response, 'Secret retrieved successfully!', 200, secret);
+          } catch (error) {
+              ResponseHandler.handleError(request, response, error);
+          }
+      };
+
+    updateSecret = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+            const id: uuid = await this._validator.getParamUuid(request, 'id');
+            const tenant = await this._service.getById(id);
+            if (tenant == null) {
+                throw new ApiError(404, 'Tenant not found.');
+            }
+            const tenantCode = tenant.Code;
+            const secretName = await this.getSecretName(tenantCode);
+            const environment = await this.getEnvironment();
+            request.body.SecretName = secretName;
+            request.body.Environment = environment;
+            const model = await this._validator.createBotSecret(request);
+            await this.authorizeOne(request, null, tenant.id);
+            const lambdaFunctionName = process.env.UPDATE_SECRET_LAMBDA_FUNCTION;
+            const updated = await this._service.updateSecret(lambdaFunctionName, model);
+            ResponseHandler.success(request, response, 'Secret updated successfully!', 200, updated);
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
         }
@@ -310,6 +507,54 @@ export class TenantController extends BaseController {
         catch (error) {
             Logger.instance().log(`Unable to send email to ${tenant.Email}`);
         }
+    };
+
+    private rollbackCreateTenant = async (tenant: TenantDto) => {
+        try {
+            if (tenant) {
+                await this._service.delete(tenant.id, true);
+            }
+        } catch (error) {
+            Logger.instance().log(error);
+        }
+    };
+
+    private setupBasicAssessmentTemplate = async (tenantId: uuid) => {
+        try {
+            await this._assessmentTemplateService.setupBasicAssessmentTemplate(tenantId);
+        } catch (error) {
+            Logger.instance().log(`Error setting up basic assessment templates: ${error.message}`);
+        }
+    };
+
+    private getEnvironment = async () => {
+        const env = process.env.NODE_ENV;
+        if (!env) {
+            throw new ApiError(500, 'NODE_ENV is not set.');
+        }
+
+        switch (env) {
+            case Environment.Development:
+                return 'dev';
+            case Environment.Production:
+                return 'prod';
+            case Environment.Uat:
+                return 'uat';
+            default:
+                throw new ApiError(500, `Invalid NODE_ENV value: ${env}`);
+        }
+    };
+
+    private getSecretName = async (tenantCode: string) => {
+        const environment = await this.getEnvironment();
+        const code = tenantCode.toLowerCase().replace(/_/g, "-");
+        return `${environment}-${code}-v1`;
+    };
+
+    private getSchemaName = async (tenantCode: string) => {
+        const environment = await this.getEnvironment();
+        const code = tenantCode.toLowerCase();
+        return `${code}_${environment}`;
     };
 
 }

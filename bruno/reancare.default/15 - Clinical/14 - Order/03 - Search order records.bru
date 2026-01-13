@@ -1,0 +1,46 @@
+meta {
+  name: Search order records
+  type: http
+  seq: 4
+}
+
+get {
+  url: {{BASE_URL}}/clinical/orders/search?type=DrugOrder&orderBy=Type&order=ascending&pageIndex=0&itemsPerPage=25&patientUserId={{PATIENT_USER_ID}}
+  body: none
+  auth: none
+}
+
+params:query {
+  type: DrugOrder
+  orderBy: Type
+  order: ascending
+  pageIndex: 0
+  itemsPerPage: 25
+  patientUserId: {{PATIENT_USER_ID}}
+  ~orderDateFrom: 2021-09-22
+  ~orderDateFrom: 2021-10-23
+  ~currentState: RaisedQuery
+}
+
+headers {
+  Authorization: Bearer {{PATIENT_USER_JWT}}
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+  Content-Type: application/json
+}
+
+tests {
+  test("Request is successfull", function () {
+      expect(res.getStatus()).to.equal(200);
+      var jsonRes = res.getBody();
+      expect(jsonRes.Status).to.eql('success');
+  });
+  
+  test("List of order records is returned", function () {
+  
+      var jsonRes = res.getBody();
+      expect(jsonRes.Data).to.have.property('OrderRecords');
+      expect(jsonRes.Data.OrderRecords.Items.length).to.be.greaterThan(0);
+  
+  });
+  
+}

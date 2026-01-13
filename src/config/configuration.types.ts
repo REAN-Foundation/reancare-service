@@ -1,4 +1,4 @@
-
+import { MessagingConfig } from "../domain.types/events/provider.types";
 export type DatabaseType = 'SQL' | 'NoSQL';
 export type DatabaseORM = 'Sequelize' | 'TypeORM' | 'Mongoose';
 export type EHRSpecification = 'FHIR'| 'OpenEHR' | 'Mock';
@@ -80,6 +80,7 @@ export interface Configurations {
     Database            : DatabaseConfig;
     Ehr                 : EHRConfig;
     FileStorage         : FileStorageConfig;
+    Messaging           : MessagingConfig;
     FeatureFlags        : FeatureFlagsConfig;
     Communication       : CommunicationConfig;
     TemporaryFolders    : TemporaryFoldersConfig;

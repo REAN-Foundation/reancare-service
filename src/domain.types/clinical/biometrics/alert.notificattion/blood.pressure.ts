@@ -1,7 +1,6 @@
-import { AlertNotification, AlertNotificationCreateModel, Severity } from "../../../../domain.types/clinical/biometrics/biometrics.types";
+import { AlertModel, AlertNotification, AlertNotificationCreateModel, Severity } from "../../../../domain.types/clinical/biometrics/biometrics.types";
 
-export interface BloodPressureAlertCreateModel {
-    PatientUserId?: string;
+export interface BloodPressureAlertModel extends AlertModel {
     Systolic?: number;
     Diastolic?: number;
     BloodPressureNotification?: AlertNotificationCreateModel;

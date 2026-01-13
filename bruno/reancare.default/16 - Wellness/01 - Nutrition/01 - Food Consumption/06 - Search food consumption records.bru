@@ -1,0 +1,61 @@
+meta {
+  name: Search food consumption records
+  type: http
+  seq: 5
+}
+
+get {
+  url: {{BASE_URL}}/wellness/nutrition/food-consumptions/search?pageIndex=0&itemsPerPage=200&patientUserId={{PATIENT_USER_ID}}&order=ascending
+  body: none
+  auth: none
+}
+
+params:query {
+  pageIndex: 0
+  itemsPerPage: 200
+  patientUserId: {{PATIENT_USER_ID}}
+  order: ascending
+  ~food: Basundi
+  ~consumedAs: Lunch
+  ~dateFrom: 2021-09-16
+  ~dateTo: 2021-09-17
+  ~orderBy: Food
+}
+
+headers {
+  Authorization: Bearer {{PATIENT_USER_JWT}}
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+  Content-Type: application/json
+}
+
+tests {
+  try {
+      var jsonRes = res.getBody();
+      var items = jsonRes.Data.FoodConsumptionRecords.Items;
+      for(var i = 0; i < items.length; i++) {
+          var r = items[i];
+          const x = i + 1;
+          var str = "NUTRITION_ID_" + x.toString();
+          console.log(str + ' : ' + r.id);
+          bru.setEnvVar(str, r.id);
+      }
+  }
+  catch (error) {
+      console.log(error.message);
+  }
+  
+  test("Request is successfull", function () {
+      expect(res.getStatus()).to.equal(200);
+      var jsonRes = res.getBody();
+      expect(jsonRes.Status).to.eql('success');
+  });
+  
+  test("List of food consumption records is returned", function () {
+  
+      var jsonRes = res.getBody();
+      expect(jsonRes.Data).to.have.property('FoodConsumptionRecords');
+      expect(jsonRes.Data.FoodConsumptionRecords.Items.length).to.be.greaterThan(0);
+  
+  });
+  
+}

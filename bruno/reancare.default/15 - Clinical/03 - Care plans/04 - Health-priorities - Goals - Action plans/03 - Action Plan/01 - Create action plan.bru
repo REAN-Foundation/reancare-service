@@ -1,0 +1,77 @@
+meta {
+  name: Create action plan
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{BASE_URL}}/action-plans
+  body: json
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{PATIENT_USER_JWT}}
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+  Content-Type: application/json
+}
+
+body:json {
+  {
+      "PatientUserId": "{{PATIENT_USER_ID}}",
+      "Source": "Self",
+      "ProviderEnrollmentId": "{{CAREPLAN_ENROLLMENT_ID}}",
+      "Provider": "{{CAREPLAN_PROVIDER}}",
+      "ProviderCareplanName": "{{CAREPLAN_NAME}}",
+      "ProviderCareplanCode": "{{CAREPLAN_CODE}}",
+      "GoalId": "{{PATIENT_GOAL_ID}}",
+      "Title": "Monitor blood pressure on regular basis",
+      "ScheduledEndDate": "{{ACTION_PAN_SCHEDULED_END_DATE}}"
+  }
+  
+}
+
+script:pre-request {
+  var year = (new Date()).getFullYear();
+  year = year + 1;
+  var today = new Date();
+  today.setFullYear(year);
+  var dt = today.toISOString().split('T')[0];
+  bru.setEnvVar("ACTION_PAN_SCHEDULED_END_DATE", dt);
+  
+}
+
+tests {
+  var jsonRes = res.getBody();
+  
+  try {
+      bru.setEnvVar("ACTION_PLAN_ID", jsonRes.Data.ActionPlan.id);
+  }
+  catch (error) {
+      console.log(error.message);
+  }
+  
+  test("Request is successfull", function () {
+      expect(res.getStatus()).to.equal(201);
+      var jsonRes = res.getBody();
+      expect(jsonRes.Status).to.eql('success');
+  });
+  
+  test("New Goal record is created", function () {
+  
+      var jsonRes = res.getBody();
+      expect(jsonRes.Data).to.have.property('ActionPlan');
+      expect(jsonRes.Data.ActionPlan).to.not.be.empty;
+      expect(jsonRes.Data.ActionPlan).to.have.property('id');
+      expect(jsonRes.Data.ActionPlan).to.have.property('PatientUserId');
+      expect(jsonRes.Data.ActionPlan).to.have.property('ProviderEnrollmentId');
+      expect(jsonRes.Data.ActionPlan).to.have.property('Provider');
+      expect(jsonRes.Data.ActionPlan).to.have.property('ProviderCareplanName');
+      expect(jsonRes.Data.ActionPlan).to.have.property('ProviderCareplanCode');
+      expect(jsonRes.Data.ActionPlan).to.have.property('Title');
+      expect(jsonRes.Data.ActionPlan).to.have.property('GoalId');
+      expect(jsonRes.Data.ActionPlan).to.have.property('ScheduledEndDate');
+  });
+  
+  
+}

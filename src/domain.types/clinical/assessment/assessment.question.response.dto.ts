@@ -27,4 +27,5 @@ export interface AssessmentQuestionResponseDto {
         | FileQueryAnswer
         | BiometricQueryAnswer;
     MessageBeforeNext?: string;
+    Skipped?     :  boolean;
 }

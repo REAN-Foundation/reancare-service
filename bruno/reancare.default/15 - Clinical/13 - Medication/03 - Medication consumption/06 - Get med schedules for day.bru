@@ -1,0 +1,81 @@
+meta {
+  name: Get med schedules for day
+  type: http
+  seq: 6
+}
+
+get {
+  url: {{BASE_URL}}/clinical/medication-consumptions/schedule-for-day/{{PATIENT_USER_ID}}/{{MEDICATION_CONSUMPTION_FOR_DATE}}?groupByDrug=true&date={{MEDICATION_CONSUMPTION_FOR_DATE}}
+  body: none
+  auth: none
+}
+
+params:query {
+  groupByDrug: true
+  date: {{MEDICATION_CONSUMPTION_FOR_DATE}}
+}
+
+headers {
+  Authorization: Bearer {{PATIENT_USER_JWT}}
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+  Content-Type: application/json
+}
+
+script:pre-request {
+  
+  Date.prototype.addDays = function(days) {
+      var date = new Date(this.valueOf());
+      date.setDate(date.getDate() + days);
+      return date;
+  }
+  
+  function formatDate(date) {
+      var d = new Date(date),
+          month = '' + (d.getMonth() + 1),
+          day = '' + d.getDate(),
+          year = d.getFullYear();
+  
+      if (month.length < 2) 
+          month = '0' + month;
+      if (day.length < 2) 
+          day = '0' + day;
+  
+      return [year, month, day].join('-');
+  }
+  
+  var date = formatDate((new Date()).addDays(4));
+  
+  bru.setEnvVar("MEDICATION_CONSUMPTION_FOR_DATE", date);
+  
+}
+
+tests {
+  
+  test("Request is successfull", function () {
+      expect(res.getStatus()).to.equal(200);
+      var jsonRes = res.getBody();
+      expect(jsonRes.Status).to.eql('success');
+  });
+  
+  test("Medication consumption schedule for day is returned", function () {
+     
+      var jsonRes = res.getBody();
+      expect(jsonRes.Data).to.have.property('MedicationSchedulesForDay');
+      expect(jsonRes.Data.MedicationSchedulesForDay).to.not.be.empty;
+      expect(jsonRes.Data.MedicationSchedulesForDay).to.have.property('Day');
+      expect(jsonRes.Data.MedicationSchedulesForDay).to.have.property('Schedules');    
+      expect(jsonRes.Data.MedicationSchedulesForDay.Schedules.length).greaterThan(0);
+  
+      var firstMed = jsonRes.Data.MedicationSchedulesForDay.Schedules[0];
+  
+      expect(firstMed).to.have.property('id');
+      expect(firstMed).to.have.property('DrugName');
+      expect(firstMed).to.have.property('Details');
+      expect(firstMed).to.have.property('TimeScheduleStart');
+      expect(firstMed).to.have.property('TimeScheduleEnd');
+      expect(firstMed).to.have.property('Status');
+    
+  });
+  
+  
+}

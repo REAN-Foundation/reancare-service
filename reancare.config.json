@@ -19,6 +19,23 @@
     "FileStorage" : {
         "Provider": "AWS-S3"
     },
+    "Messaging" : {
+        "Provider": "AWS-SNS-SQS",
+        "Events": {
+                "Enabled": true,
+                "RetryPolicy": {
+                    "MaxRetries": 5,
+                    "BackoffMultiplier": 2,
+                    "MaxBackoffSeconds": 900
+                },
+                "DeadLetterQueue": {
+                    "Enabled": true,
+                    "MaxReceiveCount": 5
+                },
+                "MessageRetentionPeriod": 1209600,
+                "VisibilityTimeout": 300            
+        }
+    },
     "FeatureFlags" : {
         "Provider": "Firebase-Remote-Config"
     },

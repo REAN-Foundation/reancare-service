@@ -1,0 +1,31 @@
+meta {
+  name: Get patient stats
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{BASE_URL}}/patient-statistics/{{PATIENT_USER_ID}}
+  body: none
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{PATIENT_USER_JWT}}
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+  Content-Type: application/json
+}
+
+tests {
+  test("Request is successfull", function () {
+      expect(res.getStatus()).to.equal(200);
+      var jsonRes = res.getBody();
+      expect(jsonRes.Status).to.eql('success');
+  });
+  
+  test("Patient stats are returned", function () {
+      var jsonRes = res.getBody();
+      expect(jsonRes.Data).to.have.property('Statistics');
+  });
+  
+}

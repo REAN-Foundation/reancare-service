@@ -58,6 +58,10 @@ export class MedicationService {
         return await this._medicationRepo.getCurrentMedications(patientUserId);
     };
 
+    getAllActiveMedications = async (): Promise<MedicationDto[]> => {
+        return await this._medicationRepo.getAllActiveMedications();
+    };
+
     search = async (filters: MedicationSearchFilters): Promise<MedicationSearchResults> => {
         return await this._medicationRepo.search(filters);
     };
@@ -192,6 +196,8 @@ export class MedicationService {
             throw new ApiError(400, 'Duration unit should match or be higher than frequency unit.');
         }
 
+        this.validateMedicationDuration(model);
+
         var timeSchedules = model.TimeSchedules;
         if (frequencyUnit === MedicationFrequencyUnits.Daily) {
             model.Frequency = timeSchedules.length === 0 ? 1 : timeSchedules.length;
@@ -213,6 +219,27 @@ export class MedicationService {
         }
     }
 
+    private validateMedicationDuration(model: MedicationDomainModel) {
+        if (
+            model.FrequencyUnit === MedicationFrequencyUnits.Daily &&
+            model.DurationUnit === MedicationDurationUnits.Days &&
+            model.Duration > 365) {
+            throw new ApiError(400, 'Duration should be less than 365 days.');
+        }
+
+        if (
+            model.FrequencyUnit === MedicationFrequencyUnits.Weekly &&
+            model.DurationUnit === MedicationDurationUnits.Weeks &&
+            model.Duration > 52) {
+            throw new ApiError(400, 'Duration should be less than 52 weeks.');
+        }
+
+        if (model.FrequencyUnit === MedicationFrequencyUnits.Monthly &&
+            model.DurationUnit === MedicationDurationUnits.Months &&
+            model.Duration > 12) {
+            throw new ApiError(400, 'Duration should be less than 12 months.');
+        }
+    }
     //#endregion
 
 }

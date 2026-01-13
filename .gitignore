@@ -53,6 +53,9 @@ typings/
 # Optional npm cache directory
 .npm
 
+.cache_ggshield
+.gitguardian.yaml
+
 # Optional eslint cache
 .eslintcache
 

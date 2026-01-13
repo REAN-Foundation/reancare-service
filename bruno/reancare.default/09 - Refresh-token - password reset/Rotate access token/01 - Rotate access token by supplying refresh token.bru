@@ -1,0 +1,52 @@
+meta {
+  name: Rotate access token by supplying refresh token
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{BASE_URL}}/users/access-token/{{DOCTOR_REFRESH_TOKEN}}
+  body: json
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+}
+
+tests {
+  try {
+      var jsonRes = res.getBody();
+      bru.setEnvVar("DOCTOR_USER_JWT", jsonRes.Data.AccessToken);
+  }
+  catch (error) {
+      console.log(error.message);
+  }
+  
+  test("Request is successfull", function () {
+      expect(res.getStatus()).to.equal(200);
+      var jsonRes = res.getBody();
+      expect(jsonRes.Status).to.eql('success');
+  });
+  
+}
+
+docs {
+  Registers patient. Phone number is the only mandatory field. The rest of the fields are optional. Phone number has to be specified in this format - 'country-code-phone-number'. e.g. "+91-1234567890".
+  
+  The typical request body is as follows - 
+  `
+  {
+      "Phone": "+91-1234567890",
+      "Prefix": "Mr.",
+      "FirstName": "John",
+      "MiddleName": "X",
+      "LastName": "Doe",
+      "Email": "john.doe@gmail.com",
+      "Gender": "Male",
+      "BirthDate": "1979-01-01",
+      "ImageResourceId": ""
+  }
+  `
+}

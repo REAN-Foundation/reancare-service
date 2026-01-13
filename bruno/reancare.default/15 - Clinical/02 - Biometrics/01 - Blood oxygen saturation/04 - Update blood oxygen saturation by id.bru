@@ -1,0 +1,53 @@
+meta {
+  name: Update blood oxygen saturation by id
+  type: http
+  seq: 3
+}
+
+put {
+  url: {{BASE_URL}}/clinical/biometrics/blood-oxygen-saturations/{{BIOMETRICS_BLOOD_OXYGEN_ID}}
+  body: json
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{PATIENT_USER_JWT}}
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+  Content-Type: application/json
+}
+
+body:json {
+  {
+      "BloodOxygenSaturation": "90",
+      "RecordDate": "2021-09-07"
+  }
+}
+
+tests {
+  test("Request is successfull", function () {
+      expect(res.getStatus()).to.equal(200);
+      var jsonRes = res.getBody();
+      expect(jsonRes.Status).to.eql('success');
+  });
+  
+  test("Updated blood oxygen saturation record is returned", function () {
+  
+      var expectedBloodOxygenSaturation = 90;
+      var expectedRecordDate = "2021-09-07T00:00:00.000Z";
+      var expectedRecordedByUserId = bru.getEnvVar("RECORDED_BY_USER_ID");
+      
+      var jsonRes = res.getBody();
+      expect(jsonRes.Data).to.have.property('BloodOxygenSaturation');
+      expect(jsonRes.Data.BloodOxygenSaturation).to.not.be.empty;
+      expect(jsonRes.Data.BloodOxygenSaturation).to.have.property('BloodOxygenSaturation');
+      expect(jsonRes.Data.BloodOxygenSaturation).to.have.property('RecordDate');
+      expect(jsonRes.Data.BloodOxygenSaturation).to.have.property('RecordedByUserId');
+  
+      expect(jsonRes.Data.BloodOxygenSaturation.BloodOxygenSaturation).equals(expectedBloodOxygenSaturation);
+      expect(jsonRes.Data.BloodOxygenSaturation.RecordDate).equals(expectedRecordDate);
+      expect(jsonRes.Data.BloodOxygenSaturation.RecordedByUserId).equals(expectedRecordedByUserId);
+      
+  });
+  
+  
+}

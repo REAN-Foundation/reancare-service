@@ -1,0 +1,37 @@
+meta {
+  name: Get user task categories
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{BASE_URL}}/user-tasks/categories
+  body: none
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{PATIENT_USER_JWT}}
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+  Content-Type: application/json
+}
+
+tests {
+  test("Request is successfull", function () {
+      expect(res.getStatus()).to.equal(200);
+      var jsonRes = res.getBody();
+      expect(jsonRes.Status).to.eql('success');
+  });
+  
+  test("User action categories are returned", function () {
+      var jsonRes = res.getBody();
+      expect(jsonRes.Data).to.have.property('UserTaskCategories');
+      expect(jsonRes.Data.UserTaskCategories).to.not.be.empty;
+      expect(jsonRes.Data.UserTaskCategories.length).greaterThan(0);
+  });
+  
+}
+
+docs {
+  Gets list of User Task records
+}

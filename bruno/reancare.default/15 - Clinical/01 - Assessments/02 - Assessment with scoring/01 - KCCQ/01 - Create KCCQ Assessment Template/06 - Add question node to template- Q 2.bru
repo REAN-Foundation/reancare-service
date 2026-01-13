@@ -1,0 +1,93 @@
+meta {
+  name: Add question node to template- Q 2
+  type: http
+  seq: 6
+}
+
+post {
+  url: {{BASE_URL}}/clinical/assessment-templates/{{ASSESSMENT_TEMPLATE_ID}}/nodes
+  body: json
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{ADMIN_USER_JWT}}
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+  Content-Type: application/json
+}
+
+body:json {
+  {
+      "ParentNodeId": "{{ASSESSMENT_TEMPLATE_ROOT_NODE_ID}}",
+      "NodeType": "Question",
+      "Title": "Q 2/8. Over the past 2 weeks, how many times did you have swelling in your feet, ankles or legs when you woke up in the morning?",
+      "Description": "Checks over past 2 weeks",
+      "QueryResponseType": "Single Choice Selection",
+      "Options": [
+          {
+              "ProviderGivenCode": "every morning",
+              "Text": "Every morning",
+              "Sequence": 1
+          },
+          {
+              "ProviderGivenCode": "3 or more times per week but not every day",
+              "Text": "3 or more times per week but not every day",
+              "Sequence": 2
+          },
+          {
+              "ProviderGivenCode": "1-2 times per week",
+              "Text": "1-2 times per week",
+              "Sequence": 3
+          },
+          {
+              "ProviderGivenCode": "less than once a week",
+              "Text": "Less than once a week",
+              "Sequence": 4
+          },
+          {
+              "ProviderGivenCode": "never over the past 2 weeks",
+              "Text": "Never over the past 2 weeks",
+              "Sequence": 5
+          }
+      ]
+  }
+  
+}
+
+tests {
+  var jsonRes = res.getBody();
+  
+  try {
+      bru.setEnvVar("KCCQ_ASSESSMENT_NODE_Q2_ID", jsonRes.Data.AssessmentNode.id);
+  }
+  catch (error) {
+      console.log(error.message);
+  }
+  
+  test("Request is successfull", function () {
+      expect(res.getStatus()).to.equal(201);
+      var jsonRes = res.getBody();
+      expect(jsonRes.Status).to.eql('success');
+  });
+  
+  test("Assessment question node - single choice selection is created", function () {
+     
+      var jsonRes = res.getBody();
+      expect(jsonRes.Data).to.have.property('AssessmentNode');
+      expect(jsonRes.Data.AssessmentNode).to.not.be.empty;
+      expect(jsonRes.Data.AssessmentNode).to.have.property('id');
+      expect(jsonRes.Data.AssessmentNode).to.have.property('ParentNodeId');
+      expect(jsonRes.Data.AssessmentNode).to.have.property('NodeType');
+      expect(jsonRes.Data.AssessmentNode).to.have.property('Title');
+      expect(jsonRes.Data.AssessmentNode).to.have.property('Description');
+      expect(jsonRes.Data.AssessmentNode).to.have.property('QueryResponseType');
+      expect(jsonRes.Data.AssessmentNode).to.have.property('TemplateId');
+      
+      expect(jsonRes.Data.AssessmentNode.Title).equals("Q 2/8. Over the past 2 weeks, how many times did you have swelling in your feet, ankles or legs when you woke up in the morning?");
+      expect(jsonRes.Data.AssessmentNode.QueryResponseType).equals("Single Choice Selection");
+      expect(jsonRes.Data.AssessmentNode.NodeType).equals("Question");
+          
+      expect(jsonRes.Data.AssessmentNode.Sequence).greaterThan(0);   
+  });
+  
+}

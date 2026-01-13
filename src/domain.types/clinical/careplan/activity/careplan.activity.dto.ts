@@ -26,6 +26,7 @@ export interface CareplanActivityDto {
     Frequency?        : number;
     Status?           : string;
     RawContent?       : string;
+    Language?         : string;
     CreatedAt?        : Date;
     UpdatedAt?        : Date;
 }

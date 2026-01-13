@@ -1,0 +1,59 @@
+meta {
+  name: Update body temperature record by id
+  type: http
+  seq: 3
+}
+
+put {
+  url: {{BASE_URL}}/clinical/biometrics/body-temperatures/{{BIOMETRICS_BODY_TEMPERATURE_ID}}
+  body: json
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{PATIENT_USER_JWT}}
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+  Content-Type: application/json
+}
+
+body:json {
+  {
+      "BodyTemperature": 37,
+      "Unit": "C",
+      "RecordDate": "2021-09-14"
+  }
+}
+
+tests {
+  
+  
+  test("Request is successfull", function () {
+      expect(res.getStatus()).to.equal(200);
+      var jsonRes = res.getBody();
+      expect(jsonRes.Status).to.eql('success');
+  });
+  
+  test("Updated body temperature record is returned", function () {
+  
+      var expectedBodyTemperature = 37;
+      var expectedRecordDate = "2021-09-14";
+      var expectedRecordedByUserId = bru.getEnvVar("RECORDED_BY_USER_ID");
+  
+      var jsonRes = res.getBody();
+      expect(jsonRes.Data).to.have.property('BodyTemperature');
+      expect(jsonRes.Data.BodyTemperature).to.not.be.empty;
+      expect(jsonRes.Data.BodyTemperature).to.have.property('BodyTemperature');
+      expect(jsonRes.Data.BodyTemperature).to.have.property('RecordDate');
+      expect(jsonRes.Data.BodyTemperature).to.have.property('RecordedByUserId');
+  
+      expect(jsonRes.Data.BodyTemperature.BodyTemperature).equals(expectedBodyTemperature);
+      expect(jsonRes.Data.BodyTemperature.RecordedByUserId).equals(expectedRecordedByUserId);
+      var recordDate = jsonRes.Data.BodyTemperature.RecordDate;
+      if (recordDate) {
+          recordDate = recordDate.split('T')[0];
+      }
+      expect(recordDate).equals(expectedRecordDate);
+  });
+  
+  
+}

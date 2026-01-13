@@ -9,6 +9,7 @@ import { Injector } from './injector';
 import { Scheduler } from './scheduler';
 import { Seeder } from './seeder';
 import { ConfigurationManager } from '../config/configuration.manager';
+import { IMessagingProvider } from '../modules/events/interfaces/messaging.povider.interface';
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -23,6 +24,8 @@ export class Loader {
     private static _notificationService: NotificationService = null;
 
     private static _ehrStore: StorageService = null;
+
+    private static _messagingProvider: IMessagingProvider = null;
 
     public static get seeder() {
         return Loader._seeder;
@@ -44,6 +47,10 @@ export class Loader {
         return Loader._notificationService;
     }
 
+    public static get messagingProvider() {
+        return Loader._messagingProvider;
+    }
+
     public static init = async (): Promise<boolean> => {
         try {
 
@@ -63,6 +70,9 @@ export class Loader {
 
             Loader._messagingService = container.resolve(MessagingService);
             Loader._messagingService.init();
+
+            Loader._messagingProvider = container.resolve<IMessagingProvider>('IMessagingProvider');
+            await Loader._messagingProvider.initialize();
 
             await CareplanHandler.init();
 

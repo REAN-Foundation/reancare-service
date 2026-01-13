@@ -1,0 +1,74 @@
+meta {
+  name: Create Again
+  type: http
+  seq: 5
+}
+
+post {
+  url: {{BASE_URL}}/clinical/maternity/maternity-pregnancies/{{PREGNANCY_ID}}/antenatal-visit
+  body: json
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{ADMIN_USER_JWT}}
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+  Content-Type: application/json
+}
+
+body:json {
+  {
+      "VisitId"                   : "{{VISIT_ID}}",
+      "ExternalVisitId"           : "ext-visit-456",
+      "PregnancyId"               : "{{PREGNANCY_ID}}",
+      "PatientUserId"             : "{{PATIENT_USER_ID}}",
+      "DateOfVisit"               : "2024-08-10T10:00:00Z",
+      "GestationInWeeks"          : 28,
+      "FetalHeartRateBPM"         : 140,
+      "FundalHeight"              :{
+                                      "Weeks": "5",
+                                      "Centimeters" : "28.5"
+                                   },
+      "DateOfNextVisit"           : "2024-08-24T10:00:00Z",
+      "BodyWeightID"              : "weight-123",
+      "BodyTemperatureId"         : "temp-456",
+      "BloodPressureId"           : "bp-789"
+  }
+  
+}
+
+tests {
+  try {
+  
+      var jsonData = res.getBody();
+      var id = jsonData.Data.AntenatalVisit.id;
+      bru.setEnvVar("ANTENATAL_VISIT_ID", id);
+  
+  }
+  catch (error) {
+      console.log(error.message);
+  }
+  
+  test("Request is successfull", function () {
+      expect(res.getStatus()).to.equal(201);
+      var jsonRes = res.getBody();
+      expect(jsonRes.Status).to.eql('success');
+  });
+  
+  test("New Antenatal visit record is created", function () {
+  
+      var jsonRes = res.getBody();
+      expect(jsonRes.Data).to.have.property('AntenatalVisit');
+      
+      expect(jsonRes.Data.AntenatalVisit).to.have.property('id');
+      expect(jsonRes.Data.AntenatalVisit).to.have.property('VisitId');
+      expect(jsonRes.Data.AntenatalVisit).to.have.property('PregnancyId');
+      expect(jsonRes.Data.AntenatalVisit).to.have.property('PatientUserId');
+      expect(jsonRes.Data.AntenatalVisit).to.have.property('DateOfVisit');
+      expect(jsonRes.Data.AntenatalVisit).to.have.property('GestationInWeeks');
+      expect(jsonRes.Data.AntenatalVisit).to.have.property('FundalHeight');
+      expect(jsonRes.Data.AntenatalVisit).to.have.property('DateOfNextVisit');
+    
+  });
+  
+}

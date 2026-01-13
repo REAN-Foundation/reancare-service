@@ -1,0 +1,43 @@
+meta {
+  name: Search physical activity
+  type: http
+  seq: 4
+}
+
+get {
+  url: {{BASE_URL}}/wellness/exercise/physical-activities/search?orderBy=Category&order=ascending&pageIndex=0&itemsPerPage=25
+  body: none
+  auth: none
+}
+
+params:query {
+  orderBy: Category
+  order: ascending
+  pageIndex: 0
+  itemsPerPage: 25
+  ~exercise: Dead lift
+  ~category: Strength training
+}
+
+headers {
+  Authorization: Bearer {{PATIENT_USER_JWT}}
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+  Content-Type: application/json
+}
+
+tests {
+  test("Request is successfull", function () {
+      expect(res.getStatus()).to.equal(200);
+      var jsonRes = res.getBody();
+      expect(jsonRes.Status).to.eql('success');
+  });
+  
+  test("List of physical activity is returned", function () {
+  
+      var jsonRes = res.getBody();
+      expect(jsonRes.Data).to.have.property('PhysicalActivities');
+      expect(jsonRes.Data.PhysicalActivities.Items.length).to.be.greaterThan(0);
+  
+  });
+  
+}

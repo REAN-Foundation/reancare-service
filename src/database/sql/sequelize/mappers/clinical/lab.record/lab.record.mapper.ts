@@ -1,4 +1,3 @@
-import { LabRecordType } from "../../../../../../domain.types/clinical/lab.record/lab.record/lab.record.types";
 import { LabRecordDto } from "../../../../../../domain.types/clinical/lab.record/lab.record/lab.record.dto";
 import { LabRecordTypeDto } from "../../../../../../domain.types/clinical/lab.record/lab.recod.type/lab.record.type.dto";
 
@@ -16,7 +15,7 @@ export class LabRecordMapper {
             PatientUserId  : labRecord.PatientUserId,
             TypeId         : labRecord.TypeId,
             TypeName       : labRecord.TypeName,
-            DisplayName    : labRecord.DisplayName as LabRecordType,
+            DisplayName    : labRecord.DisplayName,
             PrimaryValue   : labRecord.PrimaryValue,
             SecondaryValue : labRecord.SecondaryValue,
             Unit           : labRecord.Unit,
@@ -44,7 +43,7 @@ export class LabRecordMapper {
             NormalRangeMin : labRecordType.NormalRangeMin,
             NormalRangeMax : labRecordType.NormalRangeMax,
             Unit           : labRecordType.Unit,
-    
+
         };
 
         return dto;

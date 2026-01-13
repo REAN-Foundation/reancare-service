@@ -1,0 +1,40 @@
+meta {
+  name: Get question by id
+  type: http
+  seq: 8
+}
+
+get {
+  url: {{BASE_URL}}/clinical/assessments/{{CAREPLAN_ASSESSMENT_ID}}/questions/{{ASSESSMENT_QUESTION_ID}}
+  body: none
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{PATIENT_USER_JWT}}
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+  Content-Type: application/json
+}
+
+tests {
+  var jsonRes = res.getBody();
+  
+  try {
+      bru.setEnvVar("ASSESSMENT_QUESTION_ID", jsonRes.Data.Next.id);
+  }
+  catch (error) {
+      console.log(error.message);
+  }
+  
+  test("Request is successfull", function () {
+      expect(res.getStatus()).to.equal(200);
+      var jsonRes = res.getBody();
+      expect(jsonRes.Status).to.eql('success');
+  });
+  
+  test("Assessment is returned", function () {
+      var jsonRes = res.getBody();
+      expect(jsonRes.Data).to.have.property('Question');
+  });
+  
+}

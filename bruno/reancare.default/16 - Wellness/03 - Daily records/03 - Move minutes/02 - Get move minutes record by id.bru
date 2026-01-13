@@ -1,0 +1,44 @@
+meta {
+  name: Get move minutes record by id
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{BASE_URL}}/wellness/daily-records/move-minutes/{{DAILY_MOVE_MINUTES_ID}}
+  body: none
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{PATIENT_USER_JWT}}
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+  Content-Type: application/json
+}
+
+tests {
+  test("Request is successfull", function () {
+      expect(res.getStatus()).to.equal(200);
+      var jsonRes = res.getBody();
+      expect(jsonRes.Status).to.eql('success');
+  });
+  
+  test("Move minutes record is returned", function () {
+  
+      var expectedValue = 50;
+      var expectedPatientUserId = bru.getEnvVar("PATIENT_USER_ID");
+  
+      var jsonRes = res.getBody();
+      expect(jsonRes.Data).to.have.property('MoveMinutes');
+      expect(jsonRes.Data.MoveMinutes).to.not.be.empty;
+      expect(jsonRes.Data.MoveMinutes).to.have.property('id');
+      expect(jsonRes.Data.MoveMinutes).to.have.property('MoveMinutes');
+      expect(jsonRes.Data.MoveMinutes).to.have.property('PatientUserId');
+  
+      expect(jsonRes.Data.MoveMinutes.MoveMinutes).equals(expectedValue);
+      expect(jsonRes.Data.MoveMinutes.PatientUserId).equals(expectedPatientUserId);
+  
+  });
+  
+  
+}

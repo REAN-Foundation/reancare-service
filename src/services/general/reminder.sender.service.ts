@@ -105,8 +105,15 @@ export class ReminderSenderService {
     private static sendReminderByWhatsApp = async (user, reminder, schedule): Promise<boolean> => {
         const { messagingService, phone, message, templateName, clientName } =
             await ReminderSenderService.getUserWhatsAppDetails(user, reminder, schedule);
+        const payload = {
+            userId         : user.id,
+            ReminderId     : reminder.id,
+            ParentActionId : reminder.ParentActionId,
+            ReminderDate   : reminder.WhenDate,
+            ReminderTime   : reminder.WhenTime
+        };
         const sent = await messagingService.sendWhatsappWithReanBot(phone, message, clientName,
-            templateName, null, null, reminder.NotificationType);
+            templateName, null, payload, reminder.NotificationType);
         await ReminderSenderService.markAsDelivered(sent, schedule.id);
         return true;
     };
@@ -189,7 +196,7 @@ export class ReminderSenderService {
         const personRepo = Injector.Container.resolve<IPersonRepo>('IPersonRepo');
         const messagingService = Loader.messagingService;
         const person = await personRepo.getById(user.PersonId);
-        const telegramChatId = person.TelegramChatId;
+        const telegramChatId = person.UniqueReferenceId;
         const templateData = JSON.parse(reminder.RawContent);
         const clientName = templateData.ClientName;
         const message =

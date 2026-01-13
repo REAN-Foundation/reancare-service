@@ -28,10 +28,11 @@ import { AssessmentTemplateRepo } from '../../../../database/sql/sequelize/repos
 import { AssessmentDomainModel } from "../../../../domain.types/clinical/assessment/assessment.domain.model";
 import { UserTaskDomainModel } from "../../../../domain.types/users/user.task/user.task.domain.model";
 import { TimeHelper } from "../../../../common/time.helper";
-import { DurationType } from "../../../../domain.types/miscellaneous/time.types";
+import { DateStringFormat, DurationType } from "../../../../domain.types/miscellaneous/time.types";
 import { Injector } from "../../../../startup/injector";
 import { UserTaskSearchFilters } from "../../../../domain.types/users/user.task/user.task.search.types";
 import { ActivityTrackerHandler } from "../../../../services/users/patient/activity.tracker/activity.tracker.handler";
+import { CareplanRepo } from "../../../../database/sql/sequelize/repositories/clinical/careplan/careplan.repo";
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -44,10 +45,13 @@ export class AhaCareplanService implements ICareplanService {
 
     _assessmentTemplateRepo: AssessmentTemplateRepo = null;
 
+    _careplanRepo: CareplanRepo = null;
+
     constructor() {
         this._assessmentService = Injector.Container.resolve(AssessmentService);
         this._userTaskService = Injector.Container.resolve(UserTaskService);
         this._assessmentTemplateRepo = Injector.Container.resolve(AssessmentTemplateRepo);
+        this._careplanRepo = Injector.Container.resolve(CareplanRepo);
     }
 
     private ActivityCode = '9999';
@@ -209,6 +213,8 @@ export class AhaCareplanService implements ICareplanService {
             },
         };
 
+        await this.checkOverlappingEnrollment(model);
+
         var url = process.env.AHA_API_BASE_URL + '/enrollments';
         var headerOptions = await this.getHeaderOptions();
         var response = await needle('post', url, enrollmentData, headerOptions);
@@ -250,6 +256,35 @@ export class AhaCareplanService implements ICareplanService {
         Logger.instance().log(`response body: ${JSON.stringify(response.body)}`);
 
         return response.body.data.enrollment.id;
+    };
+
+    // Overlapping enrollment check - AHA careplan does not allow overlapping enrollments
+    public checkOverlappingEnrollment = async (model: EnrollmentDomainModel): Promise<void> => {
+        const enrollments = await this._careplanRepo.getOverlappingEnrollments(
+            model.PatientUserId,
+            model.Provider,
+            model.PlanCode
+        );
+
+        enrollments.forEach(enrollment => {
+            const daysToAdd = this.getCareplanDuration(model.PlanCode);
+            const endDate = TimeHelper.addDuration(enrollment.StartAt, daysToAdd, DurationType.Day);
+            if (endDate >= new Date()) {
+                const endDateString = TimeHelper.getDateString(endDate, DateStringFormat.YYYY_MM_DD);
+                throw new ApiError(400, `You can not enroll to the ${model.PlanCode} careplan before ${endDateString}`);
+            }
+        });
+    };
+
+    private getCareplanDuration = (planCode: string): number => {
+        switch (planCode) {
+            case 'Cholesterol':
+                return 91;
+            case 'Stroke':
+                return 91;
+            default:
+                return 84;
+        }
     };
 
     public fetchActivities = async (
@@ -913,7 +948,7 @@ export class AhaCareplanService implements ICareplanService {
 
     private getUserTaskCategory(activityType: string, title?: string, contentTypeCode?: string): UserTaskCategory {
 
-        if (activityType === 'Questionnaire' || activityType === 'Assessment') {
+        if (activityType === 'Questionnaire' || activityType === 'Assessment' || activityType === 'Question') {
             return UserTaskCategory.Assessment;
         }
         var type = activityType ?? contentTypeCode;
@@ -1054,6 +1089,10 @@ export class AhaCareplanService implements ICareplanService {
     };
 
     scheduleDailyHighRiskCareplan(): Promise<void> {
+        throw new Error("Method not implemented.");
+    }
+
+    deleteParticipantData(participantId: string): Promise<boolean> {
         throw new Error("Method not implemented.");
     }
 

@@ -13,7 +13,8 @@ export interface PersonDetailsDto {
     DisplayName                : string;
     Phone                      : string;
     Email                      : string;
-    TelegramChatId?            : string;
+    UniqueReferenceId?         : string;
+    UniqueReferenceIdType?     : string;
     Gender                     : Gender;
     SelfIdentifiedGender?      : string;
     MaritalStatus?             : string;
@@ -38,5 +39,5 @@ export interface PersonDto {
     Email: string;
     Gender: Gender;
     BirthDate: Date;
-    TelegramChatId?: string;
+    UniqueReferenceId?: string;
 }

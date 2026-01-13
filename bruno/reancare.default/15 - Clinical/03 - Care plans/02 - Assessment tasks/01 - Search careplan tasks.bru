@@ -1,0 +1,84 @@
+meta {
+  name: Search careplan tasks
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{BASE_URL}}/user-tasks/search?status=pending&category=assessment&itemsPerPage=2000
+  body: none
+  auth: none
+}
+
+params:query {
+  status: pending
+  category: assessment
+  itemsPerPage: 2000
+  ~task: Assessment
+  ~actionType: careplan
+  ~actionId: {{MEDICATION_CONSUMPTION_ID}}
+  ~userId: {{PATIENT_USER_ID}}
+  ~dateFrom: 2022-07-28
+  ~dateTo: 2022-04-29
+  ~scheduledFrom: 2022-07-28
+  ~scheduledTo: 2022-07-15
+  ~orderBy: ScheduledStartTime
+  ~order: descending
+  ~pageIndex: 0
+}
+
+headers {
+  Authorization: Bearer {{PATIENT_USER_JWT}}
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+  Content-Type: application/json
+}
+
+tests {
+  try {
+      var jsonRes = res.getBody();
+      var tasks = jsonRes.Data.UserTasks.Items;
+      var filtered = [];
+      for(var i = 0; i < tasks.length; i++) {
+          if (filtered.length > 9) {
+              break;
+          }
+          var r = tasks[i];
+          console.log(r.Task);
+          if (r.Task.includes("Check-in")) {
+              continue;
+          }
+          if(r.ActionType === 'Careplan' && r.Category === 'Assessment') {
+              filtered.push(r);
+          }
+      }
+      if (filtered.length > 0) {
+          var task = filtered[Math.floor(Math.random() * filtered.length)];
+          var dt = task.ScheduledStartTime.split('T')[0];
+          bru.setEnvVar('CAREPLAN_ASSESSMENT_TASK_ID', task.id);
+          bru.setEnvVar('CAREPLAN_ASSESSMENT_TASK_ID', task.id);
+          bru.setEnvVar('CAREPLAN_ASSESSMENT_ID', task.Action.id);
+      }
+  }
+  catch (error) {
+      console.log(error.message);
+  }
+  
+  test("Request is successfull", function () {
+      expect(res.getStatus()).to.equal(200);
+      var jsonRes = res.getBody();
+      expect(jsonRes.Status).to.eql('success');
+  });
+  
+  test("List of User task records is returned", function () {
+  
+      var jsonRes = res.getBody();
+      expect(jsonRes.Data).to.have.property('UserTasks');
+      expect(jsonRes.Data.UserTasks.Items.length).greaterThan(0);
+  
+  });
+  
+}
+
+docs {
+  Search User Task records with filters
+}

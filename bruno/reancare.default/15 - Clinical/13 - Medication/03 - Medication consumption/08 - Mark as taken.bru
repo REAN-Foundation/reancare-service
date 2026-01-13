@@ -1,0 +1,37 @@
+meta {
+  name: Mark as taken
+  type: http
+  seq: 8
+}
+
+put {
+  url: {{BASE_URL}}/clinical/medication-consumptions/mark-as-taken/{{MEDICATION_CONSUMPTION_ID}}
+  body: none
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{PATIENT_USER_JWT}}
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+  Content-Type: application/json
+}
+
+tests {
+  
+  test("Request is successfull", function () {
+      expect(res.getStatus()).to.equal(200);
+      var jsonRes = res.getBody();
+      expect(jsonRes.Status).to.eql('success');
+  });
+  
+  test("Medication consumption schedule marked as taken", function () {
+     
+      var jsonRes = res.getBody();
+      expect(jsonRes.Data).to.have.property('MedicationConsumption');
+      expect(jsonRes.Data.MedicationConsumption).to.not.be.empty;
+      expect(jsonRes.Data.MedicationConsumption.Status).eqls('Taken');
+    
+  });
+  
+  
+}

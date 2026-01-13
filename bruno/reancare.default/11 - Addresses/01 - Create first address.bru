@@ -1,0 +1,95 @@
+meta {
+  name: Create first address
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{BASE_URL}}/addresses
+  body: json
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{PATIENT_USER_JWT}}
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+  Content-Type: application/json
+}
+
+body:json {
+  {
+      "Type": "{{ADDRESS_TYPE}}",
+      "AddressLine": "{{ADDRESS_LINE}}",
+      "City": "{{ADDRESS_CITY}}",
+      "District": "{{ADDRESS_DISTRICT}}",
+      "State": "{{ADDRESS_STATE}}",
+      "Country": "{{ADDRESS_COUNTRY}}",
+      "PostalCode": "{{ADDRESS_POSTAL_CODE}}",
+      "Longitude": {{ADDRESS_LONGITUDE}},
+      "Lattitude": {{ADDRESS_LATTITUDE}}
+  }
+}
+
+script:pre-request {
+  bru.setEnvVar("ADDRESS_TYPE", 'Home');
+  bru.setEnvVar("ADDRESS_LINE", '89/88, Sembudoss St, Parrys');
+  bru.setEnvVar("ADDRESS_CITY", 'Pune');
+  bru.setEnvVar("ADDRESS_DISTRICT", 'Greater Pune');
+  bru.setEnvVar("ADDRESS_STATE", 'Maharashtra');
+  bru.setEnvVar("ADDRESS_COUNTRY", 'India');
+  bru.setEnvVar("ADDRESS_POSTAL_CODE", '411001');
+  bru.setEnvVar("ADDRESS_LONGITUDE", 36.732324);
+  bru.setEnvVar("ADDRESS_LATTITUDE", 6.611966);
+  
+}
+
+tests {
+  var jsonRes = res.getBody();
+  
+  try {
+      bru.setEnvVar("ADDRESS_ID", jsonRes.Data.Address.id);
+      bru.setEnvVar("ADDRESS_ID_1", jsonRes.Data.Address.id);
+  }
+  catch (error) {
+      console.log(error.message);
+  }
+  
+  test("Request is successfull", function () {
+      expect(res.getStatus()).to.equal(201);
+      var jsonRes = res.getBody();
+      expect(jsonRes.Status).to.eql('success');
+  });
+  
+  test("Address is created", function () {
+  
+      var expectedType = "Home";
+      var expectedAddressLine = bru.getEnvVar("ADDRESS_LINE");
+      var expectedCity = bru.getEnvVar("ADDRESS_CITY");
+      var expectedDistrict = null;
+      var expectedState = null;
+      var expectedCountry = bru.getEnvVar("ADDRESS_COUNTRY");
+      var expectedPostalCode = null;
+  
+      var jsonRes = res.getBody();
+      expect(jsonRes.Data).to.have.property('Address');
+      expect(jsonRes.Data.Address).to.not.be.empty;
+      expect(jsonRes.Data.Address).to.have.property('id');
+      expect(jsonRes.Data.Address).to.have.property('Type');
+      expect(jsonRes.Data.Address).to.have.property('AddressLine');
+      expect(jsonRes.Data.Address).to.have.property('City');
+      expect(jsonRes.Data.Address).to.have.property('District');
+      expect(jsonRes.Data.Address).to.have.property('State');
+      expect(jsonRes.Data.Address).to.have.property('Country');
+      expect(jsonRes.Data.Address).to.have.property('PostalCode');
+      expect(jsonRes.Data.Address).to.have.property('Longitude');
+      expect(jsonRes.Data.Address).to.have.property('Lattitude');
+    });
+  
+  
+  
+  
+}
+
+docs {
+  Add an address.
+}

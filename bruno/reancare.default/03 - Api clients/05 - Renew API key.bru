@@ -1,0 +1,59 @@
+meta {
+  name: Renew API key
+  type: http
+  seq: 6
+}
+
+put {
+  url: {{BASE_URL}}/api-clients/{{API_CLIENT_CODE}}/renew-api-key
+  body: json
+  auth: basic
+}
+
+headers {
+  Content-Type: application/json
+}
+
+auth:basic {
+  username: {{API_CLIENT_CODE}}
+  password: {{API_CLIENT_PASSWORD}}
+}
+
+body:json {
+  {
+      "ValidFrom": "2021-07-21",
+      "ValidTill": "2024-07-20"
+  }
+}
+
+tests {
+  
+  test("Request is successfull", function () {
+      expect(res.getStatus()).to.equal(200);
+      var jsonRes = res.getBody();
+      expect(jsonRes.Status).to.eql('success');
+  });
+  
+  test("New api key is returned", function () {
+  
+      var currentApiKey = bru.getEnvVar("API_KEY");
+  
+      var jsonRes = res.getBody();
+      expect(jsonRes.Data).to.have.property('ApiKeyDetails');
+      expect(jsonRes.Data.ApiKeyDetails).to.not.be.empty;
+      expect(jsonRes.Data.ApiKeyDetails).to.have.property('id');
+      expect(jsonRes.Data.ApiKeyDetails).to.have.property('ClientCode');
+      expect(jsonRes.Data.ApiKeyDetails.ApiKey).to.not.be.empty;
+      expect(jsonRes.Data.ApiKeyDetails.ApiKey).not.equals(currentApiKey);
+      
+      //set the new key to env
+      bru.setEnvVar("API_KEY", jsonRes.Data.ApiKeyDetails.ApiKey);
+  });
+  
+}
+
+docs {
+  Renew API key with a given validity period. If not added, the key will be valid for 1 year.
+  
+  This API uses basic authentication with Username and Password. As a username, one has to add 'Client code' generated during the registration.
+}

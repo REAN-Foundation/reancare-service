@@ -1,0 +1,131 @@
+meta {
+  name: Add new medication by drug name
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{BASE_URL}}/clinical/medications/
+  body: json
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{PATIENT_USER_JWT}}
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+  Content-Type: application/json
+  ~Authorization: Bearer {{DOCTOR_USER_JWT}}
+}
+
+body:json {
+  {
+  	"PatientUserId": "{{PATIENT_USER_ID}}",
+      "DrugName": "Generic Tamiflu",
+      "Dose": 1,
+      "DosageUnit": "Tablet",
+      "TimeSchedules": [
+          "Morning", 
+          "Afternoon", 
+          "Evening", 
+          "Night"
+      ],
+      "Frequency": 2,
+      "FrequencyUnit": "Daily",
+      "Route": "Oral",
+      "Duration": 20,
+      "DurationUnit": "Days",
+      "StartDate": "{{MEDICATION_START_DATE}}",
+      "RefillNeeded": false,
+      "Instructions": "If there is reaction or allergy, please contact immediately.",
+      "ImageResourceId": "{{RESOURCE_ID}}"
+  }
+}
+
+script:pre-request {
+  Date.prototype.addDays = function(days) {
+      var date = new Date(this.valueOf());
+      date.setDate(date.getDate() + days);
+      return date;
+  }
+  
+  function formatDate(date) {
+      var d = new Date(date),
+          month = '' + (d.getMonth() + 1),
+          day = '' + d.getDate(),
+          year = d.getFullYear();
+  
+      if (month.length < 2) 
+          month = '0' + month;
+      if (day.length < 2) 
+          day = '0' + day;
+  
+      return [year, month, day].join('-');
+  }
+  
+  var start_date = formatDate((new Date()).addDays(-1));
+  
+  bru.setEnvVar("MEDICATION_START_DATE", start_date);
+  
+  
+  
+}
+
+tests {
+  try {
+  
+      var jsonData = res.getBody();
+      var id = jsonData.Data.Medication.id;
+      bru.setEnvVar("MEDICATION_ID", id);
+  
+  }
+  catch (error) {
+      console.log(error.message);
+  }
+  
+  
+  test("Request is successfull", function () {
+      expect(res.getStatus()).to.equal(201);
+      var jsonRes = res.getBody();
+      expect(jsonRes.Status).to.eql('success');
+  });
+  
+  test("A newly created medication is returned", function () {
+     
+      var jsonRes = res.getBody();
+      expect(jsonRes.Data).to.have.property('Medication');
+      expect(jsonRes.Data.Medication).to.not.be.empty;
+      expect(jsonRes.Data.Medication).to.have.property('id');
+      expect(jsonRes.Data.Medication).to.have.property('PatientUserId');
+      expect(jsonRes.Data.Medication).to.have.property('DrugName');
+      expect(jsonRes.Data.Medication).to.have.property('DrugId');
+      expect(jsonRes.Data.Medication).to.have.property('Dose');
+      expect(jsonRes.Data.Medication).to.have.property('Dose');
+      expect(jsonRes.Data.Medication).to.have.property('DosageUnit');
+      expect(jsonRes.Data.Medication).to.have.property('TimeSchedules');
+      expect(jsonRes.Data.Medication).to.have.property('Frequency');
+      expect(jsonRes.Data.Medication).to.have.property('FrequencyUnit');
+      expect(jsonRes.Data.Medication).to.have.property('Route');
+      expect(jsonRes.Data.Medication).to.have.property('Duration');
+      expect(jsonRes.Data.Medication).to.have.property('DurationUnit');
+      expect(jsonRes.Data.Medication).to.have.property('StartDate');
+      expect(jsonRes.Data.Medication).to.have.property('RefillNeeded');
+      expect(jsonRes.Data.Medication).to.have.property('IsExistingMedication');
+      expect(jsonRes.Data.Medication).to.have.property('ConsumptionSummary');
+      expect(jsonRes.Data.Medication.ConsumptionSummary).to.have.property('TotalConsumptionCount');
+      expect(jsonRes.Data.Medication.ConsumptionSummary).to.have.property('TotalDoseCount');
+      expect(jsonRes.Data.Medication.ConsumptionSummary).to.have.property('PendingConsumptionCount');
+      expect(jsonRes.Data.Medication.ConsumptionSummary).to.have.property('PendingDoseCount');
+      
+      expect(jsonRes.Data.Medication.ConsumptionSummary.TotalConsumptionCount).greaterThan(0);    
+      expect(jsonRes.Data.Medication.TimeSchedules.length).greaterThan(0); 
+  
+      var expectedDrugName = "Generic Tamiflu";
+      expect(jsonRes.Data.Medication.DrugName).equals(expectedDrugName);    
+    
+  });
+  
+}
+
+docs {
+  Create a new drug order (medication list) for a patient for the visit.
+}

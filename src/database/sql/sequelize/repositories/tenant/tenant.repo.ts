@@ -183,9 +183,9 @@ export class TenantRepo implements ITenantRepo {
         }
     };
 
-    delete = async (id: string): Promise<boolean> => {
+    delete = async (id: string, hardDelete: boolean = false): Promise<boolean> => {
         try {
-            const deletedCount = await Tenant.destroy({ where: { Id: id } });
+            const deletedCount = await Tenant.destroy({ where: { Id: id }, force: hardDelete });
             return deletedCount > 0;
         }
         catch (error) {
@@ -379,6 +379,21 @@ export class TenantRepo implements ITenantRepo {
         }
         catch (error) {
             throw new Error(`Failed to get tenant moderators: ${error.message}`);
+        }
+    };
+
+    getActiveTenants = async (): Promise<TenantDto[]> => {
+        try {
+            const tenants = await Tenant.findAll({
+                where : { DeletedAt: null }
+            });
+            const dtos: TenantDto[] = tenants.map((tenant) => {
+                return TenantMapper.toDto(tenant);
+            });
+            return dtos;
+        }
+        catch (error) {
+            throw new Error(`Failed to fetch active tenants: ${error.message}`);
         }
     };
 

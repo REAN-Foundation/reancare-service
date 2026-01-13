@@ -7,7 +7,7 @@ export interface IWaterConsumptionRepo {
     create(waterConsumptionDomainModel: WaterConsumptionDomainModel): Promise<WaterConsumptionDto>;
 
     getById(id: string): Promise<WaterConsumptionDto>;
-    
+
     search(filters: WaterConsumptionSearchFilters): Promise<WaterConsumptionSearchResults>;
 
     update(id: string, waterConsumptionDomainModel: WaterConsumptionDomainModel):
@@ -16,5 +16,7 @@ export interface IWaterConsumptionRepo {
     delete(id: string): Promise<boolean>;
 
     getByRecordDate(recordDate: Date, patientUserId : string): Promise<WaterConsumptionDto>;
+
+    deleteByUserId(patientUserId: string, hardDelete: boolean): Promise<boolean>;
 
 }

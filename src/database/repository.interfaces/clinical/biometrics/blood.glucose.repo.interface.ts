@@ -26,4 +26,5 @@ export interface IBloodGlucoseRepo {
 
     getMostRecentBloodGlucoseActivity(patientUserId: string): Promise<MostRecentActivityDto>;
 
+    deleteByUserId(patientUserId: string, hardDelete: boolean): Promise<boolean>;
 }

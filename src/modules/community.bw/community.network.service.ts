@@ -92,7 +92,7 @@ export class CommunityNetworkService {
 
             //Since not registered with provider, register
             participant = await this._careplanRepo.addPatientWithProvider(
-                enrollmentDetails.PatientUserId, provider, participantId);
+                enrollmentDetails.PatientUserId, provider, participantId, enrollmentDetails.TenantId);
 
             if (!participant) {
                 throw new Error('Error while adding care plan participant details to database.');

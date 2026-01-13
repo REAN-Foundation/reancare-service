@@ -36,4 +36,8 @@ export class BloodCholesterolService {
         return await this._bloodCholesterolRepo.delete(id);
     };
 
+    deleteByUserId = async (patientUserId: string, hardDelete: boolean = true): Promise<boolean> => {
+        return await this._bloodCholesterolRepo.deleteByUserId(patientUserId, hardDelete);
+    };
+
 }

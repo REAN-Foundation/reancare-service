@@ -31,9 +31,9 @@ export const register = (app: express.Application): void => {
     router.get('/:id/nodes/:nodeId/paths/:pathId', auth(AssessmentTemplateAuth.getPath), controller.getPath);
     router.delete('/:id/nodes/:nodeId/paths/:pathId', auth(AssessmentTemplateAuth.deletePath), controller.deletePath);
 
-    router.post('/:id/nodes/:nodeId/options', auth(AssessmentTemplateAuth.addOption), controller.addPath);
-    router.put('/:id/nodes/:nodeId/options/:optionId', auth(AssessmentTemplateAuth.updateOption), controller.updatePath);
-    router.get('/:id/nodes/:nodeId/options/:optionId', auth(AssessmentTemplateAuth.getOption), controller.getPath);
+    router.post('/:id/nodes/:nodeId/options', auth(AssessmentTemplateAuth.addOption), controller.addOption);
+    router.put('/:id/nodes/:nodeId/options/:optionId', auth(AssessmentTemplateAuth.updateOption), controller.updateOption);
+    router.get('/:id/nodes/:nodeId/options/:optionId', auth(AssessmentTemplateAuth.getOption), controller.getOption);
     router.delete('/:id/nodes/:nodeId/options/:optionId', auth(AssessmentTemplateAuth.deleteOption), controller.deleteOption);
     
     router.post('/:id/scoring-conditions/', auth(AssessmentTemplateAuth.addScoringCondition), controller.addScoringCondition);

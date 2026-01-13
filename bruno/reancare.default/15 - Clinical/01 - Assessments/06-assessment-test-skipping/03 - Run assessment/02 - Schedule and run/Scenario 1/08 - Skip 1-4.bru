@@ -1,0 +1,46 @@
+meta {
+  name: 08 - Skip 1-4
+  type: http
+  seq: 8
+}
+
+post {
+  url: {{BASE_URL}}/clinical/assessments/{{ASSESSMENT_ID}}/questions/{{ASSESSMENT_QUESTION_ID}}/skip
+  body: json
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{PATIENT_USER_JWT}}
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+  Content-Type: application/json
+}
+
+tests {
+  try {
+      var jsonRes = res.getBody();
+      bru.setEnvVar("ASSESSMENT_QUESTION_ID", jsonRes.Data.AnswerResponse.Next.id);
+      bru.setEnvVar("ASSESSMENT_NEXT_QUESTION_ID", jsonRes.Data.AnswerResponse.Next.id);
+  }
+  catch (error) {
+      console.log(error.message);
+  }
+  
+  test("Request is successfull", function () {
+      expect(res.getStatus()).to.equal(200);
+      var jsonRes = res.getBody();
+      expect(jsonRes.Status).to.eql('success');
+  });
+  
+  test("3- assessment question is answered", function () {
+      var jsonRes = res.getBody();
+      expect(jsonRes.Data).to.have.property('AnswerResponse');
+      expect(jsonRes.Data.AnswerResponse).to.not.be.empty;
+      expect(jsonRes.Data.AnswerResponse).to.have.property('AssessmentId');
+      expect(jsonRes.Data.AnswerResponse).to.have.property('Parent');
+      expect(jsonRes.Data.AnswerResponse).to.have.property('Answer');
+      expect(jsonRes.Data.AnswerResponse).to.have.property('Next');
+      expect(jsonRes.Data.AnswerResponse.Next).to.have.property('id');
+  });
+  
+}

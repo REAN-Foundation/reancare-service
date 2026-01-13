@@ -36,7 +36,8 @@ export class PersonMapper {
             Age                  : person.Age ?? age,
             Phone                : person.Phone,
             Email                : person.Email,
-            TelegramChatId       : person.TelegramChatId,
+            UniqueReferenceId    : person.UniqueReferenceId,
+            UniqueReferenceIdType: person.UniqueReferenceIdType,
             ImageResourceId      : person.ImageResourceId,
             ProfileImageURL      : profileImageURL,
             ActiveSince          : person.CreatedAt,
@@ -54,7 +55,7 @@ export class PersonMapper {
 
         const prefix = person.Prefix ? (person.Prefix + ' ') : '';
         const firstName = person.FirstName ? (person.FirstName + ' ') : '';
-        const displayName:string = prefix + firstName + person.LastName ?? '';
+        const displayName:string = prefix + firstName + (person.LastName ?? '');
 
         //const age = Helper.getAgeFromBirthDate(person.BirthDate);
 

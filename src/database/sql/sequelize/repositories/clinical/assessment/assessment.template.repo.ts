@@ -32,6 +32,7 @@ export class AssessmentTemplateRepo implements IAssessmentTemplateRepo {
                 TotalNumberOfQuestions      : model.TotalNumberOfQuestions ?? null,
                 TenantId                    : model.TenantId ?? null,
                 Tags                        : model.Tags && model.Tags.length > 0 ? JSON.stringify(model.Tags) : null,
+                RawData                     : model.RawData ? JSON.stringify(model.RawData) : null,
             };
             const assessmentTemplate = await AssessmentTemplate.create(entity);
             return AssessmentTemplateMapper.toDto(assessmentTemplate);
@@ -87,6 +88,9 @@ export class AssessmentTemplateRepo implements IAssessmentTemplateRepo {
                         [Op.like] : `%${tag}%`,
                     },
                 }));
+            }
+            if (filters.TenantId != null) {
+                search.where['TenantId'] = filters.TenantId;
             }
             let orderByColum = 'Title';
             if (filters.OrderBy) {
@@ -173,6 +177,13 @@ export class AssessmentTemplateRepo implements IAssessmentTemplateRepo {
                         ? JSON.stringify(updateModel.Tags)
                         : null;
             }
+            if (updateModel.RawData != null) {
+                assessmentTemplate.RawData = JSON.stringify(updateModel.RawData);
+            }
+            if (updateModel.TenantId != null) {
+                assessmentTemplate.TenantId = updateModel.TenantId;
+            }
+
             await assessmentTemplate.save();
 
             return AssessmentTemplateMapper.toDto(assessmentTemplate);

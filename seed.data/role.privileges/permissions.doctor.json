@@ -79,7 +79,9 @@
                 "ScoreAssessment": false,
                 "Search": true,
                 "StartAssessment": false,
-                "Update": false
+                "Update": false,
+                "SkipQuestion": false,
+                "SubmitAtOnce": false
             },
             "AssessmentTemplate": {
                 "AddNode": false,
@@ -581,6 +583,10 @@
         "Update": false
     },
     "Statistics": {
+        "AhaNumbers": {
+            "Upload": false,
+            "Download": false
+        },
         "AppStats": {
             "GetAllYears": false,
             "GetAppDownlodCount": false,
@@ -631,14 +637,32 @@
             "GetTenantStats": false,
             "PromoteTenantUserAsAdmin": false,
             "Search": false,
-            "Update": false
+            "Update": false,
+            "CreateBotSchema": false,
+            "CreateSecret": false,
+            "GetSecret": false,
+            "GetSecretByCode": false,
+            "UpdateSecret": false,
+            "GetActiveTenants": false
         },
         "Settings": {
             "GetTenantSettingsTypes": false,
             "GetTenantSettings": false,
             "GetTenantSettingsByType": false,
+            "GetTenantSettingsByCode": false,
             "UpdateTenantSettingsByType": false,
             "UpdateTenantSettings": false
+        },
+        "SettingsMarketing": {
+            "Create": false,
+            "GetByTenant": false,
+            "UpdateAll": false,
+            "UpdateImages": false,
+            "UpdateLogos": false,
+            "UpdateQRCode": false,
+            "UpdateContent": false,
+            "DownloadPdf": false,
+            "Delete": false
         }
     },
     "User": {
@@ -751,7 +775,8 @@
             "Search": true,
             "Update": false,
             "DeleteProfileImage": false,
-            "Delete": false
+            "Delete": false,
+            "ValidateUserById":false
         },
         "UserTask": {
             "CancelTask": true,
@@ -884,5 +909,5 @@
         "Update": false,
         "Delete": false
     }
-   
+
 }

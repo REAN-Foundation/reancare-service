@@ -1,12 +1,9 @@
-FROM node:18.12.0-alpine3.15 AS builder
+FROM node:24-alpine3.22 AS builder
 ADD . /app
 RUN apk add bash
 RUN apk add --no-cache \
         python3 \
         py3-pip \
-    && pip3 install --upgrade pip \
-    && pip3 install \
-        awscli \
     && rm -rf /var/cache/apk/*
 RUN apk add --update alpine-sdk
 RUN apk add chromium \
@@ -20,19 +17,19 @@ RUN npm cache clean --force
 RUN rm -rf node_modules
 # RUN npm rm @types/glob @types/rimraf minimatch @types/minimatch
 RUN npm install
+ENV NODE_OPTIONS="--max-old-space-size=4096"
 RUN npm run build
 
 ##RUN npm run build
 
-FROM node:18.12.0-alpine3.15
+FROM node:24-alpine3.22
 RUN apk add bash
 RUN apk add --no-cache \
         python3 \
         py3-pip \
-    && pip3 install --upgrade pip \
-    && pip3 install \
-        awscli \
+    && pip3 install --break-system-packages awscli \
     && rm -rf /var/cache/apk/*
+
 RUN apk add --update alpine-sdk
 RUN apk add chromium \
     harfbuzz
@@ -48,3 +45,4 @@ COPY --from=builder ./app/dist/ .
 
 RUN chmod +x /app/entrypoint.sh
 ENTRYPOINT ["/bin/bash", "-c", "/app/entrypoint.sh"]
+

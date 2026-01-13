@@ -1,0 +1,47 @@
+meta {
+  name: Set contact user to organization
+  type: http
+  seq: 7
+}
+
+put {
+  url: {{BASE_URL}}/organizations/{{ORGANIZATION_ID}}
+  body: json
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{ADMIN_USER_JWT}}
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+  Content-Type: application/json
+}
+
+body:json {
+  {
+      "ContactUserId": "{{CONTACT_USER_ID}}"
+  }
+}
+
+tests {
+  
+  test("Request is successfull", function () {
+      expect(res.getStatus()).to.equal(200);
+      var jsonRes = res.getBody();
+      expect(jsonRes.Status).to.eql('success');
+  });
+  
+  test("Contact user id for the organization is updated", function () {
+  
+      var expectedContactUserId = bru.getEnvVar("CONTACT_USER_ID");
+      var jsonRes = res.getBody();
+      expect(jsonRes.Data).to.have.property('Organization');
+      expect(jsonRes.Data.Organization).to.have.property('ContactUser');
+      expect(jsonRes.Data.Organization.ContactUser.id).equals(expectedContactUserId);
+  
+  });
+  
+}
+
+docs {
+  Get an address by address id.
+}

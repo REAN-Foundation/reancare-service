@@ -1,0 +1,56 @@
+meta {
+  name: Search patient medications
+  type: http
+  seq: 11
+}
+
+get {
+  url: {{BASE_URL}}/clinical/medications/search?patientUserId={{PATIENT_USER_ID}}
+  body: json
+  auth: none
+}
+
+params:query {
+  patientUserId: {{PATIENT_USER_ID}}
+}
+
+headers {
+  Authorization: Bearer {{PATIENT_USER_JWT}}
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+  Content-Type: application/json
+}
+
+tests {
+  var jsonRes = res.getBody();
+  
+  try {
+      bru.setEnvVar("DRUG_ID", jsonRes.Data.DrugRecords.Items[3].id);
+  }
+  catch (error) {
+      console.log(error.message);
+  }
+  
+  test("Request is successfull", function () {
+      expect(res.getStatus()).to.equal(200);
+      var jsonRes = res.getBody();
+      expect(jsonRes.Status).to.eql('success');
+  });
+  
+  test("Searched medications are returned", function () {
+     
+      var jsonRes = res.getBody();
+      expect(jsonRes.Data).to.have.property('Medications');
+      expect(jsonRes.Data.Medications).to.not.be.empty;
+      expect(jsonRes.Data.Medications).to.have.property('TotalCount');
+      expect(jsonRes.Data.Medications).to.have.property('Items');
+      
+      expect(jsonRes.Data.Medications.TotalCount).greaterThan(0);    
+      expect(jsonRes.Data.Medications.Items.length).greaterThan(0);    
+  });
+  
+  
+}
+
+docs {
+  Returns the list of drugs/medicines stored in the system.
+}

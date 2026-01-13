@@ -1,0 +1,55 @@
+meta {
+  name: Get current API key
+  type: http
+  seq: 5
+}
+
+get {
+  url: {{BASE_URL}}/api-clients/{{API_CLIENT_CODE}}/current-api-key
+  body: json
+  auth: basic
+}
+
+headers {
+  Content-Type: application/json
+}
+
+auth:basic {
+  username: {{API_CLIENT_CODE}}
+  password: {{API_CLIENT_PASSWORD}}
+}
+
+tests {
+  try {
+      var jsonRes = res.getBody();
+  }
+  catch (error) {
+      console.log(error.message);
+  }
+  
+  test("Request is successfull", function () {
+      expect(res.getStatus()).to.equal(200);
+      var jsonRes = res.getBody();
+      expect(jsonRes.Status).to.eql('success');
+  });
+  
+  test("Api key is returned", function () {
+  
+      var expectedClientCode = bru.getEnvVar("API_CLIENT_CODE");
+  
+      var jsonRes = res.getBody();
+      expect(jsonRes.Data).to.have.property('ApiKeyDetails');
+      expect(jsonRes.Data.ApiKeyDetails).to.not.be.empty;
+      expect(jsonRes.Data.ApiKeyDetails).to.have.property('id');
+      expect(jsonRes.Data.ApiKeyDetails).to.have.property('ClientCode');
+      expect(jsonRes.Data.ApiKeyDetails.ClientCode).equals(expectedClientCode);
+      expect(jsonRes.Data.ApiKeyDetails.ApiKey).to.not.be.empty;
+  });
+  
+}
+
+docs {
+  Get the current valid API key for a given client. 
+  
+  This API uses basic authentication with Username and Password. As a username, one has to add 'Client code' generated during the registration.
+}

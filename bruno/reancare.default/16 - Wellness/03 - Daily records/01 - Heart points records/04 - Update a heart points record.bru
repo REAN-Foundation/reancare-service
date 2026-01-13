@@ -1,0 +1,62 @@
+meta {
+  name: Update a heart points record
+  type: http
+  seq: 3
+}
+
+put {
+  url: {{BASE_URL}}/wellness/daily-records/heart-points/{{HEART_POINT_ID}}
+  body: json
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{PATIENT_USER_JWT}}
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+  Content-Type: application/json
+}
+
+body:json {
+  {
+      "PersonId": "{{HEART_POINT_PERSONID}}",
+      "PatientUserId": "{{HEART_POINT_PATIENTUSERID}}",
+      "HeartPoints": 150,
+      "Unit": "{{HEART_POINT_UNIT}}"
+  }
+}
+
+script:pre-request {
+  bru.setEnvVar("HEART_POINT_Value", 150);
+}
+
+tests {
+  var jsonRes = res.getBody();
+  
+  test("Request is successfull", function () {
+      expect(res.getStatus()).to.equal(200);
+      var jsonRes = res.getBody();
+      expect(jsonRes.Status).to.eql('success');
+  });
+  
+  test("Correct updates should be reflected", function () {
+  
+      var expectedPatientUserId = bru.getEnvVar("HEART_POINT_PATIENTUSERID");
+  
+      var jsonRes = res.getBody();
+      expect(jsonRes.Data).to.have.property('HeartPoints');
+      expect(jsonRes.Data.HeartPoints).to.not.be.empty;
+      expect(jsonRes.Data.HeartPoints).to.have.property('PatientUserId');
+      expect(jsonRes.Data.HeartPoints).to.have.property('HeartPoints');
+      expect(jsonRes.Data.HeartPoints).to.have.property('Unit');
+  
+      expect(jsonRes.Data.HeartPoints.PatientUserId).equals(expectedPatientUserId);
+      expect(jsonRes.Data.HeartPoints.HeartPoints).equals(150);
+  
+  });
+  
+  
+}
+
+docs {
+  Update the details for an HeartPoint.
+}

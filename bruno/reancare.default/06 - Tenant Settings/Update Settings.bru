@@ -1,0 +1,285 @@
+meta {
+  name: Update Settings
+  type: http
+  seq: 5
+}
+
+put {
+  url: {{BASE_URL}}/tenant-settings/{{TENANT_ID}}
+  body: json
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+  Authorization: Bearer {{TENANT_ADMIN_USER_JWT}}
+}
+
+body:json {
+  {
+      "UserInterfaces": {
+          "PatientApp": true,
+          "ChatBot": true,
+          "Forms": true
+      },
+      "Common": {
+          "Clinical": {
+              "Vitals": true,
+              "LabRecords": true,
+              "Symptoms": true,
+              "DrugsManagement": true,
+              "Medications": true,
+              "Careplans": false,
+              "Assessments": true
+          },
+          "External": {
+              "FHIRStorage": false,
+              "EHRIntegration": false,
+              "ABDMIntegration": false
+          },
+          "AddOns": {
+              "HospitalSystems": false,
+              "Gamification": false,
+              "LearningJourney": false,
+              "Community": false,
+              "PatientSelfServicePortal": false,
+              "PatientStatusReports": false,
+              "DocumentsManagement": false,
+              "AppointmentReminders": false,
+              "Organizations": false,
+              "Cohorts": false,
+              "Notifications": true,
+              "Newsfeeds": false,
+              "Notices": false
+          },
+          "Analysis": {
+              "CustomQueries": false,
+              "Quicksight": false
+          }
+      },
+      "PatientApp": {
+          "Exercise": true,
+          "Nutrition": true,
+          "DeviceIntegration": {
+              "Terra": false,
+              "SenseSemi": false
+          }
+      },
+      "ChatBot": {
+          "Name": "Chatbot",
+          "Icon": null,
+          "Description": "Chatbot for patient interaction",
+          "DefaultLanguage": "en",
+          "MessageChannels": {
+              "WhatsApp": false,
+              "Telegram": true
+          },
+          "SupportChannels": {
+              "ClickUp": false,
+              "Slack": false,
+              "Email": false
+          },
+          "Personalization": false,
+          "LocationContext": false,
+          "Localization": true
+      },
+      "Forms": {
+          "Integrations": {
+              "KoboToolbox": false,
+              "GoogleForm": false,
+              "ODK": false
+          },
+          "OfflineSupport": false,
+          "FieldApp": false
+      }
+  }
+  
+}
+
+script:pre-request {
+  {
+      "UserInterfaces": {
+          "PatientApp": true,
+          "ChatBot": true,
+          "Forms": true
+      },
+      "Common": {
+          "Clinical": {
+              "Vitals": true,
+              "LabRecords": true,
+              "Symptoms": true,
+              "DrugsManagement": true,
+              "Medications": true,
+              "Careplans": false,
+              "Assessments": true
+          },
+          "External": {
+              "FHIRStorage": false,
+              "EHRIntegration": false,
+              "ABDMIntegration": false
+          },
+          "AddOns": {
+              "HospitalSystems": false,
+              "Gamification": false,
+              "LearningJourney": false,
+              "Community": false,
+              "PatientSelfServicePortal": false,
+              "PatientStatusReports": false,
+              "DocumentsManagement": false,
+              "AppointmentReminders": false,
+              "Organizations": false,
+              "Cohorts": false,
+              "Notifications": true,
+              "Newsfeeds": false,
+              "Notices": false
+          },
+          "Analysis": {
+              "CustomQueries": false,
+              "Quicksight": false
+          }
+      },
+      "PatientApp": {
+          "Exercise": true,
+          "Nutrition": true,
+          "DeviceIntegration": {
+              "Terra": false,
+              "SenseSemi": false
+          }
+      },
+      "ChatBot": {
+          "Name": "Chatbot",
+          "Icon": null,
+          "Description": "Chatbot for patient interaction",
+          "DefaultLanguage": "en",
+          "MessageChannels": {
+              "WhatsApp": false,
+              "Telegram": true
+          },
+          "SupportChannels": {
+              "ClickUp": false,
+              "Slack": false,
+              "Email": false
+          },
+          "Personalization": false,
+          "LocationContext": false,
+          "Localization": true
+      },
+      "Forms": {
+          "Integrations": {
+              "KoboToolbox": false,
+              "GoogleForm": false,
+              "ODK": false
+          },
+          "OfflineSupport": false,
+          "FieldApp": false
+      }
+  }
+}
+
+tests {
+  
+  test("Request is successfull", function () {
+      expect(res.getStatus()).to.equal(200);
+      var jsonRes = res.getBody();
+      expect(jsonRes.Status).to.eql('success');
+  });
+  
+  test("Updated tenant settings structure exists", () => {
+      expect(jsonRes).to.have.property("Data");
+      expect(jsonRes.Data).to.have.property("Updated");
+  
+  //     const updated = jsonRes.Data.Updated;
+  
+  //     // UserInterfaces
+  //     expect(updated).to.have.property("UserInterfaces");
+  //     expect(updated.UserInterfaces).to.have.property("PatientApp").that.is.a("boolean");
+  //     expect(updated.UserInterfaces).to.have.property("ChatBot").that.is.a("boolean");
+  //     expect(updated.UserInterfaces).to.have.property("Forms").that.is.a("boolean");
+  
+  //     // Common.Clinical
+  //     const clinical = updated.Common.Clinical;
+  //     expect(clinical.Vitals).to.equal(true);
+  //     expect(clinical.LabRecords).to.equal(true);
+  //     expect(clinical.Symptoms).to.equal(true);
+  //     expect(clinical.DrugsManagement).to.equal(true);
+  //     expect(clinical.Medications).to.equal(true);
+  //     expect(clinical.Careplans).to.equal(false);
+  //     expect(clinical.Assessments).to.equal(true);
+  
+  //     // Common.External
+  //     const external = updated.Common.External;
+  //     expect(external.FHIRStorage).to.equal(false);
+  //     expect(external.EHRIntegration).to.equal(false);
+  //     expect(external.ABDMIntegration).to.equal(false);
+  
+  //     // Common.AddOns
+  //     const addOns = updated.Common.AddOns;
+  //     expect(addOns.Notifications).to.equal(true);
+  //     expect(addOns.Gamification).to.equal(false);
+  //     expect(addOns.AppointmentReminders).to.equal(false);
+  
+  //     // Common.Analysis
+  //     const analysis = updated.Common.Analysis;
+  //     expect(analysis.CustomQueries).to.equal(false);
+  //     expect(analysis.Quicksight).to.equal(false);
+  // });
+  
+  // // ✅ Check PatientApp section
+  // test("PatientApp settings are correct", () => {
+  //     const patientApp = jsonRes.Data.Updated.PatientApp;
+  //     expect(patientApp.Exercise).to.equal(true);
+  //     expect(patientApp.Nutrition).to.equal(true);
+  //     expect(patientApp.DeviceIntegration.Terra).to.equal(false);
+  //     expect(patientApp.DeviceIntegration.SenseSemi).to.equal(false);
+  // });
+  
+  // // ✅ Check ChatBot section
+  // test("ChatBot settings are correct", () => {
+  //     const chatBot = jsonRes.Data.Updated.ChatBot;
+  //     expect(chatBot.Name).to.equal("Chatbot");
+  //     expect(chatBot.Description).to.contain("patient");
+  //     expect(chatBot.DefaultLanguage).to.equal("en");
+  
+  //     expect(chatBot.MessageChannels.WhatsApp).to.equal(false);
+  //     expect(chatBot.MessageChannels.Telegram).to.equal(true);
+  
+  //     expect(chatBot.SupportChannels.ClickUp).to.equal(false);
+  //     expect(chatBot.SupportChannels.Slack).to.equal(false);
+  //     expect(chatBot.SupportChannels.Email).to.equal(false);
+  
+  //     expect(chatBot.Personalization).to.equal(false);
+  //     expect(chatBot.Localization).to.equal(true);
+  //     expect(chatBot.LocationContext).to.equal(false);
+  // });
+  
+  // // ✅ Check Forms section
+  // test("Forms settings are correct", () => {
+  //     const forms = jsonRes.Data.Updated.Forms;
+  //     expect(forms.Integrations.KoboToolbox).to.equal(false);
+  //     expect(forms.Integrations.GoogleForm).to.equal(false);
+  //     expect(forms.Integrations.ODK).to.equal(false);
+  
+  //     expect(forms.OfflineSupport).to.equal(false);
+  //     expect(forms.FieldApp).to.equal(false);
+  // });
+}
+
+docs {
+  Registers patient. Phone number is the only mandatory field. The rest of the fields are optional. Phone number has to be specified in this format - 'country-code-phone-number'. e.g. "+91-1234567890".
+  
+  The typical request body is as follows - 
+  `
+  {
+      "Phone": "+91-1234567890",
+      "Prefix": "Mr.",
+      "FirstName": "John",
+      "MiddleName": "X",
+      "LastName": "Doe",
+      "Email": "john.doe@gmail.com",
+      "Gender": "Male",
+      "BirthDate": "1979-01-01",
+      "ImageResourceId": ""
+  }
+  `
+}

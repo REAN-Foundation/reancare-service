@@ -13,6 +13,8 @@ import { CustomTaskDomainModel } from '../../domain.types/users/custom.task/cust
 import { ApiError } from '../../common/api.error';
 import { Injector } from '../../startup/injector';
 import { ActivityTrackerHandler } from '../../services/users/patient/activity.tracker/activity.tracker.handler';
+import { MedicationService } from '../../services/clinical/medication/medication.service';
+import { MedicationScheduleHandler } from '../../services/general/medication.schedule.service';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -26,11 +28,14 @@ export class CommonActions {
 
     _assessmentTemplateService: AssessmentTemplateService = null;
 
+    _medicationService: MedicationService = null;
+
     constructor() {
         this._customTaskService = Injector.Container.resolve(CustomTaskService);
         this._assessmentService = Injector.Container.resolve(AssessmentService);
         this._userTaskService = Injector.Container.resolve(UserTaskService);
         this._assessmentTemplateService = Injector.Container.resolve(AssessmentTemplateService);
+        this._medicationService = Injector.Container.resolve(MedicationService);
     }
 
     //#region Public
@@ -112,6 +117,15 @@ export class CommonActions {
 
         userTask['Action'] = customTask;
         return userTask;
+    };
+
+    scheduleCreateMedicationConsumptionTask = async (cronExpression: string) => {
+        const medications = await this._medicationService.getAllActiveMedications();
+        Logger.instance().log(`Total medications to schedule: ${medications.length}`);
+        Logger.instance().log(`Cron expression: ${cronExpression}`);
+        for (const medication of medications) {
+            await MedicationScheduleHandler.scheduleMedicationConsumption(medication, cronExpression);
+        }
     };
 
 }

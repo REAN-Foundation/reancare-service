@@ -20,9 +20,25 @@ export class TenantAuth {
         RequestType : RequestType.CreateOne,
     };
 
+    static readonly createBotSchema: AuthOptions = {
+        ...DefaultAuthOptions,
+        Context     : `${this._baseContext}.CreateBotSchema`,
+        Ownership   : ResourceOwnership.Tenant,
+        ActionScope : ActionScope.System,
+        RequestType : RequestType.CreateOne,
+    };
+
     static readonly search: AuthOptions = {
         ...DefaultAuthOptions,
         Context     : `${this._baseContext}.Search`,
+        Ownership   : ResourceOwnership.System,
+        ActionScope : ActionScope.System,
+        RequestType : RequestType.GetMany,
+    };
+
+    static readonly getActiveTenants: AuthOptions = {
+        ...DefaultAuthOptions,
+        Context     : `${this._baseContext}.GetActiveTenants`,
         Ownership   : ResourceOwnership.System,
         ActionScope : ActionScope.System,
         RequestType : RequestType.GetMany,
@@ -82,6 +98,38 @@ export class TenantAuth {
         Ownership   : ResourceOwnership.Tenant,
         ActionScope : ActionScope.Tenant,
         RequestType : RequestType.GetMany,
+    };
+
+    static readonly createSecret: AuthOptions = {
+        ...DefaultAuthOptions,
+        Context     : `${this._baseContext}.CreateSecret`,
+        Ownership   : ResourceOwnership.Tenant,
+        ActionScope : ActionScope.System,
+        RequestType : RequestType.CreateOne,
+    };
+
+    static readonly getSecret: AuthOptions = {
+        ...DefaultAuthOptions,
+        Context     : `${this._baseContext}.GetSecret`,
+        Ownership   : ResourceOwnership.Tenant,
+        ActionScope : ActionScope.System,
+        RequestType : RequestType.GetOne,
+    };
+
+    static readonly getSecretByCode: AuthOptions = {
+        ...DefaultAuthOptions,
+        Context     : `${this._baseContext}.GetSecretByCode`,
+        Ownership   : ResourceOwnership.Tenant,
+        ActionScope : ActionScope.System,
+        RequestType : RequestType.GetOne,
+    };
+
+    static readonly updateSecret: AuthOptions = {
+        ...DefaultAuthOptions,
+        Context     : `${this._baseContext}.UpdateSecret`,
+        Ownership   : ResourceOwnership.Tenant,
+        ActionScope : ActionScope.System,
+        RequestType : RequestType.UpdateOne,
     };
 
     static readonly getById: AuthOptions = {

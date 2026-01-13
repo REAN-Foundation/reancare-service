@@ -31,4 +31,6 @@ export interface IAssessmentRepo {
 
     existsWithProviderSubmissionId(provider: string, providerSubmissionId: string): Promise<boolean>;
 
+    deleteByUserId(patientUserId: string, hardDelete: boolean): Promise<boolean>;
+
 }

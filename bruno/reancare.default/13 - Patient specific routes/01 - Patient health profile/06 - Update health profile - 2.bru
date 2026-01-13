@@ -1,0 +1,104 @@
+meta {
+  name: Update health profile - 2
+  type: http
+  seq: 6
+}
+
+put {
+  url: {{BASE_URL}}/patient-health-profiles/{{PATIENT_USER_ID}}
+  body: json
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{PATIENT_USER_JWT}}
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+  Content-Type: application/json
+}
+
+body:json {
+  {
+      "BloodGroup": "O+",
+      "MajorAilment": "Heart failure",
+      "OtherConditions": "None",
+      "IsDiabetic": false,
+      "HasHeartAilment": true,
+      "MaritalStatus": "Married",
+      "Ethnicity": "South-Asian",
+      "Nationality": "Indian",
+      "Occupation": "Software engineer",
+      "SedentaryLifestyle": true,
+      "IsSmoker": false,
+      "IsDrinker": true,
+      "DrinkingSeverity": "Medium",
+      "DrinkingSince": "2010-01-01",
+      "SubstanceAbuse": true,
+      "ProcedureHistory": "Had a toncil operation"
+  }
+}
+
+tests {
+  test("Request is successfull", function () {
+      expect(res.getStatus()).to.equal(200);
+      var jsonRes = res.getBody();
+      expect(jsonRes.Status).to.eql('success');
+  });
+  
+  test("Updated patient health profile is returned", function () {
+  
+      var expectedPatientUserId = bru.getEnvVar("PATIENT_USER_ID");
+  
+      var jsonRes = res.getBody();
+      expect(jsonRes.Data).to.have.property('HealthProfile');
+      expect(jsonRes.Data.HealthProfile).to.not.be.empty;
+      expect(jsonRes.Data.HealthProfile).to.have.property('id');
+      expect(jsonRes.Data.HealthProfile).to.have.property('PatientUserId');
+      expect(jsonRes.Data.HealthProfile).to.have.property('MajorAilment');
+      expect(jsonRes.Data.HealthProfile).to.have.property('OtherConditions');
+      expect(jsonRes.Data.HealthProfile).to.have.property('BloodGroup');
+      expect(jsonRes.Data.HealthProfile).to.have.property('IsDiabetic');
+      expect(jsonRes.Data.HealthProfile).to.have.property('HasHeartAilment');
+      expect(jsonRes.Data.HealthProfile).to.have.property('MaritalStatus');
+      expect(jsonRes.Data.HealthProfile).to.have.property('Ethnicity');
+      expect(jsonRes.Data.HealthProfile).to.have.property('Nationality');
+      expect(jsonRes.Data.HealthProfile).to.have.property('Occupation');
+      expect(jsonRes.Data.HealthProfile).to.have.property('SedentaryLifestyle');
+      expect(jsonRes.Data.HealthProfile).to.have.property('IsSmoker');
+      expect(jsonRes.Data.HealthProfile).to.have.property('IsDrinker');
+      expect(jsonRes.Data.HealthProfile).to.have.property('DrinkingSeverity');
+      expect(jsonRes.Data.HealthProfile).to.have.property('DrinkingSince');
+      expect(jsonRes.Data.HealthProfile).to.have.property('ProcedureHistory');
+      expect(jsonRes.Data.HealthProfile).to.have.property('SubstanceAbuse');
+  
+      expect(jsonRes.Data.HealthProfile.PatientUserId).equals(expectedPatientUserId);
+      expect(jsonRes.Data.HealthProfile.BloodGroup).equals("O+");
+      expect(jsonRes.Data.HealthProfile.MajorAilment).equals("Heart failure");
+      expect(jsonRes.Data.HealthProfile.OtherConditions).equals("None");
+      expect(jsonRes.Data.HealthProfile.IsDiabetic).equals(false);
+      expect(jsonRes.Data.HealthProfile.HasHeartAilment).equals(true);
+      expect(jsonRes.Data.HealthProfile.MaritalStatus).equals("Married");
+      expect(jsonRes.Data.HealthProfile.Ethnicity).equals("South-Asian");
+      expect(jsonRes.Data.HealthProfile.Nationality).equals("Indian");
+      expect(jsonRes.Data.HealthProfile.Occupation).equals("Software engineer");
+      expect(jsonRes.Data.HealthProfile.SedentaryLifestyle).equals(true);
+      expect(jsonRes.Data.HealthProfile.IsSmoker).equals(false);
+      expect(jsonRes.Data.HealthProfile.IsDrinker).equals(true);
+      expect(jsonRes.Data.HealthProfile.DrinkingSeverity).equals("Medium");
+  
+      var drinkingSince = jsonRes.Data.HealthProfile.DrinkingSince;
+      if(drinkingSince){
+          drinkingSince = drinkingSince.split('T')[0];
+      }
+      expect(drinkingSince).equals("2010-01-01");
+  
+      expect(jsonRes.Data.HealthProfile.SubstanceAbuse).equals(true);
+      expect(jsonRes.Data.HealthProfile.ProcedureHistory).equals("Had a toncil operation");
+  
+  });
+  
+  
+}
+
+docs {
+  Add an address.
+}

@@ -1,0 +1,59 @@
+meta {
+  name: Search user tasks
+  type: http
+  seq: 13
+}
+
+get {
+  url: {{BASE_URL}}/user-tasks/search?userId={{PATIENT_USER_ID}}&orderBy=ScheduledStartTime&order=descending
+  body: none
+  auth: none
+}
+
+params:query {
+  userId: {{PATIENT_USER_ID}}
+  orderBy: ScheduledStartTime
+  order: descending
+  ~scheduledFrom: 2022-06-06
+  ~scheduledTo: 2022-06-06
+  ~task: 
+  ~actionType: 
+  ~status: completed
+  ~actionId: {{MEDICATION_CONSUMPTION_ID}}
+  ~category: Medication
+  ~dateFrom: 2022-02-16
+  ~dateTo: 2022-02-16
+  ~createdDateTo: 2021-10-14
+  ~createdDateFrom: 2021-09-01
+  ~orderBy: 
+  ~order: ascending
+  ~pageIndex: 0
+  ~itemsPerPage: 25
+}
+
+headers {
+  Authorization: Bearer {{PATIENT_USER_JWT}}
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+  Content-Type: application/json
+}
+
+tests {
+  test("Request is successfull", function () {
+      expect(res.getStatus()).to.equal(200);
+      var jsonRes = res.getBody();
+      expect(jsonRes.Status).to.eql('success');
+  });
+  
+  test("List of User task records is returned", function () {
+  
+      var jsonRes = res.getBody();
+      expect(jsonRes.Data).to.have.property('UserTasks');
+      expect(jsonRes.Data.UserTasks.Items.length).greaterThan(0);
+  
+  });
+  
+}
+
+docs {
+  Search User Task records with filters
+}

@@ -30,6 +30,8 @@ import { ActivityTrackerHandler } from "../../users/patient/activity.tracker/act
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+export const MEDICATION_CONSUMPTION_DURATION_DAYS = 40;
+
 @injectable()
 export class MedicationConsumptionService implements IUserActionService {
 
@@ -47,7 +49,12 @@ export class MedicationConsumptionService implements IUserActionService {
         }
     }
 
-    create = async (medication: MedicationDto, customStartDate = null)
+    create = async (
+        medication: MedicationDto,
+        customStartDate = null,
+        scheduledMedicationConsumptionsCount: number = 0,
+        medicationConsumptionDurationDays: number = MEDICATION_CONSUMPTION_DURATION_DAYS
+    )
         :Promise<MedicationConsumptionStatsDto> => {
 
         var timeZone = await this.getPatientTimeZone(medication.PatientUserId);
@@ -69,7 +76,11 @@ export class MedicationConsumptionService implements IUserActionService {
         var dosageUnit = medication.DosageUnit;
         var refills = medication.RefillCount;
 
-        var days = this.getDurationInDays(duration, durationUnit, refills);
+        var days = Math.min(
+            medicationConsumptionDurationDays,
+            (this.getDurationInDays(duration, durationUnit, refills) - scheduledMedicationConsumptionsCount)
+        );
+
         var dayStep = this.getDayStep(frequency, frequencyUnit);
 
         var totalCount = 0;
@@ -280,8 +291,8 @@ export class MedicationConsumptionService implements IUserActionService {
         return updatedDto;
     };
 
-    deleteFutureMedicationSchedules = async (medicationId: string): Promise<number> => {
-        return await this._medicationConsumptionRepo.deleteFutureMedicationSchedules(medicationId);
+    deleteFutureMedicationSchedules = async (medicationId: string, hardDelete: boolean = false): Promise<number> => {
+        return await this._medicationConsumptionRepo.deleteFutureMedicationSchedules(medicationId, hardDelete);
     };
 
     getById = async (id: string): Promise<MedicationConsumptionDetailsDto> => {
@@ -531,6 +542,13 @@ export class MedicationConsumptionService implements IUserActionService {
         return await this.getById(actionId);
     };
 
+    getScheduledMedicationCountById = async(medicationId: string): Promise<number> => {
+        return await this._medicationConsumptionRepo.getScheduledMedicationCountById(medicationId);
+    };
+
+    deleteByUserId = async (patientUserId: string, hardDelete: boolean = true): Promise<boolean> => {
+        return await this._medicationConsumptionRepo.deleteByUserId(patientUserId, hardDelete);
+    };
     //#region Privates
 
     private async finishAssociatedTask(medConsumption: MedicationConsumptionDetailsDto) {
@@ -658,7 +676,7 @@ export class MedicationConsumptionService implements IUserActionService {
         return scheduleSlots;
     };
 
-    private getDurationInDays = (duration, durationUnit, refillsCount) => {
+    getDurationInDays = (duration, durationUnit, refillsCount) => {
 
         var refills = 0;
         if (refillsCount) {
@@ -676,7 +694,7 @@ export class MedicationConsumptionService implements IUserActionService {
         return 1;
     };
 
-    private getDayStep = (frequency, frequencyUnit) => {
+    getDayStep = (frequency, frequencyUnit) => {
 
         if (frequencyUnit === MedicationFrequencyUnits.Daily) {
             return 1;
@@ -795,7 +813,7 @@ export class MedicationConsumptionService implements IUserActionService {
             messageTemplate.MedicationReminder.NotificationType, title, body
         );
         Logger.instance().log(`Seding notification to patient :: ${patientUserId} - ${JSON.stringify(message)}`);
-        
+
         for await (var device of deviceList) {
             await Loader.notificationService.sendNotificationToDevice(device.Token, message);
         }

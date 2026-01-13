@@ -1,0 +1,44 @@
+meta {
+  name: Get pulse record by id
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{BASE_URL}}/clinical/biometrics/pulse/{{BIOMETRICS_PULSE_ID}}
+  body: none
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{PATIENT_USER_JWT}}
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+  Content-Type: application/json
+}
+
+tests {
+  test("Request is successfull", function () {
+      expect(res.getStatus()).to.equal(200);
+      var jsonRes = res.getBody();
+      expect(jsonRes.Status).to.eql('success');
+  });
+  
+  test("Pulse record is returned", function () {
+  
+      var expectedValue = 72;
+      var expectedPatientUserId = bru.getEnvVar("PATIENT_USER_ID");
+  
+      var jsonRes = res.getBody();
+      expect(jsonRes.Data).to.have.property('Pulse');
+      expect(jsonRes.Data.Pulse).to.not.be.empty;
+      expect(jsonRes.Data.Pulse).to.have.property('id');
+      expect(jsonRes.Data.Pulse).to.have.property('Pulse');
+      expect(jsonRes.Data.Pulse).to.have.property('PatientUserId');
+  
+      expect(jsonRes.Data.Pulse.Pulse).equals(expectedValue);
+      expect(jsonRes.Data.Pulse.PatientUserId).equals(expectedPatientUserId);
+  
+  });
+  
+  
+}

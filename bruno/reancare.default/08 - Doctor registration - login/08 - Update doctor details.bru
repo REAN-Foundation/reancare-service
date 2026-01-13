@@ -1,0 +1,69 @@
+meta {
+  name: Update doctor details
+  type: http
+  seq: 6
+}
+
+put {
+  url: {{BASE_URL}}/doctors/{{DOCTOR_USER_ID}}
+  body: json
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{DOCTOR_USER_JWT}}
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+  Content-Type: application/json
+}
+
+body:json {
+  {
+      "Prefix": "Mr.",
+      "FirstName": "{{FIRST_NAME}}",
+      "MiddleName": "ASDF",
+      "LastName": "{{LAST_NAME}}",
+      "Email": "{{EMAIL}}",
+      "Gender": "Male",
+      "BirthDate": "1979-01-01",
+      "ImageResourceId": ""
+  }
+}
+
+tests {
+  try {
+      var jsonRes = res.getBody();
+      bru.setEnvVar("DOCTOR_FIRST_NAME", jsonRes.Data.Doctor.User.Person.FirstName);
+      bru.setEnvVar("DOCTOR_PHONE", jsonRes.Data.Doctor.User.Person.Phone);
+      bru.setEnvVar("DOCTOR_GENDER", jsonRes.Data.Doctor.User.Person.Gender);
+      bru.setEnvVar("DOCTOR_EMAIL", jsonRes.Data.Doctor.User.Person.Email);
+  
+      var phone = jsonRes.Data.Doctor.User.Person.Phone;
+      var tokens = phone.split('-');
+      var phoneNumber = tokens[1];
+  
+      bru.setEnvVar("DOCTOR_PHONE_NUMBER", phoneNumber);
+  }
+  catch (error) {
+      console.log(error.message);
+  }
+  
+  
+  test("Request is successfull", function () {
+      expect(res.getStatus()).to.equal(200);
+      var jsonRes = res.getBody();
+      expect(jsonRes.Status).to.eql('success');
+  });
+  
+  test("Doctor details are updated", function () {
+      var jsonRes = res.getBody();
+      expect(jsonRes.Data).to.have.property('Doctor');
+      expect(jsonRes.Data.Doctor).to.not.be.empty;
+      expect(jsonRes.Data.Doctor).to.have.property('id');
+      expect(jsonRes.Data.Doctor).to.have.property('User');
+      expect(jsonRes.Data.Doctor.User).to.not.be.empty;
+      expect(jsonRes.Data.Doctor.User).to.have.property('id');
+      expect(jsonRes.Data.Doctor.User.Person).to.not.be.empty;
+      expect(jsonRes.Data.Doctor.User.Person).to.have.property('id');
+  });
+  
+}

@@ -1,9 +1,16 @@
 import express from 'express';
 import { QueryResponseType } from '../../../../domain.types/clinical/assessment/assessment.types';
-import { AssessmentDomainModel } from '../../../../domain.types/clinical/assessment/assessment.domain.model';
+import { AssessmentDomainModel, AssessmentSubmissionDomainModel } from '../../../../domain.types/clinical/assessment/assessment.domain.model';
 import { AssessmentSearchFilters } from '../../../../domain.types/clinical/assessment/assessment.search.types';
 import { BaseValidator, Where } from '../../../base.validator';
 import { AssessmentAnswerDomainModel } from '../../../../domain.types/clinical/assessment/assessment.answer.domain.model';
+import { ApiError } from '../../../../common/api.error';
+import { Gender } from '../../../../domain.types/miscellaneous/system.types';
+import { COUNTRY_CODE_INDIA } from '../../../../domain.types/person/person.types';
+import { PersonDomainModel } from '../../../../domain.types/person/person.domain.model';
+import { BiometricAlertSettings } from '../../../../domain.types/clinical/biometrics/biometrics.types';
+import { NotificationChannel } from '../../../../domain.types/general/notification/notification.types';
+import { BotMessagingType } from '../../../../domain.types/miscellaneous/bot,request.types';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -18,7 +25,7 @@ export class AssessmentValidator extends BaseValidator {
         var dateStr = request.body.ScheduledDate ? new Date(request.body.ScheduledDate).toISOString()
             .split('T')[0] : null;
 
-        const patientAssessmentModel: AssessmentDomainModel = {
+        const model: AssessmentDomainModel = {
             PatientUserId          : request.body.PatientUserId ?? null,
             Title                  : request.body.Title ?? null,
             Type                   : request.body.Type ?? null,
@@ -32,7 +39,7 @@ export class AssessmentValidator extends BaseValidator {
             ScheduledDateString    : dateStr
         };
 
-        return patientAssessmentModel;
+        return model;
     };
 
     create = async (request: express.Request): Promise<AssessmentDomainModel> => {
@@ -166,6 +173,32 @@ export class AssessmentValidator extends BaseValidator {
         return answerModelList;
     };
 
+    submitAtOnce = async (request: express.Request): Promise<AssessmentSubmissionDomainModel> => {
+        await this.validateString(request, 'PatientUserId', Where.Body, true, false, false, 1);
+        await this.validateString(request, 'AssessmentTemplateId', Where.Body, true, false, false, 1);
+        await this.validateString(request, 'AssessmentTemplateTitle', Where.Body, true, false);
+        await this.validateString(request, 'ClientName', Where.Body, true, false, false, 1);
+        await this.validateString(request, 'TenantId', Where.Body, true, false, false, 1);
+        await this.validateString(request, 'FlowToken', Where.Body, false, false);
+        await this.validateObject(request, 'Answers', Where.Body, true, false);
+        this.validateRequest(request);
+        
+        var submissionModel: AssessmentSubmissionDomainModel = {
+            PatientUserId           : request.body.PatientUserId,
+            AssessmentTemplateId    : request.body.AssessmentTemplateId,
+            AssessmentTemplateTitle : request.body.AssessmentTemplateTitle ?? null,
+            ScoringApplicable       : request.body.ScoringApplicable ?? false,
+            ClientName              : request.body.ClientName,
+            TenantId                : request.body.TenantId,
+            FlowToken               : request.body.FlowToken ?? null,
+            Answers                 : request.body.Answers,
+            ProviderEnrollmentId    : request.body.ProviderEnrollmentId ?? null,
+            ProviderAssessmentCode  : request.body.ProviderAssessmentCode ?? null,
+            Provider                : request.body.Provider ?? null,
+        };
+        return submissionModel;
+    };
+
     private getFilter(request): AssessmentSearchFilters {
 
         var filters: AssessmentSearchFilters = {
@@ -219,5 +252,71 @@ export class AssessmentValidator extends BaseValidator {
         this.validateRequest(request);
 
     }
+
+    userRegistration = (request: Record<string, string>): PersonDomainModel => {
+
+        if (!('FirstName' in request)) {
+            throw new ApiError(400, 'Please provide a first name.');
+        }
+        if (!('LastName' in request)) {
+            throw new ApiError(400, 'Please provide a last name.');
+        }
+        if (!('Phone' in request)) {
+            throw new ApiError(400, 'Please provide a phone number.');
+        }
+
+        if (!request['Phone'].startsWith('+')) {
+            request['Phone'] = COUNTRY_CODE_INDIA + '-' + request['Phone'];
+        }
+        const model: PersonDomainModel = {
+            FirstName                 : request['FirstName'],
+            LastName                  : request['LastName'],
+            Phone                     : request['Phone'],
+            Gender                    : request['Gender'] as Gender ?? null,
+            BirthDate                 : request['BirthDate'] ? new Date(Date.parse(request['BirthDate'])) : null,
+            Prefix                    : request['Prefix'] ?? null,
+            Email                     : request['Email'] ?? null,
+            UniqueReferenceId         : request['UniqueReferenceId'] ?? null,
+            UniqueReferenceIdType     : request['UniqueReferenceIdType'] ?? null,
+            SelfIdentifiedGender      : request['SelfIdentifiedGender'] ?? null,
+            MaritalStatus             : request['MaritalStatus'] ?? null,
+            Race                      : request['Race'] ?? null,
+            Ethnicity                 : request['Ethnicity'] ?? null,
+            StrokeSurvivorOrCaregiver : request['StrokeSurvivorOrCaregiver'] ?? null,
+            ImageResourceId           : request['ImageResourceId'] ?? null,
+        };
+
+        return model;
+    };
+
+    validateAssessmentTargetUser = (request: Record<string, string>): string => {
+        if (!('EMRId' in request)) {
+            return null;
+        }
+        return request['EMRId'];
+    };
+
+    validateBiometricAlertSettings = (biometricAlertSettings: Record<string, string>): BiometricAlertSettings => {
+        if (!biometricAlertSettings && !('Channel' in biometricAlertSettings)) {
+            throw new ApiError(400, 'Channel is not found in Biometric Alert Settings.');
+        }
+        if (!biometricAlertSettings && !('ClientName' in biometricAlertSettings)) {
+            throw new ApiError(400, 'Client Name is not found in Biometric Alert Settings.');
+        }
+        if (!biometricAlertSettings && !('BiometricAlertCategories' in biometricAlertSettings)) {
+            throw new ApiError(400, 'Biometric Alert Categories is not found in Biometric Alert Settings.');
+        }
+        if (!biometricAlertSettings && !('Type' in biometricAlertSettings)) {
+            throw new ApiError(400, 'Type is not found in Biometric Alert Settings.');
+        }
+      
+        return {
+            Channel                  : biometricAlertSettings['Channel'] as NotificationChannel,
+            ClientName               : biometricAlertSettings['ClientName'],
+            BiometricAlertCategories : biometricAlertSettings['BiometricAlertCategories'] as unknown as string[],
+            Type                     : biometricAlertSettings['Type'] as BotMessagingType,
+            TemplateName             : biometricAlertSettings['TemplateName'] ?? null
+        };
+    };
 
 }

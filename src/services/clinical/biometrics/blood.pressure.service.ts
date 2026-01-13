@@ -105,4 +105,8 @@ export class BloodPressureService {
         return await this._bloodPressureRepo.getMostRecentBloodPressureActivity(patientUserId);
     };
 
+    deleteByUserId = async (patientUserId: string, hardDelete: boolean = true): Promise<boolean> => {
+        return await this._bloodPressureRepo.deleteByUserId(patientUserId, hardDelete);
+    };
+
 }

@@ -1,0 +1,69 @@
+meta {
+  name: Add blood glucose
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{BASE_URL}}/clinical/biometrics/blood-glucose
+  body: json
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{PATIENT_USER_JWT}}
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+  Content-Type: application/json
+}
+
+body:json {
+  {
+      "PatientUserId": "{{PATIENT_USER_ID}}",
+      "Unit": "mg|dL",
+      "BloodGlucose": 98,
+      "RecordDate": "2021-09-02",
+      "RecordedByUserId": "{{RECORDED_BY_USER_ID}}"
+  }
+  
+}
+
+script:pre-request {
+  var userId = bru.getEnvVar("PATIENT_USER_ID");
+  bru.setEnvVar("RECORDED_BY_USER_ID", userId);
+  
+}
+
+tests {
+  var jsonRes = res.getBody();
+  
+  try {
+      bru.setEnvVar("BIOMETRICS_BLOOD_GLUCOSE_ID", jsonRes.Data.BloodGlucose.id);
+  }
+  catch (error) {
+      console.log(error.message);
+  }
+  
+  test("Request is successfull", function () {
+      expect(res.getStatus()).to.equal(201);
+      var jsonRes = res.getBody();
+      expect(jsonRes.Status).to.eql('success');
+  });
+  
+  test("New blood glucose record is created", function () {
+  
+      var expectedValue = 98;
+      var expectedPatientUserId = bru.getEnvVar("PATIENT_USER_ID");
+  
+      var jsonRes = res.getBody();
+      expect(jsonRes.Data).to.have.property('BloodGlucose');
+      expect(jsonRes.Data.BloodGlucose).to.not.be.empty;
+      expect(jsonRes.Data.BloodGlucose).to.have.property('id');
+      expect(jsonRes.Data.BloodGlucose).to.have.property('BloodGlucose');
+      expect(jsonRes.Data.BloodGlucose).to.have.property('PatientUserId');
+      
+  
+      expect(jsonRes.Data.BloodGlucose.BloodGlucose).equals(expectedValue);
+      expect(jsonRes.Data.BloodGlucose.PatientUserId).equals(expectedPatientUserId);
+  
+  });
+}

@@ -13,7 +13,7 @@
       "ProviderGivenId": null,
       "ProviderGivenCode": null,
       "Title": "Assessment root node",
-      "Children": [
+      "ChildrenNodeDisplayCodes": [
         "QNode#7ao5fbmgwn81roab5i0i7fro",
         "QNode#6em7ql5ljwi1s70l2md9fjrz",
         "QNode#3t5zbed6cxvfcc7uxdbehtii",

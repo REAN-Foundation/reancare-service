@@ -8,6 +8,8 @@ import { EnrollmentDomainModel } from '../domain.types/clinical/careplan/enrollm
 import { UserTaskSenderService } from '../services/users/user/user.task.sender.service';
 import { Injector } from '../startup/injector';
 import { GGHNActions } from './gghn/gghn.actions';
+import { CommonActions } from './common/common.actions';
+import { AssessmentService } from '../services/clinical/assessment/assessment.service';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -16,6 +18,8 @@ export class CustomActionsHandler {
     _ahaActions: AHAActions = new AHAActions();
 
     _gghnActions: GGHNActions = new GGHNActions();
+
+    _comonActions: CommonActions = new CommonActions();
 
     //#region Public
 
@@ -70,14 +74,16 @@ export class CustomActionsHandler {
         }
     };
 
-    public performActions_PostAssessmentScoring = async (patientUserId: uuid, assessmentId: uuid): Promise<any> => {
+    public performActionsPostAssessmentScoring = async (patientUserId: uuid, assessmentId: uuid): Promise<any> => {
         try {
             if (this.isForAHA()) {
-                return await this._ahaActions.performActions_PostAssessmentScoring(patientUserId, assessmentId);
+                return await this._ahaActions.performActionsAHAPostAssessmentScoring(patientUserId, assessmentId);
+            } else {
+                return await this._ahaActions.performActionsDefaultPostAssessmentScoring(patientUserId, assessmentId);
             }
         }
         catch (error) {
-            Logger.instance().log(`Error performing post registration custom actions.`);
+            Logger.instance().log(`Error performing post assessment scoring actions.`);
         }
     };
 
@@ -155,6 +161,15 @@ export class CustomActionsHandler {
         }
     };
 
+    public scheduleCreateMedicationConsumptionTask = async (cronExpression: string) => {
+        try {
+            Logger.instance().log('Inside scheduleCreateMedicationConsumptionTask');
+            await this._comonActions.scheduleCreateMedicationConsumptionTask(cronExpression);
+        }
+        catch (error) {
+            Logger.instance().log(`Error in schedule of medication consumption task.`);
+        }
+    };
     //#endregion
 
     //#region Privates
@@ -166,10 +181,7 @@ export class CustomActionsHandler {
         const isForAHA =
         systemIdentifier.includes('AHA') ||
         systemIdentifier.includes('AHA Helper') ||
-        systemIdentifier.includes('HF Helper') ||
-        systemIdentifier.includes('Lipid Helper') ||
-        process.env.NODE_ENV === 'development' ||
-        process.env.NODE_ENV === 'uat';
+        systemIdentifier.includes('HF Helper');
 
         return isForAHA;
     };

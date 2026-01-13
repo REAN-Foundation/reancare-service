@@ -1,0 +1,65 @@
+meta {
+  name: Create
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{BASE_URL}}/clinical/maternity/maternity-deliveries/{{DELIVERY_ID}}/postnatal-visits
+  body: json
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{ADMIN_USER_JWT}}
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+  Content-Type: application/json
+}
+
+body:json {
+  {
+      "DeliveryId": "{{DELIVERY_ID}}",
+      "PatientUserId": "{{PATIENT_USER_ID}}",
+      "DateOfVisit": "2025-03-30T10:30:00Z",
+      "BodyWeightId": "{{BODY_WEIGHT_ID}}",
+      "ComplicationId": "{{COMPLICATION_ID}}",
+      "BodyTemperatureId": "{{BIOMETRICS_BODY_TEMPERATURE_ID}}",
+      "BloodPressureId": "c7d9e1b2-5c27-4a12-b5c1-14e6f0c2d4a5"
+  }
+  
+}
+
+tests {
+  try {
+  
+      var jsonData = res.getBody();
+      var id = jsonData.Data.PostnatalVisit.id;
+      bru.setEnvVar("POSTNATAL_VISIT_ID", id);
+  
+  }
+  catch (error) {
+      console.log(error.message);
+  }
+  
+  test("Request is successfull", function () {
+      expect(res.getStatus()).to.equal(201);
+      var jsonRes = res.getBody();
+      expect(jsonRes.Status).to.eql('success');
+  });
+  
+  test("New Postnatal visit record is created", function () {
+  
+      var jsonRes = res.getBody();
+      expect(jsonRes.Data).to.have.property('PostnatalVisit');
+      
+      expect(jsonRes.Data.PostnatalVisit).to.have.property('id');
+      expect(jsonRes.Data.PostnatalVisit).to.have.property('DeliveryId');
+      expect(jsonRes.Data.PostnatalVisit).to.have.property('PatientUserId');
+      expect(jsonRes.Data.PostnatalVisit).to.have.property('DateOfVisit');
+      expect(jsonRes.Data.PostnatalVisit).to.have.property('BodyWeightId');
+      expect(jsonRes.Data.PostnatalVisit).to.have.property('ComplicationId');
+      expect(jsonRes.Data.PostnatalVisit).to.have.property('BodyTemperatureId');
+      expect(jsonRes.Data.PostnatalVisit).to.have.property('BloodPressureId');
+  });
+  
+}

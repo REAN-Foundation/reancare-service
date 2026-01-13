@@ -38,6 +38,12 @@ export default class CareplanParticipant extends Model {
     ParticipantId: string;
 
     @Column({
+        type      : DataType.STRING(64),
+        allowNull : false,
+    })
+        TenantId: string;
+
+    @Column({
         type         : DataType.STRING(64),
         allowNull    : false,
         defaultValue : "AHA"

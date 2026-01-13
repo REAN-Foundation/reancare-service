@@ -1,0 +1,64 @@
+meta {
+  name: 02 - Add list node - Q1
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{BASE_URL}}/clinical/assessment-templates/{{ASSESSMENT_TEMPLATE_ID}}/nodes
+  body: json
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{ADMIN_USER_JWT}}
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+  Content-Type: application/json
+}
+
+body:json {
+  {
+      "ParentNodeId": "{{ASSESSMENT_TEMPLATE_ROOT_NODE_ID}}",
+      "NodeType": "Node list",
+      "Title": "Q. Effects of cholesterol on daily activities.",
+      "ServeListNodeChildrenAtOnce": false
+  }
+  
+}
+
+tests {
+  var jsonRes = res.getBody();
+  
+  try {
+      bru.setEnvVar("ASSESSMENT_NODE_ID", jsonRes.Data.AssessmentNode.id);
+      bru.setEnvVar("ASSESSMENT_LIST_NODE_ID", jsonRes.Data.AssessmentNode.id);
+      bru.setEnvVar("COMB_ASSESSMENT_NODE_Q1_ID", jsonRes.Data.AssessmentNode.id);
+  }
+  catch (error) {
+      console.log(error.message);
+  }
+  
+  test("Request is successfull", function () {
+      expect(res.getStatus()).to.equal(201);
+      var jsonRes = res.getBody();
+      expect(jsonRes.Status).to.eql('success');
+  });
+  
+  test("Assessment list node is created", function () {
+     
+      var jsonRes = res.getBody();
+      expect(jsonRes.Data).to.have.property('AssessmentNode');
+      expect(jsonRes.Data.AssessmentNode).to.not.be.empty;
+      expect(jsonRes.Data.AssessmentNode).to.have.property('id');
+      expect(jsonRes.Data.AssessmentNode).to.have.property('ParentNodeId');
+      expect(jsonRes.Data.AssessmentNode).to.have.property('NodeType');
+      expect(jsonRes.Data.AssessmentNode).to.have.property('Title');
+      expect(jsonRes.Data.AssessmentNode).to.have.property('TemplateId');
+      
+      expect(jsonRes.Data.AssessmentNode.Title).equals("Q 1/8. Effects of heart failure on daily activities.");
+      expect(jsonRes.Data.AssessmentNode.NodeType).equals("Node list");
+              
+      expect(jsonRes.Data.AssessmentNode.Sequence).greaterThan(0);
+  });
+  
+}

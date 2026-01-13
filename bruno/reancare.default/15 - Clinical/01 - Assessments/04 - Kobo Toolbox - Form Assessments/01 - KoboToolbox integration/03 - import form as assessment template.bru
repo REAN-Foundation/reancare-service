@@ -1,0 +1,69 @@
+meta {
+  name: import form as assessment template
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{BASE_URL}}/clinical/forms/provider/afxhbExAq9Hoff7B2nuP9m/import-form/911036
+  body: json
+  auth: none
+}
+
+headers {
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+  Content-Type: application/json
+  Authorization: Bearer {{PATIENT_USER_JWT}}
+}
+
+body:json {
+  {
+      "BaseUrl":"{{KOBO_TOOLBOX_BASE_URL}}",
+      "SecondaryUrl":"{{KOBO_TOOLBOX_SECONDARY_URL}}",
+      "Token":"{{KOBO_TOOLBOX_TOKEN}}"
+  }
+}
+
+script:pre-request {
+  bru.setEnvVar("KOBO_TOOLBOX_BASE_URL", "https://kc.kobotoolbox.org/api/");
+  bru.setEnvVar("KOBO_TOOLBOX_SECONDARY_URL", "https://kf.kobotoolbox.org/api/");
+  bru.setEnvVar("KOBO_TOOLBOX_TOKEN", "");
+  //1023823
+}
+
+tests {
+  var jsonRes = res.getBody();
+  
+  try {
+      bru.setEnvVar("ASSESSMENT_TEMPLATE_ID", jsonRes.Data.AssessmentTemplate.id);
+  }
+  catch (error) {
+      console.log(error.message);
+  }
+  
+  test("Request is successfull", function () {
+      expect(res.getStatus()).to.equal(200);
+      var jsonRes = res.getBody();
+      expect(jsonRes.Status).to.eql('success');
+  });
+  
+  test("Import kobo-toolbox form", function () {
+      var jsonRes = res.getBody();
+      expect(jsonRes.Data).to.have.property('AssessmentTemplate');
+      expect(jsonRes.Data.AssessmentTemplate).to.not.be.empty;
+      expect(jsonRes.Data.AssessmentTemplate).to.have.property('id');
+      expect(jsonRes.Data.AssessmentTemplate).to.have.property('DisplayCode');
+      expect(jsonRes.Data.AssessmentTemplate).to.have.property('Title');
+      expect(jsonRes.Data.AssessmentTemplate).to.have.property('Type');
+      expect(jsonRes.Data.AssessmentTemplate).to.have.property('Provider');
+      expect(jsonRes.Data.AssessmentTemplate).to.have.property('ProviderAssessmentCode');
+      expect(jsonRes.Data.AssessmentTemplate).to.have.property('RootNodeId');
+      expect(jsonRes.Data.AssessmentTemplate).to.have.property('FileResourceId');
+  });
+  
+  
+}
+
+docs {
+  Add an emergency event.
+}

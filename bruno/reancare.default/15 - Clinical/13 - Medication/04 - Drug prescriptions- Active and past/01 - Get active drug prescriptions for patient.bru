@@ -1,0 +1,17 @@
+meta {
+  name: Get active drug prescriptions for patient
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{BASE_URL}}/drug-order/active-for-patient/{{PATIENT_ROLE_USER_ID}}
+  body: none
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{PATIENT_USER_JWT}}
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+  Content-Type: application/json
+}

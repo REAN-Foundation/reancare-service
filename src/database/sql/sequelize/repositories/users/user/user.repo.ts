@@ -135,6 +135,18 @@ export class UserRepo implements IUserRepo {
         return await UserMapper.toDetailsDto(user);
     };
 
+    getByUniqueReferenceIdAndRole = async (uniqueReferenceId: string, roleId: number): Promise<UserDetailsDto> => {
+        if (!uniqueReferenceId || !roleId) {
+            return null;
+        }
+        const person = await Person.findOne({ where: { UniqueReferenceId: uniqueReferenceId } });
+        if (person == null) {
+            return null;
+        }
+        const user = await User.findOne({ where: { PersonId: person.id, RoleId: roleId } });
+        return UserMapper.toDetailsDto(user);
+    };
+
     userExistsWithUsername = async (userName: string): Promise<boolean> => {
         if (userName != null && typeof userName !== 'undefined') {
             const existing = await User.findOne({

@@ -1,0 +1,44 @@
+meta {
+  name: Get next assessment question
+  type: http
+  seq: 3
+}
+
+get {
+  url: {{BASE_URL}}/clinical/assessments/{{ASSESSMENT_ID}}/questions/next
+  body: none
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{PATIENT_USER_JWT}}
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+  Content-Type: application/json
+}
+
+tests {
+  
+  try {
+      var jsonRes = res.getBody();
+      bru.setEnvVar("ASSESSMENT_QUESTION_ID", jsonRes.Data.Next.id);
+      bru.setEnvVar("ASSESSMENT_NEXT_QUESTION_ID", jsonRes.Data.Next.id);
+  }
+  catch (error) {
+      console.log(error.message);
+  }
+  
+  test("Request is successfull", function () {
+      expect(res.getStatus()).to.equal(200);
+      var jsonRes = res.getBody();
+      expect(jsonRes.Status).to.eql('success');
+  });
+  
+  test("Assessment question is returned", function () {
+      var jsonRes = res.getBody();
+      expect(jsonRes.Data).to.have.property('Next');
+      expect(jsonRes.Data.Next).to.not.be.empty;
+      expect(jsonRes.Data.Next).to.have.property('id');
+  });
+  
+  
+}

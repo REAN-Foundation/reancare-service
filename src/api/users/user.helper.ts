@@ -21,6 +21,8 @@ import { TenantDto } from '../../domain.types/tenant/tenant.dto';
 import { DoctorDomainModel } from '../../domain.types/users/doctor/doctor.domain.model';
 import { DoctorDetailsDto } from '../../domain.types/users/doctor/doctor.dto';
 import { DoctorService } from '../../services/users/doctor/doctor.service';
+import { Logger } from '../../common/logger';
+import { PersonDomainModel } from '../../domain.types/person/person.domain.model';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -55,7 +57,8 @@ export class UserHelper {
 
     public performDuplicatePersonCheck = async (
         phone: string | null | undefined,
-        email: string | null | undefined) => {
+        email: string | null | undefined,
+        uniqueReferenceId: string | null | undefined = null) => {
         const support = process.env.SUPPORT_EMAIL || 'support';
         if (phone) {
             const multiplePersonsWithSamePhone = await this._personService.multiplePersonsWithSamePhone(phone);
@@ -68,6 +71,13 @@ export class UserHelper {
             const multiplePersonsWithSameEmail = await this._personService.multiplePersonsWithSameEmail(email);
             if (multiplePersonsWithSameEmail) {
                 const message = `Multiple persons are associated with the Email ${email}. Please contact ${support} to merge your accounts.`;
+                throw new ApiError(409, message);
+            }
+        }
+        if (uniqueReferenceId) {
+            const multiplePersonsWithSameUniqueReferenceId = await this._personService.multiplePersonsWithSameUniqueReferenceId(uniqueReferenceId);
+            if (multiplePersonsWithSameUniqueReferenceId) {
+                const message = `Multiple persons are associated with the Unique Reference ID ${uniqueReferenceId}. Please contact ${support} to merge your accounts.`;
                 throw new ApiError(409, message);
             }
         }
@@ -84,16 +94,17 @@ export class UserHelper {
             throw new ApiError(404, 'Role- ' + Roles.Patient + ' does not exist!');
         }
 
-        await this.performDuplicatePersonCheck(createModel.User.Person.Phone, createModel.User.Person.Email);
+        await this.performDuplicatePersonCheck(createModel.User.Person.Phone, createModel.User.Person.Email, createModel.User.Person.UniqueReferenceId);
 
-        // First check using phone and email if the person exists
+        // First check using phone, email and unique reference id if the person exists
         const basicDetails: UserBasicDetails = {
             Phone : createModel.User.Person.Phone,
-            Email : createModel.User.Person.Email
+            Email : createModel.User.Person.Email,
+            UniqueReferenceId : createModel.User.Person.UniqueReferenceId
         };
         person = await this._userService.getExistingPerson(basicDetails);
 
-        //If the person does not exist with the same phone and email, check if the person exists with the same username.
+        //If the person does not exist with the same phone, email and unique reference id, check if the person exists with the same username.
         //This is true for the patients coming from the bot.
         //We are allowing some patient's coming from the bot to be created without phone number or email
         if (person == null && createModel.User.UserName != null) {
@@ -120,7 +131,7 @@ export class UserHelper {
             }
             //Person exists but patient does not exist, check if the user exists or not!
             if (!user) {
-                user = await this._userService.getByPhoneAndRole(createModel.User.Person.Phone, patientRole.id);
+                user = await this._userService.getExistingUser(basicDetails, patientRole.id);
                 if (!user) {
                     //User with patient role does not exist for this person, create one
                     user = await this.createUser(person, createModel, patientRole.id);
@@ -157,6 +168,56 @@ export class UserHelper {
         patient.User.Person.Addresses = [address];
 
         return [ patient, true ];
+    };
+
+    checkMultipleAdministrativeRoles = async (newRoleId: number, existingPersonId: string) => {
+        var allRoles = await this._roleService.search({});
+        var newRoleName = allRoles.Items.find(r => r.id === newRoleId)?.RoleName;
+        if (!newRoleName) {
+            const msg = 'Role not found.';
+            Logger.instance().log(`Role not found: Role id ${newRoleId}`);
+            throw new ApiError(404, msg);
+        }
+        if (newRoleName !== Roles.TenantAdmin &&
+                newRoleName !== Roles.TenantUser &&
+                newRoleName !== Roles.SystemAdmin &&
+                newRoleName !== Roles.SystemUser) {
+            return;
+        }
+        var existingUsers = await this._userService.getByPersonId(existingPersonId);
+        for (var i = 0; i < existingUsers.length; i++) {
+            var existingUserRoleName = allRoles.Items.find(r => r.id === existingUsers[i].RoleId)?.RoleName;
+            if (!existingUserRoleName) {
+                const msg = 'Role not found.';
+                throw new ApiError(404, msg);
+            }
+            if (existingUserRoleName === Roles.TenantAdmin ||
+                    existingUserRoleName === Roles.TenantUser ||
+                    existingUserRoleName === Roles.SystemAdmin ||
+                    existingUserRoleName === Roles.SystemUser) {
+                const msg = `User cannot have multiple administrative roles.`;
+                throw new ApiError(409, msg);
+            }
+        }
+    };
+
+    updatePersonInformation = async (person: PersonDetailsDto, model: UserDomainModel) => {
+        const personUpdateModel: PersonDomainModel = {};
+        if (!person.Email && model.Person.Email) {
+            const personWithEmail = await this._personService.getPersonWithEmail(model.Person.Email);
+            if (personWithEmail) {
+                return null;
+            }
+            personUpdateModel.Email = model.Person.Email;
+        }
+        if (!person.FirstName && model.Person.FirstName) {
+            personUpdateModel.FirstName = model.Person.FirstName;
+        }
+        if (!person.LastName && model.Person.LastName) {
+            personUpdateModel.LastName = model.Person.LastName;
+        }
+        const updatedPerson = await this._personService.update(person.id, personUpdateModel);
+        return updatedPerson;
     };
 
     private createPatientWithHealthProfile = async (

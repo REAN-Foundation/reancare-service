@@ -1,0 +1,48 @@
+meta {
+  name: Get body height by id
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{BASE_URL}}/clinical/biometrics/body-heights/{{BODY_HEIGHT_ID}}
+  body: json
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{PATIENT_USER_JWT}}
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+  Content-Type: application/json
+}
+
+tests {
+  test("Request is successfull", function () {
+      expect(res.getStatus()).to.equal(200);
+      var jsonRes = res.getBody();
+      expect(jsonRes.Status).to.eql('success');
+  });
+  
+  test("Body height biometric is returned", function () {
+  
+      var expectedPatientUserId = bru.getEnvVar("PATIENT_USER_ID");
+      var expectedBodyHeight = bru.getEnvVar("BODY_HEIGHT");
+      var expectedHeightUnit = bru.getEnvVar("HEIGHT_UNIT");
+  
+      var jsonRes = res.getBody();
+      expect(jsonRes.Data).to.have.property('BodyHeight');
+      expect(jsonRes.Data.BodyHeight).to.have.property('BodyHeight');
+      expect(jsonRes.Data.BodyHeight).to.have.property('PatientUserId');
+      expect(jsonRes.Data.BodyHeight).to.have.property('Unit');
+  
+      expect(jsonRes.Data.BodyHeight.PatientUserId).equals(expectedPatientUserId);
+      expect(Number(jsonRes.Data.BodyHeight.BodyHeight)).equals(Number(expectedBodyHeight));
+      expect(jsonRes.Data.BodyHeight.Unit).equals(expectedHeightUnit);
+  });
+  
+  
+}
+
+docs {
+  Get body height metric by body_height_id
+}

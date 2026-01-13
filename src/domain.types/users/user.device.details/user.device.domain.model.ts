@@ -10,6 +10,7 @@ export interface UserDeviceDetailsDomainModel {
     AppName?          : string;
     AppVersion?       : string;
     ChangeCount?      : number;
+    IsNotificationEnabled? : boolean;
 }
 
 export interface DeviceDetails {

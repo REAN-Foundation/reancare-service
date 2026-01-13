@@ -1,0 +1,72 @@
+meta {
+  name: Upload document
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{BASE_URL}}/patient-documents/
+  body: multipartForm
+  auth: none
+}
+
+headers {
+  enc: multipart/form-data
+  authorization: Bearer {{PATIENT_USER_JWT}}
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+}
+
+body:multipart-form {
+  Name: @file(C:\Users\Madhu\Downloads\Clockify_Time_Report_Summary_01_02_2025-28_02_2025.pdf)
+  DocumentType: Lab report
+  ~PatientUserId: {{PATIENT_USER_ID}}
+  ~MedicalPractitionerUserId: {{DOCTOR_USER_ID}}
+  ~OwnerUserId: {{OWNER_USER_ID}}
+  ~MedicalPractionerRole: Doctor
+  ~AssociatedVisitId: 
+  ~AssociatedVisitType: 
+  ~AssociatedOrderId: 
+  ~AssociatedOrderType: 
+}
+
+script:pre-request {
+  var patientId = bru.getEnvVar("PATIENT_USER_ID");
+  bru.setEnvVar("OWNER_USER_ID", patientId);
+  
+}
+
+tests {
+  try {
+      var jsonRes = res.getBody();
+      bru.setEnvVar("PATIENT_DOCUMENT_ID", jsonRes.Data.PatientDocument.id);
+  }
+  catch (error) {
+      console.log(error.message);
+  }
+  
+  test("Request is successfull", function () {
+      expect(res.getStatus()).to.equal(201);
+      var jsonRes = res.getBody();
+      expect(jsonRes.Status).to.eql('success');
+  });
+  
+  test("Document is uploaded", function () {
+  
+      // var expectedMedicalPractitionerUserId = bru.getEnvVar("DOCTOR_USER_ID");
+      var expectedPatientUserId = bru.getEnvVar("PATIENT_USER_ID");
+  
+      var jsonRes = res.getBody();
+      expect(jsonRes.Data).to.have.property('PatientDocument');
+      expect(jsonRes.Data.PatientDocument).to.not.be.empty;
+      expect(jsonRes.Data.PatientDocument).to.have.property('id');
+      // expect(jsonRes.Data.PatientDocument).to.have.property('MedicalPractitionerUserId');
+      expect(jsonRes.Data.PatientDocument).to.have.property('PatientUserId');
+      expect(jsonRes.Data.PatientDocument).to.have.property('ResourceId');
+      
+      expect(jsonRes.Data.PatientDocument.ResourceId).to.not.be.empty;
+      // expect(jsonRes.Data.PatientDocument.MedicalPractitionerUserId).equals(expectedMedicalPractitionerUserId);
+      expect(jsonRes.Data.PatientDocument.PatientUserId).equals(expectedPatientUserId);
+  
+  });
+  
+}

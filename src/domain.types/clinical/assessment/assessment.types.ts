@@ -78,6 +78,8 @@ export enum AssessmentType {
     Careplan    = 'Careplan',
     Symptom     = 'Symptoms',
     Survey      = 'Survey',
+    UserRegistration = 'User Registration',
+    Clinical = 'Clinical',
     Protocol    = 'Protocol',
     Custom      = 'Custom',
 }
@@ -87,6 +89,8 @@ export const AssessmentTypeList: AssessmentType[] = [
     AssessmentType.Careplan,
     AssessmentType.Symptom,
     AssessmentType.Survey,
+    AssessmentType.UserRegistration,
+    AssessmentType.Clinical,
     AssessmentType.Protocol,
     AssessmentType.Custom
 ];
@@ -167,6 +171,8 @@ export class CAssessmentTemplate {
     RootNodeDisplayCode?         : string;
     Nodes                        : CAssessmentNode[];
     TenantId?                    : uuid;
+    ScoringApplicable?           : boolean;
+    RawData?                     : string;
     CreatedAt?                   : Date;
     UpdatedAt?                   : Date;
     CreatedBy?                   : uuid;
@@ -237,14 +243,16 @@ export class CAssessmentListNode extends CAssessmentNode {
 
 export class CAssessmentQuestionNode extends CAssessmentNode {
 
-    QueryResponseType: QueryResponseType;
-    DefaultPathId?   : uuid;
-    Paths?           : CAssessmentNodePath[];
-    Options?         : CAssessmentQueryOption[];
-    UserResponse?    : CAssessmentQueryResponse;
-    SkipCondition?   : CAssessmentPathCondition;
-    ScoringCondition?: CScoringCondition;
-    CorrectAnswer?   : string | any;
+    QueryResponseType   : QueryResponseType;
+    DefaultPathId?      : uuid;
+    Paths?              : CAssessmentNodePath[];
+    Options?            : CAssessmentQueryOption[];
+    UserResponse?       : CAssessmentQueryResponse;
+    SkipCondition?      : CAssessmentPathCondition;
+    ScoringCondition   ?: CScoringCondition;
+    CorrectAnswer?      : string | any;
+    FieldIdentifier?    : string;
+    FieldIdentifierUnit?: string;
 
     constructor() {
         super();
@@ -323,6 +331,7 @@ export class CAssessmentQueryResponse {
     SatisfiedConditionId?: uuid;
     ChosenPathId?        : uuid;
     CreatedAt?           : Date;
+    Skipped?             : boolean;
 
     constructor() {
         this.ResponseType = QueryResponseType.None;
@@ -468,6 +477,10 @@ export interface AssessmentBiometrics {
 
 export interface BiometricQueryAnswer extends BaseQueryAnswer {
     Values  : AssessmentBiometrics[] | AssessmentBiometrics;
+}
+
+export interface SkipQueryAnswer extends BaseQueryAnswer {
+    Skipped : boolean;
 }
 
 export class CScoringCondition {

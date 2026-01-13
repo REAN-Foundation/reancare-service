@@ -103,4 +103,8 @@ export class UserTaskService {
         return await this._userTaskRepo.getMostRecentUserActivity(patientUserId);
     };
 
+    deleteByUserId = async (userId: string, hardDelete: boolean = true): Promise<boolean> => {
+        return await this._userTaskRepo.deleteByUserId(userId, hardDelete);
+    };
+
 }

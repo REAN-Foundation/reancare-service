@@ -26,8 +26,9 @@ export class EnrollmentMapper {
             StoppedAt           : enrollment.StoppedAt,
             IsActive            : enrollment.IsActive,
             Complication        : enrollment.Complication,
-            HasHighRisk         : enrollment.HasHighRisk
-            
+            HasHighRisk         : enrollment.HasHighRisk,
+            TenantId            : enrollment.TenantId
+
         };
         return dto;
     };

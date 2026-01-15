@@ -17,6 +17,7 @@ import { EmailDetails } from "../../../modules/communication/email/email.details
 import { TenantDto } from '../../../domain.types/tenant/tenant.dto';
 import { Helper } from '../../../common/helper';
 import { TenantSettingsService } from '../../../services/tenant/tenant.settings.service';
+import { TenantSettingsMarketingService } from '../../../services/tenant/marketing/tenant.settings.marketing.service';
 import { BaseController } from '../../../api/base.controller';
 import { UserHelper } from '../../../api/users/user.helper';
 import { PersonDetailsDto } from '../../../domain.types/person/person.dto';
@@ -40,6 +41,8 @@ export class TenantController extends BaseController {
     _personRoleService: PersonRoleService = Injector.Container.resolve(PersonRoleService);
 
     _tenantSettingsService: TenantSettingsService = Injector.Container.resolve(TenantSettingsService);
+
+    _tenantSettingsMarketingService: TenantSettingsMarketingService = Injector.Container.resolve(TenantSettingsMarketingService);
 
     _assessmentTemplateService: AssessmentTemplateService = Injector.Container.resolve(AssessmentTemplateService);
 
@@ -137,7 +140,9 @@ export class TenantController extends BaseController {
             }
             Logger.instance().log(`Tenant admin user created successfully. UserName: ${adminUserName}`);
 
-            const settings = await this._tenantSettingsService.createDefaultSettings(tenant.id);
+            const settings = await this._tenantSettingsService.createDefaultSettings(tenant.id, tenantCode);
+            
+            await this._tenantSettingsMarketingService.createDefaultSettings(tenant.id, {});
 
             //Send email to the admin user with username and password
             await this.sendWelcomeEmail(tenant, adminUserName, adminPassword);
@@ -305,7 +310,8 @@ export class TenantController extends BaseController {
             request.body.Environment = environment;
             const model = await this._validator.createBotSecret(request);
             await this.authorizeOne(request, null, tenant.id);
-            const created = await this._service.createSecret(model);
+            const lambdaFunctionName = process.env.CREATE_SECRET_LAMBDA_FUNCTION;
+            const created = await this._service.createSecret(lambdaFunctionName, model);
             ResponseHandler.success(request, response, 'Secret created successfully!', 200, created);
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
@@ -325,7 +331,8 @@ export class TenantController extends BaseController {
             const model = {
                 SecretName : secretName,
             };
-            const secret = await this._service.getSecret(model);
+            const lambdaFunctionName = process.env.GET_SECRET_LAMBDA_FUNCTION;
+            const secret = await this._service.getSecret(lambdaFunctionName, model);
             await this.authorizeOne(request, null, tenant.id);
             ResponseHandler.success(request, response, 'Secret retrieved successfully!', 200, secret);
         } catch (error) {
@@ -340,7 +347,8 @@ export class TenantController extends BaseController {
               const model = {
                   SecretName : secretName,
               };
-              const secret = await this._service.getSecret(model);
+              const lambdaFunctionName = process.env.GET_SECRET_LAMBDA_FUNCTION;
+              const secret = await this._service.getSecret(lambdaFunctionName, model);
               ResponseHandler.success(request, response, 'Secret retrieved successfully!', 200, secret);
           } catch (error) {
               ResponseHandler.handleError(request, response, error);
@@ -361,7 +369,8 @@ export class TenantController extends BaseController {
             request.body.Environment = environment;
             const model = await this._validator.createBotSecret(request);
             await this.authorizeOne(request, null, tenant.id);
-            const updated = await this._service.updateSecret(model);
+            const lambdaFunctionName = process.env.UPDATE_SECRET_LAMBDA_FUNCTION;
+            const updated = await this._service.updateSecret(lambdaFunctionName, model);
             ResponseHandler.success(request, response, 'Secret updated successfully!', 200, updated);
         } catch (error) {
             ResponseHandler.handleError(request, response, error);

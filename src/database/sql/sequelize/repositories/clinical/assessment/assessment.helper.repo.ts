@@ -78,6 +78,8 @@ export class AssessmentHelperRepo implements IAssessmentHelperRepo {
                 ProviderAssessmentCode      : t.ProviderAssessmentCode ?? null,
                 Provider                    : t.Provider ?? null,
                 ServeListNodeChildrenAtOnce : t.ServeListNodeChildrenAtOnce ?? false,
+                ScoringApplicable           : t.ScoringApplicable ?? false,
+                RawData                     : t.RawData ?? null,
                 TenantId                    : t.TenantId ?? null,
                 Tags                        : t.Tags && t.Tags.length > 0 ? JSON.stringify(t.Tags) : null,
             };
@@ -141,17 +143,20 @@ export class AssessmentHelperRepo implements IAssessmentHelperRepo {
         }
         var nodes = await this.getTemplateChildrenNodesForExport(templateId);
         var templateObj: CAssessmentTemplate = {
-            TemplateId             : template.id,
-            DisplayCode            : template.DisplayCode,
-            Title                  : template.Title,
-            Description            : template.Description,
-            Provider               : template.Provider,
-            ProviderAssessmentCode : template.ProviderAssessmentCode,
-            Version                : template.Version,
-            RootNodeDisplayCode    : rootNode.DisplayCode,
-            Nodes                  : nodes,
-            Type                   : template.Type as AssessmentType,
-            Tags                   : template.Tags ? JSON.parse(template.Tags) : [],
+            TemplateId                  : template.id,
+            DisplayCode                 : template.DisplayCode,
+            Title                       : template.Title,
+            Description                 : template.Description,
+            Provider                    : template.Provider,
+            ProviderAssessmentCode      : template.ProviderAssessmentCode,
+            Version                     : template.Version,
+            RootNodeDisplayCode         : rootNode.DisplayCode,
+            Nodes                       : nodes,
+            Type                        : template.Type as AssessmentType,
+            Tags                        : template.Tags ? JSON.parse(template.Tags) : [],
+            ScoringApplicable           : template.ScoringApplicable,
+            ServeListNodeChildrenAtOnce : template.ServeListNodeChildrenAtOnce,
+            RawData                     : template.RawData,
 
         };
         return templateObj;
@@ -724,10 +729,11 @@ export class AssessmentHelperRepo implements IAssessmentHelperRepo {
 
             for await (var sPath of paths) {
                 const pathEntity = {
-                    DisplayCode         : sPath.DisplayCode,
-                    ParentNodeId        : thisNode.id,
-                    NextNodeDisplayCode : sPath.NextNodeDisplayCode,
-                    IsExitPath          : sPath.IsExitPath
+                    DisplayCode           : sPath.DisplayCode,
+                    ParentNodeId          : thisNode.id,
+                    NextNodeDisplayCode   : sPath.NextNodeDisplayCode,
+                    IsExitPath            : sPath.IsExitPath,
+                    MessageBeforeQuestion : sPath.MessageBeforeQuestion
                 };
 
                 var path = await AssessmentNodePath.create(pathEntity);
@@ -909,10 +915,13 @@ export class AssessmentHelperRepo implements IAssessmentHelperRepo {
 
         const condition = await AssessmentPathCondition.create(conditionEntity);
 
-        for await (var childCondition of sCondition.Children) {
-            var child = await this.createNewPathCondition(childCondition, currentNodeId, pathId, condition.id);
-            Logger.instance().log(`Operator type: ${child.OperatorType}`);
-            Logger.instance().log(`Composition type: ${child.CompositionType}`);
+        // Only process children if this is a composite condition with children
+        if (sCondition.IsCompositeCondition && sCondition.Children && sCondition.Children.length > 0) {
+            for await (var childCondition of sCondition.Children) {
+                var child = await this.createNewPathCondition(childCondition, currentNodeId, pathId, condition.id);
+                Logger.instance().log(`Operator type: ${child.OperatorType}`);
+                Logger.instance().log(`Composition type: ${child.CompositionType}`);
+            }
         }
         return condition;
     }

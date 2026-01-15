@@ -13,18 +13,18 @@ import {
 } from 'sequelize-typescript';
 
 import { v4 } from 'uuid';
-import Tenant from './tenant.model';
+import Tenant from '../tenant.model';
 
 ///////////////////////////////////////////////////////////////////////
 
 @Table({
     timestamps      : true,
-    modelName       : 'TenantSettings',
-    tableName       : 'tenant_settings',
+    modelName       : 'TenantSettingsMarketing',
+    tableName       : 'tenant_settings_marketing',
     paranoid        : true,
     freezeTableName : true,
 })
-export default class TenantSettings extends Model {
+export default class TenantSettingsMarketing extends Model {
 
     @IsUUID(4)
     @PrimaryKey
@@ -51,45 +51,39 @@ export default class TenantSettings extends Model {
 
     @Column({
         type      : DataType.TEXT,
-        allowNull : false,
+        allowNull : true,
     })
-    Common: string;
-
-    @Column({
-        type      : DataType.TEXT,
-        allowNull : false,
-    })
-    Followup: string;
-
-    @Column({
-        type      : DataType.TEXT,
-        allowNull : false,
-    })
-    ChatBot: string;
-
-    @Column({
-        type      : DataType.TEXT,
-        allowNull : false,
-    })
-    Forms: string;
+    Styling: string;
 
     @Column({
         type      : DataType.TEXT,
         allowNull : true,
     })
-    Consent: string;
+    Content: string;
 
     @Column({
         type      : DataType.TEXT,
         allowNull : true,
     })
-    CustomSettings: string;
+    QRcode: string;
 
     @Column({
         type      : DataType.TEXT,
         allowNull : true,
     })
-    VitalsThresholds: string;
+    Images: string;
+
+    @Column({
+        type      : DataType.TEXT,
+        allowNull : true,
+    })
+    Logos: string;
+
+    @Column({
+        type      : DataType.STRING(64),
+        allowNull : true,
+    })
+    PDFResourceId: string;
 
     @Column
     @CreatedAt
@@ -102,3 +96,4 @@ export default class TenantSettings extends Model {
     DeletedAt: Date;
 
 }
+

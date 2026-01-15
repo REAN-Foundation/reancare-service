@@ -794,8 +794,11 @@ export class AssessmentHelperRepo implements IAssessmentHelperRepo {
                 Sequence                    : nodeObj.Sequence,
                 Score                       : nodeObj.Score,
                 QueryResponseType           : QueryResponseType.None,
-                ServeListNodeChildrenAtOnce : false,
+                ServeListNodeChildrenAtOnce : nodeObj.ServeListNodeChildrenAtOnce ?? false,
                 RawData                     : nodeObj.RawData,
+                Tags                        : nodeObj.Tags && nodeObj.Tags.length > 0 ? JSON.stringify(nodeObj.Tags) : null,
+                Required                    : nodeObj.Required
+
             };
 
             if (nodeObj.ChildrenNodeDisplayCodes !== undefined) {
@@ -838,6 +841,9 @@ export class AssessmentHelperRepo implements IAssessmentHelperRepo {
             } else {
                 const questionNode = nodeObj as CAssessmentQuestionNode;
                 thisNode.QueryResponseType = questionNode.QueryResponseType;
+                thisNode.CorrectAnswer = questionNode.CorrectAnswer;
+                thisNode.FieldIdentifier = questionNode.FieldIdentifier;
+                thisNode.FieldIdentifierUnit = questionNode.FieldIdentifierUnit;
                 await thisNode.save();
                 await this.updateQuestionNode(templateObj, questionNode, thisNode, templateId);
             }

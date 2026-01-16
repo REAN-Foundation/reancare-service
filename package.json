@@ -79,7 +79,7 @@
         "timezone-support": "^3.1.0",
         "tsyringe": "^4.8.0",
         "twilio": "^5.6.0",
-        "typeorm": "^0.3.26",
+        "typeorm": "^0.3.28",
         "uuid": "^9.0.1",
         "uuid-apikey": "^1.5.3",
         "word-wrap": "^1.2.5",

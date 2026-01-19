@@ -140,4 +140,20 @@ export class TenantAuth {
         RequestType : RequestType.GetOne,
     };
 
+    static readonly promotionFrom: AuthOptions = {
+        ...DefaultAuthOptions,
+        Context     : `${this._baseContext}.PromotionFrom`,
+        Ownership   : ResourceOwnership.Tenant,
+        ActionScope : ActionScope.System,
+        RequestType : RequestType.CreateOne,
+    };
+
+    static readonly promotionTo: AuthOptions = {
+        ...DefaultAuthOptions,
+        Context     : `${this._baseContext}.PromotionTo`,
+        Ownership   : ResourceOwnership.Tenant,
+        ActionScope : ActionScope.System,
+        RequestType : RequestType.CreateOne,
+    };
+
 }

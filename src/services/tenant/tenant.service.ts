@@ -30,7 +30,7 @@ export class TenantService {
 
      _lambdaService: AwsLambdaService = Injector.Container.resolve(AwsLambdaService);
 
-     _userHelper: UserHelper = new UserHelper();
+     _userHelper: UserHelper = null;
      
      constructor(
         @inject('ITenantRepo') private _tenantRepo: ITenantRepo,
@@ -604,6 +604,9 @@ export class TenantService {
             Phone       : payload.Tenant.Phone,
             Email       : payload.Tenant.Email,
         };
+        if (!this._userHelper) {
+            this._userHelper = new UserHelper();
+        }
         await this._userHelper.performDuplicatePersonCheck(tenantModel.Phone, tenantModel.Email);
         const tenant = await this._tenantRepo.create(tenantModel);
         if (!tenant) {

@@ -503,15 +503,7 @@ export class TenantController extends BaseController {
                 requestBody.TargetEnvironment
             );
 
-            await this._service.triggerPromotion(payload);
-
-            const responseData: PromotionFromResponse = {
-                TenantCode        : tenant.Code,
-                TenantName        : tenant.Name,
-                TargetEnvironment : requestBody.TargetEnvironment,
-                InitiatedAt       : new Date(),
-                Message           : 'Tenant promotion initiated successfully',
-            };
+            const responseData = await this._service.triggerPromotion(payload);
 
             Logger.instance().log(`Tenant promotion initiated. TenantCode: ${tenant.Code}, Target: ${requestBody.TargetEnvironment}`);
 
@@ -549,7 +541,6 @@ export class TenantController extends BaseController {
                 if (!adminCredentials) {
                     throw new ApiError(500, 'Failed to create admin user for promoted tenant.');
                 }
-                result.AdminCredentials = adminCredentials;
 
                 tenant = await this._service.getById(result.TenantId);
                 if (tenant && adminCredentials) {
@@ -557,7 +548,7 @@ export class TenantController extends BaseController {
                 }
             }
 
-            Logger.instance().log(`Tenant promotion completed. TenantCode: ${payload.Tenant.Code}, Action: ${result.Action}`);
+            Logger.instance().log(`Tenant promotion completed. TenantCode: ${payload.Tenant?.Code}, Action: ${result?.Action}`);
 
             ResponseHandler.success(request, response, `Tenant ${result.Action.toLowerCase()} successfully!`, 200, result);
         } catch (error) {

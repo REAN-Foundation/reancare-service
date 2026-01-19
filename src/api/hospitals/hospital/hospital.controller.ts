@@ -9,6 +9,7 @@ import { RoleService } from '../../../services/role/role.service';
 import { HospitalValidator } from './hospital.validator';
 import { Injector } from '../../../startup/injector';
 import { BaseController } from '../../../api/base.controller';
+import { HospitalSearchFilters } from '../../../domain.types/hospitals/hospital/hospital.search.types';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -33,6 +34,7 @@ export class HospitalController extends BaseController{
     create = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             const domainModel = await this._validator.create(request);
+            await this.authorizeOne(request, null, domainModel.TenantId);
             const hospital = await this._service.create(domainModel);
             if (hospital == null) {
                 throw new ApiError(400, 'Cannot create hospital!');
@@ -66,7 +68,8 @@ export class HospitalController extends BaseController{
 
     search = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            const filters = await this._validator.search(request);
+            let filters = await this._validator.search(request);
+            filters = await this.authorizeSearch(request, filters);
             const searchResults = await this._service.search(filters);
             const count = searchResults.Items.length;
             const message =
@@ -89,6 +92,7 @@ export class HospitalController extends BaseController{
             if (existingHospital == null) {
                 throw new ApiError(404, 'Hospital not found.');
             }
+            await this.authorizeOne(request, null, existingHospital.TenantId);
             const updated = await this._service.update(domainModel.id, domainModel);
             if (updated == null) {
                 throw new ApiError(400, 'Unable to update hospital record!');
@@ -110,6 +114,7 @@ export class HospitalController extends BaseController{
             if (existingHospital == null) {
                 throw new ApiError(404, 'Hospital not found.');
             }
+            await this.authorizeOne(request, null, existingHospital.TenantId);
             const deleted = await this._service.delete(id);
             if (!deleted) {
                 throw new ApiError(400, 'Hospital cannot be deleted.');
@@ -139,5 +144,24 @@ export class HospitalController extends BaseController{
     };
 
     //#endregion
+
+    authorizeSearch = async (
+        request: express.Request,
+        searchFilters: HospitalSearchFilters): Promise<HospitalSearchFilters> => {
+
+        if (request.currentClient?.IsPrivileged) {
+            return searchFilters;
+        }
+
+        if (searchFilters.TenantId != null) {
+            if (searchFilters.TenantId !== request.currentUser.TenantId) {
+                throw new ApiError(403, 'Forbidden');
+            }
+        }
+        else {
+            searchFilters.TenantId = request.currentUser.TenantId;
+        }
+        return searchFilters;
+    };
 
 }

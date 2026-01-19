@@ -40,7 +40,7 @@ export class HospitalValidator extends BaseValidator {
     };
 
     search = async (request: express.Request): Promise<HospitalSearchFilters> => {
-        await this.validateUuid(request, 'TenantId', Where.Query, false, false);
+        await this.validateUuid(request, 'tenantId', Where.Query, false, false);
         await this.validateUuid(request, 'healthSystemId', Where.Query, false, false);
         await this.validateString(request, 'name', Where.Query, false, false);
         await this.validateString(request, 'tag', Where.Query, false, false);
@@ -76,7 +76,7 @@ export class HospitalValidator extends BaseValidator {
     private getFilter(request): HospitalSearchFilters {
 
         const filters: HospitalSearchFilters = {
-            TenantId       : request.query.TenantId ?? null,
+            TenantId       : request.query.tenantId ?? null,
             HealthSystemId : request.query.healthSystemId ?? null,
             Name           : request.query.name ?? null,
             Tags           : request.query.tags ?? null,

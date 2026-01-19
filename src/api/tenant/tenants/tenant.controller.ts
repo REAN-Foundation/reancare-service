@@ -3,6 +3,7 @@ import { TenantService } from '../../../services/tenant/tenant.service';
 import { ResponseHandler } from '../../../common/handlers/response.handler';
 import { Injector } from '../../../startup/injector';
 import { TenantValidator } from './tenant.validator';
+import { TenantPromotionValidator } from './tenant.promotion.validator';
 import { ApiError } from '../../../common/api.error';
 import { uuid } from '../../../domain.types/miscellaneous/system.types';
 import { RoleService } from '../../../services/role/role.service';
@@ -23,6 +24,7 @@ import { UserHelper } from '../../../api/users/user.helper';
 import { PersonDetailsDto } from '../../../domain.types/person/person.dto';
 import { AssessmentTemplateService } from '../../../services/clinical/assessment/assessment.template.service';
 import { Environment } from '../../../domain.types/tenant/tenant.settings.types';
+import { PromotionAction, PromotionFromResponse } from '../../../domain.types/tenant/tenant.promotion.types';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -42,11 +44,14 @@ export class TenantController extends BaseController {
 
     _tenantSettingsService: TenantSettingsService = Injector.Container.resolve(TenantSettingsService);
 
-    _tenantSettingsMarketingService: TenantSettingsMarketingService = Injector.Container.resolve(TenantSettingsMarketingService);
+    _tenantSettingsMarketingService: TenantSettingsMarketingService =
+    Injector.Container.resolve(TenantSettingsMarketingService);
 
     _assessmentTemplateService: AssessmentTemplateService = Injector.Container.resolve(AssessmentTemplateService);
 
     _validator: TenantValidator = new TenantValidator();
+
+    _promotionValidator: TenantPromotionValidator = new TenantPromotionValidator();
 
     _userHelper: UserHelper = new UserHelper();
 
@@ -476,6 +481,182 @@ export class TenantController extends BaseController {
             ResponseHandler.handleError(request, response, error);
         }
     };
+
+    //#region Promotion Endpoints
+
+    promotionFrom = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+            const id: uuid = await this._validator.getParamUuid(request, 'id');
+            const tenant = await this._service.getById(id);
+            if (tenant == null) {
+                throw new ApiError(404, 'Tenant not found.');
+            }
+
+            if (tenant.Code === 'default') {
+                throw new ApiError(400, 'Cannot promote tenant with code "default"!');
+            }
+
+            const requestBody = await this._promotionValidator.validatePromotionFrom(request);
+
+            const payload = await this._service.preparePromotionPayload(
+                id,
+                requestBody.TargetEnvironment
+            );
+
+            await this._service.triggerPromotion(payload);
+
+            const responseData: PromotionFromResponse = {
+                TenantCode        : tenant.Code,
+                TenantName        : tenant.Name,
+                TargetEnvironment : requestBody.TargetEnvironment,
+                InitiatedAt       : new Date(),
+                Message           : 'Tenant promotion initiated successfully',
+            };
+
+            Logger.instance().log(`Tenant promotion initiated. TenantCode: ${tenant.Code}, Target: ${requestBody.TargetEnvironment}`);
+
+            ResponseHandler.success(request, response, 'Tenant promotion initiated successfully!', 200, responseData);
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
+    promotionTo = async (request: express.Request, response: express.Response): Promise<void> => {
+        let tenant: TenantDto = null;
+        try {
+            const isValidLambdaAuth = this._promotionValidator.validateLambdaAuthHeader(request);
+            if (!isValidLambdaAuth) {
+                throw new ApiError(401, 'Unauthorized: Invalid Lambda authentication token');
+            }
+
+            const payload = await this._promotionValidator.validatePromotionTo(request);
+
+            const currentEnv = process.env.NODE_ENV;
+            if (payload.TargetEnvironment !== currentEnv) {
+                throw new ApiError(400, `Target environment mismatch. Expected: ${currentEnv}, Received: ${payload.TargetEnvironment}`);
+            }
+
+            if (payload.Tenant.Code === 'default') {
+                throw new ApiError(400, 'Cannot promote tenant with code "default"!');
+            }
+
+            Logger.instance().log(`Processing incoming tenant promotion. TenantCode: ${payload.Tenant.Code}, Source: ${payload.SourceEnvironment}`);
+
+            const result = await this._service.processIncomingPromotion(payload);
+
+            if (result.Action === PromotionAction.Created) {
+                const adminCredentials = await this.createAdminUserForPromotedTenant(result.TenantId);
+                if (!adminCredentials) {
+                    throw new ApiError(500, 'Failed to create admin user for promoted tenant.');
+                }
+                result.AdminCredentials = adminCredentials;
+
+                tenant = await this._service.getById(result.TenantId);
+                if (tenant && adminCredentials) {
+                    await this.sendWelcomeEmail(tenant, adminCredentials.UserName, adminCredentials.TemporaryPassword);
+                }
+            }
+
+            Logger.instance().log(`Tenant promotion completed. TenantCode: ${payload.Tenant.Code}, Action: ${result.Action}`);
+
+            ResponseHandler.success(request, response, `Tenant ${result.Action.toLowerCase()} successfully!`, 200, result);
+        } catch (error) {
+            await this.rollbackCreateTenant(tenant);
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
+    private createAdminUserForPromotedTenant = async (
+        tenantId: uuid,
+    ): Promise<{ UserName: string; TemporaryPassword: string } | null> => {
+        try {
+            let person: PersonDetailsDto = null;
+            const tenant = await this._service.getById(tenantId);
+            if (!tenant) {
+                Logger.instance().log(`Tenant not found for creating admin user: ${tenantId}`);
+                return null;
+            }
+
+            const tenantCode = tenant.Code;
+            const adminUserName = (tenantCode + '-admin').toLowerCase();
+
+            const existingUser = await this._userService.getByUserName(adminUserName);
+            if (existingUser) {
+                Logger.instance().log(`Admin user already exists for tenant: ${tenantCode}`);
+                return null;
+            }
+
+            const adminPassword = Helper.generatePassword();
+            const role = await this._roleService.getByName(Roles.TenantAdmin);
+
+            const userModel: UserDomainModel = {
+                Person : {
+                    Phone     : tenant.Phone,
+                    Email     : tenant.Email,
+                    FirstName : 'Admin',
+                    LastName  : tenant.Name,
+                },
+                TenantId : tenant.id,
+                UserName : adminUserName,
+                Password : adminPassword,
+                RoleId   : role.id,
+            };
+
+            const existingPerson = await this._userService.getExistingPerson({
+                Phone      : userModel.Person.Phone,
+                Email      : userModel.Person.Email,
+                UserName   : userModel.UserName,
+                TenantId   : userModel.TenantId,
+                TenantCode : tenant.Code,
+            });
+            
+            if (existingPerson == null) {
+                person = await this._personService.create(userModel.Person);
+                if (person == null) {
+                    throw new ApiError(400, 'Cannot create person!');
+                }
+            }
+            else {
+                person = existingPerson;
+                var existingUserWithRole = await this._userService.getUserByPersonIdAndRole(
+                    existingPerson.id, userModel.RoleId);
+                if (existingUserWithRole) {
+                    throw new ApiError(409, `User already exists with the same role.`);
+                }
+                await this._userHelper.checkMultipleAdministrativeRoles(userModel.RoleId, existingPerson.id);
+            }
+
+            userModel.Person.id = person.id;
+
+            const updatedPerson = await this._userHelper.updatePersonInformation(person, userModel);
+
+            if (!updatedPerson) {
+                throw new ApiError(409, `User already exists with the same email.`);
+            }
+
+            const user = await this._userService.create(userModel);
+            if (user == null) {
+                throw new ApiError(400, 'Unable to create tenant admin user.');
+            }
+            var personRole = await this._personRoleService.addPersonRole(person.id, role.id);
+            if (personRole == null) {
+                throw new ApiError(400, 'Unable to assign tenant admin user role.');
+            }
+            Logger.instance().log(`Tenant admin user created successfully. UserName: ${adminUserName}`);
+
+            await this.setupBasicAssessmentTemplate(tenant.id);
+
+            return {
+                UserName          : adminUserName,
+                TemporaryPassword : adminPassword,
+            };
+        } catch (error) {
+            Logger.instance().log(`Error creating admin user for promoted tenant: ${error.message}`);
+            return null;
+        }
+    };
+
+    //#endregion
 
     private sendWelcomeEmail = async (tenant: TenantDto, adminUserName: string, adminPassword: string) => {
         try {

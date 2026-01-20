@@ -179,6 +179,7 @@ export interface ChatBotSettings {
     QnA                 : boolean,
     Consent             : boolean,
     WelcomeMessage      : boolean,
+    WelcomeMessages?    : WelcomeMessage[],
     Feedback            : boolean,
     ReminderAppointment : boolean,
     AppointmentFollowup : boolean,
@@ -323,6 +324,12 @@ export interface ConsentMessage {
     LanguageCode?  : string;
     Content?: string;
     WebsiteURL?  : string;
+}
+
+export interface WelcomeMessage {
+    LanguageCode?  : string;
+    Content?       : string;
+    URL?           : string;
 }
 
 export enum CustomSettingDataType {

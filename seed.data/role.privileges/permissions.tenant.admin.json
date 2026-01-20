@@ -643,7 +643,9 @@
             "GetSecret": true,
             "GetSecretByCode": true,
             "UpdateSecret": true,
-            "GetActiveTenants": false
+            "GetActiveTenants": false,
+            "PromotionFrom": true,
+            "PromotionTo": true
         },
         "Settings": {
             "GetTenantSettingsTypes": true,

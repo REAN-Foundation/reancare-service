@@ -171,6 +171,8 @@ export class CAssessmentTemplate {
     RootNodeDisplayCode?         : string;
     Nodes                        : CAssessmentNode[];
     TenantId?                    : uuid;
+    ScoringApplicable?           : boolean;
+    RawData?                     : string;
     CreatedAt?                   : Date;
     UpdatedAt?                   : Date;
     CreatedBy?                   : uuid;

@@ -482,6 +482,8 @@
     "Tenant.Tenants.GetSecretByCode",
     "Tenant.Tenants.UpdateSecret",
     "Tenant.Tenants.GetActiveTenants",
+    "Tenant.Tenants.PromotionFrom",
+    "Tenant.Tenants.PromotionTo",
     "Tenant.Settings.GetTenantSettingsTypes",
     "Tenant.Settings.GetTenantSettings",
     "Tenant.Settings.GetTenantSettingsByType",

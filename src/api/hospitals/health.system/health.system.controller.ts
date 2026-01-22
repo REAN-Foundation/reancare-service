@@ -109,7 +109,6 @@ export class HealthSystemController extends BaseController {
 
     delete = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.authorizeOne(request, null, null);
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const existingHealthSystem = await this._service.getById(id);
             if (existingHealthSystem == null) {

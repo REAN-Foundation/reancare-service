@@ -49,8 +49,7 @@ export class AssessmentTemplatePromotionValidator extends BaseValidator {
 
     validateLambdaAuthHeader = (request: express.Request): boolean => {
         const lambdaAuthToken = request.headers['x-lambda-auth'] as string;
-        const expectedToken = process.env.LAMBDA_ASSESSMENT_PROMOTION_AUTH_TOKEN
-            ?? process.env.LAMBDA_PROMOTION_AUTH_TOKEN;
+        const expectedToken = process.env.LAMBDA_PROMOTION_AUTH_TOKEN;
 
         if (!expectedToken) {
             throw new Error('Lambda assessment promotion auth token is not configured');

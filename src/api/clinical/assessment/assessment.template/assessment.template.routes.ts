@@ -51,5 +51,8 @@ export const register = (app: express.Application): void => {
     router.post('/import-file', auth(AssessmentTemplateAuth.importFromFile), controller.importFromFile);
     router.post('/import-json', auth(AssessmentTemplateAuth.importFromJson), controller.importFromJson);
 
+    router.post('/:id/promote-from', auth(AssessmentTemplateAuth.promoteAssessment), controller.promoteAssessment);
+    router.post('/promotion-to', controller.receivePromotion);
+
     app.use('/api/v1/clinical/assessment-templates/', router);
 };

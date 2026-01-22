@@ -68,6 +68,22 @@ export class AssessmentTemplateRepo implements IAssessmentTemplateRepo {
         }
     };
 
+    public getByDisplayCodeAndTenant = async (displayCode: string, tenantId: uuid)
+        : Promise<AssessmentTemplateDto> => {
+        try {
+            const assessmentTemplate = await AssessmentTemplate.findOne({
+                where : {
+                    DisplayCode : displayCode,
+                    TenantId    : tenantId
+                }
+            });
+            return AssessmentTemplateMapper.toDto(assessmentTemplate);
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    };
+
     public search = async (filters: AssessmentTemplateSearchFilters): Promise<AssessmentTemplateSearchResults> => {
         try {
             const search = { where: {} };

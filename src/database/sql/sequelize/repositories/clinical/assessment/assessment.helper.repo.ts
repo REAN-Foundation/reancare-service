@@ -1537,7 +1537,622 @@ export class AssessmentHelperRepo implements IAssessmentHelperRepo {
            throw new ApiError(500, error.message);
        }
    };
-    
+
+   //#endregion
+
+   //#region Assessment Promotion Methods
+
+    public addTemplateForPromotion = async (t: CAssessmentTemplate): Promise<AssessmentTemplateDto> => {
+        try {
+            const entity = {
+                DisplayCode                 : t.DisplayCode,
+                Type                        : t.Type ?? null,
+                Title                       : t.Title ?? t.Title,
+                Description                 : t.Description ?? null,
+                ProviderAssessmentCode      : t.ProviderAssessmentCode ?? null,
+                Provider                    : t.Provider ?? null,
+                ServeListNodeChildrenAtOnce : t.ServeListNodeChildrenAtOnce ?? false,
+                ScoringApplicable           : t.ScoringApplicable ?? false,
+                // RawData                     : t.RawData ?? null,
+                RawData                     : t.RawData ? JSON.stringify(t.RawData) : null,
+                TenantId                    : t.TenantId ?? null,
+                Tags                        : t.Tags && t.Tags.length > 0 ? JSON.stringify(t.Tags) : null,
+            };
+
+            var template = await AssessmentTemplate.create(entity);
+
+            const rootNodeDisplayCode: string = t.RootNodeDisplayCode;
+            var sRootNode = CAssessmentTemplate.getNodeByDisplayCode(t.Nodes, rootNodeDisplayCode);
+            sRootNode.Sequence = 0;
+            sRootNode.Score = 0;
+
+            const rootNode = await this.createNodeForPromotion(t, template.id, null, sRootNode);
+            template.RootNodeId = rootNode.id;
+            var updatedTemplate = await template.save();
+
+            if (updatedTemplate.RootNodeId == null) {
+                throw new Error("Unable to save root node id for the template.");
+            }
+
+            return AssessmentTemplateMapper.toDto(template);
+
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    };
+
+    public syncNodesForPromotion = async (
+        templateId: uuid,
+        sourceNodes: CAssessmentNode[],
+        rootNodeDisplayCode: string
+    ): Promise<{ Created: string[]; Updated: string[]; Deleted: string[] }> => {
+        try {
+            const result = {
+                Created : [] as string[],
+                Updated : [] as string[],
+                Deleted : [] as string[],
+            };
+
+            const existingNodes = await AssessmentNode.findAll({
+                where : { TemplateId: templateId }
+            });
+
+            const sourceNodeMap = new Map<string, CAssessmentNode>();
+            for (const node of sourceNodes) {
+                sourceNodeMap.set(node.DisplayCode, node);
+            }
+
+            const existingNodeMap = new Map<string, AssessmentNode>();
+            for (const node of existingNodes) {
+                existingNodeMap.set(node.DisplayCode, node);
+            }
+
+            const idMap = new Map<string, uuid>();
+
+            for (const sourceNode of sourceNodes) {
+                const existingNode = existingNodeMap.get(sourceNode.DisplayCode);
+
+                if (existingNode) {
+                    await this.updateNodeForPromotion(existingNode.id, sourceNode);
+                    idMap.set(sourceNode.DisplayCode, existingNode.id);
+                    result.Updated.push(sourceNode.DisplayCode);
+                } else {
+                    const newNode = await this.createNodeForPromotionFlat(templateId, sourceNode);
+                    idMap.set(sourceNode.DisplayCode, newNode.id);
+                    result.Created.push(sourceNode.DisplayCode);
+                }
+            }
+
+            for (const [displayCode, existingNode] of existingNodeMap) {
+                if (!sourceNodeMap.has(displayCode)) {
+                    await AssessmentNode.destroy({ where: { id: existingNode.id } });
+                    result.Deleted.push(displayCode);
+                }
+            }
+
+            const childToParentMap = new Map<string, string>();
+            for (const sourceNode of sourceNodes) {
+                if (sourceNode.NodeType === AssessmentNodeType.NodeList) {
+                    const listNode = sourceNode as CAssessmentListNode;
+                    if (listNode.ChildrenNodeDisplayCodes && listNode.ChildrenNodeDisplayCodes.length > 0) {
+                        for (const childDisplayCode of listNode.ChildrenNodeDisplayCodes) {
+                            childToParentMap.set(childDisplayCode, sourceNode.DisplayCode);
+                        }
+                    }
+                }
+            }
+
+            for (const sourceNode of sourceNodes) {
+                const nodeId = idMap.get(sourceNode.DisplayCode);
+                const parentDisplayCode = childToParentMap.get(sourceNode.DisplayCode);
+
+                if (parentDisplayCode && idMap.has(parentDisplayCode)) {
+                    const parentId = idMap.get(parentDisplayCode);
+                    await AssessmentNode.update(
+                        { ParentNodeId: parentId },
+                        { where: { id: nodeId } }
+                    );
+                }
+            }
+
+            const rootNodeId = idMap.get(rootNodeDisplayCode);
+            if (rootNodeId) {
+                await AssessmentTemplate.update(
+                    { RootNodeId: rootNodeId },
+                    { where: { id: templateId } }
+                );
+            }
+
+            for (const sourceNode of sourceNodes) {
+                const nodeId = idMap.get(sourceNode.DisplayCode);
+                if (sourceNode.NodeType === AssessmentNodeType.Question) {
+                    const questionNode = sourceNode as CAssessmentQuestionNode;
+                    if (questionNode.Options) {
+                        await this.syncNodeOptionsForPromotion(nodeId, questionNode.Options);
+                    }
+                    if (questionNode.Paths) {
+                        await this.syncNodePathsForPromotion(nodeId, questionNode.Paths, idMap);
+                    }
+                }
+            }
+
+            return result;
+
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    };
+
+    private createNodeForPromotion = async (
+        templateObj: CAssessmentTemplate,
+        templateId: uuid,
+        parentNodeId: uuid,
+        nodeObj: CAssessmentNode
+    ): Promise<AssessmentNode> => {
+        try {
+            const existingNode = await AssessmentNode.findOne({
+                where : {
+                    DisplayCode : nodeObj.DisplayCode,
+                    TemplateId  : templateId,
+                },
+            });
+            if (existingNode) {
+                return existingNode;
+            }
+
+            if (!nodeObj.Title) {
+                nodeObj.Title = nodeObj.NodeType;
+            }
+
+            const nodeEntity = {
+                DisplayCode                 : nodeObj.DisplayCode,
+                TemplateId                  : templateId,
+                ParentNodeId                : parentNodeId,
+                NodeType                    : nodeObj.NodeType,
+                ProviderGivenId             : nodeObj.ProviderGivenId,
+                ProviderGivenCode           : nodeObj.ProviderGivenCode,
+                Title                       : nodeObj.Title,
+                Description                 : nodeObj.Description,
+                Sequence                    : nodeObj.Sequence,
+                Score                       : nodeObj.Score,
+                QueryResponseType           : QueryResponseType.None,
+                ServeListNodeChildrenAtOnce : nodeObj.ServeListNodeChildrenAtOnce ?? false,
+                RawData                     : nodeObj.RawData ? JSON.stringify(nodeObj.RawData) : null,
+                Tags                        : nodeObj.Tags && nodeObj.Tags.length > 0 ? JSON.stringify(nodeObj.Tags) : null,
+                Required                    : nodeObj.Required
+            };
+
+            var thisNode = await AssessmentNode.create(nodeEntity);
+            const currentNodeId = thisNode.id;
+
+            if (thisNode.DisplayCode.startsWith('RNode#')) {
+                var template = await AssessmentTemplate.findByPk(templateId);
+                if (template !== null) {
+                    template.RootNodeId = thisNode.id;
+                    await template.save();
+                }
+            }
+
+            if (nodeObj.NodeType === AssessmentNodeType.NodeList) {
+                var listNode: CAssessmentListNode = nodeObj as CAssessmentListNode;
+                var childrenDisplayCodes = listNode.ChildrenNodeDisplayCodes;
+                for await (var childDisplayCode of childrenDisplayCodes) {
+                    const child = CAssessmentTemplate.getNodeByDisplayCode(templateObj.Nodes, childDisplayCode);
+                    if (child) {
+                        await this.createNodeForPromotion(templateObj, templateId, currentNodeId, child);
+                    }
+                }
+            } else if (nodeObj.NodeType === AssessmentNodeType.Message) {
+                const messageNode = nodeObj as CAssessmentMessageNode;
+                thisNode.Message = messageNode.Message;
+                thisNode.QueryResponseType = QueryResponseType.Ok;
+                thisNode.Acknowledged = false;
+                await thisNode.save();
+            } else {
+                const questionNode = nodeObj as CAssessmentQuestionNode;
+                thisNode.QueryResponseType = questionNode.QueryResponseType;
+                thisNode.CorrectAnswer = questionNode.CorrectAnswer;
+                thisNode.FieldIdentifier = questionNode.FieldIdentifier;
+                thisNode.FieldIdentifierUnit = questionNode.FieldIdentifierUnit;
+                await thisNode.save();
+                await this.createQuestionNodeChildrenForPromotion(templateObj, questionNode, thisNode, templateId);
+            }
+            return thisNode;
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    };
+
+    private createNodeForPromotionFlat = async (
+        templateId: uuid,
+        nodeObj: CAssessmentNode
+    ): Promise<AssessmentNode> => {
+        try {
+            if (!nodeObj.Title) {
+                nodeObj.Title = nodeObj.NodeType;
+            }
+
+            const nodeEntity = {
+                DisplayCode                 : nodeObj.DisplayCode,
+                TemplateId                  : templateId,
+                ParentNodeId                : null,
+                NodeType                    : nodeObj.NodeType,
+                ProviderGivenId             : nodeObj.ProviderGivenId,
+                ProviderGivenCode           : nodeObj.ProviderGivenCode,
+                Title                       : nodeObj.Title,
+                Description                 : nodeObj.Description,
+                Sequence                    : nodeObj.Sequence,
+                Score                       : nodeObj.Score,
+                QueryResponseType           : QueryResponseType.None,
+                ServeListNodeChildrenAtOnce : nodeObj.ServeListNodeChildrenAtOnce ?? false,
+                RawData                     : nodeObj.RawData ? JSON.stringify(nodeObj.RawData) : null,
+                Tags                        : nodeObj.Tags && nodeObj.Tags.length > 0 ? JSON.stringify(nodeObj.Tags) : null,
+                Required                    : nodeObj.Required ?? true
+            };
+
+            var thisNode = await AssessmentNode.create(nodeEntity);
+
+            if (nodeObj.NodeType === AssessmentNodeType.Message) {
+                const messageNode = nodeObj as CAssessmentMessageNode;
+                thisNode.Message = messageNode.Message;
+                thisNode.QueryResponseType = QueryResponseType.Ok;
+                thisNode.Acknowledged = false;
+                await thisNode.save();
+            } else if (nodeObj.NodeType === AssessmentNodeType.Question) {
+                const questionNode = nodeObj as CAssessmentQuestionNode;
+                thisNode.QueryResponseType = questionNode.QueryResponseType;
+                thisNode.CorrectAnswer = questionNode.CorrectAnswer;
+                thisNode.FieldIdentifier = questionNode.FieldIdentifier;
+                thisNode.FieldIdentifierUnit = questionNode.FieldIdentifierUnit;
+                await thisNode.save();
+            }
+
+            return thisNode;
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    };
+
+    private updateNodeForPromotion = async (
+        nodeId: uuid,
+        sourceNode: CAssessmentNode
+    ): Promise<void> => {
+        try {
+            const updates: any = {
+                Title                       : sourceNode.Title,
+                Description                 : sourceNode.Description,
+                Sequence                    : sourceNode.Sequence,
+                Score                       : sourceNode.Score,
+                ProviderGivenId             : sourceNode.ProviderGivenId,
+                ProviderGivenCode           : sourceNode.ProviderGivenCode,
+                ServeListNodeChildrenAtOnce : sourceNode.ServeListNodeChildrenAtOnce,
+                RawData                     : sourceNode.RawData ? JSON.stringify(sourceNode.RawData) : null,
+                Required                    : sourceNode.Required,
+            };
+
+            if (sourceNode.Tags && sourceNode.Tags.length > 0) {
+                updates.Tags = JSON.stringify(sourceNode.Tags);
+            }
+
+            if (sourceNode.NodeType === AssessmentNodeType.Message) {
+                const messageNode = sourceNode as CAssessmentMessageNode;
+                updates.Message = messageNode.Message;
+                updates.QueryResponseType = QueryResponseType.Ok;
+            } else if (sourceNode.NodeType === AssessmentNodeType.Question) {
+                const questionNode = sourceNode as CAssessmentQuestionNode;
+                updates.QueryResponseType = questionNode.QueryResponseType;
+                updates.CorrectAnswer = questionNode.CorrectAnswer;
+                updates.FieldIdentifier = questionNode.FieldIdentifier;
+                updates.FieldIdentifierUnit = questionNode.FieldIdentifierUnit;
+            }
+
+            await AssessmentNode.update(updates, { where: { id: nodeId } });
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    };
+
+    private createQuestionNodeChildrenForPromotion = async (
+        sTemplate: CAssessmentTemplate,
+        questionNode: CAssessmentQuestionNode,
+        thisNode: AssessmentNode,
+        templateId: string
+    ): Promise<void> => {
+        if (questionNode.Options && questionNode.Options.length > 0) {
+            for await (var option of questionNode.Options) {
+                const optEntity = {
+                    DisplayCode       : option.DisplayCode,
+                    ProviderGivenCode : option.ProviderGivenCode,
+                    NodeId            : thisNode.id,
+                    Text              : option.Text,
+                    ImageUrl          : option.ImageUrl,
+                    Sequence          : option.Sequence,
+                };
+                await AssessmentQueryOption.create(optEntity);
+            }
+        }
+
+        if (questionNode.Paths && questionNode.Paths.length > 0) {
+            for await (var sPath of questionNode.Paths) {
+                const pathEntity = {
+                    DisplayCode           : sPath.DisplayCode,
+                    ParentNodeId          : thisNode.id,
+                    NextNodeDisplayCode   : sPath.NextNodeDisplayCode,
+                    IsExitPath            : sPath.IsExitPath,
+                    MessageBeforeQuestion : sPath.MessageBeforeQuestion
+                };
+
+                var path = await AssessmentNodePath.create(pathEntity);
+
+                if (!sPath.IsExitPath && sPath.Condition) {
+                    const condition = await this.createPathConditionForPromotion(
+                        sPath.Condition,
+                        thisNode.id,
+                        path.id,
+                        null
+                    );
+                    path.ConditionId = condition.id;
+
+                    const sNextNode = CAssessmentTemplate.getNodeByDisplayCode(
+                        sTemplate.Nodes,
+                        sPath.NextNodeDisplayCode
+                    );
+                    if (sNextNode) {
+                        var nextNode = await this.createNodeForPromotion(
+                            sTemplate,
+                            templateId,
+                            thisNode.id,
+                            sNextNode
+                        );
+                        if (nextNode) {
+                            path.NextNodeId = nextNode.id;
+                            await path.save();
+                        }
+                    }
+                }
+            }
+        }
+    };
+
+    private createPathConditionForPromotion = async (
+        sCondition: CAssessmentPathCondition,
+        currentNodeId: string,
+        pathId: string,
+        parentConditionId: any
+    ): Promise<AssessmentPathCondition> => {
+        const firstOperandValue = sCondition.FirstOperand
+            ? this.getOperandValueStringForPromotion(sCondition.FirstOperand.Value, sCondition.FirstOperand.DataType)
+            : null;
+        const secondOperandValue = sCondition.SecondOperand
+            ? this.getOperandValueStringForPromotion(sCondition.SecondOperand.Value, sCondition.SecondOperand.DataType)
+            : null;
+        const thirdOperandValue = sCondition.ThirdOperand
+            ? this.getOperandValueStringForPromotion(sCondition.ThirdOperand.Value, sCondition.ThirdOperand.DataType)
+            : null;
+
+        const dt = ConditionOperandDataType.Text;
+
+        var conditionEntity = {
+            DisplayCode           : sCondition.DisplayCode,
+            NodeId                : currentNodeId,
+            PathId                : pathId,
+            IsCompositeCondition  : sCondition.IsCompositeCondition,
+            CompositionType       : sCondition.CompositionType,
+            ParentConditionId     : parentConditionId,
+            OperatorType          : sCondition.OperatorType,
+            FirstOperandName      : sCondition.FirstOperand ? sCondition.FirstOperand.Name : null,
+            FirstOperandValue     : firstOperandValue,
+            FirstOperandDataType  : sCondition.FirstOperand ? sCondition.FirstOperand.DataType : dt,
+            SecondOperandName     : sCondition.SecondOperand ? sCondition.SecondOperand.Name : null,
+            SecondOperandValue    : secondOperandValue,
+            SecondOperandDataType : sCondition.SecondOperand ? sCondition.SecondOperand.DataType : dt,
+            ThirdOperandName      : sCondition.ThirdOperand ? sCondition.ThirdOperand.Name : null,
+            ThirdOperandValue     : thirdOperandValue,
+            ThirdOperandDataType  : sCondition.ThirdOperand ? sCondition.ThirdOperand.DataType : dt,
+        };
+
+        const condition = await AssessmentPathCondition.create(conditionEntity);
+
+        if (sCondition.IsCompositeCondition && sCondition.Children && sCondition.Children.length > 0) {
+            for await (var childCondition of sCondition.Children) {
+                await this.createPathConditionForPromotion(
+                    childCondition,
+                    currentNodeId,
+                    pathId,
+                    condition.id
+                );
+            }
+        }
+
+        return condition;
+    };
+
+    private getOperandValueStringForPromotion = (
+        operand: any,
+        dataType: ConditionOperandDataType
+    ): string => {
+        if (!operand) {
+            return null;
+        }
+        if (
+            dataType === ConditionOperandDataType.Text ||
+            dataType === ConditionOperandDataType.Float ||
+            dataType === ConditionOperandDataType.Integer
+        ) {
+            return operand.toString();
+        }
+        if (dataType === ConditionOperandDataType.Array) {
+            return JSON.stringify(operand);
+        }
+        if (dataType === ConditionOperandDataType.Boolean) {
+            return operand === true ? 'true' : 'false';
+        }
+        return null;
+    };
+
+    private syncNodeOptionsForPromotion = async (
+        nodeId: uuid,
+        sourceOptions: CAssessmentQueryOption[]
+    ): Promise<void> => {
+        try {
+            const existingOptions = await AssessmentQueryOption.findAll({
+                where : { NodeId: nodeId }
+            });
+
+            const sourceOptionMap = new Map<string, CAssessmentQueryOption>();
+            for (const opt of sourceOptions) {
+                sourceOptionMap.set(opt.DisplayCode, opt);
+            }
+
+            const existingOptionMap = new Map<string, any>();
+            for (const opt of existingOptions) {
+                existingOptionMap.set(opt.DisplayCode, opt);
+            }
+
+            for (const sourceOpt of sourceOptions) {
+                const existingOpt = existingOptionMap.get(sourceOpt.DisplayCode);
+                if (existingOpt) {
+                    await AssessmentQueryOption.update({
+                        Text              : sourceOpt.Text,
+                        ImageUrl          : sourceOpt.ImageUrl,
+                        Sequence          : sourceOpt.Sequence,
+                        ProviderGivenCode : sourceOpt.ProviderGivenCode,
+                    }, { where: { id: existingOpt.id } });
+                } else {
+                    await AssessmentQueryOption.create({
+                        DisplayCode       : sourceOpt.DisplayCode,
+                        ProviderGivenCode : sourceOpt.ProviderGivenCode,
+                        NodeId            : nodeId,
+                        Text              : sourceOpt.Text,
+                        ImageUrl          : sourceOpt.ImageUrl,
+                        Sequence          : sourceOpt.Sequence,
+                    });
+                }
+            }
+
+            for (const [displayCode, existingOpt] of existingOptionMap) {
+                if (!sourceOptionMap.has(displayCode)) {
+                    await AssessmentQueryOption.destroy({ where: { id: existingOpt.id } });
+                }
+            }
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    };
+
+    private syncNodePathsForPromotion = async (
+        nodeId: uuid,
+        sourcePaths: CAssessmentNodePath[],
+        nodeIdMap: Map<string, uuid>
+    ): Promise<void> => {
+        try {
+            const existingPaths = await AssessmentNodePath.findAll({
+                where : { ParentNodeId: nodeId }
+            });
+
+            const sourcePathMap = new Map<string, CAssessmentNodePath>();
+            for (const path of sourcePaths) {
+                sourcePathMap.set(path.DisplayCode, path);
+            }
+
+            const existingPathMap = new Map<string, any>();
+            for (const path of existingPaths) {
+                existingPathMap.set(path.DisplayCode, path);
+            }
+
+            for (const sourcePath of sourcePaths) {
+                const existingPath = existingPathMap.get(sourcePath.DisplayCode);
+                const nextNodeId = sourcePath.NextNodeDisplayCode
+                    ? nodeIdMap.get(sourcePath.NextNodeDisplayCode)
+                    : null;
+
+                if (existingPath) {
+                    await AssessmentNodePath.update({
+                        NextNodeId            : nextNodeId,
+                        NextNodeDisplayCode   : sourcePath.NextNodeDisplayCode,
+                        IsExitPath            : sourcePath.IsExitPath,
+                        MessageBeforeQuestion : sourcePath.MessageBeforeQuestion,
+                    }, { where: { id: existingPath.id } });
+
+                    if (sourcePath.Condition) {
+                        await this.syncPathConditionForPromotion(
+                            existingPath.id,
+                            nodeId,
+                            sourcePath.Condition,
+                            existingPath.ConditionId
+                        );
+                    }
+                } else {
+                    const newPath = await AssessmentNodePath.create({
+                        DisplayCode           : sourcePath.DisplayCode,
+                        ParentNodeId          : nodeId,
+                        NextNodeId            : nextNodeId,
+                        NextNodeDisplayCode   : sourcePath.NextNodeDisplayCode,
+                        IsExitPath            : sourcePath.IsExitPath,
+                        MessageBeforeQuestion : sourcePath.MessageBeforeQuestion,
+                    });
+
+                    if (sourcePath.Condition) {
+                        const condition = await this.createPathConditionForPromotion(
+                            sourcePath.Condition,
+                            nodeId,
+                            newPath.id,
+                            null
+                        );
+                        newPath.ConditionId = condition.id;
+                        await newPath.save();
+                    }
+                }
+            }
+
+            for (const [displayCode, existingPath] of existingPathMap) {
+                if (!sourcePathMap.has(displayCode)) {
+                    if (existingPath.ConditionId) {
+                        await this.deletePathCondition(existingPath.ConditionId);
+                    }
+                    await AssessmentNodePath.destroy({ where: { id: existingPath.id } });
+                }
+            }
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    };
+
+    private syncPathConditionForPromotion = async (
+        pathId: uuid,
+        nodeId: uuid,
+        sourceCondition: CAssessmentPathCondition,
+        existingConditionId: uuid
+    ): Promise<void> => {
+        try {
+            if (existingConditionId) {
+                await this.deletePathCondition(existingConditionId);
+            }
+
+            const condition = await this.createPathConditionForPromotion(
+                sourceCondition,
+                nodeId,
+                pathId,
+                null
+            );
+
+            await AssessmentNodePath.update(
+                { ConditionId: condition.id },
+                { where: { id: pathId } }
+            );
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    };
+
     //#endregion
 
 }

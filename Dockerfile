@@ -1,14 +1,15 @@
 FROM node:24-alpine3.22 AS builder
 ADD . /app
-RUN apk add bash
-RUN apk add --no-cache \
-        python3 \
-        py3-pip \
-    && rm -rf /var/cache/apk/*
-RUN apk add --update alpine-sdk
-RUN apk add chromium \
-    harfbuzz
 WORKDIR /app
+RUN apk update && apk upgrade --no-cache
+RUN apk add --no-cache \
+    bash \
+    python3 \
+    py3-pip \
+    alpine-sdk \
+    chromium \
+    harfbuzz
+
 COPY package*.json /app/
 RUN npm install -g typescript
 COPY src ./src
@@ -23,20 +24,21 @@ RUN npm run build
 ##RUN npm run build
 
 FROM node:24-alpine3.22
-RUN apk add bash
-RUN apk add --no-cache \
-        python3 \
-        py3-pip \
-    && pip3 install --break-system-packages awscli \
-    && rm -rf /var/cache/apk/*
 
-RUN apk add --update alpine-sdk
-RUN apk add chromium \
-    harfbuzz
-RUN apk update
-RUN apk upgrade
 ADD . /app
 WORKDIR /app
+
+RUN apk update && apk upgrade --no-cache
+
+RUN apk add --no-cache \
+    bash \
+    python3 \
+    py3-pip \
+    chromium \
+    harfbuzz \
+ && pip3 install --break-system-packages awscli \
+ && apk del cups cups-libs cups-client 2>/dev/null || true \
+ && rm -rf /var/cache/apk/*
 
 COPY package*.json /app/
 RUN npm install pm2 -g
@@ -45,4 +47,3 @@ COPY --from=builder ./app/dist/ .
 
 RUN chmod +x /app/entrypoint.sh
 ENTRYPOINT ["/bin/bash", "-c", "/app/entrypoint.sh"]
-

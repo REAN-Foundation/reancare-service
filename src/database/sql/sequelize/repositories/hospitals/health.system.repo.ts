@@ -48,6 +48,10 @@ export class HealthSystemRepo implements IHealthSystemRepo {
                 search.where['Name'] = { [Op.like]: '%' + filters.Name + '%' };
             }
 
+            if (filters.TenantId != null) {
+                search.where['TenantId'] = filters.TenantId;
+            }
+
             let orderByColum = 'CreatedAt';
             if (filters.OrderBy) {
                 orderByColum = filters.OrderBy;

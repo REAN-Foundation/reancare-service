@@ -115,7 +115,9 @@
                 "AddOption": false,
                 "GetOption": false,
                 "UpdateOption": false,
-                "DeleteOption": false
+                "DeleteOption": false,
+                "PromoteAssessment": false,
+                "PromotionTo": false
             },
             "DailyAssessment": {
                 "Create": true,
@@ -643,7 +645,9 @@
             "GetSecret": false,
             "GetSecretByCode": false,
             "UpdateSecret": false,
-            "GetActiveTenants": false
+            "GetActiveTenants": false,
+            "PromotionFrom": false,
+            "PromotionTo": false
         },
         "Settings": {
             "GetTenantSettingsTypes": false,

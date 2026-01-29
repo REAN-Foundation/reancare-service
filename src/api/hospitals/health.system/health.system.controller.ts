@@ -9,6 +9,7 @@ import { RoleService } from '../../../services/role/role.service';
 import { HealthSystemValidator } from './health.system.validator';
 import { Injector } from '../../../startup/injector';
 import { BaseController } from '../../../api/base.controller';
+import { HealthSystemSearchFilters } from '../../../domain.types/hospitals/health.system/health.system.search.types';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -67,7 +68,8 @@ export class HealthSystemController extends BaseController {
 
     search = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            const filters = await this._validator.search(request);
+            let filters = await this._validator.search(request);
+            filters = await this.authorizeSearch(request, filters);
             const searchResults = await this._service.search(filters);
             const count = searchResults.Items.length;
             const message =
@@ -107,7 +109,6 @@ export class HealthSystemController extends BaseController {
 
     delete = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            await this.authorizeOne(request, null, null);
             const id: uuid = await this._validator.getParamUuid(request, 'id');
             const existingHealthSystem = await this._service.getById(id);
             if (existingHealthSystem == null) {
@@ -143,5 +144,24 @@ export class HealthSystemController extends BaseController {
     };
 
     //#endregion
+
+    authorizeSearch = async (
+        request: express.Request,
+        searchFilters: HealthSystemSearchFilters ): Promise<HealthSystemSearchFilters> => {
+
+        if (request.currentClient?.IsPrivileged) {
+            return searchFilters;
+        }
+
+        if (searchFilters.TenantId != null) {
+            if (searchFilters.TenantId !== request.currentUser.TenantId) {
+                throw new ApiError(403, 'Forbidden');
+            }
+        }
+        else {
+            searchFilters.TenantId = request.currentUser.TenantId;
+        }
+        return searchFilters;
+    };
 
 }

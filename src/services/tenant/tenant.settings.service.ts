@@ -378,6 +378,7 @@ export class TenantSettingsService {
             QnA                 : false,
             Consent             : true,
             WelcomeMessage      : true,
+            WelcomeMessages     : null,
             Feedback            : false,
             ReminderAppointment : false,
             AppointmentFollowup : false,

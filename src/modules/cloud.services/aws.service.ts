@@ -1,6 +1,7 @@
 import { injectable } from 'tsyringe';
 import AWS from 'aws-sdk';
 import { ApiError } from '../../common/api.error';
+import { Logger } from '../../common/logger';
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -31,6 +32,7 @@ export class AwsLambdaService {
         if (responsePayload?.Status === 'success') {
             return data as T;
         } else {
+            Logger.instance().log(`Lambda invocation failed: ${responsePayload?.Message}`);
             throw new ApiError(responsePayload?.HttpCode || 500, responsePayload?.Message || 'Lambda invocation failed');
         }
     }

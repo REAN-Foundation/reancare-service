@@ -5,7 +5,7 @@ name: LVPI-CI-CD
 
 on:
   push:
-    branches: [main, feature/lvpi-ci-cd]  # TODO: Remove feature branch after testing
+    branches: [main, feature/lvpi-ci-cd]
   workflow_dispatch:
     inputs:
       deploy_to_ecs:
@@ -17,6 +17,8 @@ on:
 env:
   AWS_REGION: ap-south-2
   ECR_REPOSITORY: lvpei-prod-reancare-service
+  ECS_CLUSTER: lvpei-prod-cluster
+  ECS_SERVICE: lvpei-prod-reancare-service
   IMAGE_TAG: ${{ github.sha }}
 
 permissions:
@@ -63,7 +65,6 @@ jobs:
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
         run: |
-          # Build and tag the image
           docker buildx build \
             --cache-from type=local,src=/tmp/.buildx-cache \
             --cache-to type=local,dest=/tmp/.buildx-cache-new,mode=max \
@@ -72,7 +73,6 @@ jobs:
             --tag $ECR_REGISTRY/$ECR_REPOSITORY:latest \
             .
 
-          # Output the image URI
           echo "image_uri=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
 
       - name: Move cache
@@ -84,40 +84,27 @@ jobs:
         run: |
           echo "Image pushed: ${{ steps.build-image.outputs.image_uri }}"
 
-  # Uncomment this job after ECS services are deployed
-  # deploy-to-ecs:
-  #   name: Deploy to ECS
-  #   needs: build-and-push
-  #   if: github.event.inputs.deploy_to_ecs == 'true' || github.ref == 'refs/heads/main'
-  #   runs-on: ubuntu-latest
-  #   environment: lvpi-prod
-  #
-  #   steps:
-  #     - name: Configure AWS credentials via OIDC
-  #       uses: aws-actions/configure-aws-credentials@v4
-  #       with:
-  #         role-to-assume: arn:aws:iam::777184858387:role/lvpei-prod-github-actions-role
-  #         role-session-name: GitHubActions-${{ github.run_id }}
-  #         aws-region: ${{ env.AWS_REGION }}
-  #
-  #     - name: Download task definition
-  #       run: |
-  #         aws ecs describe-task-definition \
-  #           --task-definition lvpei-prod-reancare-service \
-  #           --query taskDefinition > task-definition.json
-  #
-  #     - name: Update image in task definition
-  #       id: task-def
-  #       uses: aws-actions/amazon-ecs-render-task-definition@v1
-  #       with:
-  #         task-definition: task-definition.json
-  #         container-name: reancare-service
-  #         image: ${{ needs.build-and-push.outputs.image_uri }}
-  #
-  #     - name: Deploy to ECS
-  #       uses: aws-actions/amazon-ecs-deploy-task-definition@v1
-  #       with:
-  #         task-definition: ${{ steps.task-def.outputs.task-definition }}
-  #         service: lvpei-prod-reancare-service
-  #         cluster: lvpei-prod-cluster
-  #         wait-for-service-stability: true
+      # Deploy to ECS - Update task definition with new image and force deployment
+      - name: Download current task definition
+        run: |
+          aws ecs describe-task-definition \
+            --task-definition ${{ env.ECS_SERVICE }} \
+            --query taskDefinition > task-definition.json
+          jq 'del(.taskDefinitionArn, .revision, .status, .requiresAttributes, .compatibilities, .registeredAt, .registeredBy)' task-definition.json > clean-task-definition.json
+
+      - name: Update image in task definition
+        id: task-def
+        uses: aws-actions/amazon-ecs-render-task-definition@v1
+        with:
+          task-definition: clean-task-definition.json
+          container-name: ${{ env.ECS_SERVICE }}
+          image: ${{ steps.build-image.outputs.image_uri }}
+
+      - name: Deploy to ECS
+        uses: aws-actions/amazon-ecs-deploy-task-definition@v2
+        with:
+          task-definition: ${{ steps.task-def.outputs.task-definition }}
+          service: ${{ env.ECS_SERVICE }}
+          cluster: ${{ env.ECS_CLUSTER }}
+          wait-for-service-stability: true
+          wait-for-minutes: 10

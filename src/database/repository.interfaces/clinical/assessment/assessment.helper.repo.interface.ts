@@ -26,7 +26,7 @@ import { AssessmentTemplateDto } from '../../../../domain.types/clinical/assessm
 import { uuid } from '../../../../domain.types/miscellaneous/system.types';
 import { AssessmentNodeSearchFilters } from '../../../../domain.types/clinical/assessment/assessment.node.search.types';
 import { AssessmentNodeSearchResults } from '../../../../domain.types/clinical/assessment/assessment.node.search.types';
-import { AssessmentDto } from '../../../../domain.types/clinical/assessment/assessment.dto';
+import { NodeSyncResult } from '../../../../domain.types/clinical/assessment/assessment.promotion.types';
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -118,5 +118,13 @@ export interface IAssessmentHelperRepo {
     getOption(optionId: uuid): Promise<CAssessmentQueryOption>;
 
     deleteOption(optionId: uuid): Promise<boolean>;
+
+    addTemplateForPromotion(template: CAssessmentTemplate): Promise<AssessmentTemplateDto>;
+
+    syncNodesForPromotion(
+        templateId: uuid,
+        sourceNodes: CAssessmentNode[],
+        rootNodeDisplayCode: string
+    ): Promise<NodeSyncResult>;
 
 }

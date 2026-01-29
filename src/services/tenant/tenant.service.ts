@@ -11,6 +11,17 @@ import * as DefaultVitalsThresholds from '../../../seed.data/default.vitals.thre
 import { Injector } from '../../startup/injector';
 import { TenantSettingsMarketingService } from './marketing/tenant.settings.marketing.service';
 import { AwsLambdaService } from '../../modules/cloud.services/aws.service';
+import {
+    TenantPromotionPayload,
+    TargetEnvironment,
+    TenantPromotionLambdaPayload,
+    TenantPromotionLambdaResponse,
+    PromotionToResponse,
+    PromotionAction
+} from '../../domain.types/tenant/tenant.promotion.types';
+import { TenantSettingsService } from './tenant.settings.service';
+import { ITenantSettingsMarketingRepo } from '../../database/repository.interfaces/tenant/marketing/tenant.settings.marketing.interface';
+import { UserHelper } from '../../api/users/user.helper';
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -19,9 +30,12 @@ export class TenantService {
 
      _lambdaService: AwsLambdaService = Injector.Container.resolve(AwsLambdaService);
 
+     _userHelper: UserHelper = null;
+     
      constructor(
         @inject('ITenantRepo') private _tenantRepo: ITenantRepo,
         @inject('ITenantSettingsRepo') private _tenantSettingsRepo: ITenantSettingsRepo,
+        @inject('ITenantSettingsMarketingRepo') private _tenantSettingsMarketingRepo: ITenantSettingsMarketingRepo,
      ) {}
 
      //#region Publics
@@ -398,6 +412,7 @@ export class TenantService {
             QnA                 : false,
             Consent             : true,
             WelcomeMessage      : true,
+            WelcomeMessages     : null,
             Feedback            : false,
             ReminderAppointment : false,
             AppointmentFollowup : false,
@@ -452,5 +467,184 @@ export class TenantService {
             "DataBaseName"                     : secret.database?.DataBaseName,
         };
     }
+
+    //#region Promotion Methods
+
+    public preparePromotionPayload = async (
+        tenantId: uuid,
+        targetEnvironment: TargetEnvironment
+    ): Promise<TenantPromotionPayload> => {
+        const tenant = await this._tenantRepo.getById(tenantId);
+        if (!tenant) {
+            throw new Error('Tenant not found');
+        }
+
+        const settings = await this._tenantSettingsRepo.getTenantSettings(tenantId);
+
+        const marketingSettings = await this._tenantSettingsMarketingRepo.getSettings(tenantId);
+
+        const payload: TenantPromotionPayload = {
+            SourceEnvironment : process.env.NODE_ENV,
+            TargetEnvironment : targetEnvironment,
+            Tenant            : {
+                Name        : tenant.Name,
+                Code        : tenant.Code,
+                Description : tenant.Description,
+                Phone       : tenant.Phone,
+                Email       : tenant.Email,
+            },
+            Settings : {
+                Common           : settings?.Common ?? null,
+                Followup         : settings?.Followup ?? null,
+                ChatBot          : settings?.ChatBot ?? null,
+                Forms            : settings?.Forms ?? null,
+                Consent          : settings?.Consent ?? null,
+                CustomSettings   : settings?.CustomSettings ?? null,
+                VitalsThresholds : settings?.VitalsThresholds ?? null,
+            },
+            MarketingSettings : {
+                Styling : marketingSettings?.Styling ?? null,
+                Content : marketingSettings?.Content ?? null,
+            },
+        };
+
+        return payload;
+    };
+
+    public triggerPromotion = async (
+        payload: TenantPromotionPayload
+    ): Promise<TenantPromotionLambdaResponse> => {
+        const lambdaFunctionName = process.env.TENANT_PROMOTION_LAMBDA_FUNCTION;
+        if (!lambdaFunctionName) {
+            throw new Error('Tenant promotion Lambda function name is not configured');
+        }
+
+        const lambdaPayload: TenantPromotionLambdaPayload = {
+            TargetEnvironment : payload.TargetEnvironment,
+            Payload           : payload,
+        };
+
+        const response = await this._lambdaService.invokeLambdaFunction<TenantPromotionLambdaResponse>(
+            lambdaFunctionName,
+            lambdaPayload
+        );
+
+        return response;
+    };
+
+    public processIncomingPromotion = async (
+        payload: TenantPromotionPayload
+    ): Promise<PromotionToResponse> => {
+        const tenantCode = payload.Tenant.Code;
+
+        const existingTenant = await this._tenantRepo.getTenantWithCode(tenantCode);
+
+        if (existingTenant) {
+            return await this.updateExistingTenantFromPromotion(existingTenant.id, payload);
+        } else {
+            return await this.createNewTenantFromPromotion(payload);
+        }
+    };
+
+    private updateExistingTenantFromPromotion = async (
+        tenantId: uuid,
+        payload: TenantPromotionPayload
+    ): Promise<PromotionToResponse> => {
+        const tenantModel: TenantDomainModel = {
+            Name        : payload.Tenant.Name,
+            Description : payload.Tenant.Description,
+        };
+        await this._tenantRepo.update(tenantId, tenantModel);
+
+        const tenantSettingsService = Injector.Container.resolve(TenantSettingsService);
+        if (payload.Settings) {
+            const settingsModel: TenantSettingsDomainModel = {
+                Common           : payload.Settings.Common,
+                Followup         : payload.Settings.Followup,
+                ChatBot          : payload.Settings.ChatBot,
+                Forms            : payload.Settings.Forms,
+                Consent          : payload.Settings.Consent,
+                CustomSettings   : payload.Settings.CustomSettings,
+                VitalsThresholds : payload.Settings.VitalsThresholds,
+            };
+            await tenantSettingsService.updateTenantSettings(tenantId, settingsModel);
+        }
+
+        const marketingService = Injector.Container.resolve(TenantSettingsMarketingService);
+        if (payload.MarketingSettings?.Styling) {
+            await marketingService.updateSettingsByType(
+                tenantId,
+                'Styling' as any,
+                payload.MarketingSettings.Styling
+            );
+        }
+        if (payload.MarketingSettings?.Content) {
+            await marketingService.updateSettingsByType(
+                tenantId,
+                'Content' as any,
+                payload.MarketingSettings.Content
+            );
+        }
+
+        return {
+            TenantId   : tenantId,
+            TenantCode : payload.Tenant.Code,
+            TenantName : payload.Tenant.Name,
+            Action     : PromotionAction.Updated,
+        };
+    };
+
+    private createNewTenantFromPromotion = async (
+        payload: TenantPromotionPayload
+    ): Promise<PromotionToResponse> => {
+        const tenantModel: TenantDomainModel = {
+            Name        : payload.Tenant.Name,
+            Code        : payload.Tenant.Code,
+            Description : payload.Tenant.Description,
+            Phone       : payload.Tenant.Phone,
+            Email       : payload.Tenant.Email,
+        };
+        if (!this._userHelper) {
+            this._userHelper = new UserHelper();
+        }
+        await this._userHelper.performDuplicatePersonCheck(tenantModel.Phone, tenantModel.Email);
+        const tenant = await this._tenantRepo.create(tenantModel);
+        if (!tenant) {
+            throw new Error('Failed to create tenant');
+        }
+
+        const tenantSettingsService = Injector.Container.resolve(TenantSettingsService);
+        if (payload.Settings) {
+            await tenantSettingsService.createDefaultSettings(tenant.id, tenant.Code);
+
+            const settingsModel: TenantSettingsDomainModel = {
+                Common           : payload.Settings.Common,
+                Followup         : payload.Settings.Followup,
+                ChatBot          : payload.Settings.ChatBot,
+                Forms            : payload.Settings.Forms,
+                Consent          : payload.Settings.Consent,
+                CustomSettings   : payload.Settings.CustomSettings,
+                VitalsThresholds : payload.Settings.VitalsThresholds,
+            };
+            await tenantSettingsService.updateTenantSettings(tenant.id, settingsModel);
+        } else {
+            await tenantSettingsService.createDefaultSettings(tenant.id, tenant.Code);
+        }
+
+        const marketingService = Injector.Container.resolve(TenantSettingsMarketingService);
+        await marketingService.createDefaultSettings(tenant.id, {
+            Styling : payload.MarketingSettings?.Styling ?? null,
+            Content : payload.MarketingSettings?.Content ?? null,
+        });
+
+        return {
+            TenantId   : tenant.id,
+            TenantCode : tenant.Code,
+            TenantName : tenant.Name,
+            Action     : PromotionAction.Created,
+        };
+    };
+
+    //#endregion
 
 }

@@ -19,6 +19,9 @@ export const register = (app: express.Application): void => {
     router.post('/:id/promote-as-admin', auth(TenantAuth.promoteTenantUserAsAdmin), controller.promoteTenantUserAsAdmin);
     router.post('/:id/demote-as-admin', auth(TenantAuth.demoteAdmin), controller.demoteAdmin);
 
+    router.post('/:id/promotion-from', auth(TenantAuth.promotionFrom), controller.promotionFrom);
+    router.post('/promotion-to', controller.promotionTo);
+
     router.post('/:id/settings/database/create-bot-schema', auth(TenantAuth.createBotSchema), controller.createBotSchema);
 
     router.post('/:id/settings/secret/create-secret', auth(TenantAuth.createSecret), controller.createSecret);

@@ -1,7 +1,7 @@
-# LVPI Production CI/CD Pipeline
+# LVPEI Production CI/CD Pipeline
 # Uses OIDC for secure, keyless authentication to AWS
 
-name: LVPI-CI-CD
+name: LVPEI-CI-CD
 
 on:
   push:

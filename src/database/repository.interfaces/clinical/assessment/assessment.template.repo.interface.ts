@@ -11,6 +11,8 @@ export interface IAssessmentTemplateRepo {
 
     getByProviderAssessmentCode(Provider: string, ProviderActionId: string): Promise<AssessmentTemplateDto>;
 
+    getByDisplayCodeAndTenant(displayCode: string, tenantId: uuid): Promise<AssessmentTemplateDto>;
+
     search(filters: AssessmentTemplateSearchFilters): Promise<AssessmentTemplateSearchResults>;
 
     update(id: uuid, model: AssessmentTemplateDomainModel): Promise<AssessmentTemplateDto>;

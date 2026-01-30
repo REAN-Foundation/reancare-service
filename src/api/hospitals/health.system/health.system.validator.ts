@@ -39,6 +39,7 @@ export class HealthSystemValidator extends BaseValidator {
     search = async (request: express.Request): Promise<HealthSystemSearchFilters> => {
         await this.validateString(request, 'name', Where.Query, false, false);
         await this.validateString(request, 'tag', Where.Query, false, false);
+        await this.validateString(request, 'tenantId', Where.Query, false, false);
         await this.validateBaseSearchFilters(request);
         this.validateRequest(request);
         return this.getFilter(request);
@@ -67,8 +68,9 @@ export class HealthSystemValidator extends BaseValidator {
     private getFilter(request): HealthSystemSearchFilters {
 
         const filters: HealthSystemSearchFilters = {
-            Name : request.query.name ?? null,
-            Tags : request.query.tag ? request.query.tag.split(',') : null,
+            Name     : request.query.name ?? null,
+            Tags     : request.query.tag ? request.query.tag.split(',') : null,
+            TenantId : request.query.tenantId
         };
 
         return this.updateBaseSearchFilters(request, filters);

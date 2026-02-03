@@ -89,6 +89,8 @@
     "Clinical.Assessments.AssessmentTemplate.GetOption",
     "Clinical.Assessments.AssessmentTemplate.UpdateOption",
     "Clinical.Assessments.AssessmentTemplate.DeleteOption",
+    "Clinical.Assessments.AssessmentTemplate.PromoteAssessment",
+    "Clinical.Assessments.AssessmentTemplate.PromotionTo",
     "Clinical.Assessments.DailyAssessment.Create",
     "Clinical.Assessments.DailyAssessment.Search",
     "Clinical.Assessments.Forms.Connect",

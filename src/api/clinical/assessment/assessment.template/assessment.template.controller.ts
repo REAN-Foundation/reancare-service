@@ -8,14 +8,17 @@ import { CAssessmentListNode, CAssessmentMessageNode, CAssessmentNode, CAssessme
 import { uuid } from '../../../../domain.types/miscellaneous/system.types';
 import { AssessmentTemplateFileConverter } from '../../../../services/clinical/assessment/assessment.template.file.converter';
 import { AssessmentTemplateService } from '../../../../services/clinical/assessment/assessment.template.service';
+import { AssessmentPromotionService } from '../../../../services/clinical/assessment/assessment.promotion.service';
 import { FileResourceService } from '../../../../services/general/file.resource.service';
 import { Injector } from '../../../../startup/injector';
 import { AssessmentTemplateValidator } from './assessment.template.validator';
+import { AssessmentTemplatePromotionValidator } from './assessment.template.promotion.validator';
 import { FileResourceValidator } from '../../../general/file.resource/file.resource.validator';
 import { BaseController } from '../../../../api/base.controller';
 import { AssessmentTemplateDto } from '../../../../domain.types/clinical/assessment/assessment.template.dto';
 import { AssessmentTemplateSearchFilters } from '../../../../domain.types/clinical/assessment/assessment.template.search.types';
 import { AssessmentTemplateDomainModel } from '../../../../domain.types/clinical/assessment/assessment.template.domain.model';
+import { AssessmentPromotionFromResponse } from '../../../../domain.types/clinical/assessment/assessment.promotion.types';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -25,9 +28,13 @@ export class AssessmentTemplateController extends BaseController {
 
     _service: AssessmentTemplateService = Injector.Container.resolve(AssessmentTemplateService);
 
+    _promotionService: AssessmentPromotionService = Injector.Container.resolve(AssessmentPromotionService);
+
     _fileResourceService: FileResourceService = Injector.Container.resolve(FileResourceService);
 
     _validator: AssessmentTemplateValidator = new AssessmentTemplateValidator();
+
+    _promotionValidator: AssessmentTemplatePromotionValidator = new AssessmentTemplatePromotionValidator();
 
     _fileResourceValidator: FileResourceValidator = new FileResourceValidator();
 
@@ -203,7 +210,7 @@ export class AssessmentTemplateController extends BaseController {
 
             // Ensure that the imported template belongs to the current user's tenant
             const currentUserTenantId = request.currentUser.TenantId;
-            if (assessmentTemplate.TenantId !== currentUserTenantId && 
+            if (assessmentTemplate.TenantId !== currentUserTenantId &&
                 currentUserTenantId != null) {
                 const updates: AssessmentTemplateDomainModel = { TenantId: currentUserTenantId };
                 await this._service.update(assessmentTemplate.id, updates);
@@ -756,6 +763,82 @@ export class AssessmentTemplateController extends BaseController {
         }
     }
 
+    //#region Assessment Promotion Methods
+
+    promoteAssessment = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+            const id: uuid = await this._validator.getParamUuid(request, 'id');
+            const assessmentTemplate = await this._service.getById(id);
+
+            if (assessmentTemplate == null) {
+                throw new ApiError(404, 'Assessment template not found.');
+            }
+
+            await this.authorizeOne(request, null, assessmentTemplate.TenantId);
+
+            const requestBody = await this._promotionValidator.validatePromotionFrom(request);
+
+            const tenantCode = request.currentUser.TenantCode;
+            if (!tenantCode) {
+                throw new ApiError(400, 'Tenant code not found for current user');
+            }
+
+            const payload = await this._promotionService.preparePromotionPayload(
+                id,
+                tenantCode,
+                requestBody.TargetEnvironment
+            );
+
+            await this._promotionService.triggerPromotion(payload);
+
+            const responseData: AssessmentPromotionFromResponse = {
+                AssessmentCode    : assessmentTemplate.DisplayCode,
+                AssessmentTitle   : assessmentTemplate.Title,
+                TenantCode        : tenantCode,
+                TargetEnvironment : requestBody.TargetEnvironment,
+                InitiatedAt       : new Date(),
+                NodeCount         : payload.Assessment.Nodes.length,
+                Message           : `Assessment promotion to ${requestBody.TargetEnvironment} initiated successfully`,
+            };
+
+            ResponseHandler.success(request, response, 'Assessment promotion initiated successfully!', 200, {
+                AssessmentPromotion : responseData,
+            });
+
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
+    receivePromotion = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+            const isValidLambdaAuth = this._promotionValidator.validateLambdaAuthHeader(request);
+            if (!isValidLambdaAuth) {
+                throw new ApiError(401, 'Unauthorized: Invalid Lambda authentication token');
+            }
+
+            const payload = await this._promotionValidator.validatePromotionTo(request);
+
+            const currentEnv = process.env.NODE_ENV;
+            if (payload.TargetEnvironment !== currentEnv) {
+                throw new ApiError(400, `Target environment mismatch. Expected: ${payload.TargetEnvironment}, Current: ${currentEnv}`);
+            }
+
+            Logger.instance().log(`Receiving assessment promotion: ${payload.Assessment.DisplayCode} from ${payload.SourceEnvironment}`);
+
+            const result = await this._promotionService.processIncomingPromotion(payload);
+
+            ResponseHandler.success(request, response, `Assessment ${result.Action.toLowerCase()} successfully!`, 200, {
+                AssessmentPromotion : result,
+            });
+
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
+    //#endregion
+
     //#endregion
 
     //#region Authorization
@@ -789,4 +872,5 @@ export class AssessmentTemplateController extends BaseController {
     };
 
     //#endregion
+
 }

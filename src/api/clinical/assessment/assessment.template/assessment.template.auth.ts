@@ -271,4 +271,20 @@ export class AssessmentTemplateAuth {
         RequestType : RequestType.DeleteOne,
     };
 
+    static readonly promoteAssessment: AuthOptions = {
+        ...DefaultAuthOptions,
+        Context     : `${this._baseContext}.PromoteAssessment`,
+        Ownership   : ResourceOwnership.Tenant,
+        ActionScope : ActionScope.Tenant,
+        RequestType : RequestType.CreateOne,
+    };
+
+    static readonly promotionTo: AuthOptions = {
+        ...DefaultAuthOptions,
+        Context     : `${this._baseContext}.PromotionTo`,
+        Ownership   : ResourceOwnership.Tenant,
+        ActionScope : ActionScope.System,
+        RequestType : RequestType.CreateOne,
+    };
+
 }

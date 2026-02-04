@@ -12,6 +12,7 @@ import { PulseAlertModel } from '../../../domain.types/clinical/biometrics/alert
 import { BodyTemperatureAlertModel } from '../../../domain.types/clinical/biometrics/alert.notificattion/body.temperature';
 import { BloodOxygenAlertModel } from '../../../domain.types/clinical/biometrics/alert.notificattion/blood.oxygen.saturation';
 import { BodyBmiAlertModel } from '../../../domain.types/clinical/biometrics/alert.notificattion/body.bmi';
+import { BodyWeightAlertModel } from '../../../domain.types/clinical/biometrics/alert.notificattion/body.weight';
 import { AlertQueue } from './alert.queue';
 import { Injector } from '../../../startup/injector';
 import { IBotService } from '../../../modules/communication/bot.service/bot.service.interface';
@@ -46,6 +47,10 @@ export class BiometricAlertBotHandler implements IBiometricAlertHandler {
     
     bmiAlert = async (model: BodyBmiAlertModel) => {
         AlertQueue.pushNotification(model, this.sendBodyBmiAlert);
+    };
+
+    bodyWeightAlert = async (model: BodyWeightAlertModel) => {
+        AlertQueue.pushNotification(model, this.sendBodyWeightAlert);
     };
 
     private sendBloodGlucoseAlert = async (model: BloodGlucoseAlertModel) => {
@@ -239,6 +244,39 @@ export class BiometricAlertBotHandler implements IBiometricAlertHandler {
 
         } catch (error) {
             Logger.instance().log(`Error sending body bmi alert notification: ${error}`);
+        }
+    };
+
+    private sendBodyWeightAlert = async (model: BodyWeightAlertModel) => {
+        try {
+            const alertMessage = await AlertHelper.getBodyWeightAlertMessage(model);
+
+            const phoneNumber = this.getRecipientPhoneNumber(
+                alertMessage.Phone,
+                alertMessage.UniqueReferenceId,
+                model.BiometricAlertSettings?.Channel
+            );
+
+            if (!phoneNumber) {
+                ErrorHandler.throwNotFoundError('User phone number or unique reference id not found');
+            }
+
+            const normalizedPhoneNumber = Helper.normalizePhoneNumber(phoneNumber);
+
+            const botRequestModel: BotRequestDomainModel = {
+                PhoneNumber : normalizedPhoneNumber,
+                ClientName  : model.BiometricAlertSettings?.ClientName ?? alertMessage.TenantCode,
+                Channel     : model.BiometricAlertSettings?.Channel ?? NotificationChannel.WhatsappMeta,
+                AgentName   : "Reancare",
+                Type        : model.BiometricAlertSettings?.Type ?? BotMessagingType.Text,
+                Message     : alertMessage.Message,
+                Payload     : {}
+            };
+
+            await this.sendMessage(botRequestModel.Channel, botRequestModel);
+
+        } catch (error) {
+            Logger.instance().log(`Error sending body weight alert notification: ${error}`);
         }
     };
 

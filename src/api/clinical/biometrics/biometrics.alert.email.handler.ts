@@ -7,6 +7,7 @@ import { PulseAlertModel } from '../../../domain.types/clinical/biometrics/alert
 import { BodyTemperatureAlertModel } from '../../../domain.types/clinical/biometrics/alert.notificattion/body.temperature';
 import { BloodOxygenAlertModel } from '../../../domain.types/clinical/biometrics/alert.notificattion/blood.oxygen.saturation';
 import { BodyBmiAlertModel } from '../../../domain.types/clinical/biometrics/alert.notificattion/body.bmi';
+import { BodyWeightAlertModel } from '../../../domain.types/clinical/biometrics/alert.notificattion/body.weight';
 import { AlertQueue } from './alert.queue';
 import { EmailService } from '../../../modules/communication/email/email.service';
 import { EmailDetails } from '../../../modules/communication/email/email.details';
@@ -41,6 +42,10 @@ export class BiometricAlertEmailHandler implements IBiometricAlertHandler {
 
     bmiAlert = async (model: BodyBmiAlertModel) => {
         AlertQueue.pushNotification(model, this.sendBodyBmiAlert);
+    };
+
+    bodyWeightAlert = async (model: BodyWeightAlertModel) => {
+        AlertQueue.pushNotification(model, this.sendBodyWeightAlert);
     };
 
     private sendBloodGlucoseAlert = async (model: BloodGlucoseAlertModel) => {
@@ -196,6 +201,32 @@ export class BiometricAlertEmailHandler implements IBiometricAlertHandler {
 
         } catch (error) {
             Logger.instance().log(`Error sending body bmi email alert: ${error}`);
+        }
+    };
+
+    private sendBodyWeightAlert = async (model: BodyWeightAlertModel) => {
+        try {
+            const alertMessage = await AlertHelper.getBodyWeightAlertMessage(model);
+
+            if (!alertMessage.Email) {
+                Logger.instance().log('User email not found for body weight alert');
+                return;
+            }
+
+            const emailTemplate = await this._emailService.getTemplate('biometric.alert.template.html');
+            const emailBody = emailTemplate.replace('{{TITLE}}', alertMessage.Title).replace('{{MESSAGE}}', alertMessage.Message);
+
+            const emailDetails: EmailDetails = {
+                EmailTo : alertMessage.Email,
+                Subject : alertMessage.Title,
+                Body    : emailBody
+            };
+
+            await this._emailService.sendEmail(emailDetails, false);
+            Logger.instance().log(`Successfully sent body weight email alert to ${alertMessage.Email}`);
+
+        } catch (error) {
+            Logger.instance().log(`Error sending body weight email alert: ${error}`);
         }
     };
 

@@ -27,4 +27,5 @@ export interface VitalsThresholds {
     BodyTemperature?      : VitalThresholdConfig;
     BloodOxygenSaturation?: VitalThresholdConfig;
     BodyBmi?              : VitalThresholdConfig;
+    BodyWeight?           : VitalThresholdConfig;
 }

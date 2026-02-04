@@ -5,6 +5,7 @@ import { BiometricAlertSettings } from "../../../../domain.types/clinical/biomet
 import { BodyTemperatureAlertModel } from "../../../../domain.types/clinical/biometrics/alert.notificattion/body.temperature";
 import { BodyBmiAlertModel } from "../../../../domain.types/clinical/biometrics/alert.notificattion/body.bmi";
 import { BloodOxygenAlertModel } from "../../../../domain.types/clinical/biometrics/alert.notificattion/blood.oxygen.saturation";
+import { BodyWeightAlertModel } from "../../../../domain.types/clinical/biometrics/alert.notificattion/body.weight";
 
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -21,4 +22,6 @@ export interface IBiometricAlertHandler {
     bloodOxygenSaturationAlert(model: BloodOxygenAlertModel, metaData?: BiometricAlertSettings | null): Promise<void>;
 
     bmiAlert(model: BodyBmiAlertModel, metaData?: BiometricAlertSettings | null): Promise<void>;
+
+    bodyWeightAlert(model: BodyWeightAlertModel, metaData?: BiometricAlertSettings | null): Promise<void>;
 }

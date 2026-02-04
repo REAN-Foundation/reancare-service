@@ -12,6 +12,7 @@ import { PulseAlertModel } from "../../../domain.types/clinical/biometrics/alert
 import { BodyTemperatureAlertModel } from "../../../domain.types/clinical/biometrics/alert.notificattion/body.temperature";
 import { BloodOxygenAlertModel } from "../../../domain.types/clinical/biometrics/alert.notificattion/blood.oxygen.saturation";
 import { BodyBmiAlertModel } from "../../../domain.types/clinical/biometrics/alert.notificattion/body.bmi";
+import { BodyWeightAlertModel } from "../../../domain.types/clinical/biometrics/alert.notificattion/body.weight";
 
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -177,6 +178,34 @@ export class AlertHelper {
 
         var body = model.BmiNotification.message;
         body = body.replace("{{BMI}}", model.Bmi.toString());
+
+        Logger.instance().log(`Notification Title: ${notificationTitle}`);
+        Logger.instance().log(`Notification Body: ${body}`);
+        return {
+            Title             : notificationTitle,
+            Message           : body,
+            Phone             : person.Phone,
+            UniqueReferenceId : person.UniqueReferenceId,
+            TenantCode        : user.TenantCode,
+            Email             : person.Email,
+        };
+    }
+
+    static async getBodyWeightAlertMessage(model: BodyWeightAlertModel): Promise<AlertMessage> {
+        var user = await this._userRepo.getById(model.PatientUserId);
+        if (!user) {
+            ErrorHandler.throwNotFoundError('User not found');
+        }
+
+        var person = await this._personRepo.getById(user.PersonId);
+        if (!person) {
+            ErrorHandler.throwNotFoundError('Person not found');
+        }
+
+        const notificationTitle = DEFAULT_ALERT_TITLE.replace("{{PatientName}}", person.FirstName ?? "there");
+
+        var body = model.WeightNotification.message;
+        body = body.replace("{{BodyWeight}}", model.BodyWeight.toString());
 
         Logger.instance().log(`Notification Title: ${notificationTitle}`);
         Logger.instance().log(`Notification Body: ${body}`);

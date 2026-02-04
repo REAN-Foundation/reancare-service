@@ -7,6 +7,7 @@ import { PulseAlertModel } from '../../../domain.types/clinical/biometrics/alert
 import { BodyTemperatureAlertModel } from '../../../domain.types/clinical/biometrics/alert.notificattion/body.temperature';
 import { BloodOxygenAlertModel } from '../../../domain.types/clinical/biometrics/alert.notificattion/blood.oxygen.saturation';
 import { BodyBmiAlertModel } from '../../../domain.types/clinical/biometrics/alert.notificattion/body.bmi';
+import { BodyWeightAlertModel } from '../../../domain.types/clinical/biometrics/alert.notificattion/body.weight';
 import { AlertQueue } from './alert.queue';
 import { MessagingService } from '../../../modules/communication/messaging.service/messaging.service';
 import { Injector } from '../../../startup/injector';
@@ -41,6 +42,10 @@ export class BiometricAlertSmsHandler implements IBiometricAlertHandler {
 
     bmiAlert = async (model: BodyBmiAlertModel) => {
         AlertQueue.pushNotification(model, this.sendBodyBmiAlert);
+    };
+
+    bodyWeightAlert = async (model: BodyWeightAlertModel) => {
+        AlertQueue.pushNotification(model, this.sendBodyWeightAlert);
     };
 
     private sendBloodGlucoseAlert = async (model: BloodGlucoseAlertModel) => {
@@ -160,6 +165,26 @@ export class BiometricAlertSmsHandler implements IBiometricAlertHandler {
 
         } catch (error) {
             Logger.instance().log(`Error sending body bmi SMS alert: ${error}`);
+        }
+    };
+
+    private sendBodyWeightAlert = async (model: BodyWeightAlertModel) => {
+        try {
+            const alertMessage = await AlertHelper.getBodyWeightAlertMessage(model);
+
+            if (!alertMessage.Phone) {
+                Logger.instance().log('User phone number not found for body weight alert');
+                return;
+            }
+
+            const normalizedPhoneNumber = Helper.normalizePhoneNumber(alertMessage.Phone);
+            const smsMessage = this.formatSmsMessage(alertMessage.Title, alertMessage.Message);
+
+            await this._messagingService.sendSMS(normalizedPhoneNumber, smsMessage);
+            Logger.instance().log(`Successfully sent body weight SMS alert to ${normalizedPhoneNumber}`);
+
+        } catch (error) {
+            Logger.instance().log(`Error sending body weight SMS alert: ${error}`);
         }
     };
 

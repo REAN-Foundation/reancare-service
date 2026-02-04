@@ -12,6 +12,7 @@ import { PulseAlertModel } from '../../../domain.types/clinical/biometrics/alert
 import { BodyTemperatureAlertModel } from '../../../domain.types/clinical/biometrics/alert.notificattion/body.temperature';
 import { BloodOxygenAlertModel } from '../../../domain.types/clinical/biometrics/alert.notificattion/blood.oxygen.saturation';
 import { BodyBmiAlertModel } from '../../../domain.types/clinical/biometrics/alert.notificattion/body.bmi';
+import { BodyWeightAlertModel } from '../../../domain.types/clinical/biometrics/alert.notificattion/body.weight';
 import { AlertQueue } from './alert.queue';
 import { AlertHelper } from './alert.helper';
 
@@ -43,6 +44,10 @@ export class BiometricAlertNotificationHandler implements IBiometricAlertHandler
 
     bmiAlert = async (model: BodyBmiAlertModel) => {
         await AlertQueue.pushNotification(model, this.sendBodyBmiAlert);
+    };
+
+    bodyWeightAlert = async (model: BodyWeightAlertModel) => {
+        await AlertQueue.pushNotification(model, this.sendBodyWeightAlert);
     };
 
     private sendBloodGlucoseAlert = async (model: BloodGlucoseAlertModel) => {
@@ -153,12 +158,33 @@ export class BiometricAlertNotificationHandler implements IBiometricAlertHandler
             var message = Loader.notificationService.formatNotificationMessage(
                 BiometricAlertType.BodyBmiAlert, alertMessage.Title, alertMessage.Message
             );
-            
+
             for await (var device of deviceList) {
                 await Loader.notificationService.sendNotificationToDevice(device.Token, message);
             }
         } catch (error) {
             Logger.instance().log(`Error sending body bmi alert notification: ${error}`);
+        }
+    };
+
+    private sendBodyWeightAlert = async (model: BodyWeightAlertModel) => {
+        try {
+
+            const alertMessage = await AlertHelper.getBodyWeightAlertMessage(model);
+
+            var deviceList = await this._userDeviceDetailsRepo.getByUserId(model.PatientUserId);
+            var deviceListsStr = JSON.stringify(deviceList, null, 2);
+            Logger.instance().log(`Sent body weight notifications to - ${deviceListsStr}`);
+
+            var message = Loader.notificationService.formatNotificationMessage(
+                BiometricAlertType.BodyWeightAlert, alertMessage.Title, alertMessage.Message
+            );
+
+            for await (var device of deviceList) {
+                await Loader.notificationService.sendNotificationToDevice(device.Token, message);
+            }
+        } catch (error) {
+            Logger.instance().log(`Error sending body weight alert notification: ${error}`);
         }
     };
 

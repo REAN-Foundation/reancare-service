@@ -25,6 +25,7 @@ import { BodyTemperatureAlertModel, bodyTemperatureNotificationTemplate, bodyTem
 import { BloodOxygenSaturationDto } from "../../../domain.types/clinical/biometrics/blood.oxygen.saturation/blood.oxygen.saturation.dto";
 import { BloodOxygenAlertModel, OXYGEN_NORMAL_MAX, OXYGEN_NORMAL_MIN, bloodOxygenNotificationTemplate, OXYGEN_LOW_RANGE_MIN, OXYGEN_LOW_THRESHOLD } from "../../../domain.types/clinical/biometrics/alert.notificattion/blood.oxygen.saturation";
 import { BMI_OBESE_THRESHOLD, BMI_OVERWEIGHT_MAX, BMI_NORMAL_MAX, BMI_NORMAL_MIN, BMI_UNDERWEIGHT_THRESHOLD, BodyBmiAlertModel, weightNotificationTemplate, BMI_OVERWEIGHT_MIN } from "../../../domain.types/clinical/biometrics/alert.notificattion/body.bmi";
+import { BodyWeightAlertModel, bodyWeightNotificationTemplate, WEIGHT_NORMAL_MAX, WEIGHT_NORMAL_MIN, WEIGHT_OBESE_THRESHOLD, WEIGHT_OVERWEIGHT_MAX, WEIGHT_OVERWEIGHT_MIN, WEIGHT_UNDERWEIGHT_THRESHOLD, weightUnitsInPounds } from "../../../domain.types/clinical/biometrics/alert.notificattion/body.weight";
 import { BodyWeightDto } from "../../../domain.types/clinical/biometrics/body.weight/body.weight.dto";
 import { BodyHeightDto } from "../../../domain.types/clinical/biometrics/body.height/body.height.dto";
 import { BiometricAlertEmailHandler } from "./biometrics.alert.email.handler";
@@ -521,6 +522,69 @@ export class BiometricAlerts {
         }
     }
 
+    static async forBodyWeight(
+        model: BodyWeightDto,
+        notificationChannel: NotificationChannel = NotificationChannel.MobilePush,
+        metaData: BiometricAlertSettings | null = null,
+        tenantId?: string
+    ) {
+        try {
+            const weightInKg = weightUnitsInPounds.includes(model.Unit?.toLowerCase())
+                ? model.BodyWeight * 0.453592
+                : model.BodyWeight;
+
+            const thresholds = await BiometricAlerts.getThresholdsForTenant(tenantId);
+            const weightConfig = thresholds?.BodyWeight;
+
+            let notification: AlertNotification | null = null;
+            let shouldSendAlert = true;
+
+            if (weightConfig && weightConfig.Enabled) {
+                const category = BiometricAlerts.evaluateSingleValueThreshold(
+                    weightInKg,
+                    weightConfig,
+                    "BodyWeight"
+                );
+                if (category) {
+                    shouldSendAlert = category.SendAlert;
+                    if (shouldSendAlert) {
+                        notification = BiometricAlerts.buildAlertFromCategory(category);
+                    }
+                }
+            } else {
+                notification = BiometricAlerts.getWeightNotification(weightInKg);
+            }
+
+            if (!notification || !shouldSendAlert) {
+                throw new Error('No alert to send for the given body weight value.');
+            }
+
+            const biometricAlertHandler = BiometricAlerts.getBiometricAlertHandler(notificationChannel);
+            if (!biometricAlertHandler) {
+                throw new ApiError(500, 'Biometric alert handler not found.');
+            }
+
+            const weightAlertModel: BodyWeightAlertModel = {};
+            weightAlertModel.PatientUserId = model.PatientUserId;
+            weightAlertModel.BodyWeight = model.BodyWeight;
+            weightAlertModel.BiometricAlertSettings = metaData;
+
+            const userLanguagePreference = await BiometricAlerts.getUserLanguagePreference(model.PatientUserId);
+            weightAlertModel.WeightNotification = {
+                severity : notification.severity,
+                range    : notification.range,
+                title    : notification.title[userLanguagePreference] ??
+                    notification.title[BiometricAlerts.DEFAULT_USER_LANGUAGE_PREFERENCE],
+                message : notification.message[userLanguagePreference] ??
+                    notification.message[BiometricAlerts.DEFAULT_USER_LANGUAGE_PREFERENCE]
+            };
+
+            await biometricAlertHandler.bodyWeightAlert(weightAlertModel);
+        } catch (error) {
+            Logger.instance().log(`Error in sending body weight alert notification : ${error}`);
+        }
+    }
+
     private static getBloodPressureNotification = (systolic: number, diastolic: number): AlertNotification | null => {
         let systolicCategory: BloodPressureCategory;
         let diastolicCategory: BloodPressureCategory;
@@ -656,6 +720,19 @@ export class BiometricAlerts {
             return weightNotificationTemplate.find(template => template.severity === Severity.HIGH) || null;
         } else if (bmi >= BMI_OBESE_THRESHOLD) {
             return weightNotificationTemplate.find(template => template.severity === Severity.VERY_HIGH) || null;
+        }
+        return null;
+    };
+
+    private static getWeightNotification = (weightInKg: number): AlertNotification | null => {
+        if (weightInKg < WEIGHT_UNDERWEIGHT_THRESHOLD) {
+            return bodyWeightNotificationTemplate.find(template => template.severity === Severity.LOW) || null;
+        } else if (weightInKg >= WEIGHT_NORMAL_MIN && weightInKg <= WEIGHT_NORMAL_MAX) {
+            return bodyWeightNotificationTemplate.find(template => template.severity === Severity.NORMAL) || null;
+        } else if (weightInKg >= WEIGHT_OVERWEIGHT_MIN && weightInKg <= WEIGHT_OVERWEIGHT_MAX) {
+            return bodyWeightNotificationTemplate.find(template => template.severity === Severity.HIGH) || null;
+        } else if (weightInKg >= WEIGHT_OBESE_THRESHOLD) {
+            return bodyWeightNotificationTemplate.find(template => template.severity === Severity.VERY_HIGH) || null;
         }
         return null;
     };

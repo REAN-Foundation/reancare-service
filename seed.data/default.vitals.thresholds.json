@@ -317,5 +317,52 @@
                 "Priority": 4
             }
         ]
+    },
+
+    "BodyWeight": {
+        "Enabled": false,
+        "Unit": "kg",
+        "Categories": [
+            {
+                "Category": "Underweight",
+                "Severity": "Low",
+                "Ranges": { "BodyWeight": { "Min": null, "Max": 44.9 } },
+                "AlertMessage": {
+                    "en-US": "Your recent weight reading is {{BodyWeight}} kg.Your weight is below the healthy range. Low body weight may increase the risk of symptoms such as fatigue or weakness. Please contact your healthcare provider, especially if you experience any discomfort. Ensure adequate nutrition and hydration."
+                 },
+                "SendAlert": false,
+                "Priority": 2
+            },
+            {
+                "Category": "Normal Weight",
+                "Severity": "Normal",
+                "Ranges": { "BodyWeight": { "Min": 45, "Max": 70 } },
+                "AlertMessage": {
+                    "en-US": "Your recent weight reading is {{BodyWeight}} kg. Your weight is within the healthy range. This supports good blood pressure control and overall health. Continue maintaining a healthy lifestyle, including balanced nutrition, regular physical activity, and routine health monitoring."   
+                },
+                "SendAlert": false,
+                "Priority": 1
+            },
+            {
+                "Category": "Overweight",
+                "Severity": "High",
+                "Ranges": { "BodyWeight": { "Min": 71, "Max": 85 } },
+                "AlertMessage": {
+                    "en-US": "Your recent weight reading is {{BodyWeight}} kg. Your weight is above the healthy range. This may increase the risk of blood pressure and heart-related problems. Consider adopting healthy lifestyle changes such as a balanced diet and regular physical activity, and consult your healthcare provider for guidance."
+                },
+                "SendAlert": false,
+                "Priority": 3
+            },
+            {
+                "Category": "Obese",
+                "Severity": "Very High",
+                "Ranges": { "BodyWeight": { "Min": 86, "Max": null } },
+                "AlertMessage": {
+                    "en-US": "Your recent weight reading is {{BodyWeight}} kg. Your weight is significantly above the healthy range. This may increase the risk of high blood pressure and other health conditions. Please consult your healthcare provider for evaluation and guidance on weight and overall health management."
+                },
+                "SendAlert": false,
+                "Priority": 4
+            }
+        ]
     }
 }

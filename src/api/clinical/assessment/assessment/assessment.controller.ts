@@ -725,6 +725,26 @@ export class AssessmentController extends BaseController {
                     tenantId
                 );
             }
+
+            if (
+                biometricAlertSettings.BiometricAlertCategories.length > 0 &&
+                biometricAlertSettings.BiometricAlertCategories.includes("Weight") &&
+                fieldIdentifier.Weight != null
+            ) {
+                Logger.instance().log(`Processing body weight alert`);
+                const weightModel: BodyWeightDto = {
+                    PatientUserId : patientUserId,
+                    BodyWeight    : isNaN(Number(fieldIdentifier.Weight)) ?
+                        0 : Number(fieldIdentifier.Weight),
+                    Unit : 'kg',
+                };
+                BiometricAlerts.forBodyWeight(
+                    weightModel,
+                    biometricAlertSettings.Channel ?? NotificationChannel.WhatsappMeta,
+                    biometricAlertSettings,
+                    tenantId
+                );
+            }
         } catch (error) {
             Logger.instance().log(`Error in processing biometric alerts by category: ${error}`);
         }

@@ -115,7 +115,9 @@
                 "AddOption": false,
                 "GetOption": false,
                 "UpdateOption": false,
-                "DeleteOption": false
+                "DeleteOption": false,
+                "PromoteAssessment": false,
+                "PromotionTo": false
             },
             "DailyAssessment": {
                 "Create": true,

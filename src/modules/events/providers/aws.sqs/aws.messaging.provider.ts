@@ -11,13 +11,13 @@ import { AwsEventPublisher } from './aws.event.publisher';
 
 @injectable()
 export class AwsMessagingProvider implements IMessagingProvider {
-    
+
     private sqs: SQS | null = null;
 
     private config: MessagingConfig;
 
     private isInitialized: boolean = false;
-    
+
     private queueUrls: Map<string, string> = new Map();
 
     private mainQueueUrl: string | null = null;
@@ -50,8 +50,13 @@ export class AwsMessagingProvider implements IMessagingProvider {
 
     private async setupQueues(): Promise<void> {
         try {
-            const queueNames = this.getEventQueues();
-            
+            // const queueNames = this.getEventQueues();
+
+            const queueNames = [
+                'bot-wrapper-test-queue',
+                'careplan-test-queue'
+            ];
+
             for (const queueName of queueNames) {
                 await this.createOrVerifyQueue(queueName);
             }
@@ -73,7 +78,7 @@ export class AwsMessagingProvider implements IMessagingProvider {
 
         try {
             let queueUrl: string | null = null;
-            
+
             try {
                 const getUrlResult = await this.sqs.getQueueUrl({
                     QueueName : queueName
@@ -103,18 +108,18 @@ export class AwsMessagingProvider implements IMessagingProvider {
             const queueAttributes: { [key: string]: string } = {
                 MessageRetentionPeriod : this.config.Events.MessageRetentionPeriod ?
                     this.config.Events.MessageRetentionPeriod.toString() : '1209600', // 14 days
-                
+
                 VisibilityTimeout : '30',
-                
+
                 ReceiveMessageWaitTimeSeconds : '20'
             };
 
             if (this.config.Events.DeadLetterQueue.Enabled) {
                 const dlqName = `${queueName}-dlq`;
                 const dlqUrl = await this.createDeadLetterQueue(dlqName);
-                
+
                 const dlqArn = await this.getQueueArn(dlqUrl);
-                
+
                 queueAttributes.RedrivePolicy = JSON.stringify({
                     deadLetterTargetArn : dlqArn,
                     maxReceiveCount     : this.config.Events.DeadLetterQueue.MaxReceiveCount || 3
@@ -199,7 +204,7 @@ export class AwsMessagingProvider implements IMessagingProvider {
         if (!env) {
             throw new Error('NODE_ENV is not set');
         }
-        
+
         return [
             `bot-wrapper-${env}-queue`,
             `careplan-${env}-queue`,
@@ -212,7 +217,7 @@ export class AwsMessagingProvider implements IMessagingProvider {
             throw new Error('AWS SQS messaging provider is not initialized. Call initialize() first.');
         }
     }
-    
+
     getPublisher(): IEventPublisher {
         this.ensureInitialized();
         return new AwsEventPublisher(this.sqs!, this.queueUrls, this.config);
@@ -230,7 +235,7 @@ export class AwsMessagingProvider implements IMessagingProvider {
                 this.queueUrls.clear();
                 this.mainQueueUrl = null;
                 this.isInitialized = false;
-                
+
                 Logger.instance().log('AWS SQS messaging provider closed successfully');
             }
         } catch (error) {

@@ -14,7 +14,7 @@ import {
 import { TenantSettingsDto } from '../../domain.types/tenant/tenant.settings.types';
 import { uuid } from '../../domain.types/miscellaneous/system.types';
 import { VitalsThresholds } from '../../domain.types/tenant/vitals.thresholds.types';
-import * as DefaultVitalsThresholds from '../../../seed.data/default.vitals.thresholds.json';
+import DefaultVitalsThresholds from '../../../seed.data/default.vitals.thresholds.json';
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 

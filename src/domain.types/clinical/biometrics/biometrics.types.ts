@@ -14,6 +14,7 @@ import { PulseAlertModel } from "./alert.notificattion/pulse";
 import { BodyTemperatureAlertModel } from "./alert.notificattion/body.temperature";
 import { BloodOxygenAlertModel } from "./alert.notificattion/blood.oxygen.saturation";
 import { BodyBmiAlertModel } from "./alert.notificattion/body.bmi";
+import { BodyWeightAlertModel } from "./alert.notificattion/body.weight";
 
 export enum BiometricsType {
     BloodGlucose          = 'Blood Glucose',
@@ -33,6 +34,7 @@ export enum BiometricAlertType {
     BloodPressureAlert         = 'BloodPressureAlert',
     BodyBmiAlert               = 'BodyBmiAlert',
     BodyTemperatureAlert       = 'BodyTemperatureAlert',
+    BodyWeightAlert            = 'BodyWeightAlert',
     PulseAlert                 = 'PulseAlert',
 }
 
@@ -108,4 +110,5 @@ export type BiometricAlertModel =  BloodGlucoseAlertModel |
                                 PulseAlertModel |
                                 BodyTemperatureAlertModel |
                                 BloodOxygenAlertModel |
-                                BodyBmiAlertModel;
+                                BodyBmiAlertModel |
+                                BodyWeightAlertModel;

@@ -679,7 +679,7 @@ export class TenantSettingsValidator extends BaseValidator {
             return null;
         }
 
-        const vitalTypes = ['BloodPressure', 'Pulse', 'BloodGlucose', 'BodyTemperature', 'BloodOxygenSaturation', 'BodyBmi'];
+        const vitalTypes = ['BloodPressure', 'Pulse', 'BloodGlucose', 'BodyTemperature', 'BloodOxygenSaturation', 'BodyBmi', 'BodyWeight'];
         const MAX_CATEGORIES = maxVitalItems;
 
         const providedKeys = Object.keys(vitalsThresholds);

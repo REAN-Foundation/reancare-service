@@ -1186,6 +1186,7 @@ export class AssessmentService {
             AssessmentId         : assessment.id,
             Sequence             : questionNode.Sequence,
             NodeType             : questionNode.NodeType as AssessmentNodeType,
+            Required             : questionNode.Required,
             Title                : questionNode.Title,
             Description          : questionNode.Description,
             ExpectedResponseType : questionNode.QueryResponseType as QueryResponseType,

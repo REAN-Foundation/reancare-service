@@ -719,7 +719,6 @@ export class TenantController extends BaseController {
 
     private getSecretName = async (tenantCode: string) => {
         const environment = await this.getEnvironment();
-        // const code = tenantCode.toLowerCase().replace(/_/g, "-");
         const code = tenantCode.toLowerCase().replace(/[_\s]/g, "-");
         return `${environment}-${code}-v1`;
     };

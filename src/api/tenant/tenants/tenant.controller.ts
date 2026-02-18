@@ -146,7 +146,7 @@ export class TenantController extends BaseController {
             Logger.instance().log(`Tenant admin user created successfully. UserName: ${adminUserName}`);
 
             const settings = await this._tenantSettingsService.createDefaultSettings(tenant.id, tenantCode);
-            
+
             await this._tenantSettingsMarketingService.createDefaultSettings(tenant.id, {});
 
             //Send email to the admin user with username and password
@@ -600,7 +600,7 @@ export class TenantController extends BaseController {
                 TenantId   : userModel.TenantId,
                 TenantCode : tenant.Code,
             });
-            
+
             if (existingPerson == null) {
                 person = await this._personService.create(userModel.Person);
                 if (person == null) {
@@ -719,7 +719,8 @@ export class TenantController extends BaseController {
 
     private getSecretName = async (tenantCode: string) => {
         const environment = await this.getEnvironment();
-        const code = tenantCode.toLowerCase().replace(/_/g, "-");
+        // const code = tenantCode.toLowerCase().replace(/_/g, "-");
+        const code = tenantCode.toLowerCase().replace(/[_\s]/g, "-");
         return `${environment}-${code}-v1`;
     };
 

@@ -104,7 +104,7 @@
     },
     "production": {
         "FileCleanup": "*/30 * * * *",
-        "MedicationReminder": "*/15 * * * *",
+        "MedicationReminder": "*/10 * * * *",
         "CreateMedicationTasks": "5 0 * * *",
         "PatientDailyTasks": "5 0 * * *",
         "ScheduleCustomTasks": "0 9 * * *",

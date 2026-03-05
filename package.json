@@ -74,7 +74,7 @@
         "sharp": "^0.33.0",
         "sqlite": "^5.0.1",
         "sqlite3": "^5.1.7",
-        "tar": "^7.5.7",
+        "tar": "^7.5.10",
         "terra-api": "^1.4.0",
         "timezone-support": "^3.1.0",
         "tsyringe": "^4.8.0",

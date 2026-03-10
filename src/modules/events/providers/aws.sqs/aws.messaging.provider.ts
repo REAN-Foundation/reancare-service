@@ -50,12 +50,7 @@ export class AwsMessagingProvider implements IMessagingProvider {
 
     private async setupQueues(): Promise<void> {
         try {
-            // const queueNames = this.getEventQueues();
-
-            const queueNames = [
-                'bot-wrapper-test-queue',
-                'careplan-test-queue'
-            ];
+            const queueNames = this.getEventQueues();
 
             for (const queueName of queueNames) {
                 await this.createOrVerifyQueue(queueName);

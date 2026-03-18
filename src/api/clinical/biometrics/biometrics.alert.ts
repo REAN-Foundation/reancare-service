@@ -107,16 +107,55 @@ export class BiometricAlerts {
             return null;
         }
 
+        const mode = config.EvaluationMode ?? 'independent';
+
+        if (mode === 'combined') {
+            return BiometricAlerts.evaluateBPCombined(systolic, diastolic, config);
+        }
+
+        return BiometricAlerts.evaluateBPIndependent(systolic, diastolic, config);
+    }
+
+    private static evaluateBPCombined(
+        systolic: number,
+        diastolic: number,
+        config: VitalThresholdConfig
+    ): ThresholdCategory | null {
+        const sorted = [...config.Categories].sort((a, b) => a.Priority - b.Priority);
+
+        for (const category of sorted) {
+            const sysRange = category.Ranges["Systolic"];
+            const diaRange = category.Ranges["Diastolic"];
+            if (!sysRange || !diaRange) {
+                continue;
+            }
+
+            const sysOk = (sysRange.Min == null || systolic >= sysRange.Min) &&
+                          (sysRange.Max == null || systolic <= sysRange.Max);
+            const diaOk = (diaRange.Min == null || diastolic >= diaRange.Min) &&
+                          (diaRange.Max == null || diastolic <= diaRange.Max);
+
+            if (sysOk && diaOk) {
+                return category;
+            }
+        }
+
+        return null;
+    }
+
+    private static evaluateBPIndependent(
+        systolic: number,
+        diastolic: number,
+        config: VitalThresholdConfig
+    ): ThresholdCategory | null {
         let systolicCategory: ThresholdCategory | null = null;
         for (const category of config.Categories) {
             const systolicRange = category.Ranges["Systolic"];
             if (!systolicRange) {
                 continue;
             }
-            const minOk = systolicRange.Min === undefined ||
-                systolicRange.Min === null || systolic >= systolicRange.Min;
-            const maxOk = systolicRange.Max === undefined ||
-                systolicRange.Max === null || systolic <= systolicRange.Max;
+            const minOk = systolicRange.Min == null || systolic >= systolicRange.Min;
+            const maxOk = systolicRange.Max == null || systolic <= systolicRange.Max;
             if (minOk && maxOk) {
                 systolicCategory = category;
                 break;
@@ -129,10 +168,8 @@ export class BiometricAlerts {
             if (!diastolicRange) {
                 continue;
             }
-            const minOk = diastolicRange.Min === undefined ||
-                diastolicRange.Min === null || diastolic >= diastolicRange.Min;
-            const maxOk = diastolicRange.Max === undefined ||
-                diastolicRange.Max === null || diastolic <= diastolicRange.Max;
+            const minOk = diastolicRange.Min == null || diastolic >= diastolicRange.Min;
+            const maxOk = diastolicRange.Max == null || diastolic <= diastolicRange.Max;
             if (minOk && maxOk) {
                 diastolicCategory = category;
                 break;
@@ -142,7 +179,6 @@ export class BiometricAlerts {
         if (!systolicCategory && !diastolicCategory) {
             return null;
         }
-
         if (!systolicCategory) {
             return diastolicCategory;
         }

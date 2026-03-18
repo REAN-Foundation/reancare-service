@@ -42,6 +42,7 @@
     "BloodPressure": {
         "Enabled": false,
         "Unit": "mmHg",
+        "EvaluationMode": "independent",
         "Categories": [
             {
                 "Category": "Normal Blood Pressure",

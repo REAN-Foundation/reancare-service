@@ -149,18 +149,7 @@ export class HospitalController extends BaseController{
         request: express.Request,
         searchFilters: HospitalSearchFilters): Promise<HospitalSearchFilters> => {
 
-        if (request.currentClient?.IsPrivileged) {
-            return searchFilters;
-        }
-
-        if (searchFilters.TenantId != null) {
-            if (searchFilters.TenantId !== request.currentUser.TenantId) {
-                throw new ApiError(403, 'Forbidden');
-            }
-        }
-        else {
-            searchFilters.TenantId = request.currentUser.TenantId;
-        }
+        searchFilters.TenantId = this.authorizeTenantSearch(request, searchFilters.TenantId);
         return searchFilters;
     };
 

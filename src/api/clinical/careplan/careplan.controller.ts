@@ -50,6 +50,10 @@ export class CareplanController extends BaseController {
     enroll = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
+            if (process.env.CAREPLAN_ENROLLMENT_ENABLED === 'false') {
+                throw new ApiError(403, 'Careplan enrollment is currently disabled.');
+            }
+
             const model = await this._validator.enroll(request);
             await this.authorizeOne(request, model.PatientUserId);
             var startDate = new Date(model.StartDateStr);

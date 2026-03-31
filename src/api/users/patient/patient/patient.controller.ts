@@ -65,6 +65,10 @@ export class PatientController extends BaseUserController {
     create = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
+            if (process.env.PATIENT_REGISTRATION_ENABLED === 'false') {
+                throw new ApiError(403, 'Patient registration is currently disabled.');
+            }
+
             const model = await this._validator.create(request);
             const [ patient, createdNew ] = await this._userHelper.createPatient(model);
 

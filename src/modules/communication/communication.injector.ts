@@ -28,10 +28,10 @@ export class CommunicationInjector {
     private static injectSmsProvider(container: DependencyContainer) {
         const smsProvider = ConfigurationManager.SMSServiceProvider();
         if (smsProvider === 'Twilio') {
-            container.register('IMessagingService', TwilioMessagingService);
+            container.registerSingleton('IMessagingService', TwilioMessagingService);
         }
         else if (smsProvider === 'Mock') {
-            container.register('IMessagingService', MockMessagingService);
+            container.registerSingleton('IMessagingService', MockMessagingService);
         }
     }
 

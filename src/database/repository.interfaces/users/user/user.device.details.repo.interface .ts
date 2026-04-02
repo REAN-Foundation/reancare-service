@@ -10,6 +10,8 @@ export interface IUserDeviceDetailsRepo {
 
     getByUserId(userId: string): Promise<UserDeviceDetailsDto[]>;
 
+    getEligibleAppUserIds(appNames: string[]): Promise<string[]>;
+
     getExistingRecord(deviceDetails: any): Promise<UserDeviceDetailsDto>;
 
     search(filters: UserDeviceDetailsSearchFilters): Promise<UserDeviceDetailsSearchResults>;

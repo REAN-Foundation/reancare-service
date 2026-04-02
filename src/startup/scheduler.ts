@@ -60,6 +60,7 @@ export class Scheduler {
                 //this.scheduleDaillyPatientTasks();
                 this.scheduleCareplanRegistrationRemindersForOldUsers();
                 // this.scheduleHFHelperTextMessage();
+                this.scheduleSunsetTextMessage();
                 this.scheduleGGHNFollowUpReminder();
                 this.scheduleUserActivityTracker();
                 this.scheduleNotificationToInactiveUsers();
@@ -205,6 +206,16 @@ export class Scheduler {
     //         })();
     //     });
     // };
+
+    private scheduleSunsetTextMessage = () => {
+        cron.schedule(Scheduler._schedules['ScheduleSunsetTextMessage'], () => {
+            (async () => {
+                Logger.instance().log('Running scheduled jobs: Schedule Sunset text message...');
+                var customActionHandler = new CustomActionsHandler();
+                await customActionHandler.scheduleSunsetTextMessage();
+            })();
+        });
+    };
 
     //Shut down - Stroke survey text mesages on June 17, 2025
     // private scheduleStrokeSurveyTextMessage = () => {

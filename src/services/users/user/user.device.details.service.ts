@@ -26,6 +26,10 @@ export class UserDeviceDetailsService {
         return await this._userDeviceDetailsRepo.getByUserId(userId);
     };
 
+    getEligibleAppUserIds = async (appNames: string[]): Promise<string[]> => {
+        return await this._userDeviceDetailsRepo.getEligibleAppUserIds(appNames);
+    };
+
     getExistingRecord = async (deviceDetails: any): Promise<UserDeviceDetailsDto> => {
         return await this._userDeviceDetailsRepo.getExistingRecord(deviceDetails);
     };

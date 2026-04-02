@@ -48,6 +48,10 @@
         }
     },
 
+    "SunsetTextMessage": {
+        "Message" : "We want to inform you that the Heart & Stroke Helper app will be retired soon. Thank you for your dedication to your heart health journey. Please stay tuned for further updates."
+    },
+
     "InactiveStrokeUserNotification": {
        "NotificationType" : "Alert",
         "Title"           : "We've Missed You!",

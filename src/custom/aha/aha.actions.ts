@@ -25,6 +25,7 @@ import { loadLanguageTemplates } from '../../modules/communication/message.templ
 import { DurationType } from '../../domain.types/miscellaneous/time.types';
 import { AppName } from '../../domain.types/statistics/aha/aha.type';
 import { ActivityTrackerHandler } from '../../services/users/patient/activity.tracker/activity.tracker.handler';
+import { SunsetSmsQueue } from './sunset.sms.queue';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -466,6 +467,18 @@ export class AHAActions {
         }
         catch (error) {
             Logger.instance().log(`Error sending SMS to users.`);
+        }
+    };
+
+    public scheduleSunsetTextMessage = async () => {
+        try {
+            const appNames        = [AppName.HS, AppName.HeartAndStrokeHelper];
+            const eligibleUserIds = await this._userDeviceDetailsService.getEligibleAppUserIds(appNames);
+            Logger.instance().log(`[SunsetTextMessageCron] Pushing ${eligibleUserIds.length} eligible app users to queue.`);
+            SunsetSmsQueue.pushAll(eligibleUserIds);
+        }
+        catch (error) {
+            Logger.instance().log(`[SunsetTextMessageCron] Error pushing patients to queue: ${error.message}`);
         }
     };
 

@@ -361,6 +361,12 @@ export class UserValidator {
                 .isBoolean()
                 .run(request);
 
+            await query('tenantId').optional()
+                .isUUID()
+                .trim()
+                .escape()
+                .run(request);
+
             const result = validationResult(request);
             if (!result.isEmpty()) {
                 Helper.handleValidationError(result);
@@ -376,7 +382,7 @@ export class UserValidator {
 
         const pageIndex = request.query.pageIndex !== 'undefined' ? parseInt(request.query.pageIndex as string, 10) : 0;
         const itemsPerPage = request.query.itemsPerPage !== 'undefined' ? parseInt(request.query.itemsPerPage as string, 10) : 25;
-        const tenantId: uuid = request.currentUserTenantId ?? null;
+        const tenantId: uuid = request.query.tenantId as string ?? null;
 
         const filters: UserSearchFilters = {
             TenantId        : tenantId,

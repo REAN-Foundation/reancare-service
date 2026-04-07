@@ -204,6 +204,7 @@ export class UserController extends BaseController {
     search = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             const searchParams = await UserValidator.search(request);
+            searchParams.TenantId = this.authorizeTenantSearch(request, searchParams.TenantId);
             const users = await this._service.search(searchParams);
             ResponseHandler.success(request, response, 'Users retrieved successfully!', 200, {
                 Users : users,

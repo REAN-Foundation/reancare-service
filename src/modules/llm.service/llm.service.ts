@@ -19,7 +19,7 @@ export class LlmService implements ILlmService {
 
     deleteCache = async (clientName: string, phone: string): Promise<boolean> => {
         try {
-            const url = `${process.env.LLM_SERVICE_BASE_URL}/llmservice/cache/${clientName}/${phone}`;
+            const url = `${process.env.LLM_SERVICE_BASE_URL}/llm_service/cache/${clientName}/${phone}`;
             const options = Helper.getNeedleOptions(headers);
             const response = await needle('delete', url, null, options);
             if (response.statusCode === 200) {

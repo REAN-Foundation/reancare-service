@@ -6,6 +6,7 @@ export interface UserDeleteEvent{
     PatientUserId: string;
     TenantId?: string;
     TenantName?: string;
+    Phone?: string;
 }
 
 export interface PublishOptions {

@@ -472,7 +472,7 @@ export class AHAActions {
 
     public scheduleSunsetTextMessage = async () => {
         try {
-            const appNames        = [AppName.HS, AppName.HeartAndStrokeHelper];
+            const appNames        = [AppName.HS];
             const eligibleUserIds = await this._userDeviceDetailsService.getEligibleAppUserIds(appNames);
             Logger.instance().log(`[SunsetTextMessageCron] Pushing ${eligibleUserIds.length} eligible app users to queue.`);
             SunsetSmsQueue.pushAll(eligibleUserIds);

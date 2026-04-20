@@ -18,6 +18,7 @@ export interface ITenantSettingsMarketingRepo {
     updateQRCode(tenantId: string, settings: TenantMarketingQRCode): Promise<TenantSettingsMarketingDto>;
     updateImages(tenantId: string, settings: TenantMarketingImages): Promise<TenantSettingsMarketingDto>;
     updateLogos(tenantId: string, settings: TenantMarketingLogos): Promise<TenantSettingsMarketingDto>;
+    updatePageView(tenantId: string, pageView: number): Promise<TenantSettingsMarketingDto>;
     updatePDFResourceId(tenantId: string, resourceId: string): Promise<TenantSettingsMarketingDto>;
     delete(tenantId: string): Promise<boolean>;
 }

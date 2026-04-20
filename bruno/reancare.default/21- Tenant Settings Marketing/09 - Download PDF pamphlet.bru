@@ -1,0 +1,75 @@
+meta {
+  name: Download PDF pamphlet
+  type: http
+  seq: 9
+}
+
+get {
+  url: {{BASE_URL}}/tenant-settings-marketing/{{TENANT_ID}}/download
+  body: none
+  auth: none
+}
+
+headers {
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+  Authorization: Bearer {{TENANT_ADMIN_USER_JWT}}
+}
+
+tests {
+  test("Request is successful", function () {
+      expect(res.getStatus()).to.equal(200);
+      expect(res.getHeader("Content-Type")).to.contain("application/pdf");
+      expect(res.getBodyBytes().length).to.be.greaterThan(0);
+  });
+  
+  test("File metadata headers are returned", function () {
+      var headers = res.getHeaders();
+      expect(headers).to.have.property("x-file-resource-id");
+      expect(headers["content-disposition"]).to.contain("attachment");
+      expect(headers["content-type"]).to.contain("application/pdf");
+      // x-file-resource-url may be present if file was uploaded to storage
+  });
+  
+}
+
+docs {
+  Downloads the latest marketing pamphlet PDF for the tenant.
+  
+  **Process:**
+  1. Fetches marketing settings (Styling, Content, Images, QRcode, Logos, PageView)
+  2. Renders HTML using Handlebars template based on PageView setting (1 or 2 pages)
+  3. Converts HTML to PDF using Puppeteer (headless Chromium)
+  4. Uploads PDF to file storage
+  5. Updates PDFResourceId in marketing settings
+  6. Returns the PDF payload directly with file metadata headers
+  
+  **Page Selection:**
+  - The page count (1 or 2) is determined by the `PageView` setting stored in marketing settings
+  - Default is 2 pages if PageView is not set
+  - To change page count, update PageView via PUT /:tenantId endpoint:
+    ```json
+    {
+      "PageView": 1  // or 2 for two-page layout
+    }
+    ```
+  - No query parameters are currently supported for page selection
+  
+  **Prerequisites:**
+  - Marketing settings must exist (call POST /:tenantId first if needed)
+  - At minimum, Styling and Content should be populated
+  - Images/Logos/QRcode are optional (will use placeholders if missing)
+  
+  **Response:**
+  - Binary PDF stream (Content-Type: application/pdf)
+  - Headers:
+    - `Content-Type: application/pdf`
+    - `Content-Disposition: attachment; filename="..."`
+    - `Content-Length: <size>`
+    - `x-file-resource-id: <uuid>` - Resource ID of the uploaded PDF
+    - `x-file-resource-url: <url>` - (Optional) Storage URL if file was uploaded
+  
+  **Use Case:**
+  Allow admins to save and download the latest marketing pamphlet directly
+  from the UI "Save & Download" action.
+}
+

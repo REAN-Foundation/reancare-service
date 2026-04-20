@@ -1,5 +1,6 @@
 import express from 'express';
 import { BaseValidator, Where } from '../../base.validator';
+import { ApiError } from '../../../common/api.error';
 import {
     TenantSettingsMarketingTypes,
     TenantMarketingStyling,
@@ -161,13 +162,29 @@ export class TenantSettingsMarketingValidator extends BaseValidator {
         return model;
     };
 
+    updatePageView = async (request: express.Request): Promise<number> => {
+        await this.validateInt(request, 'PageView', Where.Body, false, true);
+        
+        this.validateRequest(request);
+
+        const pageView = request.body?.PageView ?? 2;
+        
+        // Validate that pageView is 1 or 2
+        if (pageView !== 1 && pageView !== 2) {
+            throw new ApiError(400, 'PageView must be either 1 or 2');
+        }
+
+        return pageView;
+    };
+
     updateByType = async (request: express.Request, type: TenantSettingsMarketingTypes)
     : Promise<
         TenantMarketingStyling |
         TenantMarketingContent |
         TenantMarketingQRCode |
         TenantMarketingImages |
-        TenantMarketingLogos
+        TenantMarketingLogos |
+        number
     > => {
         if (type === TenantSettingsMarketingTypes.Styling) {
             return await this.updateStyling(request);
@@ -184,6 +201,9 @@ export class TenantSettingsMarketingValidator extends BaseValidator {
         if (type === TenantSettingsMarketingTypes.Logos) {
             return await this.updateLogos(request);
         }
+        if (type === TenantSettingsMarketingTypes.PageView) {
+            return await this.updatePageView(request);
+        }
         return null;
     };
 
@@ -193,18 +213,19 @@ export class TenantSettingsMarketingValidator extends BaseValidator {
         const qrCode = await this.updateQRCode(request);
         const images = await this.updateImages(request);
         const logos = await this.updateLogos(request);
+        const pageView = await this.updatePageView(request);
 
         this.validateRequest(request);
 
         const model: TenantSettingsMarketingDomainModel = {
-            Styling : styling,
-            Content : content,
-            QRCode  : qrCode,
-            Images  : images,
-            Logos   : logos,
+            Styling  : styling,
+            Content  : content,
+            QRCode   : qrCode,
+            Images   : images,
+            Logos    : logos,
+            PageView : pageView,
         };
 
         return model;
     };
-
 }

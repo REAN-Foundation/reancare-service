@@ -117,6 +117,10 @@ export class TenantSettingsMarketingController extends BaseController {
                 await this._service.updateSettingsByType(tenantId, TenantSettingsMarketingTypes.Logos, payload.Logos);
             }
 
+            if (payload.PageView !== undefined) {
+                await this._service.updateSettingsByType(tenantId, TenantSettingsMarketingTypes.PageView, payload.PageView);
+            }
+
             const updated = await this._service.getSettings(tenantId);
             ResponseHandler.success(request, response, 'Tenant marketing settings updated successfully!', 200, {
                 TenantMarketingSettings : updated,
@@ -297,4 +301,3 @@ export class TenantSettingsMarketingController extends BaseController {
     }
 
 }
-

@@ -50,7 +50,7 @@ export class Scheduler {
                 // this.scheduleHsSurvey();
                 this.scheduleReminderOnNoActionToDonationRequest();
                 this.scheduleReminders();
-                this.scheduleCareplanRegistrationReminders();
+                // this.scheduleCareplanRegistrationReminders();
                 this.scheduleFetchDataFromDevices();
                 this.scheduleCurrentTimezoneUpdate();
                 this.scheduleDailyStatistics();
@@ -58,7 +58,7 @@ export class Scheduler {
                 // this.scheduleStrokeSurveyTextMessage();
                 
                 //this.scheduleDaillyPatientTasks();
-                this.scheduleCareplanRegistrationRemindersForOldUsers();
+                // this.scheduleCareplanRegistrationRemindersForOldUsers();
                 // this.scheduleHFHelperTextMessage();
                 this.scheduleSunsetTextMessage();
                 this.scheduleGGHNFollowUpReminder();

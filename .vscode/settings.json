@@ -1,4 +1,5 @@
 {
+    "typescript.tsdk": "node_modules/typescript/lib",
     "json.schemas": [
         {
             "fileMatch": [
@@ -6,5 +7,6 @@
             ],
             "url": "./src/modules/ehr/specifications/fhir/schema/fhir.schema.json"
         }
-    ]
+    ],
+    "js/ts.tsdk.path": "node_modules/typescript/lib"
 }

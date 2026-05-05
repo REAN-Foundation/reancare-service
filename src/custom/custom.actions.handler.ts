@@ -138,6 +138,15 @@ export class CustomActionsHandler {
         }
     };
 
+    public scheduleSunsetTextMessage = async () => {
+        try {
+            await this._ahaActions.scheduleSunsetTextMessage();
+        }
+        catch (error) {
+            Logger.instance().log(`Error sending sunset text message.`);
+        }
+    };
+
     public scheduleGGHNFollowUpReminder = async () => {
         try {
             await this._gghnActions.scheduleGGHNFollowUpReminder();

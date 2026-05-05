@@ -48,6 +48,10 @@
         }
     },
 
+    "SunsetTextMessage": {
+        "Message" : "Reminder: Heart & Stroke Helper App will be discontinued on June 30. Please review any important information in the app before the service ends."
+    },
+
     "InactiveStrokeUserNotification": {
        "NotificationType" : "Alert",
         "Title"           : "We've Missed You!",

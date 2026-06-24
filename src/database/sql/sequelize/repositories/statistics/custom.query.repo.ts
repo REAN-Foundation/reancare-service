@@ -24,6 +24,7 @@ const sequelizeStats = new Sequelize(
     process.env.DB_USER_NAME,
     process.env.DB_USER_PASSWORD, {
         host    : process.env.DB_HOST,
+        port    : parseInt(process.env.DB_PORT),
         dialect : process.env.DB_DIALECT  as Dialect,
     });
 

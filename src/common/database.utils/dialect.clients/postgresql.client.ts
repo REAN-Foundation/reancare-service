@@ -25,6 +25,7 @@ export class PostgresqlClient  implements IDatabaseClient {
                 host     : config.Host,
                 user     : config.Username,
                 password : config.Password,
+                port     : config.Port,
             });
             await this.connection.connect();
         } catch (error) {
@@ -71,7 +72,7 @@ export class PostgresqlClient  implements IDatabaseClient {
                 user     : config.Username,
                 host     : config.Host,
                 password : config.Password,
-                port     : 5432,
+                port     : config.Port,
             });
             await client.connect();
             await client.query(query);

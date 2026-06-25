@@ -43,7 +43,8 @@ RUN apk add --no-cache \
 
 COPY package*.json /app/
 RUN npm install pm2 -g
-RUN npm install sharp
+RUN npm install --omit=dev
+COPY --from=builder /app/node_modules /app/node_modules
 COPY --from=builder ./app/dist/ .
 
 RUN dos2unix /app/entrypoint.sh && chmod +x /app/entrypoint.sh

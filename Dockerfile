@@ -19,7 +19,7 @@ COPY src ./src
 COPY tsconfig.json ./
 
 ENV NODE_OPTIONS="--max-old-space-size=4096"
-RUN npm run build || echo "Build completed with warnings"
+RUN npm run build 2>&1
 
 #######################################
 

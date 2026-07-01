@@ -334,6 +334,7 @@ export class PatientController extends BaseUserController {
                 PatientUserId : userId,
                 TenantId      : user.TenantId,
                 TenantName    : user.TenantCode,
+                Phone         : user?.Person?.Phone
             };
             await this._patientDeleteService.enqueueDeletePatientData(userDeleteEvent);
 

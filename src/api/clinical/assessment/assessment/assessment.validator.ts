@@ -10,7 +10,7 @@ import { COUNTRY_CODE_INDIA } from '../../../../domain.types/person/person.types
 import { PersonDomainModel } from '../../../../domain.types/person/person.domain.model';
 import { BiometricAlertSettings } from '../../../../domain.types/clinical/biometrics/biometrics.types';
 import { NotificationChannel } from '../../../../domain.types/general/notification/notification.types';
-import { BotMessagingType } from '../../../../domain.types/miscellaneous/bot,request.types';
+import { BotMessagingType } from '../../../../domain.types/miscellaneous/bot.request.types';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 

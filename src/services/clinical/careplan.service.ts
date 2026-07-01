@@ -300,16 +300,8 @@ export class CareplanService implements IUserActionService {
             details.Description = activity.Description;
             details.Transcription = activity.Transcription;
 
-            //Handle assessment activities in special manner...
-            if (activity.Category === UserTaskCategory.Assessment ||
-            activity.Type === 'Assessment') {
-                var template = await this.getAssessmentTemplate(details);
-                const assessment = await this.getAssessment(activity, template, scheduledAt);
-                activity['Assessment'] = assessment;
-            }
-            else {
-                activity['RawContent'] = details.RawContent;
-            }
+            activity = await this._handler.processActivityDetails(activity, details, scheduledAt, activity.Provider);
+
             return activity;
         }
         else {
@@ -431,42 +423,6 @@ export class CareplanService implements IUserActionService {
 
     public getAllCareplanEnrollmentByPlanCode = async (planCode: CareplanCode): Promise<EnrollmentDto[]> => {
         return await this._careplanRepo.getAllCareplanEnrollmentByPlanCode(planCode);
-    };
-
-    private getAssessment = async (
-        activity: CareplanActivityDto,
-        template: AssessmentTemplateDto,
-        scheduledAt: string): Promise<AssessmentDto> => {
-
-        var existingAssessment = await this._assessmentRepo.getByActivityId(activity.id);
-
-        if (existingAssessment) {
-            return existingAssessment;
-        }
-
-        var code = template.DisplayCode ? template.DisplayCode.split('#')[1] : '';
-        const displayCode = 'Assessment#' + code + ':' +
-            (activity.EnrollmentId ? activity.EnrollmentId : 'x') + ':' + scheduledAt;
-
-        const assessmentModel: AssessmentDomainModel = {
-            PatientUserId          : activity.PatientUserId,
-            DisplayCode            : displayCode,
-            Title                  : template.Title,
-            Description            : template.Description,
-            AssessmentTemplateId   : template.id,
-            Type                   : template.Type,
-            Provider               : template.Provider,
-            ProviderEnrollmentId   : activity.EnrollmentId,
-            ProviderAssessmentCode : template.ProviderAssessmentCode,
-            Status                 : ProgressStatus.Pending,
-            ParentActivityId       : activity.id,
-            UserTaskId             : activity.UserTaskId,
-            ScheduledDateString    : scheduledAt,
-            CurrentNodeId          : template.RootNodeId,
-        };
-
-        const assessment = await this._assessmentRepo.create(assessmentModel);
-        return assessment;
     };
 
     //#region Privates

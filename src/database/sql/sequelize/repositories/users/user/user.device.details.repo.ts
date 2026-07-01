@@ -6,6 +6,7 @@ import { UserDeviceDetailsSearchFilters, UserDeviceDetailsSearchResults } from "
 import { IUserDeviceDetailsRepo } from '../../../../../repository.interfaces/users/user/user.device.details.repo.interface ';
 import { UserDeviceDetailsMapper } from '../../../mappers/users/user/user.device.details.mapper';
 import UserDeviceDetailsModel from '../../../models/users/user/user.device.details.model';
+import { Op } from 'sequelize';
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -53,6 +54,25 @@ export class UserDeviceDetailsRepo implements IUserDeviceDetailsRepo {
                 }
             });
             return userDeviceDetailsList.map(x => UserDeviceDetailsMapper.toDto(x));
+        } catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, error.message);
+        }
+    };
+
+    getEligibleAppUserIds = async (appNames: string[]): Promise<string[]> => {
+        try {
+            const records = await UserDeviceDetailsModel.findAll({
+                attributes : ['UserId'],
+                where      : {
+                    [Op.or] : [
+                        { AppName: { [Op.in]: appNames } },
+                        { AppName: null }
+                    ]
+                },
+                group : ['UserId']
+            });
+            return records.map(r => r.UserId);
         } catch (error) {
             Logger.instance().log(error.message);
             throw new ApiError(500, error.message);

@@ -1,4 +1,4 @@
-import { BotMessagingType } from "../../../domain.types/miscellaneous/bot,request.types";
+import { BotMessagingType } from "../../miscellaneous/bot.request.types";
 import { NotificationChannel } from "../../../domain.types/general/notification/notification.types";
 import { BloodCholesterolSearchFilters } from "./blood.cholesterol/blood.cholesterol.search.types";
 import { BloodGlucoseSearchFilters } from "./blood.glucose/blood.glucose.search.types";

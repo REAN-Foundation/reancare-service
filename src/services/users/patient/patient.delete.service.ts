@@ -25,6 +25,7 @@ import { IUserDeviceDetailsRepo } from '../../../database/repository.interfaces/
 import { CareplanHandler } from '../../../modules/careplan/careplan.handler';
 import { IMessagingProvider } from '../../../modules/events/interfaces/messaging.povider.interface';
 import { EventType, UserDeleteEvent } from '../../../domain.types/events/event.types';
+import { ILlmService } from '../../../modules/llm.service/llm.service.interface';
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -57,6 +58,7 @@ export class PatientDeleteService {
         @inject('IEmergencyContactRepo') private _emergencyContactRepo: IEmergencyContactRepo,
         @inject('IUserDeviceDetailsRepo') private _userDeviceDetailsRepo: IUserDeviceDetailsRepo,
         @inject('IMessagingProvider') private _messagingProvider: IMessagingProvider,
+        @inject('ILlmService') private _llmService: ILlmService,
 
  ){}
 
@@ -140,6 +142,10 @@ export class PatientDeleteService {
             if (participant) {
                 await this._careplanRepo.deleteParticipantByUserId(userDeleteEvent.PatientUserId, true);
                 await this._handler.deleteParticipantData(participant.ParticipantId, participant.Provider);
+            }
+
+            if (userDeleteEvent.Phone) {
+                await this._llmService.deleteCache(userDeleteEvent.TenantName, userDeleteEvent.Phone);
             }
 
             const publisher = this._messagingProvider.getPublisher();

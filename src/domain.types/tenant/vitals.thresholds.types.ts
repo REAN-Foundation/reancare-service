@@ -14,10 +14,13 @@ export interface ThresholdCategory {
     Priority     : number;
 }
 
+export type BPEvaluationMode = 'independent' | 'combined';
+
 export interface VitalThresholdConfig {
-    Enabled    : boolean;
-    Unit       : string;
-    Categories : ThresholdCategory[];
+    Enabled         : boolean;
+    Unit            : string;
+    Categories      : ThresholdCategory[];
+    EvaluationMode? : BPEvaluationMode;
 }
 
 export interface VitalsThresholds {

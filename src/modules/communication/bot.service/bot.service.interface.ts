@@ -1,4 +1,4 @@
-import { BotRequestDomainModel } from "../../../domain.types/miscellaneous/bot,request.types";
+import { BotRequestDomainModel } from "../../../domain.types/miscellaneous/bot.request.types";
 
 export interface IBotService {
    

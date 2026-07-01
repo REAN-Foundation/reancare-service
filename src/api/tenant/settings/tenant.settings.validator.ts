@@ -694,6 +694,9 @@ export class TenantSettingsValidator extends BaseValidator {
                 await this.validateBoolean(request, `${basePath}.Enabled`, Where.Body, true, false);
                 await this.validateString(request, `${basePath}.Unit`, Where.Body, true, false, false, 1);
                 await this.validateArray(request, `${basePath}.Categories`, Where.Body, true, false, 1);
+                if (vitalType === 'BloodPressure' && vitalsThresholds[vitalType]?.EvaluationMode !== undefined) {
+                    await this.validateEnum(request, `${basePath}.EvaluationMode`, Where.Body, false, false, { independent: 'independent', combined: 'combined' });
+                }
 
                 const categories = vitalsThresholds[vitalType]?.Categories || [];
                 for (let i = 0; i < Math.min(categories.length, MAX_CATEGORIES); i++) {

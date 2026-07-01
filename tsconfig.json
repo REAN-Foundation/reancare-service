@@ -9,7 +9,8 @@
         "target": "es6",
         "listFiles":true,
         "noImplicitAny": false,
-        "moduleResolution": "node",
+        "moduleResolution": "node10",
+        "ignoreDeprecations": "5.0",
         "sourceMap": true,
         "noEmitHelpers":false,
         "alwaysStrict": true,
@@ -19,11 +20,6 @@
         "outDir": "dist/",
         "diagnostics": true,
         "baseUrl": ".",
-        "paths": {
-            "*": [
-                "node_modules/*"
-            ]
-        },
         "typeRoots": ["@types", "node_modules/@types"]
     },
     "include": [

@@ -1,8 +1,11 @@
 import { injectable } from "tsyringe";
 import { Logger } from "../../../common/logger";
-import { BotRequestDomainModel } from "../../../domain.types/miscellaneous/bot,request.types";
+import { BotRequestDomainModel } from "../../../domain.types/miscellaneous/bot.request.types";
+import { NotificationChannel } from "../../../domain.types/general/notification/notification.types";
 import axios from "axios";
 import { IBotService } from "./bot.service.interface";
+
+///////////////////////////////////////////////////////////////////////////////
 
 @injectable()
 export class BotService implements IBotService {
@@ -25,8 +28,9 @@ export class BotService implements IBotService {
                 'Accept-Encoding' : 'gzip, deflate, br',
                 Connection        : 'keep-alive',
             };
-
-            var url = process.env.REANBOT_BACKEND_BASE_URL + model.ClientName + '/' + model.Channel + '/' + process.env.REANBOT_WEBHOOK_CLIENT_URL_TOKEN + '/send';
+            
+            const botChannel = this.convertNotificationChannelToBotChannel(model.Channel);
+            var url = process.env.REANBOT_BACKEND_BASE_URL + model.ClientName + '/' + botChannel + '/' + process.env.REANBOT_WEBHOOK_CLIENT_URL_TOKEN + '/send';
             Logger.instance().log(`URL: ${url}`);
             var body = {
                 type         : model.Type,
@@ -37,6 +41,7 @@ export class BotService implements IBotService {
                 templateName : model.TemplateName,
                 payload      : model.Payload ?? {}
             };
+            Logger.instance().log(`Sending body to bot: ${JSON.stringify(body)}`);
             var response = await axios.post(url, body, { headers });
             if (response.status === 201 || response.status === 200) {
                 Logger.instance().log(`Successfully sent message to bot! ${body?.userId}`);
@@ -46,6 +51,23 @@ export class BotService implements IBotService {
         } catch (error) {
             Logger.instance().log(`Error sending message to bot: ${error}`);
         }
+    }
+
+    private convertNotificationChannelToBotChannel(channel: NotificationChannel): string {
+        const channelMap: Record<NotificationChannel, string> = {
+            [NotificationChannel.WhatsApp]     : 'whatsapp',
+            [NotificationChannel.WhatsappWati] : 'whatsapp',
+            [NotificationChannel.WhatsappMeta] : 'whatsappMeta',
+            [NotificationChannel.Telegram]     : 'telegram',
+            [NotificationChannel.Email]        : 'email',
+            [NotificationChannel.SMS]          : 'sms',
+            [NotificationChannel.WebPush]      : 'webpush',
+            [NotificationChannel.MobilePush]   : 'mobilepush',
+            [NotificationChannel.Webhook]      : 'webhook',
+            [NotificationChannel.Slack]        : 'slack'
+        };
+
+        return channelMap[channel] || channel.toLowerCase();
     }
 
 }

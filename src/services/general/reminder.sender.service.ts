@@ -224,11 +224,13 @@ export class ReminderSenderService {
         // create a function, which set variables according to template name
         const templateData = JSON.parse(reminder.RawContent);
         const clientName = templateData.ClientName;
-        templateData.Variables.en[0].text = person.DisplayName;
-        if (templateData.AppointmentDate) {
-            templateData.Variables.en[2].text = templateData.AppointmentDate;
-        } else {
-            templateData.Variables.en[2].text = TimeHelper.formatTimeTo_AM_PM(reminder.WhenTime);
+        if (templateData.Variables?.en) {
+            templateData.Variables.en[0].text = person.DisplayName;
+            if (templateData.AppointmentDate) {
+                templateData.Variables.en[2].text = templateData.AppointmentDate;
+            } else {
+                templateData.Variables.en[2].text = TimeHelper.formatTimeTo_AM_PM(reminder.WhenTime);
+            }
         }
         const templateName = templateData.TemplateName;
         const message = JSON.stringify(templateData);

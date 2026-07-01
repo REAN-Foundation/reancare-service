@@ -33,6 +33,8 @@ import { Injector } from "../../../../startup/injector";
 import { UserTaskSearchFilters } from "../../../../domain.types/users/user.task/user.task.search.types";
 import { ActivityTrackerHandler } from "../../../../services/users/patient/activity.tracker/activity.tracker.handler";
 import { CareplanRepo } from "../../../../database/sql/sequelize/repositories/clinical/careplan/careplan.repo";
+import { IAssessmentHelperRepo } from "../../../../database/repository.interfaces/clinical/assessment/assessment.helper.repo.interface";
+import { IAssessmentRepo } from "../../../../database/repository.interfaces/clinical/assessment/assessment.repo.interface";
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -45,12 +47,18 @@ export class AhaCareplanService implements ICareplanService {
 
     _assessmentTemplateRepo: AssessmentTemplateRepo = null;
 
+    _assessmentHelperRepo: IAssessmentHelperRepo = null;
+
+    _assessmentRepo: IAssessmentRepo = null;
+
     _careplanRepo: CareplanRepo = null;
 
     constructor() {
         this._assessmentService = Injector.Container.resolve(AssessmentService);
         this._userTaskService = Injector.Container.resolve(UserTaskService);
         this._assessmentTemplateRepo = Injector.Container.resolve(AssessmentTemplateRepo);
+        this._assessmentHelperRepo = Injector.Container.resolve('IAssessmentHelperRepo');
+        this._assessmentRepo = Injector.Container.resolve('IAssessmentRepo');
         this._careplanRepo = Injector.Container.resolve(CareplanRepo);
     }
 
@@ -725,300 +733,330 @@ export class AhaCareplanService implements ICareplanService {
 
         return entity;
     };
-    //#endregion
 
-    //#endregion
+ public processActivityDetails = async (
+     activity: any,
+     details: CareplanActivity,
+     scheduledAt: string
+ ): Promise<any> => {
 
-    //#region Privates
+     if (activity.Category === UserTaskCategory.Assessment ||
+            activity.Type === 'Assessment') {
 
-    private extractUrl(url: string, activity: any, languagePreference: string) {
+         const template = await this.getAssessmentTemplateForActivity(details);
 
-        var activityUrl = url && Helper.isUrl(url) ? url : null;
-        var locale = activity.locale;
-        if (locale && locale.length > 0)  {
-            var obj = locale[0];
-            if (obj) {
-                var x = obj[languagePreference];
-                if (x) {
-                    var xUrl = x['url'];
-                    if (Helper.isUrl(xUrl)) {
-                        activityUrl = xUrl;
-                    }
-                }
-            }
-        }
+         const assessment = await this.createAssessmentForActivity(
+             activity,
+             template,
+             scheduledAt
+         );
 
-        return activityUrl;
-    }
+         activity['Assessment'] = assessment;
 
-    private async getAssessmentUpdateModel(activity: any): Promise<any> {
+         Logger.instance().log(
+             `AHA assessment processed - Activity: ${activity.id}, Template: ${template.id}`
+         );
+     } else {
+         activity['RawContent'] = details.RawContent;
+     }
 
-        var updates = {
-            completedAt : Helper.formatDate(new Date()),
-            status      : 'COMPLETED',
-        };
+     return activity;
+ };
 
-        const taskCategory = activity.Category;
+ //#endregion
 
-        if (taskCategory !== UserTaskCategory.Assessment) {
-            return updates;
-        }
+ //#endregion
 
-        const assessment = activity['ActionDetails'] as AssessmentDto;
-        if (!assessment) {
-            return null;
-        }
+ //#region Privates
 
-        const userResponses = assessment.UserResponses as CAssessmentQueryResponse[];
-        updates['items'] = [];
+ private extractUrl(url: string, activity: any, languagePreference: string) {
 
-        for (var res of userResponses) {
+     var activityUrl = url && Helper.isUrl(url) ? url : null;
+     var locale = activity.locale;
+     if (locale && locale.length > 0)  {
+         var obj = locale[0];
+         if (obj) {
+             var x = obj[languagePreference];
+             if (x) {
+                 var xUrl = x['url'];
+                 if (Helper.isUrl(xUrl)) {
+                     activityUrl = xUrl;
+                 }
+             }
+         }
+     }
 
-            var responseType = res.ResponseType;
-            var node = res.Node;
-            var v = {
-                id     : node.ProviderGivenId,
-                values : []
-            };
+     return activityUrl;
+ }
 
-            switch (responseType) {
-                case QueryResponseType.SingleChoiceSelection: {
-                    var option = JSON.parse(res.Additional);
-                    v.values.push({
-                        value : option.Text
-                    });
-                    updates['items'].push(v);
-                    break;
-                }
-                case QueryResponseType.MultiChoiceSelection: {
-                    var options = JSON.parse(res.Additional);
-                    for (var opt of options) {
-                        v.values.push({
-                            value : opt.Text
-                        });
-                    }
-                    updates['items'].push(v);
-                    break;
-                }
-                case QueryResponseType.Text: {
-                    v.values.push({
-                        value : res.TextValue
-                    });
-                    updates['items'].push(v);
-                    break;
-                }
-                case QueryResponseType.Integer: {
-                    v.values.push({
-                        value : res.IntegerValue.toString()
-                    });
-                    updates['items'].push(v);
-                    break;
-                }
-                case QueryResponseType.Float: {
-                    v.values.push({
-                        value : res.FloatValue.toString()
-                    });
-                    updates['items'].push(v);
-                    break;
-                }
-                case QueryResponseType.Boolean: {
-                    v.values.push({
-                        value : res.BooleanValue.toString()
-                    });
-                    updates['items'].push(v);
-                    break;
-                }
-                case QueryResponseType.Ok: {
-                    v.values.push({
-                        value : 'Ok'
-                    });
-                    updates['items'].push(v);
-                    break;
-                }
-                case QueryResponseType.Biometrics: {
-                    var biometrics = [];
-                    Logger.instance().log(`Result - Value : ${JSON.stringify(res.ObjectValue.Value)}`);
-                    var biometrics_ = res.ObjectValue.Value;
-                    Logger.instance().log(`Biometrics : ${biometrics_}`);
-                    if (!Array.isArray(biometrics_)) {
-                        biometrics = [biometrics_];
-                    }
-                    else {
-                        biometrics = biometrics_;
-                    }
-                    for (var b of biometrics) {
-                        var biometricsType = b.BiometricsType as BiometricsType;
-                        this.populateBiometricValues(biometricsType, v, b);
-                    }
-                    updates['items'].push(v);
-                    break;
-                }
-            }
-        }
+ private async getAssessmentUpdateModel(activity: any): Promise<any> {
 
-        return updates;
-    }
+     var updates = {
+         completedAt : Helper.formatDate(new Date()),
+         status      : 'COMPLETED',
+     };
 
-    private populateBiometricValues(biometricsType: BiometricsType, v: { id: string; values: any[]; }, b: any) {
+     const taskCategory = activity.Category;
 
-        switch (biometricsType) {
-            case BiometricsType.BloodGlucose: {
-                v.values.push({
-                    value : b.BloodGlucose
-                });
-                break;
-            }
-            case BiometricsType.BloodOxygenSaturation: {
-                v.values.push({
-                    value : b.BloodOxygenSaturation
-                });
-                break;
-            }
-            case BiometricsType.BloodPressure: {
-                v.values.push({
-                    value : b.Systolic
-                });
-                v.values.push({
-                    value : b.Diastolic
-                });
-                break;
-            }
-            case BiometricsType.BodyWeight: {
-                v.values.push({
-                    value : b.BodyWeight
-                });
-                break;
-            }
-            case BiometricsType.BodyTemperature: {
-                v.values.push({
-                    value : b.BodyTemperature
-                });
-                break;
-            }
-            case BiometricsType.BodyHeight: {
-                v.values.push({
-                    value : b.BodyHeight
-                });
-                break;
-            }
-            case BiometricsType.Pulse: {
-                v.values.push({
-                    value : b.Pulse
-                });
-                break;
-            }
-            default: {
-                // Don't send anything else
-            }
-        }
+     if (taskCategory !== UserTaskCategory.Assessment) {
+         return updates;
+     }
 
-    }
+     const assessment = activity['ActionDetails'] as AssessmentDto;
+     if (!assessment) {
+         return null;
+     }
 
-    private async getHeaderOptions() {
-        const currentTime = new Date();
+     const userResponses = assessment.UserResponses as CAssessmentQueryResponse[];
+     updates['items'] = [];
 
-        if (currentTime > AhaCache.GetTokenExpirationTime()) {
-            Logger.instance().log('AHA token expired, generating new token.');
-            await this.init();
-        }
+     for (var res of userResponses) {
 
-        const token = AhaCache.GetWebToken();
-        var headers = {
-            'Content-Type' : 'application/json',
-            accept         : 'application/json',
-            Authorization  : `Bearer ${token}`,
-        };
+         var responseType = res.ResponseType;
+         var node = res.Node;
+         var v = {
+             id     : node.ProviderGivenId,
+             values : []
+         };
 
-        return {
-            headers : headers,
-        };
-    }
+         switch (responseType) {
+             case QueryResponseType.SingleChoiceSelection: {
+                 var option = JSON.parse(res.Additional);
+                 v.values.push({
+                     value : option.Text
+                 });
+                 updates['items'].push(v);
+                 break;
+             }
+             case QueryResponseType.MultiChoiceSelection: {
+                 var options = JSON.parse(res.Additional);
+                 for (var opt of options) {
+                     v.values.push({
+                         value : opt.Text
+                     });
+                 }
+                 updates['items'].push(v);
+                 break;
+             }
+             case QueryResponseType.Text: {
+                 v.values.push({
+                     value : res.TextValue
+                 });
+                 updates['items'].push(v);
+                 break;
+             }
+             case QueryResponseType.Integer: {
+                 v.values.push({
+                     value : res.IntegerValue.toString()
+                 });
+                 updates['items'].push(v);
+                 break;
+             }
+             case QueryResponseType.Float: {
+                 v.values.push({
+                     value : res.FloatValue.toString()
+                 });
+                 updates['items'].push(v);
+                 break;
+             }
+             case QueryResponseType.Boolean: {
+                 v.values.push({
+                     value : res.BooleanValue.toString()
+                 });
+                 updates['items'].push(v);
+                 break;
+             }
+             case QueryResponseType.Ok: {
+                 v.values.push({
+                     value : 'Ok'
+                 });
+                 updates['items'].push(v);
+                 break;
+             }
+             case QueryResponseType.Biometrics: {
+                 var biometrics = [];
+                 Logger.instance().log(`Result - Value : ${JSON.stringify(res.ObjectValue.Value)}`);
+                 var biometrics_ = res.ObjectValue.Value;
+                 Logger.instance().log(`Biometrics : ${biometrics_}`);
+                 if (!Array.isArray(biometrics_)) {
+                     biometrics = [biometrics_];
+                 }
+                 else {
+                     biometrics = biometrics_;
+                 }
+                 for (var b of biometrics) {
+                     var biometricsType = b.BiometricsType as BiometricsType;
+                     this.populateBiometricValues(biometricsType, v, b);
+                 }
+                 updates['items'].push(v);
+                 break;
+             }
+         }
+     }
 
-    private getActivityStatus(status: string) {
-        if (status === "PENDING") {
-            return ProgressStatus.Pending;
-        }
-        else if (status === "COMPLETED") {
-            return ProgressStatus.Completed;
-        }
-        else {
-            return ProgressStatus.Unknown;
-        }
-    }
+     return updates;
+ }
 
-    private getUserTaskCategory(activityType: string, title?: string, contentTypeCode?: string): UserTaskCategory {
+ private populateBiometricValues(biometricsType: BiometricsType, v: { id: string; values: any[]; }, b: any) {
 
-        if (activityType === 'Questionnaire' || activityType === 'Assessment' || activityType === 'Question') {
-            return UserTaskCategory.Assessment;
-        }
-        var type = activityType ?? contentTypeCode;
+     switch (biometricsType) {
+         case BiometricsType.BloodGlucose: {
+             v.values.push({
+                 value : b.BloodGlucose
+             });
+             break;
+         }
+         case BiometricsType.BloodOxygenSaturation: {
+             v.values.push({
+                 value : b.BloodOxygenSaturation
+             });
+             break;
+         }
+         case BiometricsType.BloodPressure: {
+             v.values.push({
+                 value : b.Systolic
+             });
+             v.values.push({
+                 value : b.Diastolic
+             });
+             break;
+         }
+         case BiometricsType.BodyWeight: {
+             v.values.push({
+                 value : b.BodyWeight
+             });
+             break;
+         }
+         case BiometricsType.BodyTemperature: {
+             v.values.push({
+                 value : b.BodyTemperature
+             });
+             break;
+         }
+         case BiometricsType.BodyHeight: {
+             v.values.push({
+                 value : b.BodyHeight
+             });
+             break;
+         }
+         case BiometricsType.Pulse: {
+             v.values.push({
+                 value : b.Pulse
+             });
+             break;
+         }
+         default: {
+             // Don't send anything else
+         }
+     }
 
-        if (type === 'Video')
-        {
-            return UserTaskCategory.EducationalVideo;
-        }
-        if (type === 'Audio')
-        {
-            return UserTaskCategory.EducationalAudio;
-        }
-        if (type === 'Animation')
-        {
-            return UserTaskCategory.EducationalAnimation;
-        }
-        if (type === 'Link' || type === 'Web' || type === 'Article')
-        {
-            return UserTaskCategory.EducationalLink;
-        }
-        if (type === 'Infographic')
-        {
-            return UserTaskCategory.EducationalInfographics;
-        }
-        if (type === 'Message') {
-            return UserTaskCategory.Message;
-        }
-        if (type === 'Goal') {
-            return UserTaskCategory.Goal;
-        }
-        if (type === 'Challenge') {
-            return UserTaskCategory.Challenge;
-        }
-        if ((type === 'Professional' && title === 'Weekly review') ||
+ }
+
+ private async getHeaderOptions() {
+     const currentTime = new Date();
+
+     if (currentTime > AhaCache.GetTokenExpirationTime()) {
+         Logger.instance().log('AHA token expired, generating new token.');
+         await this.init();
+     }
+
+     const token = AhaCache.GetWebToken();
+     var headers = {
+         'Content-Type' : 'application/json',
+         accept         : 'application/json',
+         Authorization  : `Bearer ${token}`,
+     };
+
+     return {
+         headers : headers,
+     };
+ }
+
+ private getActivityStatus(status: string) {
+     if (status === "PENDING") {
+         return ProgressStatus.Pending;
+     }
+     else if (status === "COMPLETED") {
+         return ProgressStatus.Completed;
+     }
+     else {
+         return ProgressStatus.Unknown;
+     }
+ }
+
+ private getUserTaskCategory(activityType: string, title?: string, contentTypeCode?: string): UserTaskCategory {
+
+     if (activityType === 'Questionnaire' || activityType === 'Assessment' || activityType === 'Question') {
+         return UserTaskCategory.Assessment;
+     }
+     var type = activityType ?? contentTypeCode;
+
+     if (type === 'Video')
+     {
+         return UserTaskCategory.EducationalVideo;
+     }
+     if (type === 'Audio')
+     {
+         return UserTaskCategory.EducationalAudio;
+     }
+     if (type === 'Animation')
+     {
+         return UserTaskCategory.EducationalAnimation;
+     }
+     if (type === 'Link' || type === 'Web' || type === 'Article')
+     {
+         return UserTaskCategory.EducationalLink;
+     }
+     if (type === 'Infographic')
+     {
+         return UserTaskCategory.EducationalInfographics;
+     }
+     if (type === 'Message') {
+         return UserTaskCategory.Message;
+     }
+     if (type === 'Goal') {
+         return UserTaskCategory.Goal;
+     }
+     if (type === 'Challenge') {
+         return UserTaskCategory.Challenge;
+     }
+     if ((type === 'Professional' && title === 'Weekly review') ||
             (type === 'Professional' && title === 'Week televisit')) {
-            return UserTaskCategory.Consultation;
-        }
-        return UserTaskCategory.Custom;
-    }
+         return UserTaskCategory.Consultation;
+     }
+     return UserTaskCategory.Custom;
+ }
 
-    private getActivityDescription(text: string, description: string) {
-        var desc = '';
-        if (text && text.length > 0) {
-            desc = text;
-            desc += '\n';
-        }
-        if (description && description.length > 0) {
-            desc = description;
-            desc += '\n';
-        }
-        return desc;
-    }
+ private getActivityDescription(text: string, description: string) {
+     var desc = '';
+     if (text && text.length > 0) {
+         desc = text;
+         desc += '\n';
+     }
+     if (description && description.length > 0) {
+         desc = description;
+         desc += '\n';
+     }
+     return desc;
+ }
 
-    private getActivityTranscription(activity: any) {
-        var transcription = null;
-        if (
-            activity.locale &&
+ private getActivityTranscription(activity: any) {
+     var transcription = null;
+     if (
+         activity.locale &&
             typeof activity.locale !== 'object' &&
             activity.locale.length > 0 &&
             activity.locale[0]['en-US']
-        ) {
-            transcription = activity.locale[0]['en-US'].transcription;
-        }
+     ) {
+         transcription = activity.locale[0]['en-US'].transcription;
+     }
 
-        if (!transcription) {
-            transcription = activity.text ?? '';
-        }
+     if (!transcription) {
+         transcription = activity.text ?? '';
+     }
 
-        return transcription;
-    }
+     return transcription;
+ }
 
     private createInitialAssessmentTask = async (
         model: EnrollmentDomainModel,
@@ -1164,6 +1202,59 @@ export class AhaCareplanService implements ICareplanService {
 
         return userTask.ActionId;
     };
+
+    private async getAssessmentTemplateForActivity(details: CareplanActivity): Promise<any> {
+        const existingTemplate = await this._assessmentTemplateRepo.getByProviderAssessmentCode(
+            this.providerName(),
+            details.ProviderActionId
+        );
+
+        if (existingTemplate) {
+            return existingTemplate;
+        }
+
+        const assessmentTemplate = await this.convertToAssessmentTemplate(details);
+
+        const template = await this._assessmentHelperRepo.addTemplate(assessmentTemplate);
+        return template;
+    }
+
+    private async createAssessmentForActivity(
+        activity: any,
+        template: any,
+        scheduledAt: string
+    ): Promise<any> {
+    
+        const existingAssessment = await this._assessmentRepo.getByActivityId(activity.id);
+
+        if (existingAssessment) {
+            return existingAssessment;
+        }
+
+        const code = template.DisplayCode ? template.DisplayCode.split('#')[1] : '';
+        const displayCode = 'Assessment#' + code + ':' +
+            (activity.EnrollmentId ? activity.EnrollmentId : 'x') + ':' + scheduledAt;
+
+        const assessmentModel: AssessmentDomainModel = {
+            PatientUserId          : activity.PatientUserId,
+            DisplayCode            : displayCode,
+            Title                  : template.Title,
+            Description            : template.Description,
+            AssessmentTemplateId   : template.id,
+            Type                   : template.Type,
+            Provider               : this.providerName(),
+            ProviderEnrollmentId   : activity.EnrollmentId,
+            ProviderAssessmentCode : template.ProviderAssessmentCode,
+            Status                 : ProgressStatus.Pending,
+            ParentActivityId       : activity.id,
+            UserTaskId             : activity.UserTaskId,
+            ScheduledDateString    : scheduledAt,
+            CurrentNodeId          : template.RootNodeId,
+        };
+
+        const assessment = await this._assessmentRepo.create(assessmentModel);
+        return assessment;
+    }
 
     //#endregion
 

@@ -4,6 +4,7 @@ import { CommunicationInjector } from './communication/communication.injector';
 import { EhrInjector } from './ehr/ehr.injector';
 import { FileStorageInjector } from './storage/file.storage.injector';
 import { EventInjector } from './events/event.injector';
+import { LlmServiceInjector } from './llm.service/llm.service.injector';
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -15,6 +16,7 @@ export class ModuleInjector {
         CommunicationInjector.registerInjections(container);
         FileStorageInjector.registerInjections(container);
         EventInjector.registerInjections(container);
+        LlmServiceInjector.registerInjections(container);
     }
 
 }

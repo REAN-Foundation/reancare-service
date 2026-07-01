@@ -77,4 +77,10 @@ export interface ICareplanService {
     scheduleDailyHighRiskCareplan(): Promise<void>
 
     deleteParticipantData( participantId: string ): Promise<boolean>;
+    
+    processActivityDetails(
+        activity: any,
+        details: CareplanActivity,
+        scheduledAt: string
+    ): Promise<any>;
 }

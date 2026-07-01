@@ -1,3 +1,4 @@
+import { BotMessagingType } from "../../miscellaneous/bot.request.types";
 import { ProgressStatus } from "../../../domain.types/miscellaneous/system.types";
 import { UserActionType, UserTaskCategory } from "./user.task.types";
 
@@ -40,8 +41,15 @@ export interface TaskSummaryDto {
     PendingTasks   : UserTaskDto[];
 }
 
-export interface ChatBotTaskDto extends UserTaskDto {
+export interface UserTaskMessageDto extends UserTaskDto {
     Language?: string;
     Sequence?: number;
-    Metadata?: any;
+    Metadata?: Record<string, any>;
+}
+
+export interface ProcessedTaskDto {
+    MessageType: BotMessagingType;
+    Message: string;
+    TemplateName?: string;
+    Metadata?: Record<string, any>;
 }

@@ -9,8 +9,8 @@ import { TimeHelper } from '../../common/time.helper';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-const ASYNC_TASK_COUNT  = 4;
-const SMS_DELAY_MS      = 1000;
+const ASYNC_TASK_COUNT  = 1;
+const SMS_DELAY_MS      = 2000;
 
 export class SunsetSmsQueue {
 

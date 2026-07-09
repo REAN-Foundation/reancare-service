@@ -21,6 +21,7 @@ export class EHRDbConnector {
             const config = databaseConfig(DatabaseSchemaType.EHRInsights);
             const options = {
                 host    : config.Host,
+                port    : config.Port,
                 dialect : dialect as Dialect,
                 models  : modelsPath,
                 pool    : {

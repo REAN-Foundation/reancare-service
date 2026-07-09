@@ -25,6 +25,7 @@ export class DatabaseConnector_Sequelize implements IPrimaryDatabaseConnector {
             const modelsPath = getFoldersRecursively(modelsFolder);
             const options = {
                 host    : config.Host,
+                port    : config.Port,
                 dialect : config.Dialect as Dialect,
                 models  : modelsPath,
                 pool    : {

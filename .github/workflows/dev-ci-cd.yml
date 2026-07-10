@@ -113,7 +113,7 @@ jobs:
           EX=$(curl -sk "${A[@]}" -X POST -H 'Content-Type: application/json' -d "{\"policy_id\":${PID}}" -D - -o /dev/null "${HARBOR}/api/v2.0/replication/executions" | awk 'tolower($1)=="location:"{print $2}' | tr -d '\r' | awk -F/ '{print $NF}')
           for i in $(seq 1 60); do
             ST=$(curl -sk "${A[@]}" "${HARBOR}/api/v2.0/replication/executions/${EX}" | jq -r .status)
-            echo "  replication: $ST"; [ "$ST" = "Succeeded" ] && break
+            echo "  replication: $ST"; [ "$ST" = "Succeed" ] && break
             [ "$ST" = "Failed" ] && { echo "replication failed"; exit 1; }
             sleep 5
           done

@@ -5,7 +5,7 @@ import { ApiError } from "../../../../../../common/api.error";
 import { IOtpRepo } from "../../../../../repository.interfaces/users/user/otp.repo.interface";
 import { OtpPersistenceEntity } from "../../../../../../domain.types/users/otp/otp.domain.types";
 import Otp from "../../../models/users/user/otp.model";
-import { Op, Sequelize } from 'sequelize';
+import { Op } from 'sequelize';
 import { OtpDto } from '../../../../../../domain.types/users/otp/otp.dto';
 
 ///////////////////////////////////////////////////////////////////////
@@ -31,7 +31,7 @@ export class OtpRepo implements IOtpRepo {
                     ValidTill : { [Op.lte]: new Date() },
                     Utilized  : false,
                 },
-                order : Sequelize.literal('max(ValidTill) DESC'),
+                order : [['ValidTill', 'DESC']],
             });
             if (otps.length > 0) {
                 const otp = otps[0];

@@ -289,12 +289,7 @@ export class TenantController extends BaseController {
 
             await this.authorizeOne(request, null, tenant.id);
 
-            const lambdaFunctionName = process.env.CREATE_BOT_SCHEMA_LAMBDA_FUNCTION_NAME;
-            if (!lambdaFunctionName) {
-                throw new ApiError(500, 'Lambda function name for creating bot schema is not configured.');
-            }
-
-            const created = await this._service.createBotSchema(lambdaFunctionName, model);
+            const created = await this._service.createBotSchema(model);
             ResponseHandler.success(request, response, 'Bot schema created successfully!', 200, created);
         } catch (error) {
             ResponseHandler.handleError(request, response, error);

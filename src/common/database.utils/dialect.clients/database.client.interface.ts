@@ -8,4 +8,8 @@ export interface IDatabaseClient {
 
     execute(schemaType: DatabaseSchemaType, query: string): Promise<boolean>;
 
+    schemaExists(schemaName: string): Promise<boolean>;
+
+    createSchema(schemaName: string): Promise<boolean>;
+
 }

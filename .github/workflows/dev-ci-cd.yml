@@ -15,7 +15,7 @@ on:
     branches: [develop]
 
 jobs:
-  Deploy-ECS:
+  Build-Push-Harbor:
     environment: dev
     runs-on: ubuntu-latest
 #       group: Default Larger Runners
@@ -80,39 +80,43 @@ jobs:
       - name: Image digest
         run: echo ${{ steps.docker_build.outputs.digest }}
 
-      - name: Download task definition
-        run: |
-          aws ecs describe-task-definition --task-definition ${{ secrets.TASK_DEFINTION_NAME }} \
-          --query taskDefinition > task-definition.json
-
-      - name: New image ID in the Amazon ECS task definition
-        id: task-def
-        uses: aws-actions/amazon-ecs-render-task-definition@v1
-        with:
-          task-definition: task-definition.json
-          container-name: default
-          image: ${{ steps.login-ecr.outputs.registry }}/reancare-service-dev-uat:${{ steps.vars.outputs.branch }}_${{ steps.vars.outputs.sha_short }}
-
-      - name: Deploy Amazon ECS task definition
-        uses: aws-actions/amazon-ecs-deploy-task-definition@v2
-        with:
-          task-definition: ${{ steps.task-def.outputs.task-definition }}
-          wait-for-service-stability: true
-
-      - name: Task Definition Variable
-        id: taskdefintionvar
+      # Mirror the freshly-pushed ECR image into Harbor (Harbor PULLS it, so no
+      # slow upload) and keep only the 5 latest. Additive: does not touch the
+      # ECR push or the ECS deploy below. continue-on-error so a Harbor hiccup
+      # never blocks the ECS deployment.
+      - name: Mirror image to Harbor (keep 5 latest)
+        continue-on-error: true
         shell: bash
+        env:
+          HARBOR: https://artifacts.reanfoundation.org
+          HARBOR_ROBOT: ${{ secrets.HARBOR_ROBOT }}
+          HARBOR_ROBOT_SECRET: ${{ secrets.HARBOR_ROBOT_SECRET }}
+          ECR_REPO: reancare-service-dev-uat
+          TAG: ${{ steps.vars.outputs.branch }}_${{ steps.vars.outputs.sha_short }}
+          HARBOR_PROJECT: rean-dev
+          ECR_REGISTRY_ID: "1"
+          RETENTION_ID: "2"
         run: |
-          echo "task_definition_arn=$(aws ecs describe-task-definition --task-definition ${{ secrets.TASK_DEFINTION_NAME }} | jq '.[] | .taskDefinitionArn')" >> $GITHUB_OUTPUT
-
-      - name: Task Defintion ARN
-        run: |
-          echo "Task Defintion: ${{ steps.taskdefintionvar.outputs.task_definition_arn }}"
-
-      - name: Deploy Amazon ECS task definition using Duplo API
-        uses: fjogeleit/http-request-action@master
-        with:
-          url: 'https://reanfoundation.duplocloud.net/subscriptions/${{ secrets.DUPLO_ID }}/UpdateEcsService'
-          method: 'POST'
-          data: '{"TaskDefinition":${{ steps.taskdefintionvar.outputs.task_definition_arn }},"Name": "${{ secrets.SERVICE_NAME }}","Replicas":1, "HealthCheckGracePeriodSeconds": 1200}'
-          bearerToken: ${{ secrets.DUPLOCLOUD_TOKEN }}
+          set -euo pipefail
+          A=(-u "${HARBOR_ROBOT}:${HARBOR_ROBOT_SECRET}")
+          POL="ci-${ECR_REPO}"
+          BODY="{\"name\":\"${POL}\",\"src_registry\":{\"id\":${ECR_REGISTRY_ID}},\"dest_namespace\":\"${HARBOR_PROJECT}\",\"dest_namespace_replace_count\":0,\"trigger\":{\"type\":\"manual\"},\"filters\":[{\"type\":\"name\",\"value\":\"${ECR_REPO}\"},{\"type\":\"tag\",\"value\":\"${TAG}\"}],\"enabled\":true,\"override\":true,\"speed\":-1}"
+          # find-or-create this repo's pull policy, pinned to the exact tag we just pushed
+          PID=$(curl -sk "${A[@]}" "${HARBOR}/api/v2.0/replication/policies?q=name%3D${POL}" | jq -r '.[0].id // empty')
+          if [ -z "$PID" ]; then
+            PID=$(curl -sk "${A[@]}" -X POST -H 'Content-Type: application/json' -d "$BODY" -D - -o /dev/null "${HARBOR}/api/v2.0/replication/policies" | awk 'tolower($1)=="location:"{print $2}' | tr -d '\r' | awk -F/ '{print $NF}')
+          else
+            curl -sk "${A[@]}" -X PUT -H 'Content-Type: application/json' -d "$BODY" "${HARBOR}/api/v2.0/replication/policies/${PID}"
+          fi
+          echo "Harbor pull policy id: $PID"
+          # trigger Harbor to pull ONLY this tag, wait for it
+          EX=$(curl -sk "${A[@]}" -X POST -H 'Content-Type: application/json' -d "{\"policy_id\":${PID}}" -D - -o /dev/null "${HARBOR}/api/v2.0/replication/executions" | awk 'tolower($1)=="location:"{print $2}' | tr -d '\r' | awk -F/ '{print $NF}')
+          for i in $(seq 1 60); do
+            ST=$(curl -sk "${A[@]}" "${HARBOR}/api/v2.0/replication/executions/${EX}" | jq -r .status)
+            echo "  replication: $ST"; [ "$ST" = "Succeed" ] && break
+            [ "$ST" = "Failed" ] && { echo "replication failed"; exit 1; }
+            sleep 5
+          done
+          # keep only the 5 latest in Harbor for this repo
+          curl -sk "${A[@]}" -X POST -H 'Content-Type: application/json' -d '{"dry_run":false}' "${HARBOR}/api/v2.0/retentions/${RETENTION_ID}/executions"
+          echo "Mirrored ${ECR_REPO}:${TAG} to Harbor (${HARBOR_PROJECT}); triggered keep-5."

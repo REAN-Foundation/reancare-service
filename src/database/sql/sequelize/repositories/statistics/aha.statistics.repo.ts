@@ -1,268 +1,261 @@
+import { Op } from 'sequelize';
 import { IAhaStatisticsRepo } from '../../../../../database/repository.interfaces/statistics/aha.statistics.repo.interface';
 import { Logger } from '../../../../../common/logger';
 import { CareplanHealthSystem } from '../../../../../domain.types/statistics/aha/aha.type';
-import { queryAhaTenant, queryCareplanList, queryHealthSystemEnrollmentCount, queryListOfHealthSystem, queryTotalActiveEnrollments, queryTotalDeletedEnrollments, queryTotalEnrollments } from './query/aha.sql';
-import { Helper } from '../../../../../common/helper';
-import { DatabaseSchemaType } from '../../../../../common/database.utils/database.config';
-import {
-    queryTotalActiveDoctors,
-    queryTotalActivePatients,
-    queryTotalActivePersons,
-    queryTotalActiveUsers,
-    queryTotalDeletedDoctors,
-    queryTotalDeletedPatients,
-    queryTotalDeletedPersons,
-    queryTotalDeletedUsers,
-    queryTotalDoctors,
-    queryTotalPatients,
-    queryTotalPersons,
-    queryTotalUsers,
-    queryUniqueUsersInDeviceDetail,
-    queryUsersWithMissingDeviceDetail } from './query/system.user.sql';
-import { DatabaseClient } from '../../../../../common/database.utils/dialect.clients/database.client';
+import User from '../../models/users/user/user.model';
+import Person from '../../models/person/person.model';
+import Patient from '../../models/users/patient/patient.model';
+import Doctor from '../../models/users/doctor.model';
+import UserDeviceDetails from '../../models/users/user/user.device.details.model';
+import CareplanEnrollment from '../../models/clinical/careplan/enrollment.model';
+import HealthSystem from '../../models/hospitals/health.system.model';
+import Tenant from '../../models/tenant/tenant.model';
 
 ////////////////////////////////////////////////////////////////////////////////////////////
 
 export class AhaStatisticsRepo implements IAhaStatisticsRepo {
 
-    public dbConnector: DatabaseClient = null;
-
-    constructor() {
-        this.dbConnector = new DatabaseClient();
-        this.dbConnector._client.connect(DatabaseSchemaType.Primary);
-    }
-
     getAhaTenant = async (): Promise<string> => {
-        const query = queryAhaTenant;
         try {
-            const [rows] = await this.dbConnector._client.executeQuery(query);
-            const tenantIds: any = rows;
-            if (tenantIds.length === 1) {
-                return tenantIds[0].id;
-            }
-            return null;
+            const tenant = await Tenant.findOne({ where: { Code: 'default' }, paranoid: false });
+            return tenant ? tenant.id : null;
         } catch (error) {
             Logger.instance().log(`Unable to get AHA tenant id: ${error.message}`);
-            // throw new ApiError(500, `Unable to process total patient count: ${error.message}`);
+            return null;
         }
     };
-    
+
     getTotalPatients = async (): Promise<number> => {
-        const query = queryTotalPatients;
-        let totalPatients = null;
-        const [rows] = await this.dbConnector._client.executeQuery(query);
-        const totalPatients_: any = rows;
-        if (totalPatients_.length === 1) {
-            totalPatients = totalPatients_[0].totalPatients;
-        }
-        return totalPatients;
+        return await Patient.count({
+            include  : [{ model: User, required: true, attributes: [], where: { IsTestUser: false }, paranoid: false }],
+            paranoid : false,
+        });
     };
 
     getTotalActivePatients = async (): Promise<number> => {
-        const query = queryTotalActivePatients;
-        let totalActivePatients = null;
-        const [rows] = await this.dbConnector._client.executeQuery(query);
-        const totalActivePatients_: any = rows;
-        if (totalActivePatients_.length === 1) {
-            totalActivePatients = totalActivePatients_[0].totalActivePatients;
-        }
-        return totalActivePatients;
+        return await Patient.count({
+            distinct : true,
+            col      : 'UserId',
+            include  : [{
+                model      : User,
+                required   : true,
+                attributes : [],
+                where      : { IsTestUser: false, DeletedAt: { [Op.is]: null } },
+                paranoid   : false,
+            }],
+            paranoid : false,
+        });
     };
 
     getTotalDeletedPatients = async (): Promise<number> => {
-        const query = queryTotalDeletedPatients;
-        let totalDeletedPatients = null;
-        const [rows] = await this.dbConnector._client.executeQuery(query);
-        const totalDeletedPatients_: any = rows;
-        if (totalDeletedPatients_.length === 1) {
-            totalDeletedPatients = totalDeletedPatients_[0].totalDeletedPatients;
-        }
-        return totalDeletedPatients;
+        return await Patient.count({
+            distinct : true,
+            col      : 'UserId',
+            include  : [{
+                model      : User,
+                required   : true,
+                attributes : [],
+                where      : { IsTestUser: false, DeletedAt: { [Op.not]: null } },
+                paranoid   : false,
+            }],
+            paranoid : false,
+        });
     };
 
     getTotalUsersWithMissingDeviceDetail = async (): Promise<number> => {
-        const query = queryUsersWithMissingDeviceDetail;
-        let totalUsersWithMissingDeviceDetail = null;
-        const [rows] = await this.dbConnector._client.executeQuery(query);
-        const totalUsersWithMissingDeviceDetail_: any = rows;
-        if (totalUsersWithMissingDeviceDetail_.length === 1) {
-            totalUsersWithMissingDeviceDetail = totalUsersWithMissingDeviceDetail_[0].count;
+        const deviceRows = await UserDeviceDetails.findAll({ attributes: ['UserId'], paranoid: false, raw: true });
+        const deviceUserIds = [...new Set(deviceRows.map((d: any) => d.UserId).filter((id) => id != null))];
+        const where: any = { IsTestUser: false };
+        if (deviceUserIds.length > 0) {
+            where.id = { [Op.notIn]: deviceUserIds };
         }
-        return totalUsersWithMissingDeviceDetail;
+        return await User.count({ where, paranoid: false });
     };
 
     getTotalUniqueUsersInDeviceDetail = async (): Promise<number> => {
-        const query = queryUniqueUsersInDeviceDetail;
-        let totalUniqueUsersInDeviceDetail = null;
-        const [rows] = await this.dbConnector._client.executeQuery(query);
-        const totalUniqueUsersInDeviceDetail_: any = rows;
-        if (totalUniqueUsersInDeviceDetail_.length === 1) {
-            totalUniqueUsersInDeviceDetail = totalUniqueUsersInDeviceDetail_[0].count;
-        }
-        return totalUniqueUsersInDeviceDetail;
+        return await UserDeviceDetails.count({
+            distinct : true,
+            col      : 'UserId',
+            include  : [{ model: User, required: true, attributes: [], where: { IsTestUser: false }, paranoid: false }],
+            paranoid : false,
+        });
     };
 
     getTotalUsers = async (): Promise<number> => {
-        const query = queryTotalUsers;
-        let totalUsers = null;
-        const [rows] = await this.dbConnector._client.executeQuery(query);
-        const totalUsers_: any = rows;
-        if (totalUsers_.length === 1) {
-            totalUsers = totalUsers_[0].totalUsers;
-        }
-        return totalUsers;
+        return await User.count({ where: { IsTestUser: false }, paranoid: false });
     };
 
     getTotalDeletedUsers = async (): Promise<number> => {
-        const query = queryTotalDeletedUsers;
-        let totalDeletedUsers = null;
-        const [rows] = await this.dbConnector._client.executeQuery(query);
-        const totalDeletedUsers_: any = rows;
-        if (totalDeletedUsers_.length === 1) {
-            totalDeletedUsers = totalDeletedUsers_[0].totalDeletedUsers;
-        }
-        return totalDeletedUsers;
+        return await User.count({ where: { IsTestUser: false, DeletedAt: { [Op.not]: null } }, paranoid: false });
     };
 
     getTotalActiveUsers = async (): Promise<number> => {
-        const query = queryTotalActiveUsers;
-        let totalActiveUsers = null;
-        const [rows] = await this.dbConnector._client.executeQuery(query);
-        const totalActiveUsers_: any = rows;
-        if (totalActiveUsers_.length === 1) {
-            totalActiveUsers = totalActiveUsers_[0].totalActiveUsers;
-        }
-        return totalActiveUsers;
+        return await User.count({ where: { IsTestUser: false, DeletedAt: { [Op.is]: null } }, paranoid: false });
     };
 
     getTotalPersons = async (): Promise<number> => {
-        const query = queryTotalPersons;
-        let totalPersons = null;
-        const [rows] = await this.dbConnector._client.executeQuery(query);
-        const totalPersons_: any = rows;
-        if (totalPersons_.length === 1) {
-            totalPersons = totalPersons_[0].totalPersons;
-        }
-        return totalPersons;
+        return await Person.count({ paranoid: false });
     };
 
     getTotalActivePersons = async (): Promise<number> => {
-        const query = queryTotalActivePersons;
-        let totalActivePersons = null;
-        const [rows] = await this.dbConnector._client.executeQuery(query);
-        const totalActivePersons_: any = rows;
-        if (totalActivePersons_.length === 1) {
-            totalActivePersons = totalActivePersons_[0].totalActivePersons;
-        }
-        return totalActivePersons;
+        return await Person.count({ where: { DeletedAt: { [Op.is]: null } }, paranoid: false });
     };
 
     getTotalDeletedPersons = async (): Promise<number> => {
-        const query = queryTotalDeletedPersons;
-        let totalDeletedPersons = null;
-        const [rows] = await this.dbConnector._client.executeQuery(query);
-        const totalDeletedPersons_: any = rows;
-        if (totalDeletedPersons_.length === 1) {
-            totalDeletedPersons = totalDeletedPersons_[0].totalDeletedPersons;
-        }
-        return totalDeletedPersons;
+        return await Person.count({ where: { DeletedAt: { [Op.not]: null } }, paranoid: false });
     };
 
     getTotalDoctors = async (): Promise<number> => {
-        const query = queryTotalDoctors;
-        let totalDoctors = null;
-        const [rows] = await this.dbConnector._client.executeQuery(query);
-        const totalDoctors_: any = rows;
-        if (totalDoctors_.length === 1) {
-            totalDoctors = totalDoctors_[0].totalDoctors;
-        }
-        return totalDoctors;
+        return await Doctor.count({
+            include  : [{ model: User, required: true, attributes: [], where: { IsTestUser: false }, paranoid: false }],
+            paranoid : false,
+        });
     };
 
     getTotalActiveDoctors = async (): Promise<number> => {
-        const query = queryTotalActiveDoctors;
-        let totalActiveDoctors = null;
-        const [rows] = await this.dbConnector._client.executeQuery(query);
-        const totalActiveDoctors_: any = rows;
-        if (totalActiveDoctors_.length === 1) {
-            totalActiveDoctors = totalActiveDoctors_[0].totalActiveDoctors;
-        }
-        return totalActiveDoctors;
+        return await Doctor.count({
+            include : [{
+                model      : User,
+                required   : true,
+                attributes : [],
+                where      : { IsTestUser: false, DeletedAt: { [Op.is]: null } },
+                paranoid   : false,
+            }],
+            paranoid : false,
+        });
     };
 
     getTotalDeletedDoctors = async (): Promise<number> => {
-        const query = queryTotalDeletedDoctors;
-        let totalDeletedDoctors = null;
-        const [rows] = await this.dbConnector._client.executeQuery(query);
-        const totalDeletedDoctors_: any = rows;
-        if (totalDeletedDoctors_.length === 1) {
-            totalDeletedDoctors = totalDeletedDoctors_[0].totalDeletedDoctors;
-        }
-        return totalDeletedDoctors;
+        return await Doctor.count({
+            include : [{
+                model      : User,
+                required   : true,
+                attributes : [],
+                where      : { IsTestUser: false, DeletedAt: { [Op.not]: null } },
+                paranoid   : false,
+            }],
+            paranoid : false,
+        });
     };
 
     getTotalEnrollments = async (careplanCode: string, tenantId: string): Promise<number> => {
-        let query = Helper.replaceAll(queryTotalEnrollments,'{{careplanCode}}',careplanCode);
-        query = Helper.replaceAll(query, '{{tenantId}}',tenantId);
-        const [rows] = await this.dbConnector._client.executeQuery(query);
-        const enrollments: any = rows;
-        if (enrollments.length === 1) {
-            return enrollments[0].totalEnrollments;
+        const userIds = await this.getUserIds({ IsTestUser: false, TenantId: tenantId });
+        if (userIds.length === 0) {
+            return 0;
         }
+        return await CareplanEnrollment.count({
+            where    : { PlanCode: careplanCode, PatientUserId: { [Op.in]: userIds } },
+            paranoid : false,
+        });
     };
 
     getTotalActiveEnrollments = async (careplanCode: string, tenantId: string): Promise<number> => {
-        let query = Helper.replaceAll(queryTotalActiveEnrollments,'{{careplanCode}}',careplanCode);
-        query = Helper.replaceAll(query, '{{tenantId}}',tenantId);
-        const [rows] = await this.dbConnector._client.executeQuery(query);
-        const deletedEnrollments: any = rows;
-        if (deletedEnrollments.length === 1) {
-            return deletedEnrollments[0].totalActiveEnrollments;
+        const userIds = await this.getPatientUserIdsByPersonDeletedState(tenantId, false);
+        if (userIds.length === 0) {
+            return 0;
         }
+        return await CareplanEnrollment.count({
+            distinct : true,
+            col      : 'PatientUserId',
+            where    : { PlanCode: careplanCode, PatientUserId: { [Op.in]: userIds } },
+            paranoid : false,
+        });
     };
 
     getTotalDeletedEnrollments = async (careplanCode: string, tenantId: string): Promise<number> => {
-        let query = Helper.replaceAll(queryTotalDeletedEnrollments,'{{careplanCode}}',careplanCode);
-        query = Helper.replaceAll(query, '{{tenantId}}',tenantId);
-        const [rows] = await this.dbConnector._client.executeQuery(query);
-        const activeEnrollments: any = rows;
-        if (activeEnrollments.length === 1) {
-            return activeEnrollments[0].totalDeletedEnrollments;
+        const userIds = await this.getPatientUserIdsByPersonDeletedState(tenantId, true);
+        if (userIds.length === 0) {
+            return 0;
         }
+        return await CareplanEnrollment.count({
+            distinct : true,
+            col      : 'PatientUserId',
+            where    : { PlanCode: careplanCode, PatientUserId: { [Op.in]: userIds } },
+            paranoid : false,
+        });
     };
-   
+
     getHealthSystemEnrollmentCount =
-    async (careplanCode: string, healthSystem : string, tenantId: string): Promise<CareplanHealthSystem> => {
-        let query = Helper.replaceAll(queryHealthSystemEnrollmentCount, '{{careplanCode}}', careplanCode);
-        query = Helper.replaceAll(query, '{{healthSystem}}', healthSystem);
-        query = Helper.replaceAll(query, '{{tenantId}}',tenantId);
-        const [rows] = await this.dbConnector._client.executeQuery(query);
-        const healthSystemEnrollments: any = rows;
-        if (healthSystemEnrollments.length === 1) {
-            return {
-                Careplan     : careplanCode,
-                HealthSystem : healthSystem,
-                Enrollments  : healthSystemEnrollments[0].count
-            };
-            
+    async (careplanCode: string, healthSystem: string, tenantId: string): Promise<CareplanHealthSystem> => {
+        const patientRows = await Patient.findAll({
+            attributes : ['UserId'],
+            where      : { HealthSystem: healthSystem },
+            include    : [{
+                model      : User,
+                required   : true,
+                attributes : [],
+                where      : { IsTestUser: false, TenantId: tenantId },
+                paranoid   : false,
+            }],
+            paranoid : false,
+            raw      : true,
+        });
+        const userIds = [...new Set(patientRows.map((p: any) => p.UserId).filter((id) => id != null))];
+        let enrollments = 0;
+        if (userIds.length > 0) {
+            enrollments = await CareplanEnrollment.count({
+                distinct : true,
+                col      : 'PatientUserId',
+                where    : { PlanCode: careplanCode, PatientUserId: { [Op.in]: userIds } },
+                paranoid : false,
+            });
         }
+        return {
+            Careplan     : careplanCode,
+            HealthSystem : healthSystem,
+            Enrollments  : enrollments,
+        };
     };
 
     getListOfCareplan = async (tenantId: string) => {
-        const query =  Helper.replaceAll(queryCareplanList, "{{tenantId}}",tenantId);
-        const [rows] = await this.dbConnector._client.executeQuery(query);
-        const careplans: any = rows;
-        return this.extractCareplanCode(careplans);
-
+        const userIds = await this.getUserIds({ TenantId: tenantId });
+        if (userIds.length === 0) {
+            return [];
+        }
+        const rows = await CareplanEnrollment.findAll({
+            attributes : ['PlanCode'],
+            where      : { PatientUserId: { [Op.in]: userIds } },
+            group      : ['PlanCode'],
+            paranoid   : false,
+            raw        : true,
+        });
+        return this.extractCareplanCode(rows);
     };
 
     getListOfHealthSystem = async () => {
-        const query = queryListOfHealthSystem;
-        const [rows] = await this.dbConnector._client.executeQuery(query);
-        const healthSystems: any = rows;
-        return this.extractHealthSystems(healthSystems);
+        const rows = await HealthSystem.findAll({
+            attributes : ['Name'],
+            group      : ['Name'],
+            paranoid   : false,
+            raw        : true,
+        });
+        return this.extractHealthSystems(rows);
     };
-    
+
+    private getUserIds = async (where: any): Promise<string[]> => {
+        const rows = await User.findAll({ attributes: ['id'], where, paranoid: false, raw: true });
+        return rows.map((u: any) => u.id);
+    };
+
+    private getPatientUserIdsByPersonDeletedState =
+    async (tenantId: string, personDeleted: boolean): Promise<string[]> => {
+        const personWhere = personDeleted ? { DeletedAt: { [Op.not]: null } } : { DeletedAt: { [Op.is]: null } };
+        const rows = await Patient.findAll({
+            attributes : ['UserId'],
+            include    : [{
+                model      : User,
+                required   : true,
+                attributes : [],
+                where      : { IsTestUser: false, TenantId: tenantId },
+                paranoid   : false,
+                include    : [{ model: Person, required: true, attributes: [], where: personWhere, paranoid: false }],
+            }],
+            paranoid : false,
+            raw      : true,
+        });
+        return [...new Set(rows.map((p: any) => p.UserId).filter((id) => id != null))];
+    };
+
     private extractHealthSystems = (data) => {
         const healthSystems = [];
         data.forEach((healthSystem) => {

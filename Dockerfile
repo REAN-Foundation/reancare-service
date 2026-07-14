@@ -32,6 +32,7 @@ RUN apk update && apk upgrade --no-cache
 
 RUN apk add --no-cache \
     bash \
+    dos2unix \
     python3 \
     py3-pip \
     chromium \
@@ -41,9 +42,11 @@ RUN apk add --no-cache \
  && rm -rf /var/cache/apk/*
 
 COPY package*.json /app/
+COPY entrypoint.sh /app/entrypoint.sh
 RUN npm install pm2 -g
-RUN npm install sharp
-COPY --from=builder ./app/dist/ .
+RUN npm install --omit=dev
+RUN dos2unix /app/entrypoint.sh && chmod +x /app/entrypoint.sh
+COPY --from=builder /app/node_modules /app/node_modules
+COPY --from=builder /app/dist /app/dist
 
-RUN chmod +x /app/entrypoint.sh
 ENTRYPOINT ["/bin/bash", "-c", "/app/entrypoint.sh"]

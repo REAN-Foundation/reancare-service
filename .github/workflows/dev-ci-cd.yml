@@ -15,7 +15,7 @@ on:
     branches: [develop]
 
 jobs:
-  Deploy-ECS:
+  Build-Push-Harbor:
     environment: dev
     runs-on: ubuntu-latest
 #       group: Default Larger Runners
@@ -120,41 +120,3 @@ jobs:
           # keep only the 5 latest in Harbor for this repo
           curl -sk "${A[@]}" -X POST -H 'Content-Type: application/json' -d '{"dry_run":false}' "${HARBOR}/api/v2.0/retentions/${RETENTION_ID}/executions"
           echo "Mirrored ${ECR_REPO}:${TAG} to Harbor (${HARBOR_PROJECT}); triggered keep-5."
-
-
-      - name: Download task definition
-        run: |
-          aws ecs describe-task-definition --task-definition ${{ secrets.TASK_DEFINTION_NAME }} \
-          --query taskDefinition > task-definition.json
-
-      - name: New image ID in the Amazon ECS task definition
-        id: task-def
-        uses: aws-actions/amazon-ecs-render-task-definition@v1
-        with:
-          task-definition: task-definition.json
-          container-name: default
-          image: ${{ steps.login-ecr.outputs.registry }}/reancare-service-dev-uat:${{ steps.vars.outputs.branch }}_${{ steps.vars.outputs.sha_short }}
-
-      - name: Deploy Amazon ECS task definition
-        uses: aws-actions/amazon-ecs-deploy-task-definition@v2
-        with:
-          task-definition: ${{ steps.task-def.outputs.task-definition }}
-          wait-for-service-stability: true
-
-      - name: Task Definition Variable
-        id: taskdefintionvar
-        shell: bash
-        run: |
-          echo "task_definition_arn=$(aws ecs describe-task-definition --task-definition ${{ secrets.TASK_DEFINTION_NAME }} | jq '.[] | .taskDefinitionArn')" >> $GITHUB_OUTPUT
-
-      - name: Task Defintion ARN
-        run: |
-          echo "Task Defintion: ${{ steps.taskdefintionvar.outputs.task_definition_arn }}"
-
-      - name: Deploy Amazon ECS task definition using Duplo API
-        uses: fjogeleit/http-request-action@master
-        with:
-          url: 'https://reanfoundation.duplocloud.net/subscriptions/${{ secrets.DUPLO_ID }}/UpdateEcsService'
-          method: 'POST'
-          data: '{"TaskDefinition":${{ steps.taskdefintionvar.outputs.task_definition_arn }},"Name": "${{ secrets.SERVICE_NAME }}","Replicas":1, "HealthCheckGracePeriodSeconds": 1200}'
-          bearerToken: ${{ secrets.DUPLOCLOUD_TOKEN }}

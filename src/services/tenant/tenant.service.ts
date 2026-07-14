@@ -11,6 +11,7 @@ import * as DefaultVitalsThresholds from '../../../seed.data/default.vitals.thre
 import { Injector } from '../../startup/injector';
 import { TenantSettingsMarketingService } from './marketing/tenant.settings.marketing.service';
 import { AwsLambdaService } from '../../modules/cloud.services/aws.service';
+import { DatabaseClient } from '../../common/database.utils/dialect.clients/database.client';
 import {
     TenantPromotionPayload,
     TargetEnvironment,
@@ -65,9 +66,16 @@ export class TenantService {
         return await this._tenantRepo.delete(id, hardDelete);
     };
 
-    public createBotSchema = async (lambdaFunctionName: string, model: TenantSchemaDomainModel):
-    Promise<TenantSchemaDto> => {
-        return await this._lambdaService.invokeLambdaFunction<TenantSchemaDto>(lambdaFunctionName, model);
+    public createBotSchema = async (model: TenantSchemaDomainModel): Promise<TenantSchemaDto> => {
+        const dbClient = Injector.Container.resolve(DatabaseClient);
+        const exists = await dbClient.schemaExists(model.SchemaName);
+        if (!exists) {
+            await dbClient.createSchema(model.SchemaName);
+        }
+        return {
+            SchemaName  : model.SchemaName,
+            Environment : model.Environment,
+        };
     };
 
     public createSecret = async (lambdaFunctionName: string, model: TenantSecretDomainModel): Promise<any> => {

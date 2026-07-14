@@ -33,4 +33,12 @@ export class DatabaseClient {
         return await this._client.executeQuery(schemaType, query);
     };
 
+    public schemaExists = async (schemaName: string): Promise<boolean> => {
+        return await this._client.schemaExists(schemaName);
+    };
+
+    public createSchema = async (schemaName: string): Promise<boolean> => {
+        return await this._client.createSchema(schemaName);
+    };
+
 }

@@ -12,7 +12,7 @@ This project is open-sourced under [MIT license](./LICENSE).
 
 __We encourage forking and welcome contributions to this code base.__
 
-* [Get started](docs/development.md) - how to setup dev-environment on your local machine
+* [Get started  ](docs/development.md) - how to setup dev-environment on your local machine
 * [Service design considerations](docs/design-considerations.md)
 * [Learn how to contribute](./CONTRIBUTING.md)
 * [Code of conduct](./CODE_OF_CONDUCT.md)

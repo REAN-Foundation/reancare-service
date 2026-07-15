@@ -68,7 +68,7 @@ class AwardsFactsDatabaseConnector {
             password    : process.env.DB_USER_PASSWORD,
             database    : process.env.DB_NAME_AWARDS_FACTS,
             entities    : entities,
-            synchronize : true,
+            synchronize : process.env.DB_SYNCHRONIZE === 'true',
             migrations  : [],
             subscribers : [],
             logging     : process.env.NODE_ENV !== 'test',

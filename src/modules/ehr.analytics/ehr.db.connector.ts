@@ -46,6 +46,7 @@ export class EHRDbConnector {
             await databaseClient.createDb(DatabaseSchemaType.EHRInsights);
 
             await EHRDbConnector._sequelize.authenticate();
+            Logger.instance().log(`[EHR DB] Schema auto-sync (alter) = ${config.Synchronize}`);
             await EHRDbConnector._sequelize.sync({ alter: config.Synchronize });
 
             Logger.instance().log(`Connected to EHR Insights database '${config.DatabaseName}'.`);

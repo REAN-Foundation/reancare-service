@@ -46,7 +46,7 @@ export class DatabaseConnector_Sequelize implements IPrimaryDatabaseConnector {
             await databaseClient.createDb(DatabaseSchemaType.Primary);
 
             await this._sequelize.authenticate();
-            await this._sequelize.sync({ force: false, alter: true });
+            await this._sequelize.sync({ force: false, alter: config.Synchronize });
 
             Logger.instance().log(`Connected to database '${config.DatabaseName}'.`);
 

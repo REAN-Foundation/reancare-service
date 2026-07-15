@@ -50,7 +50,7 @@ export const databaseConfig = (schemaType: DatabaseSchemaType)
         },
         Cache       : true,
         Logging     : true,
-        Synchronize : true
+        Synchronize : process.env.DB_SYNCHRONIZE === 'true'
     };
 
     if (schemaType === DatabaseSchemaType.EHRInsights &&

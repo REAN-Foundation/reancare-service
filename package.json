@@ -41,7 +41,7 @@
         "aws-sdk": "^2.1542.0",
         "axios": "^1.13.5",
         "bcryptjs": "^2.4.3",
-        "body-parser": "^1.20.4",
+        "body-parser": "^1.20.6",
         "cors": "^2.8.5",
         "country-currency-phone": "^0.1.11",
         "cron-parser": "^5.1.1",

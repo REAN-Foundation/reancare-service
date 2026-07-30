@@ -26,62 +26,13 @@ import Pulse from '../../models/clinical/biometrics/pulse.model';
 import { TimeHelper } from '../../../../../common/time.helper';
 import User from '../../models/users/user/user.model';
 import Role from '../../models/role/role.model';
+import HealthProfile from '../../models/users/patient/health.profile.model';
+import UserDeviceDetails from '../../models/users/user/user.device.details.model';
+import UserLoginSession from '../../models/users/user/user.login.session.model';
+import CareplanEnrollment from '../../models/clinical/careplan/enrollment.model';
 import { DurationType } from '../../../../../domain.types/miscellaneous/time.types';
 import { StatisticSearchFilters } from '../../../../../domain.types/statistics/statistics.search.type';
-import {
-    queryTenantUsersCareplanEnrollments,
-    queryDeletedTenantUsers,
-    queryHeavyDrinkersTenantUser,
-    queryNotAddictedTenantUser,
-    queryNotDeletedTenantUsers,
-    querySubstanceAbuseTenantUser,
-    queryTobaccoSmokersTenantUser,
-    queryTotalOnboardedTenantUsers,
-    queryTenantUserByAge,
-    queryTenantUserByGender,
-    queryTenantUserByMajorAilment,
-    queryTenantUserMarritalStatus,
-    queryTenantUsersByDeviceDetail,
-    queryTenantUsersWithActiveSession,
-    queryYearWiseTenantUserDeviceDetail,
-    queryYearWiseTenantUserGenderDetails,
-    queryYearWiseHeavyDrinkersTenantUser,
-    queryYearWiseTenantUserMajorAilmentDetails,
-    queryYearWiseTenantUserMaritalDetails,
-    queryYearWiseNotAddictedTenantUser,
-    queryYearWiseSubstanceAbuseTenantUser,
-    queryYearWiseTobaccoSmokersTenantUser,
-    queryYearWiseTenantUserAge,
-    queryYearWiseTenantUserCount
-} from './query/tenant.sql';
-import {
-    queryTotalCareplanEnrollments,
-    queryAllYear,
-    queryAppDownloadCount,
-    queryDeletedUsers,
-    queryHeavyDrinkers,
-    queryNotAddicted,
-    queryNotDeletedUsers,
-    querySubstanceAbuse,
-    queryTobaccoSmokers,
-    queryTotalOnboardedUsers,
-    queryUserByAge,
-    queryUserByGender,
-    queryUserByMajorAilment,
-    queryUserMarritalStatus,
-    queryUsersByDeviceDetail,
-    queryUsersWithActiveSession,
-    queryYearWiseDeviceDetail,
-    queryYearWiseGenderDetails,
-    queryYearWiseHeavyDrinkers,
-    queryYearWiseMajorAilmentDistributionDetails,
-    queryYearWiseMaritalDetails,
-    queryYearWiseNotAddicted,
-    queryYearWiseSubstanceAbuse,
-    queryYearWiseTobaccoSmokers,
-    queryYearWiseUserAge,
-    queryYearWiseUserCount
-} from './query/system.sql';
+import { queryAppDownloadCount } from './query/system.sql';
 import { GenderDetails } from '../../../../../domain.types/person/person.types';
 import { MajorAilmentDetails, MaritalStatusDetails } from '../../../../../domain.types/users/patient/health.profile/health.profile.types';
 import { DatabaseSchemaType } from '../../../../../common/database.utils/database.config';
@@ -100,6 +51,61 @@ export class StatisticsRepo implements IStatisticsRepo {
 
     createConnection = async (schemaType: DatabaseSchemaType) => {
         await this.dbConnector._client.connect(schemaType);
+    };
+
+    private buildUserWhere = (filter: any): any => {
+        const where: any = { IsTestUser: false };
+        if (filter && filter.TenantId) {
+            where.TenantId = filter.TenantId;
+        }
+        return where;
+    };
+
+    private userInclude = (filter: any): any => ({
+        model      : User,
+        required   : true,
+        attributes : [],
+        where      : this.buildUserWhere(filter),
+        paranoid   : false,
+    });
+
+    private groupByYearAndField = (rows: any[], field: string): any[] => {
+        const counts = new Map<string, any>();
+        for (const r of rows) {
+            const year = getUtcYear(r.CreatedAt);
+            const key = `${year}|${r[field]}`;
+            const existing = counts.get(key);
+            if (existing) {
+                existing.totalCount++;
+            } else {
+                counts.set(key, { year, [field]: r[field], totalCount: 1 });
+            }
+        }
+        return [...counts.values()];
+    };
+
+    private healthProfileCount = async (filter: any, profileWhere: any): Promise<number> => {
+        return await HealthProfile.count({
+            where    : profileWhere,
+            include  : [this.userInclude(filter)],
+            paranoid : false,
+        });
+    };
+
+    private yearWiseHealthProfileCount = async (filter: any, profileWhere: any): Promise<any[]> => {
+        const rows = await HealthProfile.findAll({
+            attributes : ['CreatedAt'],
+            where      : profileWhere,
+            include    : [this.userInclude(filter)],
+            paranoid   : false,
+            raw        : true,
+        });
+        const counts = new Map<number, number>();
+        for (const r of rows as any[]) {
+            const y = getUtcYear(r.CreatedAt);
+            counts.set(y, (counts.get(y) ?? 0) + 1);
+        }
+        return [...counts.entries()].sort((a, b) => a[0] - b[0]).map(([year, count]) => ({ year, count }));
     };
 
     getUsersCount = async (filters: StatisticSearchFilters): Promise<any> => {
@@ -188,87 +194,78 @@ export class StatisticsRepo implements IStatisticsRepo {
     };
 
     getUsersByGender = async (filter): Promise<any> => {
-        let query = null;
-
-        if (filter.TenantId) {
-            query =  Helper.replaceAll(queryTenantUserByGender, "{{tenantId}}", filter.TenantId);
-        } else {
-            query = queryUserByGender;
+        const rows = await Person.findAll({
+            attributes : ['Gender'],
+            include    : [this.userInclude(filter)],
+            paranoid   : false,
+            raw        : true,
+        });
+        const counts = new Map<any, number>();
+        for (const r of rows as any[]) {
+            counts.set(r.Gender, (counts.get(r.Gender) ?? 0) + 1);
         }
-
-        const [rows] = await this.dbConnector._client.executeQuery(query);
-        const genderWiseUsers: any = rows;
+        const genderWiseUsers = [...counts.entries()].map(([Gender, totalCount]) => ({ Gender, totalCount }));
         return this.aggregateUserByGender(genderWiseUsers);
     };
 
-    public getYearWiseAgeDetails = async(filter) => {
-        const queryForAllYears = queryAllYear;
-        const [allYears] = await this.dbConnector._client.executeQuery(queryForAllYears);
-        const years: any = allYears;
+    public getYearWiseAgeDetails = async (filter) => {
+        const years = await this.getAllYears();
+        const rows = await Person.findAll({
+            attributes : ['BirthDate', 'CreatedAt'],
+            include    : [this.userInclude(filter)],
+            paranoid   : false,
+            raw        : true,
+        });
         const result = [];
-
-        for (let i = 0; i < years.length; i++) {
-            let query = null;
-
-            if (filter.TenantId) {
-                query =  Helper.replaceAll(queryYearWiseTenantUserAge, "{{tenantId}}", filter.TenantId);
-            } else {
-                query = queryYearWiseUserAge;
-            }
-
-            query =  Helper.replaceAll(query, "{{year}}", years[i].year);
-            const [rows] = await this.dbConnector._client.executeQuery(query);
-            const userByAge: any = rows;
+        for (const y of years as any[]) {
+            const yearRows = (rows as any[]).filter((r) => getUtcYear(r.CreatedAt) === Number(y.year));
+            const userByAge = yearRows.map((r) => ({ age: r.BirthDate ? computeAge(r.BirthDate) : null }));
             const ageDetails = this.aggregateUserByAge(userByAge);
             result.push({
-                Year       : years[i].year,
+                Year       : y.year,
                 AgeDetails : ageDetails
             });
         }
-
         return result;
     };
 
     getUsersByAge = async (filter): Promise<any> => {
-        let query = null;
-
-        if (filter.TenantId) {
-            query =  Helper.replaceAll(queryTenantUserByAge, "{{tenantId}}", filter.TenantId);
-        } else {
-            query = queryUserByAge;
-        }
-
-        const [rows] = await this.dbConnector._client.executeQuery(query);
-        const userByAge: any = rows;
+        const rows = await Person.findAll({
+            attributes : ['BirthDate'],
+            include    : [this.userInclude(filter)],
+            paranoid   : false,
+            raw        : true,
+        });
+        const userByAge = (rows as any[]).map((r) => ({ age: r.BirthDate ? computeAge(r.BirthDate) : null }));
         return this.aggregateUserByAge(userByAge);
     };
 
     getUsersByMaritalStatus = async (filter): Promise<any> => {
-        let query = null;
-
-        if (filter.TenantId) {
-            query =  Helper.replaceAll(queryTenantUserMarritalStatus, "{{tenantId}}", filter.TenantId);
-        } else {
-            query = queryUserMarritalStatus;
+        const rows = await HealthProfile.findAll({
+            attributes : ['MaritalStatus'],
+            include    : [this.userInclude(filter)],
+            paranoid   : false,
+            raw        : true,
+        });
+        const counts = new Map<any, number>();
+        for (const r of rows as any[]) {
+            counts.set(r.MaritalStatus, (counts.get(r.MaritalStatus) ?? 0) + 1);
         }
-
-        const [rows] = await this.dbConnector._client.executeQuery(query);
-        const usersByMaritalStatus: any = rows;
-        return usersByMaritalStatus;
+        return [...counts.entries()].map(([MaritalStatus, Count]) => ({ MaritalStatus, Count }));
     };
 
     getUsersByDeviceDetail = async (filter): Promise<any> => {
-        let query = null;
-
-        if (filter.TenantId) {
-            query =  Helper.replaceAll(queryTenantUsersByDeviceDetail, "{{tenantId}}", filter.TenantId);
-        } else {
-            query = queryUsersByDeviceDetail;
+        const rows = await UserDeviceDetails.findAll({
+            attributes : ['OSType'],
+            include    : [this.userInclude(filter)],
+            paranoid   : false,
+            raw        : true,
+        });
+        const counts = new Map<any, number>();
+        for (const r of rows as any[]) {
+            counts.set(r.OSType, (counts.get(r.OSType) ?? 0) + 1);
         }
-
-        const [rows] = await this.dbConnector._client.executeQuery(query);
-        const userByDeviceDetails: any = rows;
-        return userByDeviceDetails;
+        return [...counts.entries()].map(([OSType, Count]) => ({ OSType, Count }));
     };
 
     updateAppDownloadCount = async (createModel: AppDownloadDomainModel):
@@ -349,17 +346,17 @@ export class StatisticsRepo implements IStatisticsRepo {
     };
 
     getUsersByMajorAilment = async (filter): Promise<any> => {
-        let query = null;
-
-        if (filter.TenantId) {
-            query =  Helper.replaceAll(queryTenantUserByMajorAilment, "{{tenantId}}", filter.TenantId);
-        } else {
-            query = queryUserByMajorAilment;
+        const rows = await HealthProfile.findAll({
+            attributes : ['MajorAilment'],
+            include    : [this.userInclude(filter)],
+            paranoid   : false,
+            raw        : true,
+        });
+        const counts = new Map<any, number>();
+        for (const r of rows as any[]) {
+            counts.set(r.MajorAilment, (counts.get(r.MajorAilment) ?? 0) + 1);
         }
-
-        const [rows] = await this.dbConnector._client.executeQuery(query);
-        const userByMajorAilment: any = rows;
-        return userByMajorAilment;
+        return [...counts.entries()].map(([MajorAilment, Count]) => ({ MajorAilment, Count }));
     };
 
     getUsersByObesity = async (filters): Promise<any> => {
@@ -548,57 +545,11 @@ export class StatisticsRepo implements IStatisticsRepo {
     };
 
     getUsersByAddiction = async (filter): Promise<any> => {
-        let tobaccoSmokers = null;
-        let tobaccoSmokersQuery = null;
-        if (filter.TenantId) {
-            tobaccoSmokersQuery =  Helper.replaceAll(queryTobaccoSmokersTenantUser, "{{tenantId}}", filter.TenantId);
-        } else {
-            tobaccoSmokersQuery = queryTobaccoSmokers;
-        }
-        const [tobaccoSmokersRows] = await this.dbConnector._client.executeQuery(tobaccoSmokersQuery);
-        const tobaccoSmokers_: any = tobaccoSmokersRows;
-        if (tobaccoSmokers_.length === 1) {
-            tobaccoSmokers = tobaccoSmokers_[0].tobaccoUserCount;
-        }
-
-        let heavyDrinkers = null;
-        let heavyDrinkersQuery = null;
-        if (filter.TenantId) {
-            heavyDrinkersQuery =  Helper.replaceAll(queryHeavyDrinkersTenantUser, "{{tenantId}}", filter.TenantId);
-        } else {
-            heavyDrinkersQuery = queryHeavyDrinkers;
-        }
-        const [heavyDrinkersRows] = await this.dbConnector._client.executeQuery(heavyDrinkersQuery);
-        const heavyDrinkers_: any = heavyDrinkersRows;
-        if (heavyDrinkers_.length === 1) {
-            heavyDrinkers = heavyDrinkers_[0].drinkerUserCount;
-        }
-
-        let substanceAbuse = null;
-        let substanceAbuseQuery = null;
-        if (filter.TenantId) {
-            substanceAbuseQuery =  Helper.replaceAll(querySubstanceAbuseTenantUser, "{{tenantId}}", filter.TenantId);
-        } else {
-            substanceAbuseQuery = querySubstanceAbuse;
-        }
-        const [substanceAbuseRows] = await this.dbConnector._client.executeQuery(substanceAbuseQuery);
-        const substanceAbuse_: any = substanceAbuseRows;
-        if (substanceAbuse_.length === 1) {
-            substanceAbuse = substanceAbuse_[0].substanceAbuseUserCount;
-        }
-
-        let notAddicted = null;
-        let notAddictedQuery = null;
-        if (filter.TenantId) {
-            notAddictedQuery =  Helper.replaceAll(queryNotAddictedTenantUser, "{{tenantId}}", filter.TenantId);
-        } else {
-            notAddictedQuery = queryNotAddicted;
-        }
-        const [notAddictedRows] = await this.dbConnector._client.executeQuery(notAddictedQuery);
-        const notAddicted_: any = notAddictedRows;
-        if (notAddicted_.length === 1) {
-            notAddicted = notAddicted_[0].notAddedUserCount;
-        }
+        const tobaccoSmokers = await this.healthProfileCount(filter, { TobaccoQuestionAns: true });
+        const heavyDrinkers = await this.healthProfileCount(filter, { IsDrinker: true, DrinkingSeverity: 'High' });
+        const substanceAbuse = await this.healthProfileCount(filter, { SubstanceAbuse: true });
+        const notAddicted = await this.healthProfileCount(filter,
+            { SubstanceAbuse: false, IsDrinker: false, TobaccoQuestionAns: false });
 
         const totalUsers = tobaccoSmokers + heavyDrinkers + substanceAbuse + notAddicted;
         const tobaccoSmokerUsers = {
@@ -785,124 +736,93 @@ export class StatisticsRepo implements IStatisticsRepo {
     };
 
     getAllYears = async (): Promise<any> => {
-        const query =  queryAllYear;
-        const [rows] = await this.dbConnector._client.executeQuery(query);
-        const years: any = rows;
-        return years;
+        const rows = await Person.findAll({ attributes: ['CreatedAt'], paranoid: false, raw: true });
+        const years = [...new Set((rows as any[]).map((r) => getUtcYear(r.CreatedAt)))].sort((a, b) => a - b);
+        return years.map((year) => ({ year }));
     };
 
     getYearWiseUserCount = async (filter) => {
-        let query = null;
-
-        if (filter.TenantId) {
-            query =  Helper.replaceAll(queryYearWiseTenantUserCount, "{{tenantId}}", filter.TenantId);
-        } else {
-            query = queryYearWiseUserCount;
+        const rows = await User.findAll({
+            attributes : ['CreatedAt'],
+            where      : this.buildUserWhere(filter),
+            paranoid   : false,
+            raw        : true,
+        });
+        const counts = new Map<number, number>();
+        for (const r of rows as any[]) {
+            const y = getUtcYear(r.CreatedAt);
+            counts.set(y, (counts.get(y) ?? 0) + 1);
         }
-
-        const [rows] = await this.dbConnector._client.executeQuery(query);
-        const yearWiseUserCount: any = rows;
-        return yearWiseUserCount;
+        return [...counts.entries()].sort((a, b) => a[0] - b[0]).map(([year, totalUsers]) => ({ year, totalUsers }));
     };
 
-    getYearWiseDeviceDetails = async(filter, yearWiseUserCount) => {
-        let query = null;
-
-        if (filter.TenantId) {
-            query =  Helper.replaceAll(queryYearWiseTenantUserDeviceDetail, "{{tenantId}}", filter.TenantId);
-        } else {
-            query = queryYearWiseDeviceDetail;
+    getYearWiseDeviceDetails = async (filter, yearWiseUserCount) => {
+        const rows = await UserDeviceDetails.findAll({
+            attributes : ['OSType', 'CreatedAt'],
+            include    : [this.userInclude(filter)],
+            paranoid   : false,
+            raw        : true,
+        });
+        const counts = new Map<string, { year: number; OSType: any; totalUsers: number }>();
+        for (const r of rows as any[]) {
+            const year = getUtcYear(r.CreatedAt);
+            const key = `${year}|${r.OSType}`;
+            const existing = counts.get(key);
+            if (existing) {
+                existing.totalUsers++;
+            } else {
+                counts.set(key, { year, OSType: r.OSType, totalUsers: 1 });
+            }
         }
-
-        const [rows] = await this.dbConnector._client.executeQuery(query);
-        const yearWiseDeviceDetails: any = rows;
-        return this.aggregateYearWiseDeviceDetails(yearWiseDeviceDetails, yearWiseUserCount);
+        return this.aggregateYearWiseDeviceDetails([...counts.values()], yearWiseUserCount);
     };
 
-    getYearWiseGenderDetails = async(filter) => {
-        let query = null;
-
-        if (filter.TenantId) {
-            query =  Helper.replaceAll(queryYearWiseTenantUserGenderDetails, "{{tenantId}}", filter.TenantId);
-        } else {
-            query = queryYearWiseGenderDetails;
-        }
-
-        const [rows] = await this.dbConnector._client.executeQuery(query);
-        const yearWiseGenderDetails: any = rows;
-        return this.aggregateYearWiseGenderDetails(yearWiseGenderDetails);
+    getYearWiseGenderDetails = async (filter) => {
+        const rows = await Person.findAll({
+            attributes : ['Gender', 'CreatedAt'],
+            include    : [this.userInclude(filter)],
+            paranoid   : false,
+            raw        : true,
+        });
+        return this.aggregateYearWiseGenderDetails(this.groupByYearAndField(rows as any[], 'Gender'));
     };
 
-    getYearWiseMaritalDetails = async(filter) => {
-        let query = null;
-
-        if (filter.TenantId) {
-            query =  Helper.replaceAll(queryYearWiseTenantUserMaritalDetails, "{{tenantId}}", filter.TenantId);
-        } else {
-            query = queryYearWiseMaritalDetails;
-        }
-
-        const [rows] = await this.dbConnector._client.executeQuery(query);
-        const yearWiseMaritalDetails: any = rows;
-        return this.aggregateYearWiseMaritalDetails(yearWiseMaritalDetails);
+    getYearWiseMaritalDetails = async (filter) => {
+        const rows = await HealthProfile.findAll({
+            attributes : ['MaritalStatus', 'CreatedAt'],
+            include    : [this.userInclude(filter)],
+            paranoid   : false,
+            raw        : true,
+        });
+        return this.aggregateYearWiseMaritalDetails(this.groupByYearAndField(rows as any[], 'MaritalStatus'));
     };
 
-    getYearWiseMajorAilmentDistributionDetails = async(filter) => {
-        let query = null;
-
-        if (filter.TenantId) {
-            query =  Helper.replaceAll(queryYearWiseTenantUserMajorAilmentDetails, "{{tenantId}}", filter.TenantId);
-        } else {
-            query = queryYearWiseMajorAilmentDistributionDetails;
-        }
-
-        const [rows] = await this.dbConnector._client.executeQuery(query);
-        const yearWiseMajorAilmentDistributionDetails: any = rows;
-        return this.aggregateYearWiseMajorAilmentDetails(yearWiseMajorAilmentDistributionDetails);
+    getYearWiseMajorAilmentDistributionDetails = async (filter) => {
+        const rows = await HealthProfile.findAll({
+            attributes : ['MajorAilment', 'CreatedAt'],
+            include    : [this.userInclude(filter)],
+            paranoid   : false,
+            raw        : true,
+        });
+        return this.aggregateYearWiseMajorAilmentDetails(this.groupByYearAndField(rows as any[], 'MajorAilment'));
     };
 
-    getYearWiseAddictionDistributionDetails = async(filter, yearWiseUserCount) => {
-        let tobaccoSmokersQuery = null;
-        if (filter.TenantId) {
-            tobaccoSmokersQuery =  Helper.replaceAll(queryYearWiseTobaccoSmokersTenantUser, "{{tenantId}}", filter.TenantId);
-        } else {
-            tobaccoSmokersQuery = queryYearWiseTobaccoSmokers;
-        }
-        const [tobaccoSmokersRows] = await this.dbConnector._client.executeQuery(tobaccoSmokersQuery);
-        const yearWiseTobaccoSmokers: any = tobaccoSmokersRows;
-
-        let heavyDrinkersQuery = null;
-        if (filter.TenantId) {
-            heavyDrinkersQuery =  Helper.replaceAll(queryYearWiseHeavyDrinkersTenantUser, "{{tenantId}}", filter.TenantId);
-        } else {
-            heavyDrinkersQuery = queryYearWiseHeavyDrinkers;
-        }
-        const [heavyDrinkersRows] = await this.dbConnector._client.executeQuery(heavyDrinkersQuery);
-        const yearWiseHeavyDrinkers: any = heavyDrinkersRows;
-
-        let substanceAbuseQuery = null;
-        if (filter.TenantId) {
-            substanceAbuseQuery =  Helper.replaceAll(queryYearWiseSubstanceAbuseTenantUser, "{{tenantId}}", filter.TenantId);
-        } else {
-            substanceAbuseQuery = queryYearWiseSubstanceAbuse;
-        }
-        const [substanceAbuseRows] = await this.dbConnector._client.executeQuery(substanceAbuseQuery);
-        const yearWiseSubstanceAbuse: any = substanceAbuseRows;
-
-        let notAddictedQuery = null;
-        if (filter.TenantId) {
-            notAddictedQuery =  Helper.replaceAll(queryYearWiseNotAddictedTenantUser, "{{tenantId}}", filter.TenantId);
-        } else {
-            notAddictedQuery = queryYearWiseNotAddicted;
-        }
-        const [notAddictedRows] = await this.dbConnector._client.executeQuery(notAddictedQuery);
-        const yearWisenotAddicted: any = notAddictedRows;
+    getYearWiseAddictionDistributionDetails = async (filter, yearWiseUserCount) => {
+        const tobacco = (await this.yearWiseHealthProfileCount(filter, { TobaccoQuestionAns: true }))
+            .map((x) => ({ year: x.year, tobaccoUserCount: x.count }));
+        const drinkers = (await this.yearWiseHealthProfileCount(filter, { IsDrinker: true, DrinkingSeverity: 'High' }))
+            .map((x) => ({ year: x.year, drinkerUserCount: x.count }));
+        const substance = (await this.yearWiseHealthProfileCount(filter, { SubstanceAbuse: true }))
+            .map((x) => ({ year: x.year, substanceAbuseUserCount: x.count }));
+        const notAddicted = (await this.yearWiseHealthProfileCount(filter,
+            { SubstanceAbuse: false, IsDrinker: false, TobaccoQuestionAns: false }))
+            .map((x) => ({ year: x.year, notAddedUserCount: x.count }));
 
         return this.aggregateYearWiseAddictionDetails(
-            yearWiseTobaccoSmokers,
-            yearWiseHeavyDrinkers,
-            yearWiseSubstanceAbuse,
-            yearWisenotAddicted,
+            tobacco,
+            drinkers,
+            substance,
+            notAddicted,
             yearWiseUserCount
         );
     };
@@ -910,93 +830,47 @@ export class StatisticsRepo implements IStatisticsRepo {
     // #private region
 
     private getOnboardedUsers = async (filters: StatisticSearchFilters): Promise<any> => {
-        let totalUsers = null;
-        let query = null;
-
-        if (filters.TenantId) {
-            query =  Helper.replaceAll(queryTotalOnboardedTenantUsers, "{{tenantId}}", filters.TenantId);
-        } else {
-            query = queryTotalOnboardedUsers;
-        }
-
-        const [rows] = await this.dbConnector._client.executeQuery(query);
-        const users: any = rows;
-        if (users.length === 1) {
-            totalUsers = users[0].totalUsers;
-        }
-        return totalUsers;
+        return await User.count({ where: this.buildUserWhere(filters), paranoid: false });
     };
 
-   private  getNotDeletedUsers = async (filters: StatisticSearchFilters): Promise<any> => {
-       let query = null;
+    private getNotDeletedUsers = async (filters: StatisticSearchFilters): Promise<any> => {
+        return await User.count({
+            where    : { ...this.buildUserWhere(filters), DeletedAt: { [Op.is]: null } },
+            paranoid : false,
+        });
+    };
 
-       if (filters.TenantId) {
-           query =  Helper.replaceAll(queryNotDeletedTenantUsers, "{{tenantId}}", filters.TenantId);
-       } else {
-           query = queryNotDeletedUsers;
-       }
-
-       let totalNotDeletedUsers = null;
-       const [rows] = await this.dbConnector._client.executeQuery(query);
-       const notDeletedUsers_: any = rows;
-       if (notDeletedUsers_.length === 1) {
-           totalNotDeletedUsers = notDeletedUsers_[0].totalNotDeletedUsers;
-       }
-       return totalNotDeletedUsers;
-   };
-
-   private  getDeletedUsers = async (filters: StatisticSearchFilters): Promise<any> => {
-       let query = null;
-
-       if (filters.TenantId) {
-           query =  Helper.replaceAll(queryDeletedTenantUsers, "{{tenantId}}", filters.TenantId);
-       } else {
-           query = queryDeletedUsers;
-       }
-
-       let totalDeletedUsers = null;
-       const [rows] = await this.dbConnector._client.executeQuery(query);
-       const deletedUsers_: any = rows;
-       if (deletedUsers_.length === 1) {
-           totalDeletedUsers = deletedUsers_[0].totalDeletedUsers;
-       }
-       return totalDeletedUsers;
-   };
+    private getDeletedUsers = async (filters: StatisticSearchFilters): Promise<any> => {
+        return await User.count({
+            where    : { ...this.buildUserWhere(filters), DeletedAt: { [Op.not]: null } },
+            paranoid : false,
+        });
+    };
 
     private getUsersWithActiveSession = async (filters: StatisticSearchFilters): Promise<any> => {
-        let usersWithActiveSession = null;
-        let query = null;
-
-        if (filters.TenantId) {
-            query =  Helper.replaceAll(queryTenantUsersWithActiveSession, "{{tenantId}}", filters.TenantId);
-        } else {
-            query = queryUsersWithActiveSession;
-        }
-
-        const [rows] = await this.dbConnector._client.executeQuery(query);
-        const usersWithActiveSession_: any = rows;
-        if (usersWithActiveSession_.length === 1) {
-            usersWithActiveSession = usersWithActiveSession_[0].totalUsersWithActiveSession;
-        }
-        return usersWithActiveSession;
+        return await UserLoginSession.count({
+            distinct : true,
+            col      : 'UserId',
+            where    : { ValidTill: { [Op.gt]: new Date() } },
+            include  : [this.userInclude(filters)],
+            paranoid : false,
+        });
     };
 
     private getEnrolledUsers = async (filters: StatisticSearchFilters): Promise<any> => {
-        let totalEnrolledUsers = null;
-        let query = null;
-
-        if (filters.TenantId) {
-            query =  Helper.replaceAll(queryTenantUsersCareplanEnrollments, "{{tenantId}}", filters.TenantId);
-        } else {
-            query = queryTotalCareplanEnrollments;
+        const userIds = (await User.findAll({
+            attributes : ['id'],
+            where      : this.buildUserWhere(filters),
+            paranoid   : false,
+            raw        : true,
+        })).map((u: any) => u.id);
+        if (userIds.length === 0) {
+            return 0;
         }
-
-        const [rows] = await this.dbConnector._client.executeQuery(query);
-        const totalEnrolledUsers_: any = rows;
-        if (totalEnrolledUsers_.length === 1) {
-            totalEnrolledUsers = totalEnrolledUsers_[0].totalCareplanEnrollments;
-        }
-        return totalEnrolledUsers;
+        return await CareplanEnrollment.count({
+            where    : { PatientUserId: { [Op.in]: userIds } },
+            paranoid : false,
+        });
     };
 
     private getTotalUsers = async (filters: StatisticSearchFilters): Promise<any> => {
@@ -2355,6 +2229,21 @@ export class StatisticsRepo implements IStatisticsRepo {
         return result;
     };
 
+}
+
+function getUtcYear(date: Date | string): number {
+    return new Date(date).getUTCFullYear();
+}
+
+function computeAge(birthDate: Date | string): number {
+    const birth = new Date(birthDate);
+    const now = new Date();
+    let age = now.getUTCFullYear() - birth.getUTCFullYear();
+    const monthDiff = now.getUTCMonth() - birth.getUTCMonth();
+    if (monthDiff < 0 || (monthDiff === 0 && now.getUTCDate() < birth.getUTCDate())) {
+        age--;
+    }
+    return age;
 }
 
 function getMinMaxDatesForYear(filters) {

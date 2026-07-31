@@ -25,6 +25,7 @@ import BodyTemperature from '../../models/clinical/biometrics/body.temperature.m
 import Pulse from '../../models/clinical/biometrics/pulse.model';
 import { TimeHelper } from '../../../../../common/time.helper';
 import User from '../../models/users/user/user.model';
+import Doctor from '../../models/users/doctor.model';
 import Role from '../../models/role/role.model';
 import HealthProfile from '../../models/users/patient/health.profile.model';
 import UserDeviceDetails from '../../models/users/user/user.device.details.model';
@@ -36,7 +37,6 @@ import { queryAppDownloadCount } from './query/system.sql';
 import { GenderDetails } from '../../../../../domain.types/person/person.types';
 import { MajorAilmentDetails, MaritalStatusDetails } from '../../../../../domain.types/users/patient/health.profile/health.profile.types';
 import { DatabaseSchemaType } from '../../../../../common/database.utils/database.config';
-import { queryTotalActiveTenantDoctors, queryTotalActiveTenantPersons, queryTotalActiveTenantUsers, queryTotalDeletedTenantDoctors, queryTotalDeletedTenantPersons, queryTotalDeletedTenantUsers, queryTotalTenantDoctors, queryTotalTenantPersons, queryTotalTenantUsers } from './query/tenant.user.sql';
 import { DatabaseClient } from '../../../../../common/database.utils/dialect.clients/database.client';
 
 //////////////////////////////////////////////////////////////////////////////////////////////
@@ -874,36 +874,24 @@ export class StatisticsRepo implements IStatisticsRepo {
     };
 
     private getTotalUsers = async (filters: StatisticSearchFilters): Promise<any> => {
-        const query = Helper.replaceAll(queryTotalTenantUsers, "{{tenantId}}", filters.TenantId);
-        let totalUsers = null;
-        const [rows] = await this.dbConnector._client.executeQuery(query);
-        const totalUsers_: any = rows;
-        if (totalUsers_.length === 1) {
-            totalUsers = totalUsers_[0].totalUsers;
-        }
-        return totalUsers;
+        return await User.count({
+            where    : this.buildUserWhere(filters),
+            paranoid : false,
+        });
     };
 
     private getTotalActiveUsers = async (filters): Promise<number> => {
-        const query = Helper.replaceAll(queryTotalActiveTenantUsers, "{{tenantId}}", filters.TenantId);
-        let totalActiveUsers = null;
-        const [rows] = await this.dbConnector._client.executeQuery(query);
-        const totalActiveUsers_: any = rows;
-        if (totalActiveUsers_.length === 1) {
-            totalActiveUsers = totalActiveUsers_[0].totalActiveUsers;
-        }
-        return totalActiveUsers;
+        return await User.count({
+            where    : { ...this.buildUserWhere(filters), DeletedAt: null },
+            paranoid : false,
+        });
     };
 
     private getTotalDeletedUsers = async (filters): Promise<number> => {
-        const query = Helper.replaceAll(queryTotalDeletedTenantUsers, "{{tenantId}}", filters.TenantId);
-        let totalDeletedUsers = null;
-        const [rows] = await this.dbConnector._client.executeQuery(query);
-        const totalDeletedUsers_: any = rows;
-        if (totalDeletedUsers_.length === 1) {
-            totalDeletedUsers = totalDeletedUsers_[0].totalDeletedUsers;
-        }
-        return totalDeletedUsers;
+        return await User.count({
+            where    : { ...this.buildUserWhere(filters), DeletedAt: { [Op.ne]: null } },
+            paranoid : false,
+        });
     };
 
     private  getPhysicalActivityUsers = async (totalUsers, filters) => {
@@ -1326,70 +1314,60 @@ export class StatisticsRepo implements IStatisticsRepo {
         }
     };
 
-    private  getTotalPersons = async (filters) => {
-        const query = Helper.replaceAll(queryTotalTenantPersons, "{{tenantId}}", filters.TenantId);
-        let totalPersons = null;
-        const [rows] = await this.dbConnector._client.executeQuery(query);
-        const totalPersons_: any = rows;
-        if (totalPersons_.length === 1) {
-            totalPersons = totalPersons_[0].totalPersons;
-        }
-        return totalPersons;
+    private getTotalPersons = async (filters) => {
+        return await Person.count({
+            include  : [this.userInclude(filters)],
+            paranoid : false,
+        });
     };
 
     private getTotalActivePersons = async (filters) => {
-        const query = Helper.replaceAll(queryTotalActiveTenantPersons, "{{tenantId}}", filters.TenantId);
-        let totalActivePersons = null;
-        const [rows] = await this.dbConnector._client.executeQuery(query);
-        const totalActivePersons_: any = rows;
-        if (totalActivePersons_.length === 1) {
-            totalActivePersons = totalActivePersons_[0].totalActivePersons;
-        }
-        return totalActivePersons;
+        return await Person.count({
+            where    : { DeletedAt: null },
+            include  : [this.userInclude(filters)],
+            paranoid : false,
+        });
     };
 
     private getTotalDeletedPersons = async (filters): Promise<number> => {
-        const query = Helper.replaceAll(queryTotalDeletedTenantPersons, "{{tenantId}}", filters.TenantId);
-        let totalDeletedPersons = null;
-        const [rows] = await this.dbConnector._client.executeQuery(query);
-        const totalDeletedPersons_: any = rows;
-        if (totalDeletedPersons_.length === 1) {
-            totalDeletedPersons = totalDeletedPersons_[0].totalDeletedPersons;
-        }
-        return totalDeletedPersons;
+        return await Person.count({
+            where    : { DeletedAt: { [Op.ne]: null } },
+            include  : [this.userInclude(filters)],
+            paranoid : false,
+        });
     };
 
-    private  getTotalDoctors = async (filters) => {
-        const query = Helper.replaceAll(queryTotalTenantDoctors, "{{tenantId}}", filters.TenantId);
-        let totalDoctors = null;
-        const [rows] = await this.dbConnector._client.executeQuery(query);
-        const totalDoctors_: any = rows;
-        if (totalDoctors_.length === 1) {
-            totalDoctors = totalDoctors_[0].totalDoctors;
-        }
-        return totalDoctors;
+    private getTotalDoctors = async (filters) => {
+        return await Doctor.count({
+            include  : [this.userInclude(filters)],
+            paranoid : false,
+        });
     };
 
     private getTotalActiveDoctors = async (filters): Promise<number> => {
-        const query = Helper.replaceAll(queryTotalActiveTenantDoctors, "{{tenantId}}", filters.TenantId);
-        let totalActiveDoctors = null;
-        const [rows] = await this.dbConnector._client.executeQuery(query);
-        const totalActiveDoctors_: any = rows;
-        if (totalActiveDoctors_.length === 1) {
-            totalActiveDoctors = totalActiveDoctors_[0].totalActiveDoctors;
-        }
-        return totalActiveDoctors;
+        return await Doctor.count({
+            include  : [{
+                model      : User,
+                required   : true,
+                attributes : [],
+                where      : { ...this.buildUserWhere(filters), DeletedAt: null },
+                paranoid   : false,
+            }],
+            paranoid : false,
+        });
     };
 
     private getTotalDeletedDoctors = async (filters): Promise<number> => {
-        const query = Helper.replaceAll(queryTotalDeletedTenantDoctors, "{{tenantId}}", filters.TenantId);
-        let totalDeletedDoctors = null;
-        const [rows] = await this.dbConnector._client.executeQuery(query);
-        const totalDeletedDoctors_: any = rows;
-        if (totalDeletedDoctors_.length === 1) {
-            totalDeletedDoctors = totalDeletedDoctors_[0].totalDeletedDoctors;
-        }
-        return totalDeletedDoctors;
+        return await Doctor.count({
+            include  : [{
+                model      : User,
+                required   : true,
+                attributes : [],
+                where      : { ...this.buildUserWhere(filters), DeletedAt: { [Op.ne]: null } },
+                paranoid   : false,
+            }],
+            paranoid : false,
+        });
     };
 
     private  getCholestrolUsers = async (totalUsers, filters: StatisticSearchFilters) => {

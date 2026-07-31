@@ -1,0 +1,101 @@
+name: UAT-CI-CD
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  Build-Push-Harbor:
+    environment: uat
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Declare some variables
+        id: vars
+        shell: bash
+        run: |
+          echo "branch=$(echo ${GITHUB_REF#refs/heads/} | sed "s/\\//-/g")" >> $GITHUB_OUTPUT
+          echo "sha_short=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+
+      - name: Print variables
+        run: |
+          echo "Branch: ${{ steps.vars.outputs.branch }}"
+          echo "Sha: ${{ steps.vars.outputs.sha_short }}"
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+
+      - name: Cache Docker layers
+        uses: actions/cache@v3
+        with:
+          path: /tmp/.buildx-cache
+          key: ${{ runner.os }}-buildx-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-buildx-
+
+      - name: Build and push
+        id: docker_build
+        uses: docker/build-push-action@v3
+        with:
+          context: ./
+          file: ./Dockerfile
+          builder: ${{ steps.buildx.outputs.name }}
+          push: true
+          tags: ${{ steps.login-ecr.outputs.registry }}/reancare-service-dev-uat:${{ steps.vars.outputs.branch }}_${{ steps.vars.outputs.sha_short }}
+          cache-from: type=local,src=/tmp/.buildx-cache
+          cache-to: type=local,dest=/tmp/.buildx-cache
+
+      - name: Image digest
+        run: echo ${{ steps.docker_build.outputs.digest }}
+
+      - name: Mirror image to Harbor (keep 5 latest)
+        shell: bash
+        env:
+          HARBOR: https://artifacts.reanfoundation.org
+          HARBOR_ROBOT: ${{ secrets.HARBOR_ROBOT }}
+          HARBOR_ROBOT_SECRET: ${{ secrets.HARBOR_ROBOT_SECRET }}
+          ECR_REPO: reancare-service-dev-uat
+          TAG: ${{ steps.vars.outputs.branch }}_${{ steps.vars.outputs.sha_short }}
+          HARBOR_PROJECT: rean-dev
+          ECR_REGISTRY_ID: "1"
+          RETENTION_ID: "3"
+        run: |
+          set -euo pipefail
+          A=(-u "${HARBOR_ROBOT}:${HARBOR_ROBOT_SECRET}")
+          POL="ci-${ECR_REPO}"
+          BODY="{\"name\":\"${POL}\",\"src_registry\":{\"id\":${ECR_REGISTRY_ID}},\"dest_namespace\":\"${HARBOR_PROJECT}\",\"dest_namespace_replace_count\":0,\"trigger\":{\"type\":\"manual\"},\"filters\":[{\"type\":\"name\",\"value\":\"${ECR_REPO}\"},{\"type\":\"tag\",\"value\":\"${TAG}\"}],\"enabled\":true,\"override\":true,\"speed\":-1}"
+          # find-or-create this repo's pull policy, pinned to the exact tag we just pushed
+          PID=$(curl -sk "${A[@]}" "${HARBOR}/api/v2.0/replication/policies?q=name%3D${POL}" | jq -r '.[0].id // empty')
+          if [ -z "$PID" ]; then
+            PID=$(curl -sk "${A[@]}" -X POST -H 'Content-Type: application/json' -d "$BODY" -D - -o /dev/null "${HARBOR}/api/v2.0/replication/policies" | awk 'tolower($1)=="location:"{print $2}' | tr -d '\r' | awk -F/ '{print $NF}')
+          else
+            curl -sk "${A[@]}" -X PUT -H 'Content-Type: application/json' -d "$BODY" "${HARBOR}/api/v2.0/replication/policies/${PID}"
+          fi
+          echo "Harbor pull policy id: $PID"
+          # trigger Harbor to pull ONLY this tag, wait for it
+          EX=$(curl -sk "${A[@]}" -X POST -H 'Content-Type: application/json' -d "{\"policy_id\":${PID}}" -D - -o /dev/null "${HARBOR}/api/v2.0/replication/executions" | awk 'tolower($1)=="location:"{print $2}' | tr -d '\r' | awk -F/ '{print $NF}')
+          for i in $(seq 1 60); do
+            ST=$(curl -sk "${A[@]}" "${HARBOR}/api/v2.0/replication/executions/${EX}" | jq -r .status)
+            echo "  replication: $ST"; [ "$ST" = "Succeed" ] && break
+            [ "$ST" = "Failed" ] && { echo "replication failed"; exit 1; }
+            sleep 5
+          done
+          # keep only the 5 latest in Harbor for this repo
+          curl -sk "${A[@]}" -X POST -H 'Content-Type: application/json' -d '{"dry_run":false}' "${HARBOR}/api/v2.0/retentions/${RETENTION_ID}/executions"
+          echo "Mirrored ${ECR_REPO}:${TAG} to Harbor (${HARBOR_PROJECT}); triggered keep-5."

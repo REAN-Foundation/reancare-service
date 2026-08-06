@@ -50,7 +50,7 @@ export const databaseConfig = (schemaType: DatabaseSchemaType)
         },
         Cache       : true,
         Logging     : true,
-        Synchronize : true
+        Synchronize : process.env.DB_SYNCHRONIZE === 'true'
     };
 
     if (schemaType === DatabaseSchemaType.EHRInsights &&
@@ -78,6 +78,9 @@ Logger.instance().log('Database host              : ' + process.env.DB_HOST);
 Logger.instance().log('Database port              : ' + process.env.DB_PORT);
 Logger.instance().log('Database user-name         : ' + process.env.DB_USER_NAME);
 Logger.instance().log('Primary database name      : ' + process.env.DB_NAME);
+Logger.instance().log('DB_SYNCHRONIZE (raw)       : ' + process.env.DB_SYNCHRONIZE);
+Logger.instance().log('Schema auto-sync effective : ' + (process.env.DB_SYNCHRONIZE === 'true'));
+Logger.instance().log('>>> BUILD MARKER: db-sync-flag-v1 <<<');
 
 if (ConfigurationManager.EHRAnalyticsEnabled()) {
     Logger.instance().log('EHR insights database name : ' + process.env.DB_NAME_EHR_INSIGHTS);

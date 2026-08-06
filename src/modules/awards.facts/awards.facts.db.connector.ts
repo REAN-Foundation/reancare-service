@@ -41,6 +41,8 @@ class AwardsFactsDatabaseConnector {
         const databaseClient = Injector.Container.resolve(DatabaseClient);
         await databaseClient.createDb(DatabaseSchemaType.AwardsFacts);
 
+        Logger.instance().log(`[Awards Facts DB] TypeORM synchronize = ${process.env.DB_SYNCHRONIZE === 'true'}`);
+
         return new Promise((resolve, reject) => {
             this._source
                 .initialize()
@@ -68,7 +70,7 @@ class AwardsFactsDatabaseConnector {
             password    : process.env.DB_USER_PASSWORD,
             database    : process.env.DB_NAME_AWARDS_FACTS,
             entities    : entities,
-            synchronize : true,
+            synchronize : process.env.DB_SYNCHRONIZE === 'true',
             migrations  : [],
             subscribers : [],
             logging     : process.env.NODE_ENV !== 'test',

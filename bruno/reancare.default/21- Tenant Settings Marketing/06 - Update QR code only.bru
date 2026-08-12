@@ -1,0 +1,64 @@
+meta {
+  name: Update QR code only
+  type: http
+  seq: 6
+}
+
+put {
+  url: {{BASE_URL}}/tenant-settings-marketing/{{TENANT_ID}}/qrcode
+  body: json
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+  Authorization: Bearer {{TENANT_ADMIN_USER_JWT}}
+}
+
+body:json {
+  {"QRCode": {
+    "ResourceId": "ac88bab5-82c0-454a-9ad6-3d8ae07b0bdb",
+    "WhatsappNumber": "+91-1234567890",
+    "Url": "https://wa.me/911234567890"
+  }
+  }
+}
+
+tests {
+  try {
+      var jsonRes = res.getBody();
+  }
+  catch (error) {
+      console.log("Error parsing response:", error.message);
+  }
+  
+  test("Request is successful", function () {
+      expect(res.getStatus()).to.equal(200);
+      var jsonRes = res.getBody();
+      expect(jsonRes.Status).to.eql("success");
+  });
+  
+  test("QR code is updated", function () {
+      var jsonRes = res.getBody();
+      expect(jsonRes).to.have.property("Data");
+      expect(jsonRes.Data).to.have.property("QRCode");
+  });
+}
+
+docs {
+  Updates only the QRCode column for a tenant's marketing settings.
+  
+  QRCode can be:
+  - A resource id string (reference to uploaded QR code image)
+  - An object with additional metadata (resourceId, whatsappNumber, url, etc.)
+  - null (to clear QR code)
+  
+  Example formats:
+  1. Simple: "qr-resource-id-123"
+  2. With metadata: {
+       "ResourceId": "qr-resource-id-123",
+       "WhatsappNumber": "+91-1234567890",
+       "Url": "https://wa.me/911234567890"
+     }
+}

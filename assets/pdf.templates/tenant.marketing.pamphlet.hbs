@@ -3,321 +3,218 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>{{content.Header.MainTitle}} — Pamphlet</title>
-  <style>
-    @page {
-      size: A4;
-      margin: 0;
+  <title>{{content.Header.MainTitle}} – Pamphlet</title>
+  
+  <!--
+    PDF GENERATION SETTINGS:
+    
+    If using Puppeteer, add these options:
+    {
+      printBackground: true,
+      preferCSSPageSize: true
     }
+    
+    If using wkhtmltopdf, add these flags:
+    --print-media-type
+    --enable-local-file-access
+    --background
+    
+    If colors still don't show, check your backend PDF library configuration.
+  -->
+  
+  <style>
+    /* PRINT & PAGE SIZING */
+    @page { size: A4; margin: 5mm; }
 
-    :root {
-      --primary: {{{styling.Primary}}};
-      --secondary: {{{styling.Secondary}}};
-      --accent: {{{styling.Accent}}};
-      --light-bg: {{{styling.LightBg}}};
-      --panel: {{{styling.Panel}}};
-      --muted: {{{styling.Muted}}};
-      --text: {{{styling.Text}}};
-      --heading-font: {{{styling.HeadingFont}}};
-      --body-font: {{{styling.BodyFont}}};
-      --page-width: {{{styling.PageWidth}}};
-      --page-height: {{{styling.PageHeight}}};
-      --user-interface-width: {{{styling.UserInterfaceWidth}}};
-      --user-interaction-width: {{{styling.UserInteractionWidth}}};
-      --qr-size: {{{styling.QrSize}}};
+    :root{
+      --primary: {{{styling.Primary}}} ;
+      --secondary: {{{styling.Secondary}}} ;
+      --accent: {{{styling.Accent}}} ;
+      --light-bg: {{{styling.LightBg}}} ;
+      --panel: {{{styling.Panel}}} ;
+      --muted: {{{styling.Muted}}} ;
+      --text: {{{styling.Text}}} ;
+      --heading-font: {{{styling.HeadingFont}}} ;
+      --body-font: {{{styling.BodyFont}}} ;
+      --page-width: {{{styling.PageWidth}}} ;
+      --page-height: {{{styling.PageHeight}}} ;
+      --user-interface-width: {{{styling.UserInterfaceWidth}}} ;
+      --user-interaction-width: {{{styling.UserInteractionWidth}}} ;
+      --qr-size: {{{styling.QrSize}}} ;
     }
 
     * { box-sizing: border-box; }
-    body { margin: 0; font-family: var(--body-font); background: #faf9f7; color: var(--text); }
-    .page { 
-      width: var(--page-width); 
-      height: var(--page-height); 
-      margin: 0 auto; 
-      background: var(--panel); 
-      display: flex; 
-      flex-direction: column; 
-      page-break-after: always;
-      position: relative;
-      border: 12px solid var(--primary);
-      box-shadow: inset 0 0 0 4px var(--light-bg), inset 0 0 0 8px white;
-    }
-    
-    /* Decorative header border */
-    .page::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      height: 8px;
-      background: linear-gradient(90deg, var(--primary) 0%, var(--accent) 50%, var(--primary) 100%);
-      z-index: 10;
-    }
-    
-    /* Decorative footer border */
-    .page::after {
-      content: '';
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      height: 8px;
-      background: linear-gradient(90deg, var(--primary) 0%, var(--accent) 50%, var(--primary) 100%);
-      z-index: 10;
-    }
-    
-    /* Corner decorations */
-    .corner-decor {
-      position: absolute;
-      width: 40px;
-      height: 40px;
-      border-style: solid;
-      z-index: 5;
-    }
-    .corner-top-left {
-      top: 20px;
-      left: 20px;
-      border-width: 3px 0 0 3px;
-      border-color: var(--accent);
-    }
-    .corner-top-right {
-      top: 20px;
-      right: 20px;
-      border-width: 3px 3px 0 0;
-      border-color: var(--accent);
-    }
-    .corner-bottom-left {
-      bottom: 20px;
-      left: 20px;
-      border-width: 0 0 3px 3px;
-      border-color: var(--accent);
-    }
-    .corner-bottom-right {
-      bottom: 20px;
-      right: 20px;
-      border-width: 0 3px 3px 0;
-      border-color: var(--accent);
-    }
-    
-    .partner-logos { 
-      display: flex; 
-      justify-content: center; 
-      align-items: center; 
-      gap: 40px; 
-      padding: 20px 20px 15px 20px; 
-      border-bottom: 3px solid var(--primary); 
-      background: linear-gradient(to bottom, var(--light-bg) 0%, #fff 100%);
-      margin-top: 8px;
-    }
-    .partner-logos img { height: 45px; object-fit: contain; }
 
-    .title-section { 
-      display: flex; 
-      justify-content: space-between; 
-      align-items: center; 
-      padding: 25px 60px 15px 60px;
-      position: relative;
-    }
-    .title-section::after {
-      content: '';
-      position: absolute;
-      bottom: 0;
-      left: 60px;
-      right: 60px;
-      height: 2px;
-      background: linear-gradient(90deg, transparent 0%, var(--secondary) 20%, var(--secondary) 80%, transparent 100%);
-    }
-    .main-title { 
-      font-size: 28px; 
-      font-family: var(--heading-font); 
-      color: var(--primary); 
-      margin: 0;
-      text-shadow: 0 1px 2px rgba(0,0,0,0.05);
-    }
-    .subtitle { 
-      font-size: 15px; 
-      color: var(--secondary); 
-      font-style: italic; 
-      margin: 8px 0 0 0; 
-    }
-    .title-image { 
-      width: var(--user-interface-width); 
-      border-radius: 10px; 
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-      border: 3px solid var(--light-bg);
+    /* Force background colors and gradients in PDF */
+    * {
+      -webkit-print-color-adjust: exact !important;
+      print-color-adjust: exact !important;
+      color-adjust: exact !important;
     }
 
-    .intro { padding: 0 60px 20px 60px; color: var(--text); font-size: 13px; line-height: 1.55; text-align: justify; }
-
-    .benefits-section { 
-      padding: 25px 60px;
-      background: linear-gradient(to bottom, transparent 0%, var(--light-bg) 20%, var(--light-bg) 80%, transparent 100%);
-      border-top: 2px solid var(--light-bg);
-      border-bottom: 2px solid var(--light-bg);
-    }
-    .benefits-title { 
-      font-size: 22px; 
-      text-align: center; 
-      color: var(--primary); 
-      margin-bottom: 20px; 
-      font-family: var(--heading-font);
-      position: relative;
-      padding-bottom: 12px;
-    }
-    .benefits-title::after {
-      content: '';
-      position: absolute;
-      bottom: 0;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 80px;
-      height: 3px;
-      background: var(--accent);
-      border-radius: 2px;
-    }
-    .benefits-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
-    .benefit-item { 
-      display: flex; 
-      align-items: flex-start; 
-      background: white; 
-      border-left: 5px solid var(--secondary); 
-      border-radius: 8px; 
-      padding: 10px 12px; 
-      font-size: 12px; 
-      line-height: 1.4;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-    }
-    .benefit-icon { font-size: 18px; margin-right: 8px; color: var(--accent); }
-
-    .user-interface-section { 
-      padding: 25px 60px; 
-      display: flex; 
-      gap: 25px; 
-      align-items: flex-start;
-      background: white;
-      border-radius: 12px;
-      margin: 15px 20px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
-    }
-    .user-interface-text { flex: 1; }
-    .user-interface-image img { 
-      width: var(--user-interaction-width); 
-      border-radius: 10px; 
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-      border: 3px solid var(--light-bg);
-    }
-
-    .footer { 
-      margin-top: auto; 
-      background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%); 
-      color: white; 
-      padding: 20px 60px 28px 60px; 
-      display: flex; 
-      justify-content: space-between; 
-      align-items: center;
-      position: relative;
-      margin-bottom: 8px;
-    }
-    .footer::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      height: 4px;
-      background: var(--accent);
-    }
-    .footer-text { max-width: 62%; }
-    .footer-qr { text-align: center; }
-    .footer-qr img { 
-      width: var(--qr-size); 
-      height: var(--qr-size); 
-      background: #fff; 
-      padding: 10px; 
-      border-radius: 12px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-      border: 3px solid var(--accent);
+    @media print {
+      * {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+        color-adjust: exact !important;
+      }
+      .page { margin:0; box-shadow:none; }
+      .partner-logos img, .title-image, .user-interface-image img, .last-cta .cta-qr img { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
     }
   </style>
 </head>
-<body>
+<body style="margin: 0; padding: 0; background: #f5f5f5; font-family: {{{styling.BodyFont}}}, Arial, sans-serif; color: {{{styling.Text}}};">
 
-  <div class="page">
-    <div class="corner-decor corner-top-left"></div>
-    <div class="corner-decor corner-top-right"></div>
-    
-    <div class="partner-logos">
-      {{#if images.PartnerLogos}}
-        {{#each images.PartnerLogos}}
-          <img src="{{{this}}}" alt="Partner Logo">
-        {{/each}}
-      {{/if}}
-    </div>
+  <!-- PAGE 1 -->
+  <div class="page" style="width: calc(210mm - 10mm); height: calc(297mm - 10mm); margin: 0 auto; background: #fff; display: flex; flex-direction: column; page-break-after: always; position: relative; overflow: hidden; padding-bottom: 30px; box-shadow: none;">
 
-    <div class="title-section">
-      <div>
-        <h1 class="main-title">{{content.Header.MainTitle}}</h1>
-        <p class="subtitle">{{content.Header.Subtitle}}</p>
+    <!-- Full Width Hero Section with Gradient -->
+    <!-- Full Width Hero Section with Gradient -->
+    <div class="hero-section" style="width: 100%; min-height: 380px; position: relative; overflow: visible; margin: 0;">
+      
+      <!-- SVG Gradient Background (Primary to Secondary) - Vibrant solid colors -->
+      <svg style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 0;" preserveAspectRatio="none">
+        <defs>
+          <linearGradient id="heroBgGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" style="stop-color:{{{styling.Primary}}};stop-opacity:1" />
+            <stop offset="100%" style="stop-color:{{{styling.Secondary}}};stop-opacity:1" />
+          </linearGradient>
+        </defs>
+        <rect width="100%" height="100%" fill="url(#heroBgGradient)" />
+      </svg>
+
+      <!-- Partner Logos - Overlapping on top of gradient -->
+      <div style="position: relative; z-index: 2; padding: 18px 36px 35px 36px;">
+        <div class="partner-logos" style="display: inline-flex; gap: 20px; align-items: center; justify-content: flex-start; padding: 14px 24px; background: #fff; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.15);">
+          {{#if images.PartnerLogos}}
+            {{#each images.PartnerLogos}}
+              <img src="{{{this}}}" alt="Partner Logo" style="height: 45px; object-fit: contain;">
+            {{/each}}
+          {{/if}}
+        </div>
       </div>
-      {{#if images.TitleImage}}
-        <img src="{{{images.TitleImage}}}" alt="Program Highlight" class="title-image">
-      {{/if}}
+
+      <!-- Content Container -->
+      <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; display: flex; align-items: stretch;">
+        
+        <!-- Left Side: Content (50%) -->
+        <div style="flex: 0 0 50%; display: flex; flex-direction: column; justify-content: center; padding: 130px 30px 30px 40px; position: relative; z-index: 2;">
+          <h1 style="font-size: 46px; margin: 0 0 18px 0; color: #fff; font-family: {{{styling.HeadingFont}}}; line-height: 1.1; letter-spacing: -0.8px; font-weight: 500; text-shadow: 0 2px 8px rgba(0,0,0,0.2);">{{content.Header.MainTitle}}</h1>
+          
+          <div style="display: flex; align-items: flex-start; gap: 16px; margin-top: 8px;">
+            <div style="width: 4px; height: 60px; background: {{{styling.LightBg}}}; flex-shrink: 0; margin-top: 4px;"></div>
+            <p style="font-size: 24px; margin: 0; color: {{{styling.LightBg}}}; font-weight: 500; line-height: 1.3; font-style: italic;">{{content.Header.Subtitle}}</p>
+          </div>
+        </div>
+
+        <!-- Right Side: Image (50%) with blend -->
+        {{#if images.TitleImage}}
+          <div style="flex: 0 0 50%; position: relative; overflow: hidden;">
+            <img src="{{{images.TitleImage}}}" alt="Program Highlight" style="width: 100%; height: 100%; object-fit: cover; object-position: top center; display: block; mask-image: linear-gradient(to right, transparent 0%, rgba(0,0,0,0.4) 10%, rgba(0,0,0,0.9) 25%, black 40%); -webkit-mask-image: linear-gradient(to right, transparent 0%, rgba(0,0,0,0.4) 10%, rgba(0,0,0,0.9) 25%, black 40%);">
+            
+            <!-- Decorative accent stripes (bottom right corner) -->
+            <div style="position: absolute; bottom: 20px; right: 10px; width: 180px; height: 60px; overflow: visible; pointer-events: none;">
+              <div style="position: absolute; width: 320px; height: 12px; background: {{{styling.Accent}}}; transform: rotate(-18deg); bottom: 30px; right: -80px; opacity: 0.85;"></div>
+              <div style="position: absolute; width: 280px; height: 12px; background: {{{styling.Accent}}}; transform: rotate(-18deg); bottom: 12px; right: -60px; opacity: 0.7;"></div>
+            </div>
+          </div>
+        {{/if}}
+      </div>
+      
+      
+      <!-- Bottom border/separator -->
+      <div style="position: absolute; bottom: 0; left: 0; right: 0; height: 3px; background: rgba(255,255,255,0.2); z-index: 1;"></div>
     </div>
 
-    <div class="intro">
-      {{content.Introduction.IntroParagraph}}
-      {{#if content.Introduction.ProblemStatement}}
-        <br><br>
-        <strong>Why this matters:</strong><br>
-        {{content.Introduction.ProblemStatement}}
-      {{/if}}
+    <div class="container" style="width: 100%; padding: 18px 36px 12px 36px; display: flex; flex-direction: column; gap: 0;">
+
+      <!-- Introduction -->
+      <div class="intro" style="padding: 4px 0 0 0; margin: 0 0 16px 0; font-size: 15px; line-height: 1.62; text-align: justify; color: {{{styling.Text}}};">
+        <div style="margin: 0 0 8px 0;">
+          {{{content.Introduction.IntroParagraph}}}
+        </div>
+        {{#if content.Introduction.ProblemStatement}}
+          <div style="margin-top: 8px; margin-bottom: 0;">
+            <strong style="color: {{{styling.Primary}}}; font-weight: 600;">Why this matters:</strong><br>
+            {{{content.Introduction.ProblemStatement}}}
+          </div>
+        {{/if}}
+      </div>
+
+
+    </div>
+
+    <!-- Privacy Strip -->
+    <div class="privacy-strip" style="position: absolute; left: 0; right: 0; bottom: 0; padding: 4px 20px; border-top: 1px solid rgba(255,255,255,0.2); font-size: 7px; color: {{{styling.Text}}}; display: flex; justify-content: space-between; align-items: center; gap: 10px;">
+      <div class="policy" style="flex: 1; line-height: 1.25; text-align: left; color: {{{styling.Text}}};">
+        <strong style="font-weight: 600; margin-right: 3px; color: {{{styling.Text}}};">Privacy:</strong> Protected under data protection laws. Policy: <a href="#" style="color: {{{styling.Text}}}; text-decoration: underline; font-weight: 500; opacity: 0.95;">www.yourcompany.com/privacy</a> | DPO: +91 98230 44567
+      </div>
+      <div class="page-number" style="color: {{{styling.Text}}}; font-weight: 600; font-size: 8px; white-space: nowrap; opacity: 0.9;">Page 1</div>
     </div>
   </div>
 
-  <div class="page">
-    <div class="corner-decor corner-top-left"></div>
-    <div class="corner-decor corner-top-right"></div>
-    <div class="corner-decor corner-bottom-left"></div>
-    <div class="corner-decor corner-bottom-right"></div>
-    
-    <div class="benefits-section">
-      <h2 class="benefits-title">{{content.Benefits.Title}}</h2>
-      <div class="benefits-grid">
-        {{#each content.Benefits.Items}}
-          <div class="benefit-item">
-            <span class="benefit-icon">✔</span> {{this}}
-          </div>
-        {{/each}}
+  <!-- PAGE 2 (last page) -->
+  <div class="page" style="width: calc(210mm - 10mm); height: calc(297mm - 10mm); margin: 0 auto; background: #fff; display: flex; flex-direction: column; page-break-after: always; position: relative; overflow: hidden; padding-bottom: 30px; box-shadow: none;">
+
+    <div class="container" style="width: 100%; padding: 18px 36px 12px 36px; display: flex; flex-direction: column; gap: 0;">
+            <!-- Benefits Section -->
+      <div class="benefits-section" style="padding: 12px 16px; margin: 20px 0 0 0; background: transparent; border-radius: 6px;">
+        <h2 class="benefits-title" style="font-size: 24px; text-align: center; color: {{{styling.Primary}}}; margin: 0 0 12px 0; font-family: {{{styling.HeadingFont}}}; font-weight: 600;">{{content.Benefits.Title}}</h2>
+        <div class="benefits-grid" style="display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 10px;">
+          {{#each content.Benefits.Items}}
+            <div class="benefit-item" style="display: flex; gap: 10px; align-items: flex-start; background: {{{../styling.Panel}}}; border-left: 3px solid {{{../styling.Primary}}}; border-radius: 4px; padding: 10px 12px; font-size: 13px; line-height: 1.45; box-shadow: 0 1px 3px rgba(0,0,0,0.08);">
+              <span class="benefit-icon" style="font-size: 15px; color: {{{../styling.Primary}}}; flex-shrink: 0; margin-top: 2px;">✓</span>
+              <span style="flex: 1; color: {{{../styling.Text}}};">{{this}}</span>
+            </div>
+          {{/each}}
+        </div>
+      </div>
+      
+      <!-- User Interface Section -->
+      <div class="user-interface-section" style="display: flex; gap: 16px; align-items: flex-start; margin-top: 12px; background: {{{styling.Secondary}}}; border-radius: 8px; padding: 16px; border: 1px solid rgba(255,255,255,0.2);">
+        <div class="user-interface-text" style="flex: 1;">
+          <h2 style="margin: 0 0 8px 0; font-size: 20px; color: {{{styling.Text}}}; font-family: {{{styling.HeadingFont}}}; font-weight: 600;">{{content.UserInterface.Heading}}</h2>
+          <p style="margin: 0; font-size: 14px; color: {{{styling.Text}}}; line-height: 1.55;">{{content.UserInterface.Paragraph}}</p>
+        </div>
+        <div class="user-interface-image">
+          {{#if images.UserInterfaceImage}}
+            <img src="{{{images.UserInterfaceImage}}}" alt="User Interaction Preview" style="width: {{{styling.UserInterfaceWidth}}}; max-width: {{{styling.UserInterfaceWidth}}}; height: auto; border-radius: 8px; border: 2px solid rgba(255,255,255,0.3); box-shadow: 0 2px 8px rgba(0,0,0,0.15);">
+          {{/if}}
+        </div>
+      </div>
+
+      <!-- About REAN Foundation Section -->
+      <div class="about-section" style="margin-top: 20px; padding: 20px; background: {{{styling.Primary}}}; border-radius: 8px;">
+        <h2 style="margin: 0 0 12px 0; font-size: 26px; color: #fff; font-family: {{{styling.HeadingFont}}}; font-weight: 700;">About REAN Foundation</h2>
+        
+        <p style="margin: 0 0 14px 0; font-size: 14px; line-height: 1.65; color: #fff; text-align: justify;">REAN Foundation is focused on improving health equity for patients by making healthcare more accessible and affordable at home in the local language. We work towards building easy and convenient solutions that integrate seamlessly into a regular lifestyle to create sustainable habits to increase adherence and improve outcomes. We offer services for free and develop open-sourced products for a digital public good.</p>
+      </div>
+
+      <!-- CTA + QR Section -->
+      <div class="last-cta" style="position: absolute; bottom: 100px; left: 0; right: 0; padding: 16px 36px; background: {{{styling.Secondary}}}; display: flex; justify-content: space-between; align-items: center; gap: 16px; border-top: 2px solid rgba(255,255,255,0.25);">
+        <div class="cta-text" style="flex: 1;">
+          <h3 style="margin: 0; font-size: 22px; font-family: {{{styling.HeadingFont}}}; color: #fff; letter-spacing: 0.3px; font-weight: 600;">{{content.Footer.CtaHeading}}</h3>
+          <p style="margin: 6px 0 0; font-size: 14px; color: #fff; opacity: 0.95;">{{content.Footer.CtaDescription}}</p>
+        </div>
+
+        <div class="cta-qr" style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; min-width: 110px;">
+          {{#if images.QRCode}}
+            <img src="{{{images.QRCode}}}" alt="QR Code" style="width: 120px; height: 120px; padding: 6px; border-radius: 8px; background: #fff; border: 2px solid rgba(255,255,255,0.4); display: block; margin: 0;">
+            <p class="scan" style="font-size: 11px; margin: 0; padding: 0; text-align: center; color: #fff; font-weight: 500; line-height: 1.3; display: block;">{{#if content.Footer.QrInstruction}}{{{content.Footer.QrInstruction}}}{{else}}Scan to get started{{/if}}</p>
+          {{/if}}
+        </div>
       </div>
     </div>
 
-    <div class="user-interface-section">
-      <div class="user-interface-text">
-        <h2 style="color:var(--primary);font-family:var(--heading-font);font-size:20px;margin:0 0 12px 0;">{{content.UserInterface.Heading}}</h2>
-        <p style="font-size:13px;color:var(--muted);line-height:1.5;margin:0;">{{content.UserInterface.Paragraph}}</p>
+ 
+    <!-- Privacy Strip -->
+    <div class="privacy-strip" style="position: absolute; left: 0; right: 0; bottom: 0; padding: 4px 20px; border-top: 1px solid rgba(255,255,255,0.2); font-size: 7px; color: {{{styling.Text}}}; display: flex; justify-content: space-between; align-items: center; gap: 10px;">
+      <div class="policy" style="flex: 1; line-height: 1.25; text-align: left; color: {{{styling.Text}}};">
+        <strong style="font-weight: 600; margin-right: 3px; color: {{{styling.Text}}};">Privacy:</strong> Protected under data protection laws. Policy: <a href="#" style="color: {{{styling.Text}}}; text-decoration: underline; font-weight: 500; opacity: 0.95;">www.yourcompany.com/privacy</a> | DPO: +91 98230 44567
       </div>
-      <div class="user-interface-image">
-        {{#if images.UserInterfaceImage}}
-          <img src="{{{images.UserInterfaceImage}}}" alt="User Interaction Preview">
-        {{/if}}
-      </div>
-    </div>
-
-    <div class="footer">
-      <div class="footer-text">
-        <h3 style="margin:0 0 8px 0; color:white; font-family:var(--heading-font); font-size:18px;">{{content.Footer.CtaHeading}}</h3>
-        <p style="margin:0; font-size:12px; line-height:1.5;">{{content.Footer.CtaDescription}}</p>
-      </div>
-      <div class="footer-qr">
-        {{#if images.QRCode}}
-          <img src="{{{images.QRCode}}}" alt="QR Code">
-        {{/if}}
-        <p style="font-size:11px; opacity:0.9; margin:4px 0 0 0;">{{content.Footer.QrInstruction}}</p>
-      </div>
+      <div class="page-number" style="color: {{{styling.Text}}}; font-weight: 600; font-size: 8px; white-space: nowrap; opacity: 0.9;">Page 2</div>
     </div>
   </div>
 
 </body>
 </html>
-
-

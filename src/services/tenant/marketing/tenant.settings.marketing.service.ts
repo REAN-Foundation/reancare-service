@@ -33,6 +33,7 @@ export class TenantSettingsMarketingService {
             Images        : model.Images ?? null,
             Logos         : model.Logos ?? null,
             PDFResourceId : model.PDFResourceId ?? null,
+            PageView      : model.PageView ?? 2,
         };
         return await this._repo.createDefaultSettings(tenantId, mergedModel);
     };
@@ -50,6 +51,7 @@ export class TenantSettingsMarketingService {
         TenantMarketingQRCode |
         TenantMarketingImages |
         TenantMarketingLogos |
+        number |
         TenantSettingsMarketingDto |
         null
     > => {
@@ -69,6 +71,8 @@ export class TenantSettingsMarketingService {
                 return settings.Images;
             case TenantSettingsMarketingTypes.Logos:
                 return settings.Logos;
+            case TenantSettingsMarketingTypes.PageView:
+                return settings.PageView ?? 2;
             default:
                 return settings;
         }
@@ -81,7 +85,8 @@ export class TenantSettingsMarketingService {
             TenantMarketingContent |
             TenantMarketingQRCode |
             TenantMarketingImages |
-            TenantMarketingLogos
+            TenantMarketingLogos |
+            number
     ): Promise<TenantSettingsMarketingDto> => {
         switch (type) {
             case TenantSettingsMarketingTypes.Styling:
@@ -94,6 +99,8 @@ export class TenantSettingsMarketingService {
                 return await this._repo.updateImages(tenantId, payload as TenantMarketingImages);
             case TenantSettingsMarketingTypes.Logos:
                 return await this._repo.updateLogos(tenantId, payload as TenantMarketingLogos);
+            case TenantSettingsMarketingTypes.PageView:
+                return await this._repo.updatePageView(tenantId, payload as number);
             default:
                 return await this._repo.getSettings(tenantId);
         }
@@ -182,4 +189,3 @@ export class TenantSettingsMarketingService {
     };
 
 }
-

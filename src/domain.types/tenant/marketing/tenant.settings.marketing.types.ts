@@ -71,6 +71,7 @@ export interface TenantSettingsMarketingDomainModel {
     Images?: TenantMarketingImages | null;
     Logos?: TenantMarketingLogos;
     PDFResourceId?: string | null;
+    PageView?: number | null;
 }
 
 export interface TenantSettingsMarketingDto extends TenantSettingsMarketingDomainModel {
@@ -78,11 +79,12 @@ export interface TenantSettingsMarketingDto extends TenantSettingsMarketingDomai
 }
 
 export enum TenantSettingsMarketingTypes {
-    Styling = 'Styling',
-    Content = 'Content',
-    QRCode  = 'QRCode',
-    Images  = 'Images',
-    Logos   = 'Logos',
+    Styling  = 'Styling',
+    Content  = 'Content',
+    QRCode   = 'QRCode',
+    Images   = 'Images',
+    Logos    = 'Logos',
+    PageView = 'PageView',
 }
 
 export const TenantSettingsMarketingTypesList = [
@@ -91,5 +93,5 @@ export const TenantSettingsMarketingTypesList = [
     TenantSettingsMarketingTypes.QRCode,
     TenantSettingsMarketingTypes.Images,
     TenantSettingsMarketingTypes.Logos,
+    TenantSettingsMarketingTypes.PageView,
 ];
-

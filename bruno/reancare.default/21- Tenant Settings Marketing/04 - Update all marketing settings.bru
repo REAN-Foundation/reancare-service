@@ -1,0 +1,141 @@
+meta {
+  name: Update all marketing settings
+  type: http
+  seq: 4
+}
+
+put {
+  url: {{BASE_URL}}/tenant-settings-marketing/{{TENANT_ID}}
+  body: json
+  auth: none
+}
+
+headers {
+  Content-Type: application/json
+  x-api-key: {{API_CLIENT_INTERNAL_KEY}}
+  Authorization: Bearer {{TENANT_ADMIN_USER_JWT}}
+}
+
+body:json {
+  {
+    "Styling": {
+      "Primary": "#1a472a",
+      "Secondary": "#2d5f3f",
+      "Accent": "#25D366",
+      "LightBg": "#f1f8f4",
+      "Panel": "#ffffff",
+      "Muted": "#555",
+      "Text": "#222",
+      "HeadingFont": "'Poppins', sans-serif",
+      "BodyFont": "'Inter', sans-serif",
+      "PageWidth": "210mm",
+      "PageHeight": "297mm",
+      "UserInterfaceWidth": "260px",
+      "UserInteractionWidth": "250px",
+      "QrSize": "120px"
+    },
+    "Content": {
+      "Header": {
+        "MainTitle": "REAN--Community Care Program",
+        "Subtitle": "Your Digital Health Companion for Better Care & Wellness"
+      },
+      "Introduction": {
+        "IntroParagraph": "The REAN Community Care Program (CCPR) is a comprehensive digital health platform designed to empower patients, caregivers, and healthcare providers with tools for better health management. Our platform bridges the gap between clinical care and daily health activities, ensuring continuous support for your wellness journey.",
+        "ProblemStatement": "Managing chronic conditions and maintaining wellness can be challenging without proper guidance, tracking tools, and timely support. Many individuals struggle with medication adherence, monitoring vital signs, and accessing reliable health information. REAN CCPR addresses these challenges by providing an integrated, easy-to-use digital solution that puts your health at your fingertips."
+      },
+      "Benefits": {
+        "Title": "Key Features & Benefits",
+        "Items": [
+          "Personalized health plans tailored to your specific conditions and goals",
+          "Daily medication reminders and tracking to improve adherence",
+          "Easy recording and monitoring of vital signs (blood pressure, glucose, weight, etc.)",
+          "Symptom tracking and assessment tools for better health awareness",
+          "Direct messaging with healthcare providers for timely support",
+          "Educational resources and health tips specific to your conditions",
+          "Progress reports and insights to visualize your health journey",
+          "Secure, HIPAA-compliant platform protecting your health information"
+        ]
+      },
+      "UserInterface": {
+        "Heading": "Who Can Benefit from REAN CCPR",
+        "Paragraph": "The REAN Community Care Program is designed for patients managing chronic conditions such as diabetes, hypertension, heart disease, and COPD. It's also valuable for individuals focused on preventive care and wellness. Caregivers supporting family members can use the platform to stay connected with their loved ones' health status. Healthcare providers benefit from better patient engagement and real-time health data to inform treatment decisions."
+      },
+      "Footer": {
+        "CtaHeading": "Get Started with REAN CCPR Today",
+        "CtaDescription": "Join thousands of individuals who are taking control of their health with REAN Community Care Program. Scan the QR code below to download the app, or contact your healthcare provider to learn more about enrollment. Your journey to better health starts here.",
+        "QrInstruction": "Scan to download the REAN CCPR app"
+      }
+    },
+    "Images": {
+      "TitleImage": "2e4772da-0d90-4f98-91f6-8f0b29cbbfcd",
+      "UserInterfaceImage": "7bded0c3-4504-40be-bb13-19b9f10643dd"
+    },
+    "QRCode": {
+      "ResourceId": "65d06444-71a7-4096-96de-6311d8ac90d4",
+      "WhatsappNumber": "+91-1234567890",
+      "Url": "https://wa.me/911234567890"
+    },
+    "Logos": [
+      "f524e488-2ccc-4510-80cc-c0ede374f82e",
+      "f524e488-2ccc-4510-80cc-c0ede374f82e"
+    ],
+    "PageView": 2
+  }
+}
+
+tests {
+  try {
+      var jsonRes = res.getBody();
+  }
+  catch (error) {
+      console.log("Error parsing response:", error.message);
+  }
+  
+  test("Request is successful", function () {
+      expect(res.getStatus()).to.equal(200);
+      var jsonRes = res.getBody();
+      expect(jsonRes.Status).to.eql("success");
+  });
+  
+  test("Marketing settings are updated", function () {
+      var jsonRes = res.getBody();
+      expect(jsonRes).to.have.property("Data");
+      expect(jsonRes.Data).to.have.property("TenantMarketingSettings");
+  });
+  
+}
+
+docs {
+  Updates marketing settings for a tenant. Supports partial updates - only provide fields you want to change.
+  
+  You can update any combination of:
+  - Styling: CSS variables for colors, fonts, sizes
+  - Content: Header, intro, features, user interface, footer sections
+  - QRCode: Resource ID for QR code
+  - Images: TitleImage, UserInterfaceImage, QRCode (content images)
+  - Logos: Array of partner logo resource IDs (separate from Images!)
+  - PageView: Number of pages for PDF (1 or 2). Default is 2 if not set.
+  
+  **To set 1-page layout:**
+  ```json
+  {
+    "PageView": 1
+  }
+  ```
+  
+  **To set 2-page layout:**
+  ```json
+  {
+    "PageView": 2
+  }
+  ```
+  
+  IMPORTANT: 
+  - Images column is for pamphlet content images (title, UI screenshot, QR)
+  - Logos column is SEPARATE and contains partner branding logos
+  - Do NOT put partner logos in the Images column!
+  - PageView must be either 1 or 2
+  
+  Fields not provided will remain unchanged.
+  All resource IDs must be valid UUIDs referencing uploaded files.
+}

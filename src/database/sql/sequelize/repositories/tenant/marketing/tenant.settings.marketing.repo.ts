@@ -35,6 +35,7 @@ export class TenantSettingsMarketingRepo implements ITenantSettingsMarketingRepo
                 QRcode: string | null;
                 Images: string | null;
                 Logos: string | null;
+                PageView: number;
             } = {
                 TenantId : tenantId,
                 Styling  : styling,
@@ -42,6 +43,7 @@ export class TenantSettingsMarketingRepo implements ITenantSettingsMarketingRepo
                 QRcode   : qrCode,
                 Images   : images,
                 Logos    : logos,
+                PageView : model.PageView ?? 2,
             };
             const settings = await TenantSettingsMarketing.create(entity);
             return TenantSettingsMarketingMapper.toDto(settings);
@@ -133,6 +135,19 @@ export class TenantSettingsMarketingRepo implements ITenantSettingsMarketingRepo
         }
     };
 
+    updatePageView = async (tenantId: string, pageView: number): Promise<TenantSettingsMarketingDto> => {
+        try {
+            const record = await TenantSettingsMarketing.findOne({ where: { TenantId: tenantId } });
+            record.PageView = pageView;
+            await record.save();
+            return TenantSettingsMarketingMapper.toDto(record);
+        }
+        catch (error) {
+            Logger.instance().log(error.message);
+            throw new ApiError(500, `Failed to update tenant marketing page view: ${error.message}`);
+        }
+    };
+
     updatePDFResourceId = async (tenantId: string, resourceId: string): Promise<TenantSettingsMarketingDto> => {
         try {
             const record = await TenantSettingsMarketing.findOne({ where: { TenantId: tenantId } });
@@ -168,4 +183,3 @@ export class TenantSettingsMarketingRepo implements ITenantSettingsMarketingRepo
     };
 
 }
-

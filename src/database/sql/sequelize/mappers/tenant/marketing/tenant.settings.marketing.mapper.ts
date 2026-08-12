@@ -17,6 +17,7 @@ export class TenantSettingsMarketingMapper {
             Images        : record.Images ? JSON.parse(record.Images) : null,
             Logos         : record.Logos ? JSON.parse(record.Logos) : null,
             PDFResourceId : record.PDFResourceId ?? null,
+            PageView      : record.PageView ?? 2,
         };
         return dto;
     };

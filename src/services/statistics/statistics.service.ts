@@ -59,7 +59,12 @@ export class StatisticsService {
     };
 
     getAppDownlodCount = async (): Promise<any> => {
-        return await this._statisticsRepo.getAppDownlodCount();
+        try {
+            await this._statisticsRepo.createConnection(DatabaseSchemaType.Primary);
+            return await this._statisticsRepo.getAppDownlodCount();
+        } finally {
+            await this._statisticsRepo.closeConnection();
+        }
     };
 
     getUsersByCountry = async (filters: StatisticSearchFilters): Promise<any> => {
@@ -139,6 +144,8 @@ export class StatisticsService {
             return dashboardStats;
         } catch (error) {
             Logger.instance().log(`Error in creating dashboard statistics:${error.message}`);
+        } finally {
+            await this._statisticsRepo.closeConnection();
         }
     };
 
@@ -194,6 +201,8 @@ export class StatisticsService {
 
         } catch (error) {
             Logger.instance().log(`Error in creating dashboard statistics:${error.message}`);
+        } finally {
+            await this._statisticsRepo.closeConnection();
         }
     };
 

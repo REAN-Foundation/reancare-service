@@ -53,6 +53,10 @@ export class StatisticsRepo implements IStatisticsRepo {
         await this.dbConnector._client.connect(schemaType);
     };
 
+    closeConnection = async (): Promise<void> => {
+        await this.dbConnector._client.disconnect();
+    };
+
     private buildUserWhere = (filter: any): any => {
         const where: any = { IsTestUser: false };
         if (filter && filter.TenantId) {

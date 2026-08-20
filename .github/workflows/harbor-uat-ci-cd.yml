@@ -1,4 +1,4 @@
-name: UAT-CI-CD
+name: Harbor-UAT-CI-CD
 
 on:
   push:
@@ -62,7 +62,7 @@ jobs:
           file: ./Dockerfile
           builder: ${{ steps.buildx.outputs.name }}
           push: true
-          tags: ${{ steps.login-ecr.outputs.registry }}/reancare-service-dev-uat:${{ steps.vars.outputs.branch }}_${{ steps.vars.outputs.sha_short }}
+          tags: ${{ steps.login-ecr.outputs.registry }}/reancare-service-dev-uat:sb.${{ steps.vars.outputs.branch }}_${{ steps.vars.outputs.sha_short }}
           cache-from: type=local,src=/tmp/.buildx-cache
           cache-to: type=local,dest=/tmp/.buildx-cache
         env:
@@ -77,14 +77,14 @@ jobs:
       # ECR push or the ECS deploy below. continue-on-error so a Harbor hiccup
       # never blocks the ECS deployment.
       - name: Mirror image to Harbor (keep 5 latest)
-        continue-on-error: true
+        continue-on-error: false
         shell: bash
         env:
           HARBOR: https://artifacts.reanfoundation.org
           HARBOR_ROBOT: ${{ secrets.HARBOR_ROBOT }}
           HARBOR_ROBOT_SECRET: ${{ secrets.HARBOR_ROBOT_SECRET }}
           ECR_REPO: reancare-service-dev-uat
-          TAG: ${{ steps.vars.outputs.branch }}_${{ steps.vars.outputs.sha_short }}
+          TAG: sb.${{ steps.vars.outputs.branch }}_${{ steps.vars.outputs.sha_short }}
           HARBOR_PROJECT: rean-dev
           ECR_REGISTRY_ID: "1"
           RETENTION_ID: "2"

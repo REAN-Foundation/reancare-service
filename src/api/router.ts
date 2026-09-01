@@ -94,6 +94,7 @@ import { register as registerPregnancyRoutes } from './clinical/maternity/pregna
 import { register as registerDeliveryRoutes } from './clinical/maternity/delivery/delivery.route';
 import { register as registerVisitRoutes } from './clinical/visit/visit.routes';
 import { register as registerAhaNumbersRoutes } from './statistics/aha.numbers/aha.numbers.routes';
+import { register as registerDebugRoutes } from './debug/debug.routes';
 
 ////////////////////////////////////////////////////////////////////////////////////
 
@@ -212,7 +213,7 @@ export class Router {
                 registerDeliveryRoutes(this._app);
                 registerVisitRoutes(this._app);
                 registerAhaNumbersRoutes(this._app);
-                
+                registerDebugRoutes(this._app);
                 resolve(true);
 
             } catch (error) {

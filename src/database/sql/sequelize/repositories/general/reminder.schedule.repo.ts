@@ -219,14 +219,15 @@ export class ReminderScheduleRepo implements IReminderScheduleRepo {
 
     getRemindersForNextNMinutes = async (timePeriod: number): Promise<any[]> => {
         try {
-            const from = new Date();
+            const from = TimeHelper.startOf(new Date(), DurationType.Minute);
             const to = TimeHelper.addDuration(from, timePeriod, DurationType.Minute);
 
             const schedules = await ReminderSchedule.findAll({
                 where : {
                     Schedule : {
                         [Op.between] : [from, to]
-                    }
+                    },
+                    IsDelivered : false
                 },
                 include : [
                     {

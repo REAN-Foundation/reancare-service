@@ -118,8 +118,8 @@ export class ReanCareplanService implements ICareplanService {
         var response = await needle('post', url, entity, headerOptions);
 
         if (response.statusCode !== 201) {
-            Logger.instance().log(`ResponseCode: ${response.statusCode}, Body: ${JSON.stringify(response.body.error)}`);
-            throw new ApiError(500, 'Rean Careplan participant service error: ' + response.body.error);
+            Logger.instance().log(`ResponseCode: ${response.statusCode}, Body: ${JSON.stringify(response.body)}`);
+            throw new ApiError(500, 'Rean Careplan participant service error: ' + response.body?.Message);
         }
 
         return response.body.Data.id;
@@ -145,8 +145,8 @@ export class ReanCareplanService implements ICareplanService {
         var headerOptions = await this.getHeaderOptions();
         var response = await needle('post', url, enrollmentData, headerOptions);
         if (response.statusCode !== 201) {
-            Logger.instance().log(`ResponseCode: ${response.statusCode}, Body: ${JSON.stringify(response.body.error)}`);
-            throw new ApiError(500, 'Rean Careplan enrollment service error: ' + response.body.error);
+            Logger.instance().log(`ResponseCode: ${response.statusCode}, Body: ${JSON.stringify(response.body)}`);
+            throw new ApiError(500, 'Rean Careplan enrollment service error: ' + response.body?.Message);
         }
         enrollmentData.EnrollmentId = response.body.Data.id;
         enrollmentData.PlanName = model.PlanName;

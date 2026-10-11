@@ -24,7 +24,7 @@
         "@aws-sdk/credential-provider-node": "^3.501.0",
         "@aws-sdk/lib-storage": "^3.958.0",
         "@aws-sdk/s3-request-presigner": "^3.958.0",
-        "@faker-js/faker": "^8.0.2",
+        "@faker-js/faker": "^10.5.0",
         "@types/adm-zip": "^0.5.1",
         "@types/amqplib": "^0.10.7",
         "@types/bcryptjs": "^2.4.3",

@@ -3,7 +3,7 @@ name: Harbor-PROD-CI-CD
 on:
   push:
     branches:
-      - 'feature/pipeline'
+      - 'main'
   
 
 jobs:

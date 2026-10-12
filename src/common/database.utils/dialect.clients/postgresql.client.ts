@@ -47,6 +47,9 @@ export class PostgresqlClient  implements IDatabaseClient {
 
     public executeQuery = async (query: string): Promise<any> => {
         try {
+            if (!this.connection) {
+                throw new Error('No active database connection. Call connect() before executing a query.');
+            }
             const result = await this.connection.query(query);
             return result;
         } catch (error) {
@@ -105,6 +108,17 @@ export class PostgresqlClient  implements IDatabaseClient {
             throw new ApiError(500, `Failed to check if schema '${schemaName}' exists: ${error.message}`);
         } finally {
             await client.end();
+        }
+    };
+
+    public disconnect = async (): Promise<void> => {
+        try {
+            if (this.connection) {
+                await this.connection.end();
+                this.connection = null;
+            }
+        } catch (error) {
+            Logger.instance().log(error.message);
         }
     };
 

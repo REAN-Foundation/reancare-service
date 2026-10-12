@@ -56,4 +56,6 @@ export interface IStatisticsRepo {
 
     createConnection(schemaType: DatabaseSchemaType): Promise<void>;
 
+    closeConnection(): Promise<void>;
+
 }

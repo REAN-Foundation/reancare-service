@@ -185,7 +185,7 @@ export class TenantRepo implements ITenantRepo {
 
     delete = async (id: string, hardDelete: boolean = false): Promise<boolean> => {
         try {
-            const deletedCount = await Tenant.destroy({ where: { Id: id }, force: hardDelete });
+            const deletedCount = await Tenant.destroy({ where: { id }, force: hardDelete });
             return deletedCount > 0;
         }
         catch (error) {

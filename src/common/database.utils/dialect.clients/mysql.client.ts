@@ -59,6 +59,9 @@ export class MysqlClient implements IDatabaseClient {
 
     public executeQuery = async (query: string): Promise<any> => {
         try {
+            if (!this.connection) {
+                throw new Error('No active database connection. Call connect() before executing a query.');
+            }
             const result = await this.connection.query(query);
             return result;
         } catch (error) {
@@ -128,9 +131,12 @@ export class MysqlClient implements IDatabaseClient {
         }
     };
 
-    public closeDbConnection = async () => {
+    public disconnect = async (): Promise<void> => {
         try {
-            await this.connection.end();
+            if (this.connection) {
+                await this.connection.end();
+                this.connection = null;
+            }
         } catch (error) {
             Logger.instance().log(error.message);
         }

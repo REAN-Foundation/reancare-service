@@ -12,4 +12,6 @@ export interface IDatabaseClient {
 
     createSchema(schemaName: string): Promise<boolean>;
 
+    disconnect(): Promise<void>;
+
 }

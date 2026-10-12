@@ -1,6 +1,7 @@
 import express from 'express';
 import { EnrollmentDomainModel } from '../../../domain.types/clinical/careplan/enrollment/enrollment.domain.model';
 import { BaseValidator, Where } from '../../base.validator';
+import { NotificationChannelList } from '../../../domain.types/general/notification/notification.types';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -21,7 +22,7 @@ export class CareplanValidator extends BaseValidator {
             EndDateStr     : request.body.EndDate,
             DayOffset      : request.body.DayOffset,
             WeekOffset     : request.body.WeekOffset,
-            Channel        : request.body.Channel,
+            Channel        : this.getNotificationChannel(request.body.Channel),
             TenantName     : request.body.TenantName,
             Language       : request.body.Language,
             IsTest         : request.body.IsTest ?? false,
@@ -36,6 +37,14 @@ export class CareplanValidator extends BaseValidator {
         };
 
         return model;
+    };
+
+    private getNotificationChannel = (channel: string): string => {
+        if (!channel) {
+            return channel;
+        }
+        const found = NotificationChannelList.find(x => x.toLowerCase() === channel.toLowerCase());
+        return found ?? channel;
     };
 
     updateRiskDomainModel = (request: express.Request): EnrollmentDomainModel => {

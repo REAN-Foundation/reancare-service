@@ -205,7 +205,8 @@ export class RabbitMqMessagingProvider implements IMessagingProvider {
         return [
             `bot-wrapper-${env}-queue`,
             `careplan-${env}-queue`,
-            `followup-${env}-queue`
+            `followup-${env}-queue`,
+            `user-analytics-${env}-queue`
         ];
     }
 

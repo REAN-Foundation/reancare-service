@@ -1,9 +1,4 @@
 name: Harbor-UAT-CI-CD
-
-on:
-  push:
-    branches:
-      - 'release/**'
   
 
 jobs:
